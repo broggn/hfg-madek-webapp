@@ -228,3 +228,21 @@ img, img.ui-thumbnail-image
   #ui-resources-preview
     height: 300px
     overflow: auto
+
+// embedded view
+body[data-r="media_entries"][data-a="embedded"]
+  background: transparent
+  overflow: hidden
+  top: 0
+  margin: 0
+  padding: 0
+  height: 100%
+  width: 100%
+  min-width: initial
+
+// React Root fixes
+
+// when wrapping ".app", height must be set for the layout (footer) to work
+[data-react-class="UI.Root"]
+  &, & [data-reactroot]
+    height: 100%

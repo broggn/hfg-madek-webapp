@@ -1,9 +1,9 @@
 # collect top-level components needed for ujs and/or server-side render:
-
+React = require('react')
+f = require('active-lodash')
 requireBulk = require('bulk-require') # require file/directory trees
 
-module.exports =
-
+react =
   # "UI library" (aka styleguide)
   # NOTE: 'requireBulk' is in the index file so that other components can use it
   UI: require('./ui-components/index.coffee')
@@ -17,11 +17,19 @@ module.exports =
   #       Will be structured more closely to the actual routes where they are used.
   Views: requireBulk(__dirname, ['./views/*.{c,}js{x,}', './views/**/*.{c,}js{x,}']).views
 
-  # App/Layout things that are only temporarly used from HAML:
+  # App/Layout partials
   App:
     UserMenu: require('../react/views/_layouts/UserMenu.cjsx')
     LoginMenu: require('../react/views/_layouts/LoginMenu.js').default
+    AppHeader: require('../react/views/App/AppHeader.js').default
+    AppFooter: require('../react/views/App/AppFooter.js').default
 
 
   # extra stuff
   AsyncDashboardSection: require('./lib/AsyncDashboardSection.cjsx')
+
+# NEW ROOT (everything will move here). (old UJS just works)
+# this index will be removed and the Root directly inmported into `./react-server-side.js`
+react.Root = require('./Root.js').default
+
+module.exports = react

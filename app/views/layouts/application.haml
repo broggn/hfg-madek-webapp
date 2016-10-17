@@ -1,14 +1,27 @@
+-# NOTE: work in progress - this is ported to react
+-# last steps: alert, modals
+
 :ruby
-  footer = {
-    copy: {
-      logo: {
-        href: 'http://madek.zhdk.ch',
-        content: component('icon.madek', 'ui-footer-logo')
+  app = @app_layout_data
+  config = app[:config]
+
+  headerProps = app[:header]
+    .merge(
+      brand: {
+        name: config[:site_title],
+        logo: config[:brand_logo_url],
+        provider: config[:brand_text],
+        href: config[:root_path]
       },
-      text: settings.brand_text
-    },
-    version_name: MADEK_VERSION[:version_name],
-    menu: settings.sitemap
+      userMenu: app[:user_menu],
+      loginLink: app[:login_link],
+      authToken: app[:auth_token]
+    )
+
+  footerProps = {
+    menu: app[:sitemap],
+    provider: config[:brand_text],
+    version: app[:version]
   }
 
   modal =
@@ -30,7 +43,7 @@
 
   #app.app{data: { view: request[:controller], action: request[:action] }}
 
-    = render('application/app_header')
+    = react('App.AppHeader', headerProps)
 
     - if not modal
       = render('application/app_alerts')
@@ -42,6 +55,7 @@
         = yield
 
     .app-footer-push
-  = combo('footer', footer)
+
+  = react('App.AppFooter', footerProps)
 
 = render template: 'layouts/_base'
