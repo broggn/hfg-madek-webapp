@@ -5,7 +5,7 @@ f = require('active-lodash')
 linkifyStr = require('linkifyjs/string')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')
 resourceName = require('../lib/decorate-resource-names.coffee')
-UI = require('../ui-components/index.coffee')
+UI = require('../ui-components/index.js')
 
 # Decorator for each type is single stateless-function-component,
 # the main/exported component just selects the right one.

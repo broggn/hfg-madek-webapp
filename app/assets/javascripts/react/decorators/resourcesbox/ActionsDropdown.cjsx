@@ -3,7 +3,7 @@ f = require('active-lodash')
 ui = require('../../lib/ui.coffee')
 t = ui.t('de')
 SelectionScope = require('../../../lib/selection-scope.coffee')
-{ Icon, Dropdown } = require('../../ui-components/index.coffee')
+{ Icon, Dropdown } = require('../../ui-components/index.js')
 MenuItem = Dropdown.MenuItem
 
 createActionsDropdown = (withActions, selection, saveable, disablePermissionsEdit, isClient, collectionData, config, callbacks) ->

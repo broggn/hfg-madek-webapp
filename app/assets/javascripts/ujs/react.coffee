@@ -3,7 +3,7 @@ React = require('react')
 ReactDOM = require('react-dom')
 f = require('active-lodash')
 url = require('url')
-UI = require('../react/index.coffee')
+UI = require('../react/index.js')
 
 # UJS for React Views (and Decorators)
 #

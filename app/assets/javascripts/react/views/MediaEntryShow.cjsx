@@ -3,7 +3,7 @@ f = require('active-lodash')
 classList = require('classnames')
 t = require('../../lib/string-translation')('de')
 
-UI = require('../ui-components/index.coffee')
+UI = require('../ui-components/index.js')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')
 MetaDataList = require('../decorators/MetaDataList.cjsx')
 MediaEntryPreview = require('../decorators/MediaEntryPreview.cjsx')

@@ -12,7 +12,7 @@ Waypoint = require('react-waypoint')
 RailsForm = require('../lib/forms/rails-form.cjsx')
 ResourceThumbnail = require('./ResourceThumbnail.cjsx')
 { Button, ButtonGroup, Icon, Link, Preloader, Dropdown, ActionsBar
-} = require('../ui-components/index.coffee')
+} = require('../ui-components/index.js')
 MenuItem = Dropdown.MenuItem
 SideFilter = require('../ui-components/ResourcesBox/SideFilter.cjsx')
 BoxToolBar = require('../ui-components/ResourcesBox/BoxToolBar.cjsx')

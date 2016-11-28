@@ -8,7 +8,7 @@ Tab = require('react-bootstrap/lib/Tab')
 Nav = require('react-bootstrap/lib/Nav')
 NavItem = require('react-bootstrap/lib/NavItem')
 MadekPropTypes = require('../../lib/madek-prop-types.coffee')
-{Icon, Tooltipped} = require('../../ui-components/index.coffee')
+{Icon, Tooltipped} = require('../../ui-components/index.js')
 InputFieldText = require('../forms/input-field-text.cjsx')
 AutoComplete = null # only required client-side!
 

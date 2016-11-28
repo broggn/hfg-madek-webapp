@@ -109,6 +109,16 @@ module Madek
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    if Rails.env.development?
+      # In development send *wp-bundle.js to the webpack-dev-server running on 8080
+      config.action_controller.asset_host = Proc.new { |source|
+        if source =~ /_bundle\.js$/i
+          "http://localhost:3333"
+        end
+      }
+    end
+
+
     # NOTE: sprockets is not used for bundling JS, hand it the prebundled files:
     Rails.application.config.assets.paths.concat(
       Dir["#{Rails.root}/public/assets/bundles"])

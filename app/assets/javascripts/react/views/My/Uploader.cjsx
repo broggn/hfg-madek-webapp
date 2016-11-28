@@ -4,7 +4,7 @@ ampersandReactMixin = require('ampersand-react-mixin')
 f = require('active-lodash')
 async = require('async')
 t = require('../../../lib/string-translation')('de')
-{ActionsBar, Button} = require('../../ui-components/index.coffee')
+{ActionsBar, Button} = require('../../ui-components/index.js')
 MediaResourcesBox = require('../../decorators/MediaResourcesBox.cjsx')
 
 FileDrop = <div/> # client-side only
