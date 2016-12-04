@@ -6,24 +6,25 @@ class VocabulariesController < ApplicationController
   def index
     authorized_resources = auth_policy_scope(current_user, Vocabulary.all)
 
-    respond_with(@get = Presenters::Vocabularies::VocabulariesIndex
-      .new(authorized_resources, user: current_user))
+    respond_with_react(
+      Presenters::Vocabularies::VocabulariesIndex
+        .new(authorized_resources, user: current_user))
   end
 
   def show
     vocab = Vocabulary.find(params.require(:vocabulary_id))
-    auth_authorize(vocab)
-    respond_with(@get = \
+    authorize(vocab)
+    respond_with_react(
       Presenters::Vocabularies::VocabularyShow.new(vocab, user: current_user))
   end
 
   def keywords # show action, with keyword tab
     vocabulary = find_by_vocab_id_param
 
-    @get = Presenters::Vocabularies::VocabularyKeywords.new(
+    get = Presenters::Vocabularies::VocabularyKeywords.new(
       vocabulary, user: current_user)
 
-    respond_with(@get)
+    respond_with_react(get)
   end
 
   def contents
