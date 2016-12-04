@@ -4,12 +4,8 @@ import sortBy from 'lodash/sortBy'
 import isEmpty from 'lodash/isEmpty'
 
 import MadekPropTypes from '../../lib/madek-prop-types.coffee'
-import Icon from '../../ui-components/Icon.cjsx'
-
-import VocabularyPage from './VocabularyPage.cjsx'
 
 import VocabTitleLink from '../../ui-components/VocabTitleLink.cjsx'
-
 
 const MIN_COLS = 2 // for MetaKeys list
 const MAX_COLS = 3
@@ -41,54 +37,51 @@ const VocabulariesShow = React.createClass({
 
   render ({get, app} = this.props) {
     const {meta_keys} = get
-    const {label, url, description, enabled_for_public_view} = get.page.vocabulary
+    const {label, url, description} = get.page.vocabulary
 
     const metaKeys = sortBy(meta_keys, 'position')
     const numCols = Math.max(MIN_COLS, Math.min(MAX_COLS, metaKeys.length))
     const metaKeyCols = chunk(metaKeys, numCols)
 
-    return <VocabularyPage page={get.page} for_url={app.url}>
+    return <div className='ui-container pal'>
+      <div className='mbl'>
 
-      <div className='ui-container pal'>
-        <div className='mbl'>
+        <VocabTitleLink text={label} href={url} />
 
-          <VocabTitleLink text={label} href={url} />
+        <p className='mtm'>{description || '(Keine Beschreibung)'}</p>
 
-          <p className='mtm'>{description || '(Keine Beschreibung)'}</p>
+        <h3 className='title-m separated light mtl mbm' style={{fontWeight: 'bold'}}>
+          MetaKeys
+        </h3>
+        {metaKeyCols.map((col, i) =>
+          <div className='row' key={i}>
+            {col.map((mk) =>
+              <div className={`col1of${numCols}`} key={mk.uuid}>
+                <div className='prl mbl'>
 
-          <h3 className='title-m separated light mtl mbm' style={{fontWeight: 'bold'}}>
-            MetaKeys
-          </h3>
-          {metaKeyCols.map((col, i) =>
-            <div className='row' key={i}>
-              {col.map((mk) =>
-                <div className={`col1of${numCols}`} key={mk.uuid}>
-                  <div className='prl mbl'>
+                  <h4 className='title-m separated light' id={shortID(mk.uuid)} >
+                    <a href={'#' + shortID(mk.uuid)}>{mk.label}</a>
+                  </h4>
 
-                    <h4 className='title-m separated light' id={shortID(mk.uuid)} >
-                      <a href={'#' + shortID(mk.uuid)}>{mk.label}</a>
-                    </h4>
-
-                    <table className='borderless'>
-                      <tbody>
-                        {metaKeyInfo(mk).map(([label, value]) => (
-                          isEmpty(value) ? null : (
-                            <tr key={label + value}>
-                              <td className='ui-summary-label'>{label}</td>
-                              <td className='ui-summary-content'>{value}</td>
-                            </tr>)
-                        ))}
-                      </tbody>
-                    </table>
-                    <br />
-                  </div>
+                  <table className='borderless'>
+                    <tbody>
+                      {metaKeyInfo(mk).map(([label, value]) => (
+                        isEmpty(value) ? null : (
+                          <tr key={label + value}>
+                            <td className='ui-summary-label'>{label}</td>
+                            <td className='ui-summary-content'>{value}</td>
+                          </tr>)
+                      ))}
+                    </tbody>
+                  </table>
+                  <br />
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
-    </VocabularyPage>
+    </div>
   }
 })
 

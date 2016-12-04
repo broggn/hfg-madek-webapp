@@ -1,5 +1,4 @@
 React = require('react')
-ReactDOM = require('react-dom')
 f = require('lodash')
 t = require('../../../lib/string-translation.js')('de')
 Icon = require('../../ui-components/Icon.cjsx')
@@ -8,10 +7,6 @@ PageHeader = require('../../ui-components/PageHeader.js')
 Tabs = require('../Tabs.cjsx')
 Tab = require('../Tab.cjsx')
 TabContent = require('../TabContent.cjsx')
-parseUrl = require('url').parse
-
-parseUrlState = (location) ->
-  parseUrl(location).pathname
 
 module.exports = React.createClass
   displayName: 'VocabularyPage'
@@ -40,10 +35,11 @@ module.exports = React.createClass
       }
     ]
 
-  render: ({page, for_url} = @props) ->
-    {label} = page.vocabulary
-    actions = page.actions
-    currentPath = parseUrlState(for_url)
+  render: ({get, children, location} = @props) ->
+    {page} = get
+    {vocabulary, actions} = page
+    {label} = vocabulary
+    currentPath = location.pathname
 
     headerActions =
       <a href={actions.index} className='button'>
@@ -65,7 +61,7 @@ module.exports = React.createClass
       </Tabs>
 
       <TabContent>
-        {@props.children}
+        {children}
       </TabContent>
 
     </PageContent>
