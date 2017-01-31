@@ -134,7 +134,7 @@ Madek::Application.routes.draw do
   get 'vocabulary', to: 'vocabularies#index', as: 'vocabularies'
   # redirect /vocabulary/{meta_key} to their anchor in the vocabulary metakeys list:
   get 'vocabulary/:meta_key_id', constraints: { meta_key_id: /.*:[^:\/]*/ },
-    to: redirect{ |p| v, m = p[:meta_key_id].split(':'); "/vocabulary/#{v}##{m}" }
+    to: redirect{ |p| v, m = p[:meta_key_id].split(':'); "/vocabulary/#{v}##{m}" }, as: 'vocabulary_meta_key'
   get 'vocabulary/:meta_key_id/terms/*term', to: 'keywords#show', as: 'vocabulary_meta_key_term', format: false
   get 'vocabulary/:vocabulary_id', to: 'vocabularies#show', as: 'vocabulary'
   get 'vocabulary/:vocab_id/keywords', to: 'vocabularies#keywords', as: 'vocabulary_keywords'
