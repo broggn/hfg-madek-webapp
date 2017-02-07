@@ -28,59 +28,117 @@ task_defaults:
           bundle exec rspec $CIDER_CI_TASK_FILE
 
 
-generate_tasks:
-  include_match: spec/.*_spec.rb
+# generate_tasks:
+#   include_match: spec/.*_spec.rb
 
 tasks:
 
   # manually prioritize slow tests higher
 
-  spec/features/batch_edit/form_values_and_appearance_spec.rb: {priority: 1}
-  spec/features/collection/collection_destroy_spec.rb: {priority: 1}
-  spec/features/collection/collection_meta_data_edit_spec.rb: {priority: 1}
-  spec/features/collection/collection_select_collection_spec.rb: {priority: 2}
-  spec/features/collection/collection_show_spec.rb: {priority: 2}
-  spec/features/dashboard_new_collection_spec.rb: {priority: 2}
-  spec/features/collection/edit_collection_cover_spec.rb: {priority: 1}
-  spec/features/collection/edit_collection_highlights_spec.rb: {priority: 1}
-  spec/features/flyout_actions_spec.rb: {priority: 2}
-  spec/features/media_entry/media_entry_index_spec.rb: {priority: 1}
-  spec/features/media_entry/permissions/media_entry_permissions_spec.rb: {priority: 1}
-  spec/features/media_entry/media_entry_select_collection_spec.rb: {priority: 2}
-  spec/features/media_entry/media_entry_export_spec.rb: {priority: 2}
-  spec/features/meta_data/meta_data_spec.rb: {priority: 1}
-  spec/features/search_spec.rb: {priority: 2}
+  # spec/features/batch_edit/form_values_and_appearance_spec.rb: {priority: 1}
+  # spec/features/collection/collection_destroy_spec.rb: {priority: 1}
+  # spec/features/collection/collection_meta_data_edit_spec.rb: {priority: 1}
+  # spec/features/collection/collection_select_collection_spec.rb: {priority: 2}
+  # spec/features/collection/collection_show_spec.rb: {priority: 2}
+  # spec/features/dashboard_new_collection_spec.rb: {priority: 2}
+  # spec/features/collection/edit_collection_cover_spec.rb: {priority: 1}
+  # spec/features/collection/edit_collection_highlights_spec.rb: {priority: 1}
+  # spec/features/flyout_actions_spec.rb: {priority: 2}
+  # spec/features/media_entry/media_entry_index_spec.rb: {priority: 1}
+  # spec/features/media_entry/permissions/media_entry_permissions_spec.rb: {priority: 1}
+  # spec/features/media_entry/media_entry_select_collection_spec.rb: {priority: 2}
+  # spec/features/media_entry/media_entry_export_spec.rb: {priority: 2}
+  # spec/features/meta_data/meta_data_spec.rb: {priority: 1}
+  # spec/features/search_spec.rb: {priority: 2}
+  #
+  # spec/features/styleguide_spec.rb:
+  #   priority: 2
+  #   scripts:
+  #     test:
+  #       body: echo "disabled till it's faster and/or do we work on CSS."
+  #
+  # # some tests need special treatment or custom configuration
+  #
+  # spec/features/custom_root-url_spec.rb:
+  #   environment_variables:
+  #     RAILS_RELATIVE_URL_ROOT: /my-test
+  #
+  # spec/features/session/expiration_spec.rb:
+  #   environment_variables:
+  #     RAILS_RELATIVE_URL_ROOT: /my-test
+  #   scripts:
+  #     configure_session_validity_duration:
+  #       body: |
+  #         echo 'madek_session_validity_duration: 10 Seconds' >> config/settings.local.yml
+  #     test:
+  #       start_when:
+  #         validity duration has been configured:
+  #           script_key: configure_session_validity_duration
+  #
+  # spec/controllers/my/zhdk_groups_controller_spec.rb:
+  #   scripts:
+  #     configure_zhdk_integration:
+  #       body: |
+  #         echo 'zhdk_integration: true' >> config/settings.local.yml
+  #     test:
+  #       start_when:
+  #         zhdk integration has been configured:
+  #           script_key: configure_zhdk_integration
 
-  spec/features/styleguide_spec.rb:
-    priority: 2
-    scripts:
-      test:
-        body: echo "disabled till it's faster and/or do we work on CSS."
+  # debug trials
+  # to use it, also disable task generation and configs (above)
 
-  # some tests need special treatment or custom configuration
+  debug 1 spec with VNC:
 
-  spec/features/custom_root-url_spec.rb:
     environment_variables:
-      RAILS_RELATIVE_URL_ROOT: /my-test
+      CIDER_CI_TASK_FILE: 'spec/features/transfer_responsibility_spec.rb'
 
-  spec/features/session/expiration_spec.rb:
-    environment_variables:
-      RAILS_RELATIVE_URL_ROOT: /my-test
+    traits:
+      ci-g2016-01: yes # force specific executor
+
+    max_trials: 1
+
     scripts:
-      configure_session_validity_duration:
-        body: |
-          echo 'madek_session_validity_duration: 10 Seconds' >> config/settings.local.yml
+      # override test script conf
       test:
         start_when:
-          validity duration has been configured:
-            script_key: configure_session_validity_duration
-
-  spec/controllers/my/zhdk_groups_controller_spec.rb:
-    scripts:
-      configure_zhdk_integration:
+          keep file touched: {script_key: 'debug_trial'}
+          vnc is set up: {script_key: 'set_vnc_password'}
+        timeout: 1 hour
         body: |
-          echo 'zhdk_integration: true' >> config/settings.local.yml
-      test:
+          #!/usr/bin/env bash
+          set -eux
+          export PATH=~/.rubies/$RUBY/bin:$PATH
+          mkdir -p log
+          xvfb-run -a -e log/xvfb.log \
+            -s "-ac -screen 0 $XVFB_SCREEN_CONF" \
+            --listen-tcp --server-num 42 --auth-file tmp/xvfb.auth \
+            bundle exec rspec "$CIDER_CI_TASK_FILE"
+
+      # keep trial files
+      debug_trial:
+        body: 'touch _cider-ci_keep'
+
+      # start VNC
+      set_vnc_password:
+        body: 'mkdir -p tmp && x11vnc -storepasswd gamingkiste tmp/vncpass'
+
+      run_vnc_screen:
         start_when:
-          zhdk integration has been configured:
-            script_key: configure_zhdk_integration
+          test is running: {script_key: test, states: [executing]}
+        terminate_when:
+          test ended: {script_key: test, states: ['aborted', 'defective', 'failed', 'passed', 'skipped']}
+
+        timeout: 1 hour
+        body: |
+          set -exu
+          sleep 10
+          x11vnc -display :42 -rfbport 4242 -rfbauth tmp/vncpass -forever -auth tmp/xvfb.auth
+          echo "Now map the port via ssh: `ssh -NL 4242:localhost:4242 root@ci-g2016-01.byod.zhdk.ch`"
+          echo "Then connect via VNC: `open 'vnc://localhost:4242'"
+
+      # stop keeping trial files
+      stop_debug_trial:
+        body: 'rm -f _cider-ci_keep'
+        start_when:
+          vnc ended: {script_key: run_vnc_screen, states: ['aborted', 'defective', 'failed', 'passed', 'skipped']}
