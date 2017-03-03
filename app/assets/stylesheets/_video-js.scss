@@ -61,6 +61,10 @@ $primary-background-color: darken(#666666, $contrast-ratio);  // #2B333F default
   color: $primary-foreground-color;
 
   font-family: "Open Sans", sans-serif;
+
+  [class*="icon-"], [class*="fa-"] {
+    font-size: inherit;
+  }
 }
 
 // sizing
