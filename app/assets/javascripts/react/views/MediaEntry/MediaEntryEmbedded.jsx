@@ -6,8 +6,6 @@ const f = require('active-lodash')
 // const MediaPlayer = require('../../ui-components/MediaPlayer.cjsx')
 const MediaEntryPreview = require('../../decorators/MediaEntryPreview.jsx')
 
-const CAPTION_HEIGHT = 55 // absolute heigth of tile caption in pixels
-
 // eslint-disable-next-line react/no-deprecated
 module.exports = React.createClass({
   displayName: 'Views.MediaEntryEmbedded',
@@ -36,7 +34,7 @@ module.exports = React.createClass({
     const eHeight = embed_config.height || defaultSize.height
 
     const fullsize = {
-      height: eHeight - CAPTION_HEIGHT + 'px',
+      height: eHeight + 'px',
       width: eWidth + 'px'
     }
 
@@ -46,8 +44,8 @@ module.exports = React.createClass({
       case 'document':
         mediaProps = {
           style: {
-            maxWidth: eWidth + 'px',
-            maxHeight: eHeight - 1 * CAPTION_HEIGHT + 'px',
+            maxWidth: fullsize.width,
+            maxHeight: fullsize.height,
             minWidth: '100px',
             minHeight: '100px'
           }
@@ -57,7 +55,7 @@ module.exports = React.createClass({
         mediaProps = f.merge(fullsize, {
           options: {
             fluid: false,
-            height: eHeight - CAPTION_HEIGHT,
+            height: eHeight,
             width: eWidth
           }
         })

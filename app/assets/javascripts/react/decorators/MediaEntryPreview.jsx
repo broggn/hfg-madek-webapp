@@ -113,21 +113,15 @@ module.exports = React.createClass({
         />
       ) : // audio player
       previews.audios ? (
-        <div
-          className="ui-container mvm"
-          style={{
-            width: '100%',
-            padding: '1em',
-            display: 'inline-block',
-            boxSizing: 'border-box'
-          }}>
-          <MediaPlayer
-            type="audio"
-            getUrl={get.url}
-            {...mediaPlayerConfig}
-            sources={previews.audios}
-          />
-        </div>
+        <MediaPlayer
+          type="audio"
+          {...mediaPlayerConfig}
+          getUrl={get.url}
+          sources={previews.audios}
+          options={f.merge({ fluid: true }, f.get(mediaPlayerConfig, 'options'))}
+          captionText={this.props.captionText}
+          isInternal={this.props.isInternal}
+        />
       ) : // picture with link and 'zoom' icon on hover
       imageHref && (withLink || withZoomLink) ? (
         <div className={cx({ 'ui-has-magnifier': withZoomLink })}>

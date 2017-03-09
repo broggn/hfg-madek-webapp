@@ -53,7 +53,7 @@ module.exports = React.createClass
     summaryContext = get.meta_data.entry_summary_context
     listContexts = get.meta_data.contexts_for_entry_extra
 
-    usesIframeEmbed = get.media_type == 'video'
+    usesIframeEmbed = f.includes(['audio', 'video'], get.media_type)
 
     # overview has summary on the left and preview on the right
     previewStyle = {width: '100%'}
