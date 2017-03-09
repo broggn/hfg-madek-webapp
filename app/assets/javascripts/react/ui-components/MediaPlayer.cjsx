@@ -1,8 +1,10 @@
+# FIXME: move to decorators
 React = require('react')
 f = require('active-lodash')
 t = require('../../lib/string-translation.js')('de')
 
-VideoJS = require('./VideoJs').default
+AudioPlayer = require('./AudioPlayer').default
+VideoPlayer = require('./VideoPlayer').default
 
 module.exports = React.createClass
   displayName: 'MediaPlayer'
@@ -30,23 +32,9 @@ module.exports = React.createClass
   render: ({type, sources, poster} = @props)->
     MediaTag = type
 
-    # TMP: audios (will just re-use <VideoJS> which could handle audio via `videojs`)
+    # FIXME: move error handling to AudioPlayer
     if type == 'audio'
-      <div style={{margin: '0px', padding: '0px'}}>
-        <MediaTag controls ref={@_ref}>
-          {f.map sources, (vid)->
-            <source src={vid.url} type={vid.content_type} key={vid.content_type + vid.url}/>}
-        </MediaTag>
-        {
-          if @state.showHint
-            <p style={{marginTop: '40px'}}>
-              {t('media_entry_file_format_not_supported_1')}
-              <a href={@props.originalUrl}>{t('media_entry_file_format_not_supported_2')}</a>
-              {t('media_entry_file_format_not_supported_3')}
-            </p>
-        }
-      </div>
-
+      <AudioPlayer sources={sources} />
     else
       # use videojs for client-side videos
       # before the player is loaded, show the poster to minimize flicker
@@ -55,11 +43,11 @@ module.exports = React.createClass
       if !@state.active
         <div>
           <div className='no-js'>
-            <VideoJS {...videoProps} />
+            <VideoPlayer {...videoProps} />
           </div>
           <div className='js-only'>
             <img src={poster} style={{height: '100%', width: '100%'}}/>
           </div>
         </div>
       else
-        <VideoJS {...videoProps} />
+        <VideoPlayer {...videoProps} />

@@ -58,7 +58,7 @@ $main-font-family: "Open Sans", sans-serif;
   /* The base font size controls the size of everything, not just text.
      All dimensions use em-based sizes so that the scale along with the font size.
      Try increasing it to 15px and see what happens. */
-  font-size: 11px;
+  font-size: 12px;
 
   /* The main font color changes the ICON COLORS as well as the text */
   color: $primary-foreground-color;
@@ -109,7 +109,7 @@ $control-bar-height:  3em;
   // like primary btn
   color:  white;
   border-color: $brand-color;
-  background-color: $brand-color;
+  background-color: darken($brand-color, 3%);
   background-image: (linear-gradient(lighten($brand-color, 5%), darken($brand-color, 3%)));
 }
 
@@ -190,3 +190,39 @@ $slider-bg-color: lighten($primary-background-color, 33.34%);
       line-height: 2.23em;
   }
 }
+
+// audio variant
+.ui-audio-player {
+  background-color: $primary-background-color;
+}
+
+// styles for plain player
+
+// .ui-audio-player {
+//   font-size: 14px;
+//   margin-top: 1em;
+//
+//   &.video-js.vjs-fluid, &.video-js.vjs-16-9, &.video-js.vjs-4-3 {
+//     height: 3.5em;
+//     padding-top: 0;
+//   }
+// }
+
+// wavesurfer plugin styles:
+
+.vjs-waveform {
+    z-index: 0;
+    position: absolute;
+    bottom: 3em;
+    left: 0;
+    right: 0;
+    top: 0;
+
+    wave, canvas {
+      height: 100% !important;
+    }
+    wave > wave {
+      height: 100% !important;
+    }
+}
+.vjs-control-bar { z-index: 1 }
