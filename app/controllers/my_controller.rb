@@ -38,7 +38,7 @@ class MyController < ApplicationController
   # - no `partial` but `href` renders an entry in the sidebar only
 
   # rubocop:disable Metrics/MethodLength
-  def sections_definition(user)
+  def dashboard_sections
     {
       activity_stream: {
         title: 'Aktivitäten',
@@ -46,15 +46,13 @@ class MyController < ApplicationController
         partial: :activity_stream,
         hide_from_index: true
       },
-      clipboard: (\
-        if (user && clipboard_collection(user))
-          {
-            title: I18n.t(:sitemap_clipboard),
-            icon: 'icon-privacy-group',
-            partial: :media_resources,
-            is_beta: true
-          }
-        end),
+      clipboard: {
+        title: I18n.t(:sitemap_clipboard),
+        icon: 'icon-privacy-group',
+        partial: :media_resources,
+        hide_from_index: true,
+        is_beta: true
+      },
       unpublished_entries: {
         title: I18n.t(:sitemap_my_unpublished),
         icon: 'icon-privacy-private',
@@ -169,7 +167,7 @@ class MyController < ApplicationController
     # any possible user-given (filter, …)-config!
     # TODO: port this logic to dashboard presenter, build table of contents there
     @sections = set_async_below_fold order_sections_according_to_counts(
-      sections_definition(current_user),
+      dashboard_sections,
       Presenters::Users::UserDashboard.new(current_user,
                                            user_scopes_for_dashboard(current_user),
                                            nil,
@@ -193,7 +191,7 @@ class MyController < ApplicationController
   def order_sections_according_to_counts(sections, presenter)
     sections = \
       put_empty_sections_last_and_set_is_empty_key_true(
-        sections_definition(current_user), presenter)
+        dashboard_sections, presenter)
 
     sections = (sections[false].presence || [])
       .concat(
