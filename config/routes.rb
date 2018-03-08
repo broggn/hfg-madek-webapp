@@ -18,7 +18,21 @@ Madek::Application.routes.draw do
   #   get '/permissions', action: :permissions_show, as: 'permissions', on: :member
   # end
 
-  resources :media_entries, path: 'entries', except: [:new] do
+  concern :temporary_urls do
+    member do
+      get 'temporary_urls'
+      get 'temporary_urls/new', controller: 'temporary_urls', action: 'new', as: 'new_temporary_url'
+      post 'temporary_urls', controller: 'temporary_urls', action: 'create', as: 'create_temporary_url'
+      get 'temporary_urls/:temporary_url_id', controller: 'temporary_urls', action: 'show', as: 'temporary_url'
+      patch 'temporary_urls/:temporary_url_id', controller: 'temporary_urls', action: 'update', as: 'update_temporary_url'
+    end
+
+    collection do
+      get 'tmp/:id', action: :show_by_temporary_url, as: 'show_by_temporary_url'
+    end
+  end
+
+  resources :media_entries, path: 'entries', except: [:new], concerns: :temporary_urls do
     # NOTE: 'new' action is under '/my/upload'!
     member do
       get 'meta_data/edit/by_context(/:context_id)', action: :edit_meta_data_by_context, as: 'edit_meta_data_by_context'
@@ -88,7 +102,7 @@ Madek::Application.routes.draw do
   put 'batch_remove_from_clipboard', controller: :batch, action: :batch_remove_from_clipboard, as: 'batch_remove_from_clipboard'
   put 'batch_remove_all_from_clipboard', controller: :batch, action: :batch_remove_all_from_clipboard, as: 'batch_remove_all_from_clipboard'
 
-  resources :collections, path: 'sets', only: [:index, :show, :create, :update, :destroy] do
+  resources :collections, path: 'sets', only: [:index, :show, :create, :update, :destroy], concerns: :temporary_urls do
     member do
       get 'permissions'
       get 'permissions/edit', action: :permissions_edit, as: 'edit_permissions'

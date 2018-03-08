@@ -39,6 +39,14 @@ class CollectionPolicy < Shared::MediaResources::MediaResourcePolicy
     logged_in? and user.admin?
   end
 
+  def temporary_urls?
+    logged_in? && owner?
+  end
+
+  def show_by_temporary_url?
+    visible_by_token?
+  end
+
   alias_method :relations?, :show?
   alias_method :more_data?, :show?
   alias_method :context?, :show?
