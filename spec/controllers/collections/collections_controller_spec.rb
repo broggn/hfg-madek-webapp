@@ -4,6 +4,11 @@ require Rails.root.join 'spec',
                         'shared',
                         'media_resources',
                         'authorization.rb'
+require Rails.root.join 'spec',
+                        'controllers',
+                        'shared',
+                        'media_resources',
+                        'temporary_urls.rb'
 
 describe CollectionsController do
   it_performs 'authorization'
@@ -118,5 +123,9 @@ describe CollectionsController do
       expect(@coll.highlighted_media_entries).not_to include me
       expect(@coll.highlighted_media_entries).to include me_h
     end
+  end
+
+  it_handles_properly 'temporary urls' do
+    let(:resource) { create :collection, creator: @user, responsible_user: @user }
   end
 end

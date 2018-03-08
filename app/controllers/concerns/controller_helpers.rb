@@ -18,6 +18,7 @@ module Concerns
 
     def get_authorized_resource(resource = nil)
       resource ||= model_klass.unscoped.find(id_param)
+      resource.accessed_by_token = true if request_by_temporary_url?(resource)
       auth_authorize resource, "#{action_name}?".to_sym
       resource
     end
@@ -46,6 +47,26 @@ module Concerns
         base_klass.singularize + action.camelize
       end
       "::Presenters::#{base_klass}::#{klass}".constantize
+    end
+
+    private
+
+    def request_by_temporary_url?(resource)
+      action_name == 'show_by_temporary_url' ||
+        preview_request_by_parent_temporary_url?(resource)
+    end
+
+    def preview_request_by_parent_temporary_url?(resource)
+      return false unless resource.is_a?(Preview)
+
+      referrer_params = Rails.application.routes.recognize_path(request.referrer)
+      controller_name == 'previews' &&
+        action_name == 'show' &&
+        referrer_params[:action] == 'show_by_temporary_url' &&
+        TemporaryUrl.find_by_token(referrer_params[:id]).try(:resource_id) == \
+          resource.media_file.media_entry_id
+    rescue ActionController::RoutingError
+      false
     end
   end
 end

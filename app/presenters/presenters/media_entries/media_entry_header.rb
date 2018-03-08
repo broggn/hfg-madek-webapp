@@ -40,6 +40,7 @@ module Presenters
           share_button,
           export_button,
           custom_urls_button,
+          temporary_url_button,
           browse_button,
           show_in_admin_button
         ]
@@ -52,6 +53,7 @@ module Presenters
         [
           :browse_button,
           :custom_urls_button,
+          :temporary_url_button,
           :export_button,
           :destroy_button,
           :show_in_admin_button
@@ -111,6 +113,20 @@ module Presenters
             raise: false),
           action: custom_urls_media_entry_path(@app_resource),
           allowed: policy_for(@user).update_custom_urls?
+        }
+      end
+
+      def temporary_url_button
+        {
+          id: :temporary_url_button,
+          async_action: nil,
+          method: 'get',
+          icon: 'clock-o',
+          title: I18n.t(
+            :resource_action_media_entry_manage_temporary_urls,
+            raise: false),
+          action: temporary_urls_media_entry_path(@app_resource),
+          allowed: policy_for(@user).temporary_urls?
         }
       end
 

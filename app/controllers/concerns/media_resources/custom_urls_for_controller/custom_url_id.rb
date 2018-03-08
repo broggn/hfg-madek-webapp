@@ -46,6 +46,8 @@ module Concerns
           id = require_media_resource_id!
           if valid_uuid?(id)
             id
+          elsif temporary_url = TemporaryUrl.find_by_token(id)
+            temporary_url.resource_id
           else
             CustomUrl
               .find_by!(id: id, is_primary: true)
