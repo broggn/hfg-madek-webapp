@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 module Presenters
   module Collections
     class CollectionHeader < Presenters::Shared::AppResource
@@ -41,6 +42,7 @@ module Presenters
           highlight_button,
           share_button,
           custom_urls_button,
+          confidential_link_button,
           show_in_admin_button
         ]
         buttons.select do |tab|
@@ -53,6 +55,7 @@ module Presenters
           :cover_button,
           :highlight_button,
           :custom_urls_button,
+          :confidential_link_button,
           :destroy_button,
           :show_in_admin_button
         ]
@@ -136,6 +139,20 @@ module Presenters
             raise: false),
           action: custom_urls_collection_path(@app_resource),
           allowed: policy_for(@user).update_custom_urls?
+        }
+      end
+
+      def confidential_link_button
+        {
+          id: :confidential_link_button,
+          async_action: nil,
+          method: 'get',
+          icon: 'clock-o',
+          title: I18n.t(
+            :resource_action_collection_manage_confidential_links,
+            raise: false),
+          action: confidential_links_collection_path(@app_resource),
+          allowed: policy_for(@user).confidential_links?
         }
       end
 

@@ -39,6 +39,14 @@ class CollectionPolicy < Shared::MediaResources::MediaResourcePolicy
     logged_in? and user.admin?
   end
 
+  def confidential_links?
+    logged_in? && owner?
+  end
+
+  def show_by_confidential_link?
+    accessed_by_confidential_link?
+  end
+
   alias_method :relations?, :show?
   alias_method :more_data?, :show?
   alias_method :context?, :show?

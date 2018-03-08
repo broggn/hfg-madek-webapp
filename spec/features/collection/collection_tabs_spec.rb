@@ -49,7 +49,7 @@ feature 'Collection tabs' do
     # NOTE: Check id of content.
     find('[data-test-id="' + full_tab_content_id + '"]')
 
-    # NOTE: Make sure you have 6 of 7 inactive tabs.
+    # NOTE: Make sure you have 7 of 8 inactive tabs.
     selector = '.ui-tabs-item[data-test-id*=set_tab]:not([class*=active])'
     inactive_tabs = all(selector)
     expect(inactive_tabs.length).to eq(6)
