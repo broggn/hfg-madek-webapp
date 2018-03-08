@@ -118,6 +118,15 @@ module Shared
         end
       end
 
+      def visible_by_token?
+        record.respond_to?(:accessed_by_token) &&
+          record.accessed_by_token
+      end
+
+      def owner?
+        record.responsible_user == user
+      end
+
     end
   end
 end
