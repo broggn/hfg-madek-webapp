@@ -6,6 +6,7 @@ buildUrl = require('url').format
 t = require('../../lib/i18n-translate.js')
 
 RightsManagement = require('../templates/ResourcePermissions.cjsx')
+TemporaryUrls = require('./Shared/TemporaryUrls.js')
 CollectionRelations = require('./Collection/Relations.cjsx')
 RelationResources = require('./Collection/RelationResources.cjsx')
 PageContentHeader = require('./PageContentHeader.cjsx')
@@ -178,6 +179,13 @@ module.exports = React.createClass
             <TabContent testId={contentTestId('permissions')}>
               <div className="bright pal rounded-bottom rounded-top-right ui-container">
                 <RightsManagement authToken={@props.authToken} get={get.permissions} />
+              </div>
+            </TabContent>
+
+          when 'temporary_urls'
+            <TabContent testId={contentTestId('temporary_urls')}>
+              <div className="bright pal rounded-bottom rounded-top-right ui-container">
+                <TemporaryUrls authToken={@props.authToken} get={get.temporary_urls} />
               </div>
             </TabContent>
 

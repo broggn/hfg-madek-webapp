@@ -16,7 +16,8 @@ feature 'Collection Context Tabs' do
     visit_collection
 
     check_title('<Collection has no title>')
-    check_tabs(['Set', 'Nutzung', 'Alle Metadaten', 'Berechtigungen'])
+    check_tabs(
+      ['Set', 'Nutzung', 'Alle Metadaten', 'Berechtigungen', 'Temporary URLs'])
   end
 
   scenario 'Show context tabs if meta data available' do
@@ -28,7 +29,8 @@ feature 'Collection Context Tabs' do
     visit_collection
 
     check_tabs(
-      ['Set', 'Core', 'Werk', 'Nutzung', 'Alle Metadaten', 'Berechtigungen'])
+      ['Set', 'Core', 'Werk', 'Nutzung', 'Alle Metadaten', 'Berechtigungen',
+       'Temporary URLs'])
     click_tab('Core')
     check_meta_data
   end

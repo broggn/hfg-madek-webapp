@@ -79,7 +79,8 @@ module Presenters
       end
 
       def child_media_resources
-        return unless ['show', 'usage_data'].include?(@active_tab)
+        return unless %w(show usage_data show_by_temporary_url)
+          .include?(@active_tab)
 
         # return unless @action == 'show'
 
@@ -114,7 +115,7 @@ module Presenters
       end
 
       def highlighted_media_resources
-        return unless @action == 'show'
+        return unless ['show', 'show_by_temporary_url'].include?(@action)
         resources = @user_scopes[:highlighted_media_entries] +
           @user_scopes[:highlighted_collections]
         Presenters::Shared::MediaResource::IndexResources.new(
@@ -141,6 +142,11 @@ module Presenters
         return unless ['permissions', 'permissions_edit'].include?(@action)
         Presenters::Collections::CollectionPermissions.new(
           @app_resource, @user)
+      end
+
+      def temporary_urls
+        return unless ['temporary_urls'].include?(@action)
+        Presenters::Collections::CollectionTemporaryUrls.new(@app_resource, @user)
       end
 
       def all_meta_data
@@ -310,6 +316,11 @@ module Presenters
             icon_type: :privacy_status_icon,
             label: I18n.t(:media_entry_tab_permissions),
             href: permissions_collection_path(@app_resource)
+          },
+          {
+            id: 'temporary_urls',
+            label: 'Temporary URLs',
+            href: temporary_urls_collection_path(@app_resource)
           }
         ]
       end

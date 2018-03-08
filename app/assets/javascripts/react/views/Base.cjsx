@@ -14,6 +14,7 @@ MediaEntryShow = require('./MediaEntryShow.cjsx')
 
 MetaDataByListing = require('../decorators/MetaDataByListing.cjsx')
 MediaEntryPermissions = require('./MediaEntry/MediaEntryPermissions.cjsx')
+TemporaryUrls = require('./Shared/TemporaryUrls.js')
 UsageData = require('../decorators/UsageData.cjsx')
 
 module.exports = React.createClass
@@ -32,6 +33,9 @@ module.exports = React.createClass
 
       else if f.includes(['permissions', 'permissions_edit'], action_name)
         <MediaEntryPermissions get={get.permissions} for_url={for_url} authToken={authToken} />
+
+      else if action_name == 'temporary_urls'
+        <TemporaryUrls get={get.temporary_urls} authToken={authToken} />
 
       else if action_name == 'usage_data'
         list = get.more_data.file_information

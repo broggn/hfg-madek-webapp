@@ -46,6 +46,14 @@ class MediaEntryPolicy < Shared::MediaResources::MediaResourcePolicy
     logged_in? and user.admin?
   end
 
+  def temporary_urls?
+    logged_in? and owner? and record.is_published
+  end
+
+  def show_by_temporary_url?
+    visible_by_token?
+  end
+
   alias_method :edit?, :update?
 
   alias_method :more_data?, :show?

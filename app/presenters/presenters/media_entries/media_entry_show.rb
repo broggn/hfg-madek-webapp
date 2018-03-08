@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 module Presenters
   module MediaEntries
     class MediaEntryShow < Presenters::Shared::AppResource
@@ -53,7 +54,9 @@ module Presenters
       end
 
       def browse_url
-        prepend_url_context(browse_media_entry_path(@app_resource))
+        if policy_for(@user).browse?
+          prepend_url_context(browse_media_entry_path(@app_resource))
+        end
       end
 
       def relation_resources
@@ -77,7 +80,7 @@ module Presenters
       end
 
       def meta_data
-        return unless ['show', 'export', 'more_data', 'usage_data']
+        return unless %w(show export more_data usage_data show_by_temporary_url)
           .include?(@active_tab)
         Presenters::MetaData::MetaDataShow.new(@app_resource, @user)
       end
@@ -100,6 +103,11 @@ module Presenters
       def permissions
         return unless ['permissions', 'permissions_edit'].include?(@active_tab)
         Presenters::MediaEntries::MediaEntryPermissions.new(@app_resource, @user)
+      end
+
+      def temporary_urls
+        return unless ['temporary_urls'].include?(@active_tab)
+        Presenters::MediaEntries::MediaEntryTemporaryUrls.new(@app_resource, @user)
       end
 
       def header
@@ -162,6 +170,11 @@ module Presenters
             title: I18n.t(:media_entry_tab_permissions),
             icon_type: :privacy_status_icon,
             href: permissions_media_entry_path(@app_resource)
+          },
+          {
+            id: 'temporary_urls',
+            title: 'Temporary URLs',
+            href: temporary_urls_media_entry_path(@app_resource)
           }
         ]
       end
