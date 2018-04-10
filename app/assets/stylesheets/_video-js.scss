@@ -12,41 +12,41 @@
 
 // default sizing:
 .video-js {
-  width: 100%;
+  // width: 100%;
   // height: 150px;
   // width: 300px;
 
   &.vjs-fluid {
-    padding-top: 56.25%;  // 16:9 aspect ratio
+    padding-top: 56.25%; // 16:9 aspect ratio
   }
 }
 // default fullscreen sizing:
 // see <https://docs.brightcove.com/en/perform/brightcove-player/guides/sizing-the-player.html#fullscreen>
 body.vjs-full-window {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-  }
-  .video-js.vjs-fullscreen {
-    position: fixed;
-    overflow: hidden;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: initial !important;
-    max-height: initial !important;
-  }
-  .video-js:-webkit-full-screen {
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .video-js.vjs-fullscreen.vjs-user-inactive {
-    cursor: none;
-  }
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+.video-js.vjs-fullscreen {
+  position: fixed;
+  overflow: hidden;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: initial !important;
+  max-height: initial !important;
+}
+.video-js:-webkit-full-screen {
+  width: 100% !important;
+  height: 100% !important;
+}
+.video-js.vjs-fullscreen.vjs-user-inactive {
+  cursor: none;
+}
 
 $brand-color: $main-color;
 $contrast-ratio: 12%; // for darker darks
@@ -57,10 +57,12 @@ $controls-opacity: 0.67;
 $primary-foreground-color: #f1f1f1; // #fff default
 
 // can still be seen on all-black video frames, which are common.
-$primary-background-color: darken(#666666, $contrast-ratio);  // #2B333F default
-$main-font-family: "Open Sans", sans-serif;
+$primary-background-color: darken(#666666, $contrast-ratio); // #2B333F default
+$main-font-family: 'Open Sans', sans-serif;
 
-.no-js .video-js .vjs-big-play-button { display: none }
+.no-js .video-js .vjs-big-play-button {
+  display: none;
+}
 
 .video-js {
   /* The base font size controls the size of everything, not just text.
@@ -72,12 +74,17 @@ $main-font-family: "Open Sans", sans-serif;
   color: $primary-foreground-color;
 
   font-family: $main-font-family;
+  background: transparent;
 }
 
 // sizing
-$control-bar-height:  3em;
+$control-bar-height: 3em;
 .video-js .vjs-control-bar {
   height: $control-bar-height;
+}
+
+.vjs-poster {
+  background-color: transparent;
 }
 
 .vjs-default-skin .vjs-big-play-button {
@@ -88,7 +95,6 @@ $control-bar-height:  3em;
   $big-play-height: $big-play-width;
   border-radius: $big-play-width;
 
-
   line-height: $big-play-height;
   height: $big-play-height;
   width: $big-play-width;
@@ -97,7 +103,7 @@ $control-bar-height:  3em;
   border: 0.05em solid $primary-foreground-color;
   background-color: transparentize($primary-foreground-color, 0.67);
 
-  color:  $brand-color;
+  color: $brand-color;
   border-color: $brand-color;
 
   /* Align center */
@@ -115,7 +121,7 @@ $control-bar-height:  3em;
   // background: transparent;
 
   // like primary btn
-  color:  white;
+  color: white;
   border-color: $brand-color;
   background-color: $brand-color;
   background-image: (linear-gradient(lighten($brand-color, 5%), darken($brand-color, 3%)));
@@ -130,7 +136,10 @@ $control-bar-height:  3em;
   background-color: $primary-background-color;
   /* Opacity: 1.0 = 100%, 0.0 = 0% */
   background-color: rgba($primary-background-color, $controls-opacity);
-  background-image:  linear-gradient(transparentize(darken(#666, $contrast-ratio), $controls-opacity), transparentize(darken(#4c4c4c, $contrast-ratio), $controls-opacity));
+  background-image: linear-gradient(
+    transparentize(darken(#666, $contrast-ratio), $controls-opacity),
+    transparentize(darken(#4c4c4c, $contrast-ratio), $controls-opacity)
+  );
 }
 
 .vjs-menu {
@@ -138,7 +147,7 @@ $control-bar-height:  3em;
   li.vjs-selected:focus,
   li.vjs-selected:hover {
     background-color: rgba($primary-foreground-color, $controls-opacity);
-    color: #2B333F;
+    color: #2b333f;
   }
 }
 
@@ -178,10 +187,8 @@ $slider-bg-color: lighten($primary-background-color, 33.34%);
   background-color: rgba($slider-bg-color, 0.75);
 }
 
-
 // plugins
 .vjs-resolution-button {
-
   color: inherit;
 
   // .vjs-menu .vjs-menu-content {
@@ -191,12 +198,12 @@ $slider-bg-color: lighten($primary-background-color, 33.34%);
   &,
   // .vjs-resolution-button-label,
   .vjs-menu li {
-  font-family: $main-font-family;
-  font-weight: bold;
+    font-family: $main-font-family;
+    font-weight: bold;
   }
 
   .vjs-resolution-button-label {
-      font-size: 1.34em;
-      line-height: 2.23em;
+    font-size: 1.34em;
+    line-height: 2.23em;
   }
 }

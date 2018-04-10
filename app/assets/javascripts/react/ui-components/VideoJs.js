@@ -33,7 +33,8 @@ const DEFAULT_OPTIONS = {
 const sourceLabel = ({ profile }) => (endsWith(profile, '_HD') ? 'HD' : 'SD')
 
 class VideoJS extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
+    // eslint-disable-next-line react/no-string-refs
     const videoTag = this.refs.video
     if (!videoTag) throw new Error('no video tag!')
 
@@ -57,24 +58,29 @@ class VideoJS extends React.Component {
     this.player = videojs(videoTag, playerOptions)
   }
 
-  render ({ props, state } = this) {
+  render({ props } = this) {
     const { sources, ...restProps } = props
     const videoProps = omit(restProps, 'options')
 
     const classes = cx(
       this.props.className,
-      'videojs video-js video-fluid vjs-default-skin'
+      'videojs',
+      'video-js',
+      'video-fluid',
+      'vjs-default-skin',
+      'vjs-16-9'
     )
 
     return (
-      <video ref='video' {...videoProps} className={classes}>
-        {sources.map(source =>
+      // eslint-disable-next-line react/no-string-refs
+      <video ref="video" {...videoProps} className={classes}>
+        {sources.map(source => (
           <source
             src={source.url}
             type={source.content_type}
             key={`${source.url}${source.content_type}`}
           />
-        )}
+        ))}
       </video>
     )
   }
