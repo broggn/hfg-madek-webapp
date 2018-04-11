@@ -10,6 +10,9 @@ module Modules
       end
 
       def embedded
+        # TODO: ref auth
+        from_origin = request.env['HTTP_REFERER']
+
         # custom auth, only public entries supported!
         skip_authorization
         media_entry = MediaEntry.find(id_param)
@@ -29,6 +32,7 @@ module Modules
         response.headers.delete('X-Frame-Options')
 
         @get = Presenters::MediaEntries::MediaEntryEmbedded.new(media_entry, conf)
+          .dump.merge(authToken: nil)
       end
 
     end

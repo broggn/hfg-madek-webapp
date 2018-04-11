@@ -61,13 +61,40 @@ module.exports = React.createClass
                   mods='ui-media-overview-metadata'
                   tagMods='small'
                   list={summaryContext} showTitle={false}/>
-      previewLg: <MediaEntryPreview
-        get={get}
-        mediaProps={{style: previewStyle}}
-        mods='ui-media-overview-preview'
-        withLink
-        withZoomLink
-        />
+
+      # # ORG
+      # previewLg: <MediaEntryPreview
+      #   get={get}
+      #   mediaProps={{style: previewStyle}}
+      #   mods='ui-media-overview-preview'
+      #   withLink
+      #   withZoomLink
+      #   />
+
+      # TEST FOR VIDEO FIXED 16:9
+      previewLg: (
+        <div className="ui-media-overview-preview">
+          <div
+            style={{
+              width: '100%',
+              position: 'relative',
+              paddingTop: '56.25%'
+            }}>
+            <iframe
+              src={"#{get.url}/embedded"}
+              referrerpolicy="unsafe-url"
+              style={{
+                height: '100% !important',
+                width: '100% !important',
+                position: 'absolute',
+                top: '0',
+                left: '0'
+              }}
+            />
+          </div>
+        </div>
+      )
+
 
     layout =
       overview: <ResourceShowOverview mods='ui-media-overview' {...overview}/>

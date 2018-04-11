@@ -1,5 +1,5 @@
 - content_for(:title_head) do
-  = @get.title
+  = @get['title']
 
 - content_for(:body) do
   = react('Views.MediaEntry.MediaEntryEmbedded', get: @get)
