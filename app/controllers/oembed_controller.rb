@@ -10,6 +10,21 @@ class OembedController < ApplicationController
   SUPPORTED_MEDIA = Madek::Constants::Webapp::EMBED_SUPPORTED_MEDIA
   EMBED_MEDIA_TYPES_MAP = Madek::Constants::Webapp::EMBED_MEDIA_TYPES_MAP
 
+  # tmp, for video
+  EMBED_DEFAULT_SIZES = {
+    height: 360,
+    width: 640
+  }.freeze
+
+  # embeds from those hosts (HTTP Referer) can embed without showing the title
+  # MUST inlude own URL because embeds are used in Madek itself that way.
+  # TODO: they can also embed non-public!!!
+  ALLOWED_HOSTS_NO_TITLE = [
+    Settings.madek_external_base_url,
+    Settings.madek_embeds_allow_hosts_no_title
+  ].flatten.compact.freeze
+
+
   def show
     # NOTE: this *only* returns JSON, no matter what was requested!
     #       therefore all errors are catched to not trigger rails default behaviour
@@ -28,9 +43,6 @@ class OembedController < ApplicationController
       oembed_params
     rescue => err
       return error_response(err, 422)
-    end
-    unless params[:format] == 'json'
-      return error_response('unsupported `format`!', 501)
     end
 
     # resource?
@@ -65,7 +77,14 @@ class OembedController < ApplicationController
     end
 
     presenter = presenter_by_class(resource_class).new(resource, current_user)
-    render(json: oembed_response(resource, presenter, params))
+
+    response = oembed_response(resource, presenter, params)
+
+    respond_to do |format|
+      format.json { render(json: response) }
+      format.xml { render(xml: oembed_to_xml(response)) }
+      format.any { render(json: response) } # fallback just to be save
+    end
   end
 
   private
@@ -95,7 +114,8 @@ class OembedController < ApplicationController
       ].compact.join(' / '),
       provider_name: settings.site_title,
       provider_url: absolute_url(''),
-      html: oembed_iframe(target_url, scaled[:width], scaled[:height])
+      # html: oembed_iframe(target_url, scaled[:width], scaled[:height])
+      html: oembed_iframe(target_url, "#{EMBED_DEFAULT_SIZES[:width]}px", "#{EMBED_DEFAULT_SIZES[:height]}px")
     }
   end
 
@@ -116,18 +136,27 @@ class OembedController < ApplicationController
 
   # NOTE: simpler to concat than templating
   def oembed_iframe(url, width, height)
+    # style="width: 100%; height: 100%; position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;"
+    # style="
+    # position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;
+    # width: #{EMBED_DEFAULT_SIZES[:width]}px; height: #{EMBED_DEFAULT_SIZES[:height]}px;
+    # "
     <<-HTML.strip_heredoc.tr("\n", ' ')
       <iframe
       width="#{width}"
       height="#{height}"
       src="#{url}"
-      style="width: 100%; height: 100%; position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;"
       frameborder="0"
       allowfullscreen
       webkitallowfullscreen
       mozallowfullscreen
       ></iframe>
     HTML
+  end
+
+  def oembed_to_xml(obj)
+    '<?xml version="1.0" encoding="utf-8" standalone="yes"?>' +
+    obj.to_xml(root: 'oembed', dasherize: false, skip_types: true, skip_instruct: true)
   end
 
 end
