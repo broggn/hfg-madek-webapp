@@ -17,7 +17,7 @@ body {
 // out videojs extensions:
 $titlebar-height: 15vh;
 $titlebar-logo-width: 30vh;
-$titlebar-logo-padding: 3vh;
+$titlebar-logo-padding: 4vh;
 $titlebar-title-padding: 3vh;
 
 .vjs-titlebar {
@@ -25,7 +25,7 @@ $titlebar-title-padding: 3vh;
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.67);
 
   font-size: 5vh;
   height: $titlebar-height;
@@ -37,18 +37,20 @@ $titlebar-title-padding: 3vh;
   }
 
   .vjs-titlebar-logo {
+    right: 0;
     height: $titlebar-height;
     width: $titlebar-logo-width;
-    background-size: ($titlebar-logo-width - (2 * $titlebar-logo-padding)) ($titlebar-height - (2 *
-              $titlebar-logo-padding));
+    background-size: 20vh 10vh;
     background-position: center center;
     background-repeat: no-repeat;
     background-image: url(zhdk-logo-svg(white));
   }
 
   .vjs-titlebar-caption {
+    left: 0;
+    width: 100%;
     padding: $titlebar-title-padding;
-    padding-left: $titlebar-title-padding + $titlebar-logo-width;
+    padding-right: $titlebar-title-padding + $titlebar-logo-width;
   }
 
   .vjs-titlebar-title {
@@ -60,4 +62,11 @@ $titlebar-title-padding: 3vh;
     font-size: 0.5em;
     line-height: 2em;
   }
+}
+
+.vjs-modal-dialog {
+  z-index: 1;
+}
+.vjs-modal-dialog-content {
+  padding: 20vh;
 }

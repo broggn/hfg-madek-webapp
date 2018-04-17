@@ -51,8 +51,8 @@ function titleBarPlugin({ logo, title, subtitle }) {
   overlay.caption.appendChild(overlay.title)
   overlay.caption.appendChild(overlay.subtitle)
 
-  overlay.el.appendChild(overlay.logo)
   overlay.el.appendChild(overlay.caption)
+  overlay.el.appendChild(overlay.logo)
 
   player.el().appendChild(overlay.el)
   // TODO: hide on play, like control bar
