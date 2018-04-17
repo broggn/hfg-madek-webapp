@@ -110,8 +110,7 @@ $control-bar-height: 3em;
   left: 50%;
   top: 50%;
   margin-left: -($big-play-width / 2);
-  // margin-top: -($big-play-width / 2);
-  margin-top: -1em;
+  margin-top: -($big-play-width / 2);
 }
 
 .vjs-default-skin:hover .vjs-big-play-button {
