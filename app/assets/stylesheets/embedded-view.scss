@@ -12,9 +12,10 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
+  color: $white;
 }
 
-// out videojs extensions:
+// our videojs extensions:
 $titlebar-height: 15vh;
 $titlebar-logo-width: 30vh;
 $titlebar-logo-padding: 4vh;
@@ -26,6 +27,9 @@ $titlebar-title-padding: 3vh;
   left: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.67);
+
+  color: $white;
+  text-decoration: none;
 
   font-size: 5vh;
   height: $titlebar-height;
@@ -53,12 +57,18 @@ $titlebar-title-padding: 3vh;
     padding-right: $titlebar-title-padding + $titlebar-logo-width;
   }
 
+  .vjs-titlebar-title,
+  .vjs-titlebar-subtitle {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .vjs-titlebar-title {
     font-weight: 600;
   }
   .vjs-titlebar-subtitle {
-    // font-size: (2/3) * 1em;
-    // line-height: (2 * 2/3) * 1em;
     font-size: 0.5em;
     line-height: 2em;
   }
@@ -68,5 +78,5 @@ $titlebar-title-padding: 3vh;
   z-index: 1;
 }
 .vjs-modal-dialog-content {
-  padding: 20vh;
+  padding: 20vh !important;
 }

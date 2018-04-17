@@ -31,11 +31,11 @@ function titleBarPlugin({ logo, title, subtitle }) {
   const Dom = document.createElement.bind(document)
   const player = this
   const overlay = {
-    el: Dom('div'),
-    logo: Dom('div'),
-    caption: Dom('div'),
-    title: Dom('div'),
-    subtitle: Dom('div')
+    el: Dom('a'),
+    logo: Dom('span'),
+    caption: Dom('span'),
+    title: Dom('span'),
+    subtitle: Dom('span')
   }
   overlay.el.className = 'vjs-titlebar'
   overlay.caption.className = 'vjs-titlebar-caption'
@@ -45,9 +45,9 @@ function titleBarPlugin({ logo, title, subtitle }) {
     overlay.logo.className = 'vjs-titlebar-logo'
   }
 
+  overlay.el.href = '//example.com' // TODO: link
   overlay.title.textContent = title
   overlay.subtitle.textContent = subtitle
-
   overlay.caption.appendChild(overlay.title)
   overlay.caption.appendChild(overlay.subtitle)
 
@@ -55,7 +55,18 @@ function titleBarPlugin({ logo, title, subtitle }) {
   overlay.el.appendChild(overlay.logo)
 
   player.el().appendChild(overlay.el)
-  // TODO: hide on play, like control bar
+
+  // hide/show on play/pause
+  player.on('play', () => {
+    if (!/vjs-hidden/.test(overlay.el.className)) {
+      overlay.el.className += ' vjs-hidden'
+    }
+  })
+  player.on('pause', () => {
+    if (/vjs-hidden/.test(overlay.el.className)) {
+      overlay.el.className = overlay.el.className.replace(/\s?vjs-hidden/, '')
+    }
+  })
 }
 
 const DEFAULT_OPTIONS = {
@@ -92,7 +103,7 @@ class VideoJS extends React.Component {
     if (!videoTag) throw new Error('no video tag!')
 
     const playerOptions = merge(DEFAULT_OPTIONS, this.props.options, {
-      // NOTE: new source list because it must include config for HD-toggle
+      // NOTE: build new source list because it must include config for HD-toggle
       sources: this.props.sources.map(source => ({
         src: source.url,
         type: source.content_type,
