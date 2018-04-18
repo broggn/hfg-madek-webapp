@@ -29,6 +29,8 @@ module Modules
           && ALLOWED_HOSTS_NO_TITLE.any? { |h| URI.join(h, '/') == URI.join(from_origin, '/') }
           return redirect_to(media_entry_path(media_entry))
         end
+        # TODO: only whitelisted hosts can request 'no title' option
+        is_internal = params.keys.include? 'internalEmbed'
 
         # errors
         unless EMBED_SUPPORTED_MEDIA.include?(media_type)
@@ -39,7 +41,7 @@ module Modules
           raise ActionController::NotFound, 'no media!'
         end
 
-        conf = params.permit(:width, :height)
+        conf = params.permit(:width, :height).merge(isInternal: is_internal)
 
         # allow this to be displayed inside an <iframe>
         response.headers.delete('X-Frame-Options')

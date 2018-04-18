@@ -88,10 +88,10 @@ $control-bar-height: 3em;
 }
 
 .vjs-default-skin .vjs-big-play-button {
-  font-size: 6em;
+  font-size: 17vh;
 
   //  circular button
-  $big-play-width: 1.67em;
+  $big-play-width: 30vh;
   $big-play-height: $big-play-width;
   border-radius: $big-play-width;
 

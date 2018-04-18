@@ -66,6 +66,13 @@ module.exports = React.createClass({
         mediaProps = fullsize
     }
 
-    return <MediaEntryPreview get={get} mediaProps={mediaProps} captionText={caption_text} />
+    return (
+      <MediaEntryPreview
+        get={get}
+        mediaProps={mediaProps}
+        captionText={caption_text}
+        isInternal={embed_config.isInternal}
+      />
+    )
   }
 })

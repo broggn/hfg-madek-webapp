@@ -109,6 +109,7 @@ module.exports = React.createClass({
           sources={previews.videos}
           options={f.merge({ fluid: true }, f.get(mediaPlayerConfig, 'options'))}
           captionText={this.props.captionText}
+          isInternal={this.props.isInternal}
         />
       ) : // audio player
       previews.audios ? (

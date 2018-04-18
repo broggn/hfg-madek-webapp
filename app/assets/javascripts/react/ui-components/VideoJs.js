@@ -92,14 +92,17 @@ class VideoJS extends React.Component {
         res: source.height
       })),
       plugins: {
-        videoJsResolutionSwitcher: { default: 'low', dynamicLabel: true },
-        titleBar: {
-          title: this.props.captionText[0],
-          subtitle: this.props.captionText[1],
-          logo: 'Z'
-        }
+        videoJsResolutionSwitcher: { default: 'low', dynamicLabel: true }
       }
     })
+
+    if (!this.props.isInternal) {
+      playerOptions.plugins.titleBar = {
+        title: this.props.captionText[0],
+        subtitle: this.props.captionText[1],
+        logo: 'Z'
+      }
+    }
 
     // init:
     const videojs = require('video.js')
@@ -111,7 +114,7 @@ class VideoJS extends React.Component {
 
   render({ props } = this) {
     const { sources, ...restProps } = props
-    const videoProps = omit(restProps, 'options', 'caption')
+    const videoProps = omit(restProps, 'options', 'captionText')
 
     const classes = cx(
       this.props.className,

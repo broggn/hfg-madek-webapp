@@ -8,11 +8,11 @@
 
 body {
   font-family: $default-font-family;
+  color: $white;
   width: 100%;
   height: 100%;
   padding: 0;
   margin: 0;
-  color: $white;
 }
 
 // our videojs extensions:
@@ -33,6 +33,13 @@ $titlebar-title-padding: 3vh;
 
   font-size: 5vh;
   height: $titlebar-height;
+
+  opacity: 1;
+  transition: opacity ease-in-out 0.3s;
+  &.vjs-hidden {
+    display: block !important;
+    opacity: 0;
+  }
 
   .vjs-titlebar-logo,
   .vjs-titlebar-caption {
@@ -67,10 +74,12 @@ $titlebar-title-padding: 3vh;
 
   .vjs-titlebar-title {
     font-weight: 600;
+    padding-bottom: 1em;
   }
   .vjs-titlebar-subtitle {
     font-size: 0.5em;
     line-height: 2em;
+    margin-top: -1.7em;
   }
 }
 

@@ -53,6 +53,8 @@ module.exports = React.createClass
     summaryContext = get.meta_data.entry_summary_context
     listContexts = get.meta_data.contexts_for_entry_extra
 
+    usesIframeEmbed = get.media_type == 'video'
+
     # overview has summary on the left and preview on the right
     previewStyle = {width: '100%'}
     previewStyle.maxHeight = '500px' unless get.media_type == 'video'
@@ -70,8 +72,7 @@ module.exports = React.createClass
         withZoomLink
         />
 
-    # TEST FOR VIDEO FIXED 16:9 as iframe
-    if get.media_type == 'video'
+    if usesIframeEmbed
       overview.previewLg = (
         <div className="ui-media-overview-preview">
           <div
@@ -81,8 +82,7 @@ module.exports = React.createClass
               paddingTop: '56.25%'
             }}>
             <iframe
-              src={"#{get.url}/embedded"}
-              referrerpolicy="unsafe-url"
+              src={"#{get.url}/embedded?internalEmbed"}
               style={{
                 height: '100% !important',
                 width: '100% !important',
