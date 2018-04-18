@@ -5,28 +5,6 @@ import omit from 'lodash/omit'
 import merge from 'lodash/merge'
 import endsWith from 'lodash/endsWith'
 
-// const fake = (
-//   <div
-//     className="vjs-titlebar"
-//     style="position: absolute; top: 0px; width: 100%; background: rgba(0, 0, 0, 0.5) none repeat scroll 0% 0%; font-size: 5vh; padding: 3vh;height: 16vh;">
-//     <div
-//       className="vjs-titlebar-logo"
-//       style="width: 10vh;height: 10vh;position: absolute;font-family: &quot;Helvetica Neue&quot;;font-weight: 900;font-size: 8vh;line-height: 9vh;text-align: center;">
-//       Z
-//     </div>
-//     <div
-//       className="vjs-titlebar-title"
-//       style="display: inline-block;padding-left: 13vh;position: relative;">
-//       {'"Athena", Sonia Tao, Fabian Keller'}
-//     </div>
-//     <div
-//       className="vjs-titlebar-subtitle"
-//       style="position: absolute;padding-left: 13vh;font-size: 0.67em;line-height: 1.45;">
-//       {'Sonia Tao, Fabian Keller, Andreas Kohli, Andreas Hofer'}
-//     </div>
-//   </div>
-// )
-
 function titleBarPlugin({ logo, title, subtitle }) {
   const Dom = document.createElement.bind(document)
   const player = this
@@ -46,6 +24,9 @@ function titleBarPlugin({ logo, title, subtitle }) {
   }
 
   overlay.el.href = '//example.com' // TODO: link
+  overlay.el.target = '_blank'
+  overlay.el.rel = 'noreferrer noopener'
+
   overlay.title.textContent = title
   overlay.subtitle.textContent = subtitle
   overlay.caption.appendChild(overlay.title)

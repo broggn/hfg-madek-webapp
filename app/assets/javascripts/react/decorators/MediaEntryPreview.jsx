@@ -135,6 +135,7 @@ module.exports = React.createClass({
             <a
               href={imageHref}
               target="_blank"
+              rel="noreferrer noopener"
               className="ui-magnifier"
               style={{ textDecoration: 'none' }}>
               <Icon i="magnifier" mods="bright" />

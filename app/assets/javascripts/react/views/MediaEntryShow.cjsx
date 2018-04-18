@@ -62,17 +62,17 @@ module.exports = React.createClass
                   tagMods='small'
                   list={summaryContext} showTitle={false}/>
 
-      # # ORG
-      # previewLg: <MediaEntryPreview
-      #   get={get}
-      #   mediaProps={{style: previewStyle}}
-      #   mods='ui-media-overview-preview'
-      #   withLink
-      #   withZoomLink
-      #   />
+      previewLg: <MediaEntryPreview
+        get={get}
+        mediaProps={{style: previewStyle}}
+        mods='ui-media-overview-preview'
+        withLink
+        withZoomLink
+        />
 
-      # TEST FOR VIDEO FIXED 16:9
-      previewLg: (
+    # TEST FOR VIDEO FIXED 16:9 as iframe
+    if get.media_type == 'video'
+      overview.previewLg = (
         <div className="ui-media-overview-preview">
           <div
             style={{
@@ -94,7 +94,6 @@ module.exports = React.createClass
           </div>
         </div>
       )
-
 
     layout =
       overview: <ResourceShowOverview mods='ui-media-overview' {...overview}/>
