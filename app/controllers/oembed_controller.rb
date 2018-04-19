@@ -10,21 +10,6 @@ class OembedController < ApplicationController
   SUPPORTED_MEDIA = Madek::Constants::Webapp::EMBED_SUPPORTED_MEDIA
   EMBED_MEDIA_TYPES_MAP = Madek::Constants::Webapp::EMBED_MEDIA_TYPES_MAP
 
-  # tmp, for video
-  EMBED_DEFAULT_SIZES = {
-    height: 360,
-    width: 640
-  }.freeze
-
-  # embeds from those hosts (HTTP Referer) can embed without showing the title
-  # MUST inlude own URL because embeds are used in Madek itself that way.
-  # TODO: they can also embed non-public!!!
-  ALLOWED_HOSTS_NO_TITLE = [
-    Settings.madek_external_base_url,
-    Settings.madek_embeds_allow_hosts_no_title
-  ].flatten.compact.freeze
-
-
   def show
     # NOTE: this *only* returns JSON, no matter what was requested!
     #       therefore all errors are catched to not trigger rails default behaviour
@@ -32,8 +17,7 @@ class OembedController < ApplicationController
     # NOTE: `url` accepts anything that Rails recognizes, for simplicity
     #       (so giving the "correct" external hostname is not strictly needed)
 
-    # NOTE: param `sfcss` enables CSS workaround for certain contexts when present
-
+    # TODO: auth per user, whitelisted hosts can serve non-public res.
     # disregard any auth (only 'public' resources are served!)
     skip_authorization
     current_user = nil
@@ -114,8 +98,7 @@ class OembedController < ApplicationController
       ].compact.join(' / '),
       provider_name: settings.site_title,
       provider_url: absolute_url(''),
-      # html: oembed_iframe(target_url, scaled[:width], scaled[:height])
-      html: oembed_iframe(target_url, "#{EMBED_DEFAULT_SIZES[:width]}px", "#{EMBED_DEFAULT_SIZES[:height]}px")
+      html: oembed_iframe(target_url, scaled[:width], scaled[:height])
     }
   end
 
@@ -130,24 +113,21 @@ class OembedController < ApplicationController
   def oembed_params
     { format: 'json' } # defaults
       .merge(url: params.require(:url))
-      .merge(params.permit(:format, :maxwidth, :maxheight, :sfcss))
+      .merge(params.permit(:format, :maxwidth, :maxheight))
       .deep_symbolize_keys
   end
 
   # NOTE: simpler to concat than templating
   def oembed_iframe(url, width, height)
+    # TMP: bs styles
     # style="width: 100%; height: 100%; position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;"
-    # style="
-    # position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;
-    # width: #{EMBED_DEFAULT_SIZES[:width]}px; height: #{EMBED_DEFAULT_SIZES[:height]}px;
-    # "
     <<-HTML.strip_heredoc.tr("\n", ' ')
       <iframe
-      width="#{width}"
-      height="#{height}"
+      width="#{width}px"
+      height="#{height}px"
       src="#{url}"
-      style="width: 100%; height: 100%; position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px;"
       frameborder="0"
+      style="border: 0"
       allowfullscreen
       webkitallowfullscreen
       mozallowfullscreen

@@ -22,12 +22,10 @@ module Madek
       }.freeze
       EMBED_SUPPORTED_MEDIA = EMBED_MEDIA_TYPES_MAP.keys.map(&:to_s).freeze
       # pixels:
-      EMBED_UI_DEFAULT_WIDTH = 500
-      EMBED_UI_DEFAULT_HEIGHT = 500
-      EMBED_UI_DEFAULT_HEIGHTS = { audio: 200 }
-      EMBED_UI_MIN_WIDTH = 320
-      EMBED_UI_MIN_HEIGHT = 140
-      EMBED_UI_EXTRA_HEIGHT = 55 # (added by tile on bottom)
+      EMBED_UI_DEFAULT_WIDTH = 640
+      EMBED_UI_DEFAULT_HEIGHT = 360
+      EMBED_UI_MIN_WIDTH = 640 / 2
+      EMBED_UI_MIN_HEIGHT = 360 / 2
 
       # oEmbed
       OEMBED_VERSION = '1.0'.freeze # should never change, spec is frozen
