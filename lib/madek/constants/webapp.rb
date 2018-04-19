@@ -26,6 +26,13 @@ module Madek
       EMBED_UI_DEFAULT_HEIGHT = 360
       EMBED_UI_MIN_WIDTH = 640 / 2
       EMBED_UI_MIN_HEIGHT = 360 / 2
+      # embeds from those hosts (HTTP Referer) can embed
+      # non-public meidia, and/or without showing the title.
+      # MUST inlude own URL because embeds are used in Madek itself that way.
+      EMBED_INTERNAL_HOST_WHITELIST = [
+        Settings.madek_external_base_url
+        # TODO: Settings.madek_embeds_allow_hosts_no_title…
+      ].flatten.compact.freeze
 
       # oEmbed
       OEMBED_VERSION = '1.0'.freeze # should never change, spec is frozen

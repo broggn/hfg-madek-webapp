@@ -4,14 +4,7 @@ module Modules
       extend ActiveSupport::Concern
 
       EMBED_SUPPORTED_MEDIA = Madek::Constants::Webapp::EMBED_SUPPORTED_MEDIA
-
-      # embeds from those hosts (HTTP Referer) can embed without showing the title
-      # MUST inlude own URL because embeds are used in Madek itself that way.
-      # TODO: they can also embed non-public!!!
-      ALLOWED_HOSTS_NO_TITLE = [
-        Settings.madek_external_base_url,
-        Settings.madek_embeds_allow_hosts_no_title
-      ].flatten.compact.freeze
+      EMBED_INTERNAL_HOST_WHITELIST = Madek::Constants::Webapp::EMBED_INTERNAL_HOST_WHITELIST
 
       included do
         layout false, only: [:embedded]
@@ -23,10 +16,7 @@ module Modules
         media_type = media_entry.try(:media_file).try(:media_type)
 
         # non-public entries can only be embedded from whitelisted hosts
-        from_origin = request.env['HTTP_REFERER']
-        unless media_entry.get_metadata_and_previews \
-          || from_origin \
-          && ALLOWED_HOSTS_NO_TITLE.any? { |h| URI.join(h, '/') == URI.join(from_origin, '/') }
+        unless is_whitelisted || media_entry.get_metadata_and_previews
           return redirect_to(media_entry_path(media_entry))
         end
         # TODO: only whitelisted hosts can request 'no title' option
@@ -48,6 +38,15 @@ module Modules
 
         @get = Presenters::MediaEntries::MediaEntryEmbedded.new(media_entry, conf)
           .dump.merge(authToken: nil)
+      end
+
+      private
+
+      def is_whitelisted
+        from_origin = request.env['HTTP_REFERER']
+        return false unless from_origin
+        EMBED_INTERNAL_HOST_WHITELIST
+          .any? { |h| URI.join(h, '/') == URI.join(from_origin, '/') }
       end
 
     end
