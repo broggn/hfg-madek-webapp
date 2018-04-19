@@ -67,7 +67,6 @@ class OembedController < ApplicationController
     respond_to do |format|
       format.json { render(json: response) }
       format.xml { render(xml: oembed_to_xml(response)) }
-      format.any { render(json: response) } # fallback just to be save
     end
   end
 
