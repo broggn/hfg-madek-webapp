@@ -74,11 +74,14 @@ class OembedController < ApplicationController
 
   def oembed_response(resource, presenter, params)
     # NOTE: MUST set fixed sizes on iframe, so we need to proportionally scale it!
-    #      'minwidth' and 'minheight' is what the UI supports
-    #       we respect it but don't return an error (would be correct but no fun)
+    # also respect params given in the resource URL itself.
+    # those are entered by the user, as opposed to the oEmbed client they are using.
+    user_params = Rack::Utils.parse_query(URI.parse(params[:url]).query).symbolize_keys
+
     scaled = scale_preview_sizes(
       presenter,
-      maxwidth: params[:maxwidth], maxheight: params[:maxheight])
+      maxwidth: user_params[:width] || params[:maxwidth] || params[:width],
+      maxheight: user_params[:height] || params[:maxheight] || params[:height])
 
     target_url = absolute_url(
       embedded_media_entry_path(
@@ -112,7 +115,7 @@ class OembedController < ApplicationController
   def oembed_params
     { format: 'json' } # defaults
       .merge(url: params.require(:url))
-      .merge(params.permit(:format, :maxwidth, :maxheight))
+      .merge(params.permit(:format, :maxwidth, :maxheight, :width, :height))
       .deep_symbolize_keys
   end
 

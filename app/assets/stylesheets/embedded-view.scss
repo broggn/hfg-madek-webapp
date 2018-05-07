@@ -7,6 +7,24 @@
 
 @import 'tmp_logo';
 
+// responsive ui sizes:
+// mini
+.videojs {
+  font-size: 10px;
+}
+// normal
+@media screen and (min-width: 640px) {
+  .videojs {
+    font-size: 12px;
+  }
+}
+// large
+@media screen and (min-width: 1600px) {
+  .videojs {
+    font-size: 14px;
+  }
+}
+
 body {
   font-family: $default-font-family;
   color: $white;
@@ -18,10 +36,13 @@ body {
 }
 
 // our videojs extensions:
-$titlebar-height: 15vh;
-$titlebar-logo-width: 30vh;
-$titlebar-logo-padding: 4vh;
-$titlebar-title-padding: 3vh;
+$titlebar-height: 15vmin;
+$titlebar-logo-width: 30vmin;
+$titlebar-logo-padding: 4vmin;
+$titlebar-title-padding: 3vmin;
+$titlebar-font-size: 5vmin;
+$titlebar-logo-sizes: 20vmin 10vmin;
+$modal-dialog-padding: 20vmin !important;
 
 .vjs-titlebar {
   position: absolute;
@@ -33,7 +54,7 @@ $titlebar-title-padding: 3vh;
   color: $white;
   text-decoration: none;
 
-  font-size: 5vh;
+  font-size: $titlebar-font-size;
   height: $titlebar-height;
 
   opacity: 1;
@@ -53,7 +74,7 @@ $titlebar-title-padding: 3vh;
     right: 0;
     height: $titlebar-height;
     width: $titlebar-logo-width;
-    background-size: 20vh 10vh;
+    background-size: $titlebar-logo-sizes;
     background-position: center center;
     background-repeat: no-repeat;
     background-image: url(zhdk-logo-svg(white));
@@ -89,5 +110,5 @@ $titlebar-title-padding: 3vh;
   z-index: 1;
 }
 .vjs-modal-dialog-content {
-  padding: 20vh !important;
+  padding: $modal-dialog-padding !important;
 }

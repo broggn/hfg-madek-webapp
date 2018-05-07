@@ -26,6 +26,7 @@ body.vjs-full-window {
   padding: 0;
   margin: 0;
   height: 100%;
+  background: black
 }
 .video-js.vjs-fullscreen {
   position: fixed;
@@ -74,7 +75,15 @@ $main-font-family: 'Open Sans', sans-serif;
   color: $primary-foreground-color;
 
   font-family: $main-font-family;
-  background: transparent;
+
+  // NOTE: background colors are set like this to minimize anti-aliassing artefacts!
+  // - black background on outer element for letterboxed video
+  // - white background on inner element the artefacts are less visible when white
+  // (because most sites, including our own have a bright background color)
+  background: black;
+  video {
+    background: white;
+  }
 }
 
 // sizing
@@ -88,10 +97,10 @@ $control-bar-height: 3em;
 }
 
 .vjs-default-skin .vjs-big-play-button {
-  font-size: 17vh;
+  font-size: 17vmin;
 
   //  circular button
-  $big-play-width: 30vh;
+  $big-play-width: 30vmin;
   $big-play-height: $big-play-width;
   border-radius: $big-play-width;
 

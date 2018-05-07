@@ -24,8 +24,8 @@ module Madek
       # pixels:
       EMBED_UI_DEFAULT_WIDTH = 640
       EMBED_UI_DEFAULT_HEIGHT = 360
-      EMBED_UI_MIN_WIDTH = 640 / 2
-      EMBED_UI_MIN_HEIGHT = 360 / 2
+      EMBED_UI_MIN_WIDTH = 350
+      EMBED_UI_MIN_HEIGHT = EMBED_UI_MIN_WIDTH * (EMBED_UI_DEFAULT_WIDTH / EMBED_UI_DEFAULT_HEIGHT )
       # embeds from those hosts (HTTP Referer) can embed
       # non-public meidia, and/or without showing the title.
       # MUST inlude own URL because embeds are used in Madek itself that way.
