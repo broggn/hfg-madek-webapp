@@ -25,6 +25,8 @@ BoxToolBar = require('../ui-components/ResourcesBox/BoxToolBar.cjsx')
 Modal = require('../ui-components/Modal.cjsx')
 EditTransferResponsibility = require('../views/Shared/EditTransferResponsibility.cjsx')
 
+SuperBox = require('./SuperBox.jsx')
+
 # models
 MediaEntries = require('../../models/media-entries.coffee')
 Collections = require('../../models/collections.coffee')
@@ -913,6 +915,7 @@ module.exports = React.createClass
 
     # component:
     <div data-test-id='resources-box' className={boxClasses}>
+      <SuperBox />
       {
         if @state.showBatchTransferResponsibility
 
