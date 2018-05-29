@@ -49,7 +49,7 @@ class SuperBox extends React.Component {
     this.ajaxGet(
       this.calculateUrl(),
       (json) => {
-        var resources = json.child_media_resources.resources
+        var resources = this.props.extractResources(json)
         this.setState((last) => {
           return {
             loadedResources: l.concat(last.loadedResources, resources)

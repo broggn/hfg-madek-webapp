@@ -919,6 +919,10 @@ module.exports = React.createClass
         baseUrl={parseUrl(@_currentUrl()).pathname}
         listParameters={parseQuery(parseUrl(@_currentUrl()).query)}
         sparseParameter={{___sparse: JSON.stringify({"child_media_resources":{"resources":{}}})}}
+        extractResources={
+          (json) =>
+            json.child_media_resources.resources
+        }
       />
       {
         if @state.showBatchTransferResponsibility
