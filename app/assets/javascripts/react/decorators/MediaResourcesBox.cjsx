@@ -915,7 +915,11 @@ module.exports = React.createClass
 
     # component:
     <div data-test-id='resources-box' className={boxClasses}>
-      <SuperBox />
+      <SuperBox
+        baseUrl={parseUrl(@_currentUrl()).pathname}
+        listParameters={parseQuery(parseUrl(@_currentUrl()).query)}
+        sparseParameter={{___sparse: JSON.stringify({"child_media_resources":{"resources":{}}})}}
+      />
       {
         if @state.showBatchTransferResponsibility
 
