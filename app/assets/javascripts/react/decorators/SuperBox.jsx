@@ -150,6 +150,8 @@ class SuperBox extends React.Component {
           withBox={this.props.withBox}
           mods={this.props.mods}
           listMods={this.props.listMods}
+          resources={this.loadedResources()}
+          perPage={this.perPage()}
         />
       </div>
     )
