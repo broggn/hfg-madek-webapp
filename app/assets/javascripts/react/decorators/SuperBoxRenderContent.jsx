@@ -7,18 +7,12 @@ import l from 'lodash'
 import Scrolling from './Scrolling.js'
 import cx from 'classnames/dedupe'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
+import SuperBoxRenderPage from './SuperBoxRenderPage.jsx'
 
 class SuperBoxRenderContent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {}
-  }
-
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
   }
 
   listClasses(config) {
@@ -33,36 +27,9 @@ class SuperBoxRenderContent extends React.Component {
     )
   }
 
-  renderResource(resource) {
-    return (
-      <ResourceThumbnail elm='div'
-        style={{}}
-        get={resource}
-        isClient={true} fetchRelations={false}
-        isSelected={false} onSelect={null} onClick={null}
-        authToken={null} key={'resource_' + resource.uuid}
-        pinThumb={false}
-        listThumb={false}
-      />
-    )
-  }
-
-  renderResources(config) {
-    return l.map(
-      config.resources,
-      (r) => {
-        return this.renderResource(r)
-      }
-    )
-  }
-
   renderPage(config) {
     return (
-      <li className='ui-resources-page' key={'page_' + config.index}>
-        <ul className='ui-resources-page-items'>
-          {this.renderResources({resources: config.resources})}
-        </ul>
-      </li>
+      <SuperBoxRenderPage resources={config.resources} key={'page_' + config.index} />
     )
   }
 
