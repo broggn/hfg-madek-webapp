@@ -6,6 +6,7 @@ import qs from 'qs'
 import l from 'lodash'
 import Scrolling from './Scrolling.js'
 import SuperBoxRenderBox from './SuperBoxRenderBox.jsx'
+import SuperBoxRenderContent from './SuperBoxRenderContent.jsx'
 
 class SuperBox extends React.Component {
 
@@ -137,6 +138,18 @@ class SuperBox extends React.Component {
     )
   }
 
+  createContent() {
+    return (
+      <SuperBoxRenderContent
+        resources={this.loadedResources()}
+        withBox={this.props.withBox}
+        mods={this.props.mods}
+        listMods={this.props.listMods}
+        perPage={this.perPage()}
+      />
+    )
+  }
+
   render() {
 
     return (
@@ -149,9 +162,7 @@ class SuperBox extends React.Component {
         <SuperBoxRenderBox
           withBox={this.props.withBox}
           mods={this.props.mods}
-          listMods={this.props.listMods}
-          resources={this.loadedResources()}
-          perPage={this.perPage()}
+          content={this.createContent()}
         />
       </div>
     )
