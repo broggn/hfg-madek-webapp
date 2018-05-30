@@ -12,7 +12,7 @@ class SuperBox extends React.Component {
     super(props)
     this.state = {
       loadingNext: false,
-      loadedResources: []
+      asyncResources: []
     }
   }
 
@@ -34,7 +34,7 @@ class SuperBox extends React.Component {
   }
 
   hasMoreToLoad() {
-    return l.size(this.resourcesToRender()) < this.totalCount()
+    return l.size(this.loadedResources()) < this.totalCount()
   }
 
   tryLoadNext() {
@@ -63,12 +63,12 @@ class SuperBox extends React.Component {
   }
 
 
-  resourcesToRender() {
-    return l.concat(this.props.initialGet.resources, this.state.loadedResources)
+  loadedResources() {
+    return l.concat(this.props.initialGet.resources, this.state.asyncResources)
   }
 
   nextPage() {
-    return l.size(this.resourcesToRender()) / this.perPage() + 1
+    return Math.ceil(l.size(this.loadedResources()) / this.perPage()) + 1
   }
 
   ajaxGet(urlWithParams, callback) {
@@ -110,7 +110,7 @@ class SuperBox extends React.Component {
         var resources = this.props.extractResources(json)
         this.setState((last) => {
           return {
-            loadedResources: l.concat(last.loadedResources, resources),
+            asyncResources: l.concat(last.asyncResources, resources),
             loadingNext: false
           }
         }, () => {
@@ -128,7 +128,7 @@ class SuperBox extends React.Component {
         <div>{this.props.baseUrl}</div>
         <div>{JSON.stringify(this.props.listParameters)}</div>
         <div>{this.calculateUrl()}</div>
-        <div>{l.map(this.resourcesToRender(), (r) => r.title)}</div>
+        <div>{l.map(this.loadedResources(), (r) => r.title)}</div>
       </div>
     )
 
