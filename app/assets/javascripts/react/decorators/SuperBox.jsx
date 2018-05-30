@@ -5,6 +5,7 @@ import url from 'url'
 import qs from 'qs'
 import l from 'lodash'
 import Scrolling from './Scrolling.js'
+import SuperBoxRenderBox from './SuperBoxRenderBox.jsx'
 
 class SuperBox extends React.Component {
 
@@ -145,6 +146,11 @@ class SuperBox extends React.Component {
         <div>{JSON.stringify(this.props.listParameters)}</div>
         <div>{this.calculateUrl()}</div>
         <div>{l.map(this.loadedResources(), (r) => r.title)}</div>
+        <SuperBoxRenderBox
+          withBox={this.props.withBox}
+          mods={this.props.mods}
+          listMods={this.props.listMods}
+        />
       </div>
     )
 
