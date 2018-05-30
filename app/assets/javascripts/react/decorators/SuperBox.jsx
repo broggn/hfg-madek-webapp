@@ -4,14 +4,71 @@ import xhr from 'xhr'
 import url from 'url'
 import qs from 'qs'
 import l from 'lodash'
+import Scrolling from './Scrolling.js'
 
 class SuperBox extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
+      loadingNext: false,
       loadedResources: []
     }
+  }
+
+  componentDidMount() {
+    Scrolling.mount(this.tryLoadNext.bind(this))
+    this.tryLoadNext()
+  }
+
+  componentWillUnmount() {
+    Scrolling.unmount(this.tryLoadNext.bind(this))
+  }
+
+  pagination() {
+    return this.props.initialGet.pagination
+  }
+
+  totalCount() {
+    return this.pagination().total_count
+  }
+
+  hasMoreToLoad() {
+    return l.size(this.resourcesToRender()) < this.totalCount()
+  }
+
+  tryLoadNext() {
+
+    if(!Scrolling._isBottom()) {
+      return
+    }
+
+    if(this.state.loadingNext) {
+      return
+    }
+
+    if(!this.hasMoreToLoad()) {
+      return
+    }
+
+    this.setState({
+      loadingNext: true
+    }, () => {
+      this.loadPage()
+    })
+  }
+
+  perPage() {
+    return this.props.initialGet.config.per_page
+  }
+
+
+  resourcesToRender() {
+    return l.concat(this.props.initialGet.resources, this.state.loadedResources)
+  }
+
+  nextPage() {
+    return l.size(this.resourcesToRender()) / this.perPage() + 1
   }
 
   ajaxGet(urlWithParams, callback) {
@@ -29,7 +86,8 @@ class SuperBox extends React.Component {
   calculateParameters() {
     return l.merge(
       this.props.listParameters,
-      this.props.sparseParameter
+      this.props.sparseParameter,
+      {list: {page: this.nextPage()}}
     )
   }
 
@@ -52,17 +110,15 @@ class SuperBox extends React.Component {
         var resources = this.props.extractResources(json)
         this.setState((last) => {
           return {
-            loadedResources: l.concat(last.loadedResources, resources)
+            loadedResources: l.concat(last.loadedResources, resources),
+            loadingNext: false
           }
+        }, () => {
+          this.tryLoadNext()
         })
       }
     )
   }
-
-  componentDidMount() {
-    this.loadPage()
-  }
-
 
   render() {
 
@@ -72,7 +128,7 @@ class SuperBox extends React.Component {
         <div>{this.props.baseUrl}</div>
         <div>{JSON.stringify(this.props.listParameters)}</div>
         <div>{this.calculateUrl()}</div>
-        <div>{l.map(this.state.loadedResources, (r) => r.title)}</div>
+        <div>{l.map(this.resourcesToRender(), (r) => r.title)}</div>
       </div>
     )
 

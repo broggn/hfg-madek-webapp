@@ -923,6 +923,7 @@ module.exports = React.createClass
           (json) =>
             json.child_media_resources.resources
         }
+        initialGet={@props.get}
       />
       {
         if @state.showBatchTransferResponsibility
