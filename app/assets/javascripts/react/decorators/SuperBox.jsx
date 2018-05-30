@@ -120,7 +120,6 @@ class SuperBox extends React.Component {
       (json) => {
 
         if(loadingId != this.loadingId) {
-          console.log('THROWN AWAY')
           return
         }
 
