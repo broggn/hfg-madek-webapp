@@ -12,9 +12,11 @@ class SuperBox extends React.Component {
     super(props)
     this.state = {
       loadingNext: false,
-      asyncResources: []
+      asyncResources: l.map(props.initialGet.resources)
     }
   }
+
+  loadingId: 0
 
   componentDidMount() {
     Scrolling.mount(this.tryLoadNext.bind(this))
@@ -37,6 +39,14 @@ class SuperBox extends React.Component {
     return l.size(this.loadedResources()) < this.totalCount()
   }
 
+  restartLoading() {
+    this.loadingId += 1
+    this.setState({
+      loadingNext: false,
+      asyncResources: []
+    })
+  }
+
   tryLoadNext() {
 
     if(!Scrolling._isBottom()) {
@@ -54,7 +64,7 @@ class SuperBox extends React.Component {
     this.setState({
       loadingNext: true
     }, () => {
-      this.loadPage()
+      this.loadPage(this.loadingId)
     })
   }
 
@@ -64,7 +74,8 @@ class SuperBox extends React.Component {
 
 
   loadedResources() {
-    return l.concat(this.props.initialGet.resources, this.state.asyncResources)
+    return this.state.asyncResources
+    // return l.concat(this.props.initialGet.resources, this.state.asyncResources)
   }
 
   nextPage() {
@@ -103,10 +114,16 @@ class SuperBox extends React.Component {
     return url.format(u)
   }
 
-  loadPage() {
+  loadPage(loadingId) {
     this.ajaxGet(
       this.calculateUrl(),
       (json) => {
+
+        if(loadingId != this.loadingId) {
+          console.log('THROWN AWAY')
+          return
+        }
+
         var resources = this.props.extractResources(json)
         this.setState((last) => {
           return {
