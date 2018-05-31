@@ -17,8 +17,8 @@ class SuperBoxRenderBox extends React.Component {
     return cx(
       {
         'ui-container': true,
-        'midtone': config.withBox,
-        'bordered': config.withBox
+        'midtone': true,
+        'bordered': true
       },
       config.mods,
       'ui-polybox'
@@ -29,7 +29,7 @@ class SuperBoxRenderBox extends React.Component {
     return cx(
       'ui-resources-holder',
       {
-        pam: config.withBox
+        pam: true
       }
     )
   }
@@ -40,12 +40,11 @@ class SuperBoxRenderBox extends React.Component {
 
   render() {
 
-    var withBox = true
     var mods = this.props.mods
 
     return (
-      <div data-test-id='resources-box' className={this.boxClasses({withBox: withBox, mods: mods})}>
-        <div className={this.listHolderClasses({withBox: withBox})}>
+      <div data-test-id='resources-box' className={this.boxClasses({mods: mods})}>
+        <div className={this.listHolderClasses({})}>
           <div className='ui-container table auto'>
             <div className='ui-container table-cell table-substance'>
               {this.renderContent()}
