@@ -29,7 +29,7 @@ class SuperBoxRenderContent extends React.Component {
 
   renderPage(config) {
     return (
-      <SuperBoxRenderPage resources={config.resources} key={'page_' + config.index} />
+      <SuperBoxRenderPage authToken={config.authToken} resources={config.resources} key={'page_' + config.index} />
     )
   }
 
@@ -51,15 +51,15 @@ class SuperBoxRenderContent extends React.Component {
   }
 
   render() {
-    var withBox = this.props.withBox
     var mods = this.props.mods
     var listMods = this.props.listMods
     var resources = this.props.resources
     var perPage = this.props.perPage
+    var authToken = this.props.authToken
 
     return (
       <ul className={this.listClasses({layout: 'grid', withActions: false, listMods: listMods})}>
-        {this.renderPages({resources: resources, perPage: perPage})}
+        {this.renderPages({resources: resources, perPage: perPage, authToken: authToken})}
       </ul>
     )
   }

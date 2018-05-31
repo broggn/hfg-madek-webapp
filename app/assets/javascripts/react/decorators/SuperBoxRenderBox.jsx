@@ -34,13 +34,13 @@ class SuperBoxRenderBox extends React.Component {
     )
   }
 
-  renderCountent() {
+  renderContent() {
     return this.props.content
   }
 
   render() {
 
-    var withBox = this.props.withBox
+    var withBox = true
     var mods = this.props.mods
 
     return (
@@ -48,7 +48,7 @@ class SuperBoxRenderBox extends React.Component {
         <div className={this.listHolderClasses({withBox: withBox})}>
           <div className='ui-container table auto'>
             <div className='ui-container table-cell table-substance'>
-              {this.renderCountent()}
+              {this.renderContent()}
             </div>
           </div>
         </div>

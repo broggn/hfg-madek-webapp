@@ -14,14 +14,14 @@ class SuperBoxRenderPage extends React.Component {
     super(props)
   }
 
-  renderResource(resource) {
+  renderResource(config) {
     return (
       <ResourceThumbnail elm='div'
         style={{}}
-        get={resource}
+        get={config.resource}
         isClient={true} fetchRelations={false}
         isSelected={false} onSelect={null} onClick={null}
-        authToken={null} key={'resource_' + resource.uuid}
+        authToken={config.authToken} key={'resource_' + config.resource.uuid}
         pinThumb={false}
         listThumb={false}
       />
@@ -32,7 +32,7 @@ class SuperBoxRenderPage extends React.Component {
     return l.map(
       config.resources,
       (r) => {
-        return this.renderResource(r)
+        return this.renderResource({resource: r, authToken: config.authToken})
       }
     )
   }
@@ -40,11 +40,12 @@ class SuperBoxRenderPage extends React.Component {
   render() {
 
     var resources = this.props.resources
+    var authToken = this.props.authToken
 
     return (
       <li className='ui-resources-page'>
         <ul className='ui-resources-page-items'>
-          {this.renderResources({resources: resources})}
+          {this.renderResources({resources: resources, authToken: authToken})}
         </ul>
       </li>
     )

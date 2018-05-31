@@ -142,7 +142,6 @@ class SuperBox extends React.Component {
     return (
       <SuperBoxRenderContent
         resources={this.loadedResources()}
-        withBox={this.props.withBox}
         mods={this.props.mods}
         listMods={this.props.listMods}
         perPage={this.perPage()}
@@ -160,7 +159,6 @@ class SuperBox extends React.Component {
         <div>{this.calculateUrl()}</div>
         <div>{l.map(this.loadedResources(), (r) => r.title)}</div>
         <SuperBoxRenderBox
-          withBox={this.props.withBox}
           mods={this.props.mods}
           content={this.createContent()}
         />
