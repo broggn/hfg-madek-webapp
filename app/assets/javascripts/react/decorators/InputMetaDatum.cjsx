@@ -3,7 +3,7 @@ f = require('active-lodash')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')
 Text = require('../lib/forms/input-text-async.cjsx')
 InputResources = require('../lib/forms/input-resources.cjsx')
-InputTextDate = require('../lib/forms/InputTextDate.js').default
+InputTextDateNew = require('../lib/forms/InputTextDateNew.jsx')
 InputKeywords = require('../lib/forms/input-keywords.cjsx')
 InputPeople = require('../lib/forms/input-people.cjsx')
 
@@ -15,7 +15,7 @@ module.exports = React.createClass
 
   _inputByTypeMap: {
     'Text': Text
-    'TextDate': InputTextDate
+    'TextDate': InputTextDateNew
     'People': InputPeople
     'Keywords': InputKeywords
   }
@@ -38,7 +38,7 @@ module.exports = React.createClass
         subForms={@props.subForms} />
 
     else if resourceType == 'TextDate'
-      <InputTextDate
+      <InputTextDateNew
         onChange={@props.onChange}
         id={id}
         name={name}
