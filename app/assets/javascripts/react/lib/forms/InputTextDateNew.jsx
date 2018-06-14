@@ -54,8 +54,10 @@ class InputTextDateNew extends React.Component {
 
   setText(event) {
     var text = event.target.value
+
     this.setState({
-      text: text
+      text: text,
+      showAt: text.length == 0
     })
   }
 
@@ -124,23 +126,36 @@ class InputTextDateNew extends React.Component {
     }
   }
 
+  renderSelected(d, onDate) {
+    return (
+      <div style={{
+          float: 'left',
+          width: '252px',
+          textAlign: 'center',
+          verticalAlign: 'middle',
+          marginTop: '53px',
+          border: 'solid #ddd 1px',
+          height: '196px',
+          borderRadius: '10px',
+          paddingTop: '80px'
+      }}>
+        {this.dateTripleToString(d)}
+        <div onClick={(e) => onDate()} className='button' style={{marginLeft: '10px'}}>
+          <i className='fa fa-calendar'></i>
+        </div>
+      </div>
+    )
+  }
+
+  clearSelectedFrom() {
+    this.setState({
+      selectedFrom: null
+    })
+  }
+
   renderFrom() {
     if(this.state.selectedFrom) {
-      return (
-        <div style={{
-            float: 'left',
-            width: '252px',
-            textAlign: 'center',
-            verticalAlign: 'middle',
-            marginTop: '53px',
-            border: 'solid #ddd 1px',
-            height: '196px',
-            borderRadius: '10px',
-            paddingTop: '80px'
-        }}>
-          {this.dateTripleToString(this.state.selectedFrom)}
-        </div>
-      )
+      return this.renderSelected(this.state.selectedFrom, () => this.clearSelectedFrom())
     } else {
       return (
         <div style={{float: 'left'}}>
@@ -154,23 +169,15 @@ class InputTextDateNew extends React.Component {
     }
   }
 
+  clearSelectedTo() {
+    this.setState({
+      selectedTo: null
+    })
+  }
+
   renderTo() {
     if(this.state.selectedTo) {
-      return (
-        <div style={{
-            float: 'left',
-            width: '252px',
-            textAlign: 'center',
-            verticalAlign: 'middle',
-            marginTop: '53px',
-            border: 'solid #ddd 1px',
-            height: '196px',
-            borderRadius: '10px',
-            paddingTop: '80px'
-        }}>
-          {this.dateTripleToString(this.state.selectedTo)}
-        </div>
-      )
+      return this.renderSelected(this.state.selectedTo, () => this.clearSelectedTo())
     } else {
       return (
         <div style={{float: 'left'}}>
@@ -206,19 +213,21 @@ class InputTextDateNew extends React.Component {
     }
   }
 
+  focus(event) {
+    event.preventDefault()
+    this.showAt()
+  }
+
   render () {
     return (
       <div className='form-item'>
         <div>
           <div className='col1of3'>
             <div style={{marginRight: '30px'}}>
-              <input onChange={(e) => this.setText(e)} type='text' name={this.props.name} value={this.state.text} style={{width: '100%'}}/>
+              <input autoComplete='off' onFocus={(e) => this.focus(e)} onChange={(e) => this.setText(e)} type='text' name={this.props.name} value={this.state.text} style={{width: '100%'}} />
             </div>
           </div>
           <div className='col2of3'>
-            <div onClick={(e) => this.showAt()} className='button' style={{marginLeft: '10px', marginTop: '2px', display: 'inline-block'}}>
-              <i className='fa fa-calendar'></i>
-            </div>
             <div onClick={(e) => this.showFromTo()} className='button' style={{marginLeft: '10px', marginTop: '2px', display: 'inline-block'}}>
               <i className='fa fa-calendar'></i>
               {' - '}
