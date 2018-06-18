@@ -33,11 +33,11 @@ class RenderDatePickerMadek extends React.Component {
   _renderNumber(index, row, rowCount, col, colCount, isValidDay) {
     if(isValidDay) {
       return (
-        <div key={'day_' + index} onClick={(event) => this.props._select(event, index)} className='DayPicker-Day' tabIndex='0' role='gridcell' aria-disabled='false' aria-selected='false'>{index + 1}</div>
+        <div key={'day_' + index} onClick={(event) => this.props._select(event, index)} className='DayPicker-Day'>{index + 1}</div>
       )
     } else {
       return (
-        <div key={'day_' + index} role='gridcell' aria-disabled='true' className='DayPicker-Day DayPicker-Day--outside'></div>
+        <div key={'day_' + index} className='DayPicker-Day DayPicker-Day--outside'></div>
       )
     }
   }
@@ -51,7 +51,7 @@ class RenderDatePickerMadek extends React.Component {
   renderCalendar() {
     return this.util().renderWeeks((week) => {
       return (
-        <div key={'week_' + week} className='DayPicker-Week' role='gridcell'>
+        <div key={'week_' + week} className='DayPicker-Week'>
           {this.renderWeekDays(week)}
         </div>
       )
@@ -62,14 +62,14 @@ class RenderDatePickerMadek extends React.Component {
     return (
       <div>
         <div>
-          <div value='' className='DayPicker' role='application' lang='de' tabIndex='0'>
+          <div className='DayPicker'>
             <div className='DayPicker-NavBar'>
-              <span onClick={(e) => this.props._previous(e)} role='button' className='DayPicker-NavButton DayPicker-NavButton--prev'></span>
-              <span onClick={(e) => this.props._next(e)} role='button' className='DayPicker-NavButton DayPicker-NavButton--next'></span>
+              <span onClick={(e) => this.props._previous(e)} className='DayPicker-NavButton DayPicker-NavButton--prev'></span>
+              <span onClick={(e) => this.props._next(e)} className='DayPicker-NavButton DayPicker-NavButton--next'></span>
             </div>
             <div className='DayPicker-Month'>
-              <div className='DayPicker-Caption' role='heading'>{this.getMonthText()} {this.props.year}</div>
-              <div className='DayPicker-Weekdays' role='rowgroup'>
+              <div className='DayPicker-Caption'>{this.getMonthText()} {this.props.year}</div>
+              <div className='DayPicker-Weekdays'>
                 <div className='DayPicker-WeekdaysRow' role='columnheader'>
                   <div className='DayPicker-Weekday'><abbr title='Montag'>Mo</abbr></div>
                   <div className='DayPicker-Weekday'><abbr title='Dienstag'>Di</abbr></div>
@@ -80,7 +80,7 @@ class RenderDatePickerMadek extends React.Component {
                   <div className='DayPicker-Weekday'><abbr title='Sonntag'>So</abbr></div>
                 </div>
               </div>
-              <div className='DayPicker-Body' role='grid'>
+              <div className='DayPicker-Body'>
                 {this.renderCalendar()}
               </div>
             </div>
