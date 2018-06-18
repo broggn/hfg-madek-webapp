@@ -35,7 +35,7 @@ class RenderDatePicker extends React.Component {
 
 
 
-  _renderNumber (index, row, rowCount, col, colCount) {
+  _renderNumber (index, row, rowCount, col, colCount, isValidDay) {
 
 
     var date = new Date()
@@ -152,7 +152,7 @@ class RenderDatePicker extends React.Component {
       style.backgroundColor = '#efefef'
     }
 
-    if(index >= 0 && index < this._daysInMonth()) {
+    if(isValidDay) {
 
       var todayStyle = {
         textDecoration: 'none',
@@ -199,18 +199,13 @@ class RenderDatePicker extends React.Component {
 
   }
 
-  _daysInMonth () {
-    return new Date(this.props.year, this.props.month + 1, 1 - 1).getDate()
-  }
-
-
   util() {
     return DatePickerUtil.createUtil(this.props.year, this.props.month)
   }
 
   renderWeekDays(week) {
-    return this.util().renderWeekDays(week, (index, row, rowCount, col, colCount) => {
-      return this._renderNumber(index, row, rowCount, col, colCount)
+    return this.util().renderWeekDays(week, (index, row, rowCount, col, colCount, isValidDay) => {
+      return this._renderNumber(index, row, rowCount, col, colCount, isValidDay)
     })
   }
 

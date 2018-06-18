@@ -28,11 +28,16 @@ module.exports = {
         return weekday - 1
       },
 
+      daysInMonth () {
+        return new Date(propsYear, propsMonth + 1, 1 - 1).getDate()
+      },
+
       renderWeekDays(row, renderWeekDayCallback) {
         var rowCount = this._rowCount()
         return this._interval(7).map((col) => {
           var index = row * 7 + col - this._firstCol()
-          return renderWeekDayCallback(index, row, rowCount, col, 7)
+          var isValidDay = index >= 0 && index < this.daysInMonth()
+          return renderWeekDayCallback(index, row, rowCount, col, 7, isValidDay)
         })
       },
 
