@@ -24,16 +24,7 @@ class DatePickerPopup extends React.Component {
 
   render () {
     return (
-      <div ref={(ref) => this.reference = ref} style={{
-          clear: 'both',
-          position: 'absolute',
-          zIndex: '1000',
-          backgroundColor: '#fff',
-          border: '1px solid #ddd',
-          padding: '10px',
-          borderRadius: '5px',
-          top: '60px'
-      }}>
+      <div ref={(ref) => this.reference = ref} style={this.props.style}>
         {this.props.children}
       </div>
     )

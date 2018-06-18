@@ -130,14 +130,12 @@ class InputTextDateNew extends React.Component {
     return (
       <div style={{
           float: 'left',
-          width: '252px',
+          width: '180px',
           textAlign: 'center',
           verticalAlign: 'middle',
           marginTop: '53px',
-          border: 'solid #ddd 1px',
-          height: '196px',
-          borderRadius: '10px',
-          paddingTop: '80px'
+          height: '30px',
+          paddingTop: '62px'
       }}>
         {this.dateTripleToString(d)}
         <div onClick={(e) => onDate()} className='button' style={{marginLeft: '10px'}}>
@@ -191,10 +189,35 @@ class InputTextDateNew extends React.Component {
     }
   }
 
+  popupStyle() {
+    return {
+      clear: 'both',
+      position: 'absolute',
+      zIndex: '1000',
+      backgroundColor: '#fff',
+      padding: '0px',
+      borderRadius: '5px',
+      top: '60px',
+      WebkitBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
+      MozBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
+      boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)'
+    }
+    // return {
+    //   clear: 'both',
+    //   position: 'absolute',
+    //   zIndex: '1000',
+    //   backgroundColor: '#fff',
+    //   border: '1px solid #ddd',
+    //   padding: '10px',
+    //   borderRadius: '5px',
+    //   top: '60px'
+    // }
+  }
+
   renderDatePickers() {
     if(this.state.showAt) {
       return (
-        <DatePickerPopup onClose={() => this.closeAt()}>
+        <DatePickerPopup onClose={() => this.closeAt()} style={this.popupStyle()}>
           <CustomDatePicker
             passedState={this.state.stateAt}
             monthCallback={(d) => this.setMonthAt(d)}
@@ -204,9 +227,9 @@ class InputTextDateNew extends React.Component {
       )
     } else if(this.state.showFromTo) {
       return (
-        <DatePickerPopup onClose={() => this.closeFromTo()}>
+        <DatePickerPopup onClose={() => this.closeFromTo()} style={this.popupStyle()}>
           {this.renderFrom()}
-          <div style={{float: 'left', padding: '150px 30px 0px 30px', fontSize: '30px'}}>-</div>
+          <div style={{float: 'left', padding: '100px 30px 0px 30px', fontSize: '30px', color: '#bbb'}}>-</div>
           {this.renderTo()}
         </DatePickerPopup>
       )

@@ -210,7 +210,6 @@ class RenderDatePicker extends React.Component {
   }
 
   _renderCalendar() {
-
     return this.util().renderWeeks((week) => {
       return (
         <tr key={week}>

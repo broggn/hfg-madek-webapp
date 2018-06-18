@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RenderDatePicker from './RenderDatePicker.jsx'
+import RenderDatePickerMadek from './RenderDatePickerMadek.jsx'
 
 class CustomDatePicker extends React.Component {
 
@@ -49,7 +49,7 @@ class CustomDatePicker extends React.Component {
 
 
   render () {
-    return <RenderDatePicker
+    return <RenderDatePickerMadek
       month={this.props.passedState.month}
       year={this.props.passedState.year}
       _previous={(e) => this._previous(e)}
