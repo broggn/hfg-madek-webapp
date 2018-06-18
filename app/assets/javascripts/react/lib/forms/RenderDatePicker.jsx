@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import DatePickerUtil from './DatePickerUtil.jsx'
 
 class RenderDatePicker extends React.Component {
 
@@ -32,14 +33,6 @@ class RenderDatePicker extends React.Component {
     return this._monthTexts()[this.props.month]
   }
 
-
-  _firstCol () {
-
-    var weekday = this._firstWeekday()
-    // Start with monday as 0
-    if(weekday == 0) weekday += 7
-    return weekday - 1
-  }
 
 
   _renderNumber (index, row, rowCount, col, colCount) {
@@ -210,49 +203,26 @@ class RenderDatePicker extends React.Component {
     return new Date(this.props.year, this.props.month + 1, 1 - 1).getDate()
   }
 
-  _firstWeekday () {
-    return new Date(this.props.year, this.props.month, 1).getDay()
+
+  util() {
+    return DatePickerUtil.createUtil(this.props.year, this.props.month)
   }
 
-
-  _interval (n) {
-    var arr = []
-    for(var i = 0; i < n; i++) {
-      arr.push(i)
-    }
-    return arr
-  }
-
-  _renderCols (row, rowCount) {
-
-    return this._interval(7).map((col) => {
-
-      var index = row * 7 + col - this._firstCol()
-
-      return this._renderNumber(index, row, rowCount, col, 7)
+  renderWeekDays(week) {
+    return this.util().renderWeekDays(week, (index, row, rowCount, col, colCount) => {
+      return this._renderNumber(index, row, rowCount, col, colCount)
     })
-
   }
 
-  _renderTable () {
+  _renderCalendar() {
 
-
-    var rowCount = Math.ceil((this._firstCol() + this._daysInMonth()) / 7.0)
-
-
-    var style = {borderRadius: '0px 0px 0px 0px', borderWidth: '1px', borderStyle: 'solid'}
-
-
-
-    return this._interval(rowCount).map((row) => {
+    return this.util().renderWeeks((week) => {
       return (
-        <tr key={row}>
-          {this._renderCols(row, rowCount)}
-
+        <tr key={week}>
+          {this.renderWeekDays(week)}
         </tr>
       )
     })
-
   }
 
 
@@ -291,7 +261,7 @@ class RenderDatePicker extends React.Component {
                </tr>
             </thead>
             <tbody>
-              {this._renderTable()}
+              {this._renderCalendar()}
 
 
 
