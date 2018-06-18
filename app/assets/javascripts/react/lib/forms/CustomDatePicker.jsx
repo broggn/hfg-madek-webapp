@@ -46,14 +46,6 @@ class CustomDatePicker extends React.Component {
     })
   }
 
-  _daysInMonth () {
-    return new Date(this.props.passedState.year, this.props.passedState.month + 1, 1 - 1).getDate()
-  }
-
-  _firstWeekday () {
-    return new Date(this.props.passedState.year, this.props.passedState.month, 1).getDay()
-  }
-
 
 
   render () {
@@ -63,8 +55,6 @@ class CustomDatePicker extends React.Component {
       _previous={(e) => this._previous(e)}
       _next={(e) => this._next(e)}
       _select={(e, i) => this._select(e, i)}
-      daysInMonth={this._daysInMonth()}
-      firstWeekday={this._firstWeekday()}
     />
   }
 }

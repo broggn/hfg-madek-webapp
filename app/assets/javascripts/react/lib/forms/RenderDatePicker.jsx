@@ -35,7 +35,7 @@ class RenderDatePicker extends React.Component {
 
   _firstCol () {
 
-    var weekday = this.props.firstWeekday
+    var weekday = this._firstWeekday()
     // Start with monday as 0
     if(weekday == 0) weekday += 7
     return weekday - 1
@@ -159,7 +159,7 @@ class RenderDatePicker extends React.Component {
       style.backgroundColor = '#efefef'
     }
 
-    if(index >= 0 && index < this.props.daysInMonth) {
+    if(index >= 0 && index < this._daysInMonth()) {
 
       var todayStyle = {
         textDecoration: 'none',
@@ -206,6 +206,14 @@ class RenderDatePicker extends React.Component {
 
   }
 
+  _daysInMonth () {
+    return new Date(this.props.year, this.props.month + 1, 1 - 1).getDate()
+  }
+
+  _firstWeekday () {
+    return new Date(this.props.year, this.props.month, 1).getDay()
+  }
+
 
   _interval (n) {
     var arr = []
@@ -229,7 +237,7 @@ class RenderDatePicker extends React.Component {
   _renderTable () {
 
 
-    var rowCount = Math.ceil((this._firstCol() + this.props.daysInMonth) / 7.0)
+    var rowCount = Math.ceil((this._firstCol() + this._daysInMonth()) / 7.0)
 
 
     var style = {borderRadius: '0px 0px 0px 0px', borderWidth: '1px', borderStyle: 'solid'}
