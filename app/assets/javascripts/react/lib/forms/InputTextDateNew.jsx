@@ -241,7 +241,9 @@ class InputTextDateNew extends React.Component {
         <div>
           <div className='col1of3'>
             <div style={{marginRight: '30px'}}>
-              <input autoComplete='off' onFocus={(e) => this.focus(e)} onChange={(e) => this.setText(e)} type='text' name={this.props.name} value={this.state.text} style={{width: '100%'}} />
+              <span onClick={(e) => this.focus(e)}>
+                <input autoComplete='off' onFocus={(e) => this.focus(e)} onChange={(e) => this.setText(e)} type='text' name={this.props.name} value={this.state.text} style={{width: '100%'}} />
+              </span>
             </div>
           </div>
           <div className='col2of3'>
