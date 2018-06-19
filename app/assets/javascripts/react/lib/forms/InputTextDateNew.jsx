@@ -152,19 +152,16 @@ class InputTextDateNew extends React.Component {
   }
 
   renderFrom() {
-    if(this.state.selectedFrom) {
-      return this.renderSelected(this.state.selectedFrom, () => this.clearSelectedFrom())
-    } else {
-      return (
-        <div style={{float: 'left'}}>
-          <CustomDatePicker
-            passedState={this.state.stateFrom}
-            monthCallback={(d) => this.setMonthFrom(d)}
-            callback={(d) => this.selectFrom(d)}
-          />
-        </div>
-      )
-    }
+    return (
+      <div style={{float: 'left'}}>
+        <CustomDatePicker
+          passedState={this.state.stateFrom}
+          monthCallback={(d) => this.setMonthFrom(d)}
+          callback={(d) => this.selectFrom(d)}
+          selected={this.state.selectedFrom}
+        />
+      </div>
+    )
   }
 
   clearSelectedTo() {
@@ -174,19 +171,16 @@ class InputTextDateNew extends React.Component {
   }
 
   renderTo() {
-    if(this.state.selectedTo) {
-      return this.renderSelected(this.state.selectedTo, () => this.clearSelectedTo())
-    } else {
-      return (
-        <div style={{float: 'left'}}>
-          <CustomDatePicker
-            passedState={this.state.stateTo}
-            monthCallback={(d) => this.setMonthTo(d)}
-            callback={(d) => this.selectTo(d)}
-          />
-        </div>
-      )
-    }
+    return (
+      <div style={{float: 'left'}}>
+        <CustomDatePicker
+          passedState={this.state.stateTo}
+          monthCallback={(d) => this.setMonthTo(d)}
+          callback={(d) => this.selectTo(d)}
+          selected={this.state.selectedTo}
+        />
+      </div>
+    )
   }
 
   popupStyle() {

@@ -30,12 +30,30 @@ class RenderDatePickerMadek extends React.Component {
     return DatePickerUtil.createUtil(this.props.year, this.props.month)
   }
 
+  isSelectedDay(y, m, d) {
+    var s = this.props.selected
+    if(!s) {
+      return false
+    }
+    return s.year == y && s.month == m && s.day == d
+  }
+
   _renderNumber(index, row, rowCount, col, colCount, isValidDay) {
     if(isValidDay) {
-      return (
-        <div key={'day_' + index} onClick={(event) => this.props._select(event, index)} className='DayPicker-Day'>{index + 1}</div>
-      )
-    } else {
+
+      if(this.isSelectedDay(this.props.year, this.props.month, index)) {
+        return (
+          <div key={'day_' + index} onClick={(event) => this.props._select(event, index)} style={{backgroundColor: '#8ec9ee'}} className='DayPicker-Day'>{index + 1}</div>
+        )
+      }
+      else {
+        return (
+          <div key={'day_' + index} onClick={(event) => this.props._select(event, index)} className='DayPicker-Day'>{index + 1}</div>
+        )
+      }
+
+    }
+    else {
       return (
         <div key={'day_' + index} className='DayPicker-Day DayPicker-Day--outside'></div>
       )

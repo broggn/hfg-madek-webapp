@@ -52,6 +52,7 @@ class CustomDatePicker extends React.Component {
     return <RenderDatePickerMadek
       month={this.props.passedState.month}
       year={this.props.passedState.year}
+      selected={this.props.selected}
       _previous={(e) => this._previous(e)}
       _next={(e) => this._next(e)}
       _select={(e, i) => this._select(e, i)}
