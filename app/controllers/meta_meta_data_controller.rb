@@ -8,6 +8,11 @@ class MetaMetaDataController < ApplicationController
       else
         throw 'not implemented'
       end
-    respond_with Presenters::MetaData::MetaMetaDataEdit.new(current_user, clazz)
+    respond_with(
+      Presenters::MetaData::MetaMetaDataEdit.new(
+        current_user,
+        clazz
+      )
+    )
   end
 end
