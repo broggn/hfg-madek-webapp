@@ -57,6 +57,10 @@ BoxFetchListData = require('./BoxFetchListData.js')
 
 BoxSetUrlParams = require('./BoxSetUrlParams.jsx')
 
+BoxBatchEdit = require('./BoxBatchEdit.js')
+BoxBatchEditButton = require('./BoxBatchEditButton.jsx')
+BoxBatchEditForm = require('./BoxBatchEditForm.jsx')
+
 # Props/Config overview:
 # - props.get.has_user = should the UI offer any interaction
 # - state.isClient = is component in client-side mode
@@ -92,6 +96,19 @@ module.exports = React.createClass
   getDefaultProps: ()->
     fallback: true
 
+  stateBatchTrigger: (props) ->
+    this.stateBatchTransition(props)
+
+  stateBatchInitial: (props) ->
+    return BoxBatchEdit(null, props, (ps) => this.stateBatchTrigger(ps))
+
+  stateBatchTransition: (props) ->
+    next = BoxBatchEdit(f.cloneDeep(@state.stateBatch), props, (ps) => this.stateBatchTrigger(ps))
+    @setState({stateBatch: next})
+
+  onBatchButton: (event) ->
+    this.stateBatchTransition({ event: 'toggle' })
+
   # kick of client-side mode:
   getInitialState: ()-> {
     isClient: false,
@@ -109,7 +126,8 @@ module.exports = React.createClass
     batchDestroyResourcesModal: false
     batchDestroyResourcesWaiting: false
     showSelectionLimit: false
-    listJobQueue: []
+    listJobQueue: [],
+    stateBatch: this.stateBatchInitial({})
   }
 
   doOnUnmount: [] # to be filled with functions to be called on unmount
@@ -685,6 +703,8 @@ module.exports = React.createClass
         })
 
 
+      batchButton = <BoxBatchEditButton stateBatch={@state.stateBatch} onBatchButton={(e) => @onBatchButton(e)} />
+
 
       filterToggleLink = BoxSetUrlParams(
         currentUrl, {list: {show_filter: (not config.show_filter)}})
@@ -702,7 +722,7 @@ module.exports = React.createClass
           </div>
 
         right: if actionsDropdown
-          <div>{actionsDropdown}</div>
+          <div>{batchButton}{actionsDropdown}</div>
 
 
         middle: if @props.renderSwitcher
@@ -772,6 +792,8 @@ module.exports = React.createClass
 
       {boxTitleBar()}
       {boxToolBar()}
+
+      <BoxBatchEditForm stateBatch={@state.stateBatch} />
 
       <div className='ui-resources-holder pam'>
         <div className='ui-container table auto'>
