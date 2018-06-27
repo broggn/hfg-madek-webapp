@@ -11,7 +11,7 @@ module.exports = (last, props, trigger) => {
 
   var next = () => {
 
-    if(!last) {
+    if(props.event == 'mount') {
       asyncLoadData('MediaEntry')
       asyncLoadData('Collection')
     }

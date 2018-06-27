@@ -269,6 +269,8 @@ module.exports = React.createClass
       config: resourceListParams(window.location)
     )
 
+    this.stateBatchTransition({ event: 'mount' })
+
 
   # - custom actions:
   _onFetchNextPage: (event)->
