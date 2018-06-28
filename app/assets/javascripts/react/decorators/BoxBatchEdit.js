@@ -20,16 +20,20 @@ module.exports = (last, props, trigger) => {
       return {
         data: {
           metaMetaData: [],
-          metaKeyForms: [],
           open: false
+        },
+        components: {
+          metaKeyForms: []
         }
       }
     } else {
       return {
         data: {
           metaMetaData: nextData(),
-          metaKeyForms: nextMetaKeyForms(),
           open: nextOpen()
+        },
+        components: {
+          metaKeyForms: nextMetaKeyForms()
         }
       }
     }
@@ -38,66 +42,95 @@ module.exports = (last, props, trigger) => {
 
   var nextMetaKeyForms = () => {
 
-    var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.data.metaKeyForms, (f) => f.metaKeyId == props.event.metaKeyId)
-    }
+    // var findMetaKeyForm = (metaKeyId) => {
+    //   return l.find(last.components.metaKeyForms, (f) => f.metaKeyId == props.event.metaKeyId)
+    // }
+    //
+    // var allMetaKeysById = () => {
+    //   var metaMetaData = last.data.metaMetaData
+    //
+    //   return l.reduce(
+    //     metaMetaData,
+    //     (memo, mmd) => {
+    //       return l.merge(
+    //         memo,
+    //         mmd.data.meta_key_by_meta_key_id
+    //       )
+    //     },
+    //     {}
+    //   )
+    // }
+    //
+    // var findMetaKey = (metaKeyId) => {
+    //   return allMetaKeysById()[metaKeyId]
+    // }
+    //
+    // var createText = () => {
+    //   return {
+    //     value: ''
+    //   }
+    // }
+    //
+    // var createForm = (metaKey) => {
+    //   var formCreators = {
+    //     'MetaDatum::Text': () => createText()
+    //   }
+    //   var creator = formCreators[metaKey.value_type]
+    //   if(!creator) throw 'not implemented for ' + metaKey.vlaue_type
+    //   return creator()
+    // }
+    //
+    // var createMetaKeyForm = (metaKeyId) => {
+    //   var metaKey = findMetaKey(metaKeyId)
+    //   return {
+    //     metaKeyId: metaKeyId,
+    //     metaKey: metaKey,
+    //     form: createForm(metaKey)
+    //   }
+    // }
+    //
+    // if(props.event.event == 'select-key') {
+    //   if(!findMetaKeyForm(props.event.metaKeyId)) {
+    //     return l.concat(
+    //       last.data.metaKeyForms,
+    //       createMetaKeyForm(props.event.metaKeyId)
+    //     )
+    //   } else {
+    //     return last.data.metaKeyForms
+    //   }
+    // } else {
+    //   return last.data.metaKeyForms
+    // }
 
-    var allMetaKeysById = () => {
-      var metaMetaData = last.data.metaMetaData
 
-      return l.reduce(
-        metaMetaData,
-        (memo, mmd) => {
-          return l.merge(
-            memo,
-            mmd.data.meta_key_by_meta_key_id
-          )
-        },
-        {}
-      )
-    }
-
-    var findMetaKey = (metaKeyId) => {
-      return allMetaKeysById()[metaKeyId]
-    }
-
-    var createText = () => {
-      return {
-        value: ''
-      }
-    }
-
-    var createForm = (metaKey) => {
-      var formCreators = {
-        'MetaDatum::Text': () => createText()
-      }
-      var creator = formCreators[metaKey.value_type]
-      if(!creator) throw 'not implemented for ' + metaKey.vlaue_type
-      return creator()
-    }
-
-    var createMetaKeyForm = (metaKeyId) => {
-      var metaKey = findMetaKey(metaKeyId)
-      return {
-        metaKeyId: metaKeyId,
-        metaKey: metaKey,
-        form: createForm(metaKey)
-      }
-    }
-
-    if(props.event.event == 'select-key') {
-      if(!findMetaKeyForm(props.event.metaKeyId)) {
+      if(props.event.event == 'select-key') {
         return l.concat(
-          last.data.metaKeyForms,
-          createMetaKeyForm(props.event.metaKeyId)
+          l.map(
+            last.components.metaKeyForms,
+            (c) => {
+              return {
+                reset: false,
+                reduce: (last, props, trigger) => {
+                  return {
+                    data: {},
+                    components: {}
+                  }
+                }
+              }
+            }
+          ),
+          []
         )
+        //
+        //
+        //
+        // l.concat(
+        //   last.components.metaKeyForms,
+        //   createMetaKeyForm(props.event.metaKeyId)
+        // )
       } else {
         return last.data.metaKeyForms
       }
-    } else {
-      return last.data.metaKeyForms
-    }
-
 
   }
 

@@ -267,17 +267,25 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
   var prettyState = (n) => {
     if(!n) return null
-    return {
-      data: n.component.data,
-      components: __.mapValues(n.component.components, (c) => prettyState(c))
+    if(Array.isArray(n)) {
+      return __.map(n, (ni) => prettyState(ni))
+    } else {
+      return {
+        data: n.component.data,
+        components: __.mapValues(n.component.components, (c) => prettyState(c))
+      }
     }
   }
 
   var prettyEvent = (n) => {
     if(!n) return null
-    return {
-      event: n.event,
-      components: __.mapValues(n.children, (e) => prettyEvent(e))
+    if(Array.isArray(n)) {
+      return __.map(n, (ni) => prettyEvent(ni))
+    } else {
+      return {
+        event: n.event,
+        components: __.mapValues(n.children, (e) => prettyEvent(e))
+      }
     }
   }
 
@@ -306,9 +314,13 @@ module.exports = {
 
     var prettyState = (n) => {
       if(!n) return null
-      return {
-        data: n.component.data,
-        components: __.mapValues(n.component.components, (c) => prettyState(c))
+      if(Array.isArray(n)) {
+        return __.map(n, (ni) => prettyState(ni))
+      } else {
+        return {
+          data: n.component.data,
+          components: __.mapValues(n.component.components, (c) => prettyState(c))
+        }
       }
     }
 

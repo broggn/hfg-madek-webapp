@@ -90,6 +90,7 @@ class BoxBatchEditForm extends React.Component {
   }
 
   renderKeyForms() {
+    return null
     return l.map(
       this.props.stateBatch.data.metaKeyForms,
       (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm)
