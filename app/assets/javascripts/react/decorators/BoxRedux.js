@@ -384,11 +384,11 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, root
 
 module.exports = {
 
-  build: function(definition, lastState, eventTree, trigger) {
-    return build(definition, lastState, trigger, eventTree);
+  build: function(stateReduction, lastState, eventTree, trigger) {
+    return build(stateReduction, lastState, trigger, eventTree);
   },
 
-  machine: function(definition, reset) {
-    return machine(definition, reset);
+  machine: function(stateReduction, reset) {
+    return machine(stateReduction, reset);
   }
 }
