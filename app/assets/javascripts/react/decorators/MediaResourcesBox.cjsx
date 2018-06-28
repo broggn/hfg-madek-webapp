@@ -61,6 +61,8 @@ BoxBatchEdit = require('./BoxBatchEdit.js')
 BoxBatchEditButton = require('./BoxBatchEditButton.jsx')
 BoxBatchEditForm = require('./BoxBatchEditForm.jsx')
 
+BoxRedux = require('./BoxRedux.js')
+
 # Props/Config overview:
 # - props.get.has_user = should the UI offer any interaction
 # - state.isClient = is component in client-side mode
@@ -106,6 +108,27 @@ module.exports = React.createClass
     next = BoxBatchEdit(f.cloneDeep(@state.stateBatch), props, (ps) => this.stateBatchTrigger(ps))
     @setState({stateBatch: next})
 
+  testRoot: () ->
+    return BoxRedux.machine(
+      {
+        step: (a) =>
+          {
+            data: {},
+            components: {}
+          }
+      }
+    )
+
+  testTrigger: (event) ->
+    this.testTransition(event)
+
+  testInitial: (event) ->
+    return BoxRedux.build(this.testRoot(), null, event, (e) => this.testTrigger(e))
+
+  testTransition: (event)  ->
+    next = BoxRedux.build(this.testRoot(), f.cloneDeep(@state.test), event, (e) => this.testTrigger(e))
+    @setState({test: next})
+
   onBatchButton: (event) ->
     @stateBatchTransition({ event: 'toggle' })
 
@@ -130,7 +153,8 @@ module.exports = React.createClass
     batchDestroyResourcesWaiting: false
     showSelectionLimit: false
     listJobQueue: [],
-    stateBatch: this.stateBatchInitial({})
+    stateBatch: this.stateBatchInitial({}),
+    test: this.testInitial(null)
   }
 
   doOnUnmount: [] # to be filled with functions to be called on unmount
