@@ -71,7 +71,7 @@ var machine = function(def, reset) {
 var compactObject = function(o) {
   return __.fromPairs(
     __.compact(
-      __.mapValues(o, function(v, k) {
+      __.map(o, function(v, k) {
         return !v ? null : [k, v]
       })
     )
@@ -181,7 +181,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEven
   if(next.components) {
 
 
-  var newMachines = compactObject(__.mapValues(next.components, function(v, k) {
+  var newMachines = compactObject(__.map(next.components, function(v, k) {
 
     if(!v) {
       return null

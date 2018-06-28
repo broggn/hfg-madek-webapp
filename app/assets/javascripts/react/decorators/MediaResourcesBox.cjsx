@@ -125,9 +125,12 @@ module.exports = React.createClass
       {
         step: (a) =>
           {
-            data: {},
+            data: {
+              'data1': 'data1',
+              'data2': 'data2'
+            },
             components: {
-              component1: this.testComponent1()
+              'component1': this.testComponent1()
             }
           }
       },
