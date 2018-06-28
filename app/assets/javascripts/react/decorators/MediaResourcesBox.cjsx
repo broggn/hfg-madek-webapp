@@ -116,7 +116,8 @@ module.exports = React.createClass
             data: {},
             components: {}
           }
-      }
+      },
+      false
     )
 
   testRoot: () ->
@@ -129,7 +130,8 @@ module.exports = React.createClass
               component1: this.testComponent1()
             }
           }
-      }
+      },
+      false
     )
 
   testTrigger: (event) ->
