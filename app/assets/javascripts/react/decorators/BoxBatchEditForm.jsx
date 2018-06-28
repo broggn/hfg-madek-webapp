@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
+import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
 
 
 
@@ -63,7 +64,11 @@ class BoxBatchEditForm extends React.Component {
 
   renderKey(k) {
     return (
-      <div key={k.metaKeyId} style={{display: 'inline-block', backgroundColor: 'white', borderRadius: '5px', padding: '0px 10px', marginRight: '5px', marginBottom: '5px'}}>
+      <div
+        key={k.metaKeyId}
+        style={{cursor: 'pointer', display: 'inline-block', backgroundColor: 'white', borderRadius: '5px', padding: '0px 10px', marginRight: '5px', marginBottom: '5px'}}
+        onClick={(e) => this.props.onClickKey(e, k.metaKeyId)}
+      >
         {k.metaKey.label}
       </div>
     )
@@ -76,6 +81,21 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  renderMetaKeyForm(metaKeyId) {
+    return (
+      <div key={metaKeyId}>
+        <BoxBatchEditMetaKeyForm metaKeyId={metaKeyId} />
+      </div>
+    )
+  }
+
+  renderKeyForms() {
+    return l.map(
+      this.props.stateBatch.metaKeyForms,
+      (metaKeyId) => this.renderMetaKeyForm(metaKeyId)
+    )
+  }
+
   render() {
 
     var stateBatch = this.props.stateBatch
@@ -85,7 +105,12 @@ class BoxBatchEditForm extends React.Component {
     } else {
       return (
         <div className='ui-resources-holder pam'>
-          {this.renderKeys()}
+          <div>
+            {this.renderKeys()}
+          </div>
+          <div>
+            {this.renderKeyForms()}
+          </div>
         </div>
       )
     }

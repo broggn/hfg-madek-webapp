@@ -107,7 +107,10 @@ module.exports = React.createClass
     @setState({stateBatch: next})
 
   onBatchButton: (event) ->
-    this.stateBatchTransition({ event: 'toggle' })
+    @stateBatchTransition({ event: 'toggle' })
+
+  onClickKey: (event, metaKeyId) ->
+    @stateBatchTransition({ event: 'select-key', metaKeyId: metaKeyId})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -795,7 +798,10 @@ module.exports = React.createClass
       {boxTitleBar()}
       {boxToolBar()}
 
-      <BoxBatchEditForm stateBatch={@state.stateBatch} />
+      <BoxBatchEditForm
+        stateBatch={@state.stateBatch}
+        onClickKey={(e, k) => @onClickKey(e, k)}
+      />
 
       <div className='ui-resources-holder pam'>
         <div className='ui-container table auto'>

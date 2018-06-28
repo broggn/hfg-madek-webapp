@@ -19,14 +19,42 @@ module.exports = (last, props, trigger) => {
     if(!last) {
       return {
         metaMetaData: [],
+        metaKeyForms: [],
         open: false
       }
     } else {
       return {
         metaMetaData: nextData(),
+        metaKeyForms: nextMetaKeyForms(),
         open: nextOpen()
       }
     }
+  }
+
+  var nextMetaKeyForms = () => {
+
+    var findMetaKeyForm = (metaKeyId) => {
+      return l.find(last.metaKeyForms, (f) => f == props.metaKeyId)
+    }
+
+    var createMetaKeyForm = (metaKeyId) => {
+      return metaKeyId
+    }
+
+    if(props.event == 'select-key') {
+      if(!findMetaKeyForm(props.metaKeyId)) {
+        return l.concat(
+          last.metaKeyForms,
+          createMetaKeyForm(props.metaKeyId)
+        )
+      } else {
+        return last.metaKeyForms
+      }
+    } else {
+      return last.metaKeyForms
+    }
+
+
   }
 
   var nextOpen = () => {
