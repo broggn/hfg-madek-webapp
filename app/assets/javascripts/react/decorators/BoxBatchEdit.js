@@ -6,6 +6,7 @@ import url from 'url'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchTextInput from './BoxBatchTextInput.js'
+import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
 module.exports = (last, props, trigger, realProps) => {
@@ -118,7 +119,7 @@ module.exports = (last, props, trigger, realProps) => {
         (c) => {
           return {
             reset: false,
-            reduce: BoxBatchTextInput,
+            reduce: decideReduce(c.props.metaKeyId),
             props: {
               metaKeyId: c.props.metaKeyId,
               metaKey: findMetaKey(c.props.metaKeyId)
@@ -128,6 +129,16 @@ module.exports = (last, props, trigger, realProps) => {
       )
     }
 
+    var decideReduce = (metaKeyId) => {
+      var mapping = {
+        'MetaDatum::Text': BoxBatchTextInput,
+        'MetaDatum::TextDate': BoxBatchDateInput
+      }
+      var type = findMetaKey(metaKeyId).value_type
+      if(!mapping[type]) throw 'not implemented for ' + type
+      return mapping[type]
+    }
+
 
     if(props.event.event == 'select-key') {
       if(!findMetaKeyForm(props.event.metaKeyId)) {
@@ -135,7 +146,7 @@ module.exports = (last, props, trigger, realProps) => {
           mapExisting(),
           {
             reset: false,
-            reduce: BoxBatchTextInput,
+            reduce: decideReduce(props.event.metaKeyId),
             props: {
               metaKeyId: props.event.metaKeyId,
               metaKey: findMetaKey(props.event.metaKeyId)
