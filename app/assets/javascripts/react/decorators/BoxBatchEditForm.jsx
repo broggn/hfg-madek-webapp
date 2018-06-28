@@ -5,49 +5,6 @@ import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
 
-var metaKeysWithTypes = (metaMetaData) => {
-
-  var allMetaKeyIds = () => {
-    return l.uniq(l.flatten(l.map(
-      metaMetaData,
-      (mmd) => l.keys(mmd.data.meta_key_by_meta_key_id)
-    )))
-
-  }
-
-  var allMetaKeysById = () => {
-    return l.reduce(
-      metaMetaData,
-      (memo, mmd) => {
-        return l.merge(
-          memo,
-          mmd.data.meta_key_by_meta_key_id
-        )
-      },
-      {}
-    )
-  }
-
-  return l.map(
-    allMetaKeyIds(),
-    (k) => {
-      return {
-        metaKeyId: k,
-        types: l.map(
-          l.filter(
-            metaMetaData,
-            (mmd) => {
-              return l.has(mmd.data.meta_key_by_meta_key_id, k)
-            }
-          ),
-          (m) => m.type
-        ),
-        metaKey: allMetaKeysById()[k]
-      }
-    }
-  )
-}
-
 class BoxBatchEditForm extends React.Component {
 
   constructor(props) {
@@ -123,3 +80,47 @@ class BoxBatchEditForm extends React.Component {
 }
 
 module.exports = BoxBatchEditForm
+
+
+var metaKeysWithTypes = (metaMetaData) => {
+
+  var allMetaKeyIds = () => {
+    return l.uniq(l.flatten(l.map(
+      metaMetaData,
+      (mmd) => l.keys(mmd.data.meta_key_by_meta_key_id)
+    )))
+
+  }
+
+  var allMetaKeysById = () => {
+    return l.reduce(
+      metaMetaData,
+      (memo, mmd) => {
+        return l.merge(
+          memo,
+          mmd.data.meta_key_by_meta_key_id
+        )
+      },
+      {}
+    )
+  }
+
+  return l.map(
+    allMetaKeyIds(),
+    (k) => {
+      return {
+        metaKeyId: k,
+        types: l.map(
+          l.filter(
+            metaMetaData,
+            (mmd) => {
+              return l.has(mmd.data.meta_key_by_meta_key_id, k)
+            }
+          ),
+          (m) => m.type
+        ),
+        metaKey: allMetaKeysById()[k]
+      }
+    }
+  )
+}
