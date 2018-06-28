@@ -15,7 +15,7 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
       if(!current.children[pi[0]]) {
         current.children[pi[0]] = {
           isArray: true,
-          arrYyy: {}
+          arrYyy: []
         }
       }
 
@@ -246,7 +246,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
       var newEventTree = {
         componentId: 0,
-        event: null,
+        event: {},
         children: {}
       }
 
@@ -281,8 +281,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
   var prettyEvent = (n) => {
     if(!n) return null
-    if(Array.isArray(n)) {
-      return __.map(n, (ni) => prettyEvent(ni))
+    if(n.isArray) {
+      return __.map(n.arrYyy, (ni) => prettyEvent(ni))
     } else {
       return {
         event: n.event,
@@ -313,7 +313,7 @@ module.exports = {
     return machine(stateReduction, reset);
   },
 
-  prettyState: function(state) {
+  prettyState: function(state, rootTrigger) {
 
     var prettyState = (n) => {
       if(!n) return null
@@ -323,7 +323,16 @@ module.exports = {
         return {
           props: n.dangerousProps,
           data: n.component.data,
-          components: __.mapValues(n.component.components, (c) => prettyState(c))
+          components: __.mapValues(n.component.components, (c) => prettyState(c)),
+          trigger: (event) => {
+            var newEventTree = {
+              componentId: 0,
+              event: {},
+              children: {}
+            }
+            var newEventTree = fireTreeEvent2(newEventTree, n.path, n.id, event)
+            rootTrigger(newEventTree)
+          }
         }
       }
     }

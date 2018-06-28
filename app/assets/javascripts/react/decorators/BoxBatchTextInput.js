@@ -28,7 +28,11 @@ module.exports = (last, event, trigger, props) => {
 
 
   var nextText = () => {
-    return last.data.text
+    if(event.event.event == 'new-text'){
+      return event.event.text
+    } else {
+      return last.data.text
+    }
   }
 
   return next()

@@ -13,8 +13,7 @@ class BoxBatchDatumText extends React.Component {
   }
 
   onChange(event) {
-    this.props.metaKeyForm
-    debugger
+    this.props.metaKeyForm.trigger({event: 'new-text', text: event.target.value})
   }
 
   render() {
