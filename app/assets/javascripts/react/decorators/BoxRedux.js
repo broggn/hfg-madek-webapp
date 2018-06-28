@@ -84,7 +84,7 @@ var build = function(v, last, rootTrigger, rootEventTree) {
   }
 
   // console.log(JSON.stringify(rootEventTree, null, '  '))
-  return buildChild2(v, last, rootTrigger, rootEventTree, [], null, null, null)
+  return buildChild2(v, last, rootTrigger, rootEventTree, [])
 };
 
 
@@ -141,7 +141,7 @@ var verifyEventId2 = function(llast, leventTree) {
 }
 
 
-var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs) {
+var buildChild2 = function(v, last, rootTrigger, eventTree, path) {
 
   var cid = null
 
@@ -154,7 +154,7 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, chi
 
   var cDef = v
   var r = {
-    component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs),
+    component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path),
     id: cid,
     path: path
   }
@@ -168,7 +168,7 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, chi
 }
 
 
-var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEvent, eventPath, eventArgs) {
+var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
 
   if(!next) {
     return null
@@ -179,7 +179,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEven
   if(next.components) {
 
 
-  var newMachines = compactObject(__.map(next.components, function(v, k) {
+  var newMachines = compactObject(__.mapValues(next.components, function(v, k) {
 
     if(!v) {
       return null
@@ -192,10 +192,9 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEven
         function(vi, i) {
 
           var lastChild = last && last.component.components[k] && i < last.component.components[k].length ? last.component.components[k][i] : null
-          var childEventPath = __.first(__.first(eventPath)) == k && __.last(__.first(eventPath)) == i ? __.tail(eventPath) : null
           var childPath = __.concat(path, [[k, i]])
           // debugger
-          return buildChild2(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath, rootEvent, childEventPath, eventArgs)
+          return buildChild2(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
 
         }
       )
@@ -204,9 +203,8 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEven
 
     // if(v.type == 'state') {
       var lastChild = last ? last.component.components[k] : null
-      var childEventPath = __.first(eventPath) == k ? __.tail(eventPath) : null
       var childPath = __.concat(path, k)
-      return buildChild2(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath, rootEvent, childEventPath, eventArgs)
+      return buildChild2(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
     // } else {
     //   var r = {
     //     component: v
@@ -227,7 +225,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, rootEven
 }
 
 
-var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, rootEvent, eventPath, eventArgs) {
+var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
   // if(!eventTree) {
   //   debugger
@@ -373,9 +371,28 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, root
   info.child = function(key) { return last.component.components[key] }
   info.lastLength = function(key) { return last.component.components[key].length }
 
-  var next = def.reduce(info)
+  var prettyState = (n) => {
+    if(!n) return null
+    return {
+      data: n.component.data,
+      components: __.mapValues(n.component.components, (c) => prettyState(c))
+    }
+  }
 
-  return buildChildren2(next, last, rootTrigger, eventTree, path, rootEvent, eventPath, eventArgs)
+  var prettyEvent = (n) => {
+    if(!n) return null
+    return {
+      events: n.events,
+      components: __.mapValues(n.component.components, (e) => prettyEvent(e))
+    }
+  }
+
+  var next = def.reduce(
+    prettyState(last),
+    prettyEvent(eventTree)
+  )
+
+  return buildChildren2(next, last, rootTrigger, eventTree, path)
 
 };
 

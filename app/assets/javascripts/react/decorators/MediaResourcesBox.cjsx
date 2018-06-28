@@ -111,7 +111,7 @@ module.exports = React.createClass
   testComponent1: () ->
     return {
       reset: false,
-      reduce: (a) =>
+      reduce: (lastState, eventTree) =>
         {
           data: {},
           components: {}
@@ -121,7 +121,7 @@ module.exports = React.createClass
   testRoot: () ->
     return {
       reset: false,
-      reduce: (a) =>
+      reduce: (lastState, eventTree) =>
         {
           data: {
             'data1': 'data1',
@@ -311,6 +311,8 @@ module.exports = React.createClass
     )
 
     this.stateBatchTransition({ event: 'mount' })
+
+    # this.testTransition({ event: 'mount' })
 
 
   # - custom actions:
