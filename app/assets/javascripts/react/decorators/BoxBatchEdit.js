@@ -111,7 +111,8 @@ module.exports = (last, props, trigger, realProps) => {
             reset: false,
             reduce: BoxBatchTextInput,
             props: {
-              metaKeyId: c.props.metaKeyId
+              metaKeyId: c.props.metaKeyId,
+              metaKey: findMetaKey(c.props.metaKeyId)
             }
           }
         }
@@ -127,7 +128,8 @@ module.exports = (last, props, trigger, realProps) => {
             reset: false,
             reduce: BoxBatchTextInput,
             props: {
-              metaKeyId: props.event.metaKeyId
+              metaKeyId: props.event.metaKeyId,
+              metaKey: findMetaKey(props.event.metaKeyId)
             }
           }
         )
