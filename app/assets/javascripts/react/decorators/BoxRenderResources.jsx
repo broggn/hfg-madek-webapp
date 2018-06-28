@@ -16,7 +16,13 @@ class BoxRenderResources extends React.Component {
     super(props)
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
+  }
+
   render() {
+
     var resources = this.props.resources
     var listClasses = this.props.listClasses
     var actionsDropdownParameters = this.props.actionsDropdownParameters

@@ -22,6 +22,7 @@ module.exports = (last, props, trigger, realProps) => {
       return {
         data: {
           metaMetaData: [],
+          cachedAllMetaKeysById: {},
           open: false
         },
         components: {
@@ -32,6 +33,7 @@ module.exports = (last, props, trigger, realProps) => {
       return {
         data: {
           metaMetaData: nextData(),
+          cachedAllMetaKeysById: nextCachedAllMetaKeysById(),
           open: nextOpen()
         },
         components: {
@@ -42,11 +44,7 @@ module.exports = (last, props, trigger, realProps) => {
   }
 
 
-  var nextMetaKeyForms = () => {
-
-    var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == props.event.metaKeyId)
-    }
+  var nextCachedAllMetaKeysById = () => {
 
     var allMetaKeysById = () => {
       var metaMetaData = last.data.metaMetaData
@@ -63,8 +61,23 @@ module.exports = (last, props, trigger, realProps) => {
       )
     }
 
+    if(props.event.event == 'data-loaded' && nextData().length == 2) {
+      return allMetaKeysById()
+    } else {
+      return last.data.cachedAllMetaKeysById
+    }
+
+  }
+
+  var nextMetaKeyForms = () => {
+
+    var findMetaKeyForm = (metaKeyId) => {
+      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == props.event.metaKeyId)
+    }
+
+
     var findMetaKey = (metaKeyId) => {
-      return allMetaKeysById()[metaKeyId]
+      return last.data.cachedAllMetaKeysById[metaKeyId]
     }
 
     // var createText = () => {

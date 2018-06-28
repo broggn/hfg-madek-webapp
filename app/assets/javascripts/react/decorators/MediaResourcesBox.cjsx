@@ -102,7 +102,7 @@ module.exports = React.createClass
   stateBatchRoot: () ->
     return {
       reset: false,
-      reduce: (l, e, t) => BoxBatchEdit(l, e, t)
+      reduce: (l, e, t) => BoxBatchEdit(l, e, t, {})
       # (lastState, eventTree, localTrigger) =>
       #   {
       #     data: {
