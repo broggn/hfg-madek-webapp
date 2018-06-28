@@ -140,7 +140,12 @@ module.exports = React.createClass
     return BoxRedux.build(this.testRoot(), null, event, (e) => this.testTrigger(e))
 
   testTransition: (event)  ->
-    next = BoxRedux.build(this.testRoot(), f.cloneDeep(@state.test), event, (e) => this.testTrigger(e))
+    eventTree = {
+      componentId: 0,
+      event: event,
+      children: {}
+    }
+    next = BoxRedux.build(this.testRoot(), f.cloneDeep(@state.test), eventTree, (e) => this.testTrigger(e))
     @setState({test: next})
 
   onBatchButton: (event) ->
@@ -312,7 +317,7 @@ module.exports = React.createClass
 
     this.stateBatchTransition({ event: 'mount' })
 
-    # this.testTransition({ event: 'mount' })
+    this.testTransition({ event: 'mount' })
 
 
   # - custom actions:

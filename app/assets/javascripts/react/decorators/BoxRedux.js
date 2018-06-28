@@ -1,7 +1,7 @@
 import __ from 'lodash'
 
 
-var fireTreeEvent2 = function(eventTree, componentPath, componentId, event, eventArgs) {
+var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
 
 
   var path = componentPath
@@ -22,7 +22,7 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event, even
       if(!current.children[pi[0]].arrYyy[pi[1]]) {
         current.children[pi[0]].arrYyy[pi[1]] = {
           children: {},
-          events: {},
+          event: null,
         }
       }
       current = current.children[pi[0]].arrYyy[pi[1]]
@@ -32,7 +32,7 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event, even
       if(!current.children[pi]) {
         current.children[pi] = {
           children: {},
-          events: {},
+          event: null,
           isArray: false
         }
       }
@@ -40,7 +40,7 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event, even
     }
 
   }
-  current.events[event] = {args: eventArgs}
+  current.event = event
   current.componentId = componentId
   return newEventTree
 }
@@ -239,92 +239,13 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   //   throw 'not possible'
   // }
 
-  var isChildEventRec = function(path, name, leventTree, llast) {
-
-
-    if(!leventTree) {
-      return false
-    }
-
-    if(path.length == 0) {
-      // if(leventTree.events[name]) {
-      //   debugger
-      // }
-
-      if(!leventTree || !leventTree.events) {
-        debugger
-      }
-      if(!leventTree.events[name]) {
-        return false
-      }
-
-      if(leventTree.componentId != llast.id) {
-        console.log('not valid child anymore ' + JSON.stringify(eventTree))
-        return false
-      }
-
-      return true
-    }
-
-    // debugger
-    //
-    // if(path.length == 1) {
-    //   var pi = path[0]
-    //   if(!)
-    //   return (eventTree.events[pi] ? true : false)
-    // }
-
-
-    var pi = __.head(path)
-    var r = __.tail(path)
-
-    if(!Array.isArray(pi)) {
-
-      if(!leventTree.children[pi]) {
-        return false
-      }
-
-      return isChildEventRec(r, name, leventTree.children[pi], llast.child(pi))
-
-    } else {
-
-      if(pi[1] == '*') {
-
-        if(!leventTree.children[pi[0]]) {
-          return false
-        }
-
-        var obj = leventTree.children[pi[0]].arrYyy
-        for(var i in obj) {
-          // debugger
-          if(isChildEventRec(r, name, obj[i], llast.component.components[pi[0]][i])) {
-            return true
-          }
-        }
-
-        return false
-
-
-      } else {
-
-        if(!leventTree.children[pi]) {
-          return false
-        }
-        return isChildEventRec(r, name, leventTree.children[pi], llast.child(pi))
-      }
-
-    }
-
-
-
-  }
 
   var info = {
     trigger: function(event, eventArgs) {
 
       var newEventTree = {
         componentId: 0,
-        events: {},
+        event: null,
         children: {}
       }
 
@@ -338,34 +259,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
     eventPath: function() { return eventPath },
     lastData: function() { return last.component.data },
     lastValue: function(key) { /*TODO support array*/ return last.component.data[key] },
-    isEvent: function(name) {
-      if(!(eventTree && eventTree.events[name])) {
-        return false
-      }
-      // if(eventTree.componentId != last.id) {
-      //   console.log('not valid anymore ' + JSON.stringify(eventTree))
-      //   return false
-      // }
-      return true
-    },
-    isChildEvent: function(path, name) {
-      // debugger
-      return isChildEventRec(path, name, eventTree, last)
-    },
     isInitial: function() { return !last },
-    childEventArgs: function(path, key) {
-      // TODO support paths with array keys
-      var current = eventTree
-      for(var i = 0; i < path.length; i++) {
-        var pi = path[i]
-        current = current.children[pi]
-      }
-      return current.events[key].args
-    },
-    eventArgs: function(key) {
-      // debugger
-      return eventTree.events[key].args
-    }
   }
 
   info.child = function(key) { return last.component.components[key] }
@@ -382,8 +276,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   var prettyEvent = (n) => {
     if(!n) return null
     return {
-      events: n.events,
-      components: __.mapValues(n.component.components, (e) => prettyEvent(e))
+      event: n.event,
+      components: __.mapValues(n.children, (e) => prettyEvent(e))
     }
   }
 
