@@ -15,8 +15,9 @@ class BoxBatchEditButton extends React.Component {
   render() {
 
     var stateBatch = this.props.stateBatch
+    var data = stateBatch.data
 
-    if(stateBatch.metaMetaData.length != 2) {
+    if(data.metaMetaData.length != 2) {
       return (
         <a className={cx('link button dropdown-toggle btn btn-default ui-link active')}>
           Loading...
@@ -24,7 +25,7 @@ class BoxBatchEditButton extends React.Component {
       )
     } else {
       return (
-        <a className={cx('link button dropdown-toggle btn btn-default ui-link', {active: stateBatch.open})} onClick={(e) => this.props.onBatchButton(e)}>
+        <a className={cx('link button dropdown-toggle btn btn-default ui-link', {active: data.open})} onClick={(e) => this.props.onBatchButton(e)}>
           <i className='small icon-pen'></i>
           {' '}
           Batch Edit

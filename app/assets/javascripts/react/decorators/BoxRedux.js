@@ -300,5 +300,18 @@ module.exports = {
 
   machine: function(stateReduction, reset) {
     return machine(stateReduction, reset);
+  },
+
+  prettyState: function(state) {
+
+    var prettyState = (n) => {
+      if(!n) return null
+      return {
+        data: n.component.data,
+        components: __.mapValues(n.component.components, (c) => prettyState(c))
+      }
+    }
+
+    return prettyState(state)
   }
 }

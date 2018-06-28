@@ -14,7 +14,7 @@ class BoxBatchEditForm extends React.Component {
   }
 
   allMetaKeyIds() {
-    var metaMetaData = this.props.stateBatch.metaMetaData
+    var metaMetaData = this.props.stateBatch.data.metaMetaData
 
 
     return l.uniq(l.flatten(l.map(
@@ -25,7 +25,7 @@ class BoxBatchEditForm extends React.Component {
   }
 
   allMetaKeysById() {
-    var metaMetaData = this.props.stateBatch.metaMetaData
+    var metaMetaData = this.props.stateBatch.data.metaMetaData
 
     return l.reduce(
       metaMetaData,
@@ -40,7 +40,7 @@ class BoxBatchEditForm extends React.Component {
   }
 
   metaKeysWithTypes() {
-    var metaMetaData = this.props.stateBatch.metaMetaData
+    var metaMetaData = this.props.stateBatch.data.metaMetaData
 
     return l.map(
       this.allMetaKeyIds(),
@@ -91,7 +91,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderKeyForms() {
     return l.map(
-      this.props.stateBatch.metaKeyForms,
+      this.props.stateBatch.data.metaKeyForms,
       (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm)
     )
   }
@@ -100,7 +100,7 @@ class BoxBatchEditForm extends React.Component {
 
     var stateBatch = this.props.stateBatch
 
-    if(!stateBatch.open) {
+    if(!stateBatch.data.open) {
       return null
     } else {
       return (

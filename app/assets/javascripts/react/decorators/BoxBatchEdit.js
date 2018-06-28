@@ -11,22 +11,26 @@ module.exports = (last, props, trigger) => {
 
   var next = () => {
 
-    if(props.event == 'mount') {
+    if(props.event.event == 'mount') {
       asyncLoadData('MediaEntry')
       asyncLoadData('Collection')
     }
 
     if(!last) {
       return {
-        metaMetaData: [],
-        metaKeyForms: [],
-        open: false
+        data: {
+          metaMetaData: [],
+          metaKeyForms: [],
+          open: false
+        }
       }
     } else {
       return {
-        metaMetaData: nextData(),
-        metaKeyForms: nextMetaKeyForms(),
-        open: nextOpen()
+        data: {
+          metaMetaData: nextData(),
+          metaKeyForms: nextMetaKeyForms(),
+          open: nextOpen()
+        }
       }
     }
   }
@@ -35,11 +39,11 @@ module.exports = (last, props, trigger) => {
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.metaKeyForms, (f) => f.metaKeyId == props.metaKeyId)
+      return l.find(last.data.metaKeyForms, (f) => f.metaKeyId == props.event.metaKeyId)
     }
 
     var allMetaKeysById = () => {
-      var metaMetaData = last.metaMetaData
+      var metaMetaData = last.data.metaMetaData
 
       return l.reduce(
         metaMetaData,
@@ -81,17 +85,17 @@ module.exports = (last, props, trigger) => {
       }
     }
 
-    if(props.event == 'select-key') {
-      if(!findMetaKeyForm(props.metaKeyId)) {
+    if(props.event.event == 'select-key') {
+      if(!findMetaKeyForm(props.event.metaKeyId)) {
         return l.concat(
-          last.metaKeyForms,
-          createMetaKeyForm(props.metaKeyId)
+          last.data.metaKeyForms,
+          createMetaKeyForm(props.event.metaKeyId)
         )
       } else {
-        return last.metaKeyForms
+        return last.data.metaKeyForms
       }
     } else {
-      return last.metaKeyForms
+      return last.data.metaKeyForms
     }
 
 
@@ -100,28 +104,28 @@ module.exports = (last, props, trigger) => {
   var nextOpen = () => {
 
     var ready = () => {
-      return last.metaMetaData.length == 2
+      return last.data.metaMetaData.length == 2
     }
 
-    if(props.event == 'toggle') {
-      if(ready() && !last.open) {
+    if(props.event.event == 'toggle') {
+      if(ready() && !last.data.open) {
         return true
       } else {
         return false
       }
     } else {
-      return last.open
+      return last.data.open
     }
   }
 
   var nextData = () => {
-    if(props.event == 'data-loaded') {
-      return last.metaMetaData.concat({
-        data: props.data,
-        type: props.type
+    if(props.event.event == 'data-loaded') {
+      return last.data.metaMetaData.concat({
+        data: props.event.data,
+        type: props.event.type
       })
     } else {
-      return last.metaMetaData
+      return last.data.metaMetaData
     }
   }
 

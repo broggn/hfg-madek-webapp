@@ -98,55 +98,44 @@ module.exports = React.createClass
   getDefaultProps: ()->
     fallback: true
 
-  stateBatchTrigger: (props) ->
-    this.stateBatchTransition(props)
 
-  stateBatchInitial: (props) ->
-    return BoxBatchEdit(null, props, (ps) => this.stateBatchTrigger(ps))
+  stateBatchRoot: () ->
+    return {
+      reset: false,
+      reduce: (l, e, t) => BoxBatchEdit(l, e, t)
+      # (lastState, eventTree, localTrigger) =>
+      #   {
+      #     data: {
+      #       'data1': 'data1',
+      #       'data2': 'data2'
+      #     },
+      #     components: {
+      #       'component1': this.testComponent1()
+      #     }
+      #   }
+    }
 
-  stateBatchTransition: (props) ->
-    next = BoxBatchEdit(f.cloneDeep(@state.stateBatch), props, (ps) => this.stateBatchTrigger(ps))
+  stateBatchTrigger: (eventTree) ->
+    next = BoxRedux.build(this.stateBatchRoot(), f.cloneDeep(@state.stateBatch), eventTree, (e) => this.stateBatchTrigger(e))
     @setState({stateBatch: next})
 
-  testComponent1: () ->
-    return {
-      reset: false,
-      reduce: (lastState, eventTree, localTrigger) =>
-        {
-          data: {},
-          components: {}
-        }
-    }
 
-  testRoot: () ->
-    return {
-      reset: false,
-      reduce: (lastState, eventTree, localTrigger) =>
-        {
-          data: {
-            'data1': 'data1',
-            'data2': 'data2'
-          },
-          components: {
-            'component1': this.testComponent1()
-          }
-        }
-    }
-
-  testTrigger: (event) ->
-    this.testTransition(event)
-
-  testInitial: (event) ->
-    return BoxRedux.build(this.testRoot(), null, event, (e) => this.testTrigger(e))
-
-  testTransition: (event)  ->
+  stateBatchInitial: (event) ->
     eventTree = {
       componentId: 0,
       event: event,
       children: {}
     }
-    next = BoxRedux.build(this.testRoot(), f.cloneDeep(@state.test), eventTree, (e) => this.testTrigger(e))
-    @setState({test: next})
+    return BoxRedux.build(this.stateBatchRoot(), null, eventTree, (e) => this.stateBatchTrigger(e))
+
+  stateBatchTransition: (event)  ->
+    eventTree = {
+      componentId: 0,
+      event: event,
+      children: {}
+    }
+    next = BoxRedux.build(this.stateBatchRoot(), f.cloneDeep(@state.stateBatch), eventTree, (e) => this.stateBatchTrigger(e))
+    @setState({stateBatch: next})
 
   onBatchButton: (event) ->
     @stateBatchTransition({ event: 'toggle' })
@@ -172,8 +161,7 @@ module.exports = React.createClass
     batchDestroyResourcesWaiting: false
     showSelectionLimit: false
     listJobQueue: [],
-    stateBatch: this.stateBatchInitial({}),
-    test: this.testInitial(null)
+    stateBatch: this.stateBatchInitial({})
   }
 
   doOnUnmount: [] # to be filled with functions to be called on unmount
@@ -316,8 +304,6 @@ module.exports = React.createClass
     )
 
     this.stateBatchTransition({ event: 'mount' })
-
-    this.testTransition({ event: 'mount' })
 
 
   # - custom actions:
@@ -753,7 +739,7 @@ module.exports = React.createClass
         })
 
 
-      batchButton = <BoxBatchEditButton stateBatch={@state.stateBatch} onBatchButton={(e) => @onBatchButton(e)} />
+      batchButton = <BoxBatchEditButton stateBatch={BoxRedux.prettyState(@state.stateBatch)} onBatchButton={(e) => @onBatchButton(e)} />
 
 
       filterToggleLink = BoxSetUrlParams(
@@ -844,7 +830,7 @@ module.exports = React.createClass
       {boxToolBar()}
 
       <BoxBatchEditForm
-        stateBatch={@state.stateBatch}
+        stateBatch={BoxRedux.prettyState(@state.stateBatch)}
         onClickKey={(e, k) => @onClickKey(e, k)}
       />
 
