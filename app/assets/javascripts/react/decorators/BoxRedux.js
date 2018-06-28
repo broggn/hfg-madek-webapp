@@ -145,16 +145,16 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, chi
 
   var cid = null
 
-  if(last && !v.def.reset) {
+  if(last && !v.reset) {
     cid = last.id
   } else {
     cid = nextId
     nextId++
   }
 
-  var cDef = v.def
+  var cDef = v
   var r = {
-    component: buildComponent2(cid, cDef, (last && !v.def.reset ? last : null), rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs),
+    component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs),
     id: cid,
     path: path
   }

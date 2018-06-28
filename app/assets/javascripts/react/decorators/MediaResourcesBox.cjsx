@@ -109,33 +109,29 @@ module.exports = React.createClass
     @setState({stateBatch: next})
 
   testComponent1: () ->
-    return BoxRedux.machine(
-      {
-        step: (a) =>
-          {
-            data: {},
-            components: {}
-          }
-        reset: false
-      }
-    )
+    return {
+      reset: false,
+      step: (a) =>
+        {
+          data: {},
+          components: {}
+        }
+    }
 
   testRoot: () ->
-    return BoxRedux.machine(
-      {
-        step: (a) =>
-          {
-            data: {
-              'data1': 'data1',
-              'data2': 'data2'
-            },
-            components: {
-              'component1': this.testComponent1()
-            }
+    return {
+      reset: false,
+      step: (a) =>
+        {
+          data: {
+            'data1': 'data1',
+            'data2': 'data2'
+          },
+          components: {
+            'component1': this.testComponent1()
           }
-        reset: false
-      }
-    )
+        }
+    }
 
   testTrigger: (event) ->
     this.testTransition(event)
