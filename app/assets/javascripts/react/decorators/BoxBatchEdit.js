@@ -43,29 +43,29 @@ module.exports = (last, props, trigger, realProps) => {
 
   var nextMetaKeyForms = () => {
 
-    // var findMetaKeyForm = (metaKeyId) => {
-    //   return l.find(last.components.metaKeyForms, (f) => f.metaKeyId == props.event.metaKeyId)
-    // }
-    //
-    // var allMetaKeysById = () => {
-    //   var metaMetaData = last.data.metaMetaData
-    //
-    //   return l.reduce(
-    //     metaMetaData,
-    //     (memo, mmd) => {
-    //       return l.merge(
-    //         memo,
-    //         mmd.data.meta_key_by_meta_key_id
-    //       )
-    //     },
-    //     {}
-    //   )
-    // }
-    //
-    // var findMetaKey = (metaKeyId) => {
-    //   return allMetaKeysById()[metaKeyId]
-    // }
-    //
+    var findMetaKeyForm = (metaKeyId) => {
+      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == props.event.metaKeyId)
+    }
+
+    var allMetaKeysById = () => {
+      var metaMetaData = last.data.metaMetaData
+
+      return l.reduce(
+        metaMetaData,
+        (memo, mmd) => {
+          return l.merge(
+            memo,
+            mmd.data.meta_key_by_meta_key_id
+          )
+        },
+        {}
+      )
+    }
+
+    var findMetaKey = (metaKeyId) => {
+      return allMetaKeysById()[metaKeyId]
+    }
+
     // var createText = () => {
     //   return {
     //     value: ''
@@ -103,21 +103,26 @@ module.exports = (last, props, trigger, realProps) => {
     //   return last.data.metaKeyForms
     // }
 
-
-      if(props.event.event == 'select-key') {
-        return l.concat(
-          l.map(
-            last.components.metaKeyForms,
-            (c) => {
-              return {
-                reset: false,
-                reduce: BoxBatchTextInput,
-                props: {
-                  metaKeyId: c.props.metaKeyId
-                }
-              }
+    var mapExisting = () => {
+      return l.map(
+        last.components.metaKeyForms,
+        (c) => {
+          return {
+            reset: false,
+            reduce: BoxBatchTextInput,
+            props: {
+              metaKeyId: c.props.metaKeyId
             }
-          ),
+          }
+        }
+      )
+    }
+
+
+    if(props.event.event == 'select-key') {
+      if(!findMetaKeyForm(props.event.metaKeyId)) {
+        return l.concat(
+          mapExisting(),
           {
             reset: false,
             reduce: BoxBatchTextInput,
@@ -126,27 +131,12 @@ module.exports = (last, props, trigger, realProps) => {
             }
           }
         )
-        //
-        //
-        //
-        // l.concat(
-        //   last.components.metaKeyForms,
-        //   createMetaKeyForm(props.event.metaKeyId)
-        // )
       } else {
-        return l.map(
-          last.components.metaKeyForms,
-          (c) => {
-            return {
-              reset: false,
-              reduce: BoxBatchTextInput,
-              props: {
-                metaKeyId: c.props.metaKeyId
-              }
-            }
-          }
-        )
+        return mapExisting()
       }
+    } else {
+      return mapExisting()
+    }
 
   }
 
