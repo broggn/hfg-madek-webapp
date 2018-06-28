@@ -5,18 +5,9 @@ import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
 
+var metaKeysWithTypes = (metaMetaData) => {
 
-
-class BoxBatchEditForm extends React.Component {
-
-  constructor(props) {
-    super(props)
-  }
-
-  allMetaKeyIds() {
-    var metaMetaData = this.props.stateBatch.data.metaMetaData
-
-
+  var allMetaKeyIds = () => {
     return l.uniq(l.flatten(l.map(
       metaMetaData,
       (mmd) => l.keys(mmd.data.meta_key_by_meta_key_id)
@@ -24,9 +15,7 @@ class BoxBatchEditForm extends React.Component {
 
   }
 
-  allMetaKeysById() {
-    var metaMetaData = this.props.stateBatch.data.metaMetaData
-
+  var allMetaKeysById = () => {
     return l.reduce(
       metaMetaData,
       (memo, mmd) => {
@@ -39,28 +28,44 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
-  metaKeysWithTypes() {
-    var metaMetaData = this.props.stateBatch.data.metaMetaData
-
-    return l.map(
-      this.allMetaKeyIds(),
-      (k) => {
-        return {
-          metaKeyId: k,
-          types: l.map(
-            l.filter(
-              metaMetaData,
-              (mmd) => {
-                return l.has(mmd.data.meta_key_by_meta_key_id, k)
-              }
-            ),
-            (m) => m.type
+  return l.map(
+    allMetaKeyIds(),
+    (k) => {
+      return {
+        metaKeyId: k,
+        types: l.map(
+          l.filter(
+            metaMetaData,
+            (mmd) => {
+              return l.has(mmd.data.meta_key_by_meta_key_id, k)
+            }
           ),
-          metaKey: this.allMetaKeysById()[k]
-        }
+          (m) => m.type
+        ),
+        metaKey: allMetaKeysById()[k]
       }
-    )
+    }
+  )
+}
+
+class BoxBatchEditForm extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      cachedMetaKeysWithTypes: metaKeysWithTypes(props.stateBatch.data.metaMetaData)
+    }
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(!l.isEqual(this.props.stateBatch.data.metaMetaData, prevProps.stateBatch.data.metaMetaData)) {
+      this.setState({
+        cachedMetaKeysWithTypes: metaKeysWithTypes(this.props.stateBatch.data.metaMetaData)
+      })
+    }
+  }
+
 
   renderKey(k) {
     return (
@@ -76,7 +81,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderKeys() {
     return l.map(
-      this.metaKeysWithTypes(),
+      this.state.cachedMetaKeysWithTypes,
       (k) => this.renderKey(k)
     )
   }
