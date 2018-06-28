@@ -62,9 +62,7 @@ var nextId = 0
 
 var machine = function(def, reset) {
   return {
-    type: 'state',
-    def: def,
-    reset: reset
+    def: def
   }
 }
 
@@ -147,7 +145,7 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, chi
 
   var cid = null
 
-  if(last && !v.reset) {
+  if(last && !v.def.reset) {
     cid = last.id
   } else {
     cid = nextId
@@ -156,7 +154,7 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path, rootEvent, chi
 
   var cDef = v.def
   var r = {
-    component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs),
+    component: buildComponent2(cid, cDef, (last && !v.def.reset ? last : null), rootTrigger, eventTree, path, rootEvent, childEventPath, eventArgs),
     id: cid,
     path: path
   }
