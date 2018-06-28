@@ -54,15 +54,16 @@ module.exports = (last, props, trigger, realProps) => {
     var findMetaKey = (metaKeyId) => {
 
       if(!cachedAllMetaKeysById) {
-        cachedAllMetaKeysById = l.reduce(
-          last.data.metaMetaData,
-          (memo, mmd) => {
-            return l.merge(
-              memo,
-              mmd.data.meta_key_by_meta_key_id
+        cachedAllMetaKeysById = l.fromPairs(
+          l.flatten(
+            l.map(
+              last.data.metaMetaData,
+              (mmd) => l.map(
+                mmd.data.meta_key_by_meta_key_id,
+                (m, k) => [k, m]
+              )
             )
-          },
-          {}
+          )
         )
       }
 
