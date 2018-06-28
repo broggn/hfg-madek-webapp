@@ -16,11 +16,16 @@ class BoxBatchDatumText extends React.Component {
     this.props.metaKeyForm.trigger({event: 'new-text', text: event.target.value})
   }
 
+  onClose(event) {
+    this.props.metaKeyForm.trigger({event: 'close'})
+  }
+
   render() {
     var metaKeyForm = this.props.metaKeyForm
 
     return (
       <div>
+        <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
         <input value={metaKeyForm.data.text} onChange={(e) => this.onChange(e)}/>
       </div>

@@ -266,15 +266,20 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   info.child = function(key) { return last.component.components[key] }
   info.lastLength = function(key) { return last.component.components[key].length }
 
-  var prettyState = (n) => {
+  var prettyState = (n, eventTree) => {
     if(!n) return null
     if(Array.isArray(n)) {
-      return __.map(n, (ni) => prettyState(ni))
+      return __.map(n, (ni, i) => {
+        return prettyState(ni, (eventTree ? eventTree.arrYyy[i] : null))
+      })
     } else {
       return {
         props: n.dangerousProps,
         data: n.component.data,
-        components: __.mapValues(n.component.components, (c) => prettyState(c))
+        components: __.mapValues(n.component.components, (c, k) => {
+          return prettyState(c, (eventTree ? eventTree.children[k] : null))
+        }),
+        event: (eventTree ? eventTree.event : {})
       }
     }
   }
@@ -292,7 +297,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   }
 
   var next = def.reduce(
-    prettyState(last),
+    prettyState(last, eventTree),
     prettyEvent(eventTree),
     (e) => info.trigger(e),
     def.props

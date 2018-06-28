@@ -103,9 +103,18 @@ module.exports = (last, props, trigger, realProps) => {
     //   return last.data.metaKeyForms
     // }
 
+    var withoutClosed = () => {
+      return l.filter(
+        last.components.metaKeyForms,
+        (f) => {
+          return f.event.event != 'close'
+        }
+      )
+    }
+
     var mapExisting = () => {
       return l.map(
-        last.components.metaKeyForms,
+        withoutClosed(),
         (c) => {
           return {
             reset: false,
