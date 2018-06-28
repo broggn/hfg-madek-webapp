@@ -241,7 +241,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
 
   var info = {
-    trigger: function(event, eventArgs) {
+    trigger: function(event) {
 
       var newEventTree = {
         componentId: 0,
@@ -249,7 +249,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
         children: {}
       }
 
-    var newEventTree = fireTreeEvent2(newEventTree, path, id, event, eventArgs)
+    var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
 
 
 
@@ -283,7 +283,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
   var next = def.reduce(
     prettyState(last),
-    prettyEvent(eventTree)
+    prettyEvent(eventTree),
+    (e) => info.trigger(e)
   )
 
   return buildChildren2(next, last, rootTrigger, eventTree, path)

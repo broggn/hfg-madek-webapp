@@ -111,7 +111,7 @@ module.exports = React.createClass
   testComponent1: () ->
     return {
       reset: false,
-      reduce: (lastState, eventTree) =>
+      reduce: (lastState, eventTree, localTrigger) =>
         {
           data: {},
           components: {}
@@ -121,7 +121,7 @@ module.exports = React.createClass
   testRoot: () ->
     return {
       reset: false,
-      reduce: (lastState, eventTree) =>
+      reduce: (lastState, eventTree, localTrigger) =>
         {
           data: {
             'data1': 'data1',
