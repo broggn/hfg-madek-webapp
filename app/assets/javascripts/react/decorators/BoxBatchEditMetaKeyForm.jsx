@@ -40,7 +40,9 @@ class BoxBatchEditMetaKeyForm extends React.Component {
   // }
 
   render() {
-    return <div>todo</div>
+    return (
+      <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} />
+    )
   }
 }
 
