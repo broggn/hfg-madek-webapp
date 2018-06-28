@@ -34,11 +34,18 @@ module.exports = (last, props, trigger) => {
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.metaKeyForms, (f) => f == props.metaKeyId)
+      return l.find(last.metaKeyForms, (f) => f.metaKeyId == props.metaKeyId)
+    }
+
+    var findMetaKey = (metaKeyId) => {
+      var data = l.find(last.metaKeyData, (d) => d.metaKeyId == metaKeyId)
+      return (data ? data.metaKey : null)
     }
 
     var createMetaKeyForm = (metaKeyId) => {
-      return metaKeyId
+      return {
+        metaKeyId: metaKeyId
+      }
     }
 
     if(props.event == 'select-key') {

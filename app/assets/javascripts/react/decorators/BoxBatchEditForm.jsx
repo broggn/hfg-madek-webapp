@@ -81,10 +81,10 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
-  renderMetaKeyForm(metaKeyId) {
+  renderMetaKeyForm(metaKeyForm) {
     return (
-      <div key={metaKeyId}>
-        <BoxBatchEditMetaKeyForm metaKeyId={metaKeyId} />
+      <div key={metaKeyForm.metaKeyId}>
+        <BoxBatchEditMetaKeyForm metaKeyId={metaKeyForm.metaKeyId} />
       </div>
     )
   }
@@ -92,7 +92,7 @@ class BoxBatchEditForm extends React.Component {
   renderKeyForms() {
     return l.map(
       this.props.stateBatch.metaKeyForms,
-      (metaKeyId) => this.renderMetaKeyForm(metaKeyId)
+      (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm)
     )
   }
 
