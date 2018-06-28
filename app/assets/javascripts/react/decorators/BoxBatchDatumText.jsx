@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
-import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
 
 
 
@@ -13,11 +12,18 @@ class BoxBatchDatumText extends React.Component {
     super(props)
   }
 
+  onChange(event) {
+
+  }
+
   render() {
-    var metaKey = this.props.metaKeyForm.metaKey
+    var metaKeyForm = this.props.metaKeyForm
+    var metaKey = metaKeyForm.metaKey
+    var textForm = metaKeyForm.form
     return (
       <div>
         {metaKey.uuid}
+        <input value={textForm.value} onChange={(e) => this.onChange(e)}/>
       </div>
     )
   }

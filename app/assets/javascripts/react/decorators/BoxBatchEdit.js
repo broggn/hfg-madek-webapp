@@ -57,10 +57,27 @@ module.exports = (last, props, trigger) => {
       return allMetaKeysById()[metaKeyId]
     }
 
+    var createText = () => {
+      return {
+        value: ''
+      }
+    }
+
+    var createForm = (metaKey) => {
+      var formCreators = {
+        'MetaDatum::Text': () => createText()
+      }
+      var creator = formCreators[metaKey.value_type]
+      if(!creator) throw 'not implemented for ' + metaKey.vlaue_type
+      return creator()
+    }
+
     var createMetaKeyForm = (metaKeyId) => {
+      var metaKey = findMetaKey(metaKeyId)
       return {
         metaKeyId: metaKeyId,
-        metaKey: findMetaKey(metaKeyId)
+        metaKey: metaKey,
+        form: createForm(metaKey)
       }
     }
 

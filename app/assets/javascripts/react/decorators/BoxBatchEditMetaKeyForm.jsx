@@ -22,7 +22,7 @@ class BoxBatchEditMetaKeyForm extends React.Component {
       'MetaDatum::Text': () => this.renderText()
     }
   }
-  
+
   renderForm() {
     var type = this.props.metaKeyForm.metaKey.value_type
     var renderer = this.renderers()[type]
