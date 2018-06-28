@@ -373,7 +373,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, root
   info.child = function(key) { return last.component.components[key] }
   info.lastLength = function(key) { return last.component.components[key].length }
 
-  var next = def.step(info)
+  var next = def.reduce(info)
 
   return buildChildren2(next, last, rootTrigger, eventTree, path, rootEvent, eventPath, eventArgs)
 

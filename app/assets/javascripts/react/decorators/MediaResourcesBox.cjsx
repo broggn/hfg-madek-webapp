@@ -111,7 +111,7 @@ module.exports = React.createClass
   testComponent1: () ->
     return {
       reset: false,
-      step: (a) =>
+      reduce: (a) =>
         {
           data: {},
           components: {}
@@ -121,7 +121,7 @@ module.exports = React.createClass
   testRoot: () ->
     return {
       reset: false,
-      step: (a) =>
+      reduce: (a) =>
         {
           data: {
             'data1': 'data1',
