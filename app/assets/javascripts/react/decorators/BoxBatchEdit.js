@@ -31,20 +31,36 @@ module.exports = (last, props, trigger) => {
     }
   }
 
+
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
       return l.find(last.metaKeyForms, (f) => f.metaKeyId == props.metaKeyId)
     }
 
+    var allMetaKeysById = () => {
+      var metaMetaData = last.metaMetaData
+
+      return l.reduce(
+        metaMetaData,
+        (memo, mmd) => {
+          return l.merge(
+            memo,
+            mmd.data.meta_key_by_meta_key_id
+          )
+        },
+        {}
+      )
+    }
+
     var findMetaKey = (metaKeyId) => {
-      var data = l.find(last.metaKeyData, (d) => d.metaKeyId == metaKeyId)
-      return (data ? data.metaKey : null)
+      return allMetaKeysById()[metaKeyId]
     }
 
     var createMetaKeyForm = (metaKeyId) => {
       return {
-        metaKeyId: metaKeyId
+        metaKeyId: metaKeyId,
+        metaKey: findMetaKey(metaKeyId)
       }
     }
 
