@@ -108,13 +108,26 @@ module.exports = React.createClass
     next = BoxBatchEdit(f.cloneDeep(@state.stateBatch), props, (ps) => this.stateBatchTrigger(ps))
     @setState({stateBatch: next})
 
-  testRoot: () ->
+  testComponent1: () ->
     return BoxRedux.machine(
       {
         step: (a) =>
           {
             data: {},
             components: {}
+          }
+      }
+    )
+
+  testRoot: () ->
+    return BoxRedux.machine(
+      {
+        step: (a) =>
+          {
+            data: {},
+            components: {
+              component1: this.testComponent1()
+            }
           }
       }
     )
