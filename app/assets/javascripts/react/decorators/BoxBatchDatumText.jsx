@@ -20,17 +20,11 @@ class BoxBatchDatumText extends React.Component {
     var metaKeyForm = this.props.metaKeyForm
 
     return (
-      <input value={metaKeyForm.data.text} onChange={(e) => this.onChange(e)}/>
+      <div>
+        {metaKeyForm.props.metaKeyId}
+        <input value={metaKeyForm.data.text} onChange={(e) => this.onChange(e)}/>
+      </div>
     )
-
-    // var metaKey = metaKeyForm.metaKey
-    // var textForm = metaKeyForm.form
-    // return (
-    //   <div>
-    //     {metaKey.uuid}
-    //     <input value={textForm.value} onChange={(e) => this.onChange(e)}/>
-    //   </div>
-    // )
   }
 }
 
