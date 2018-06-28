@@ -28,7 +28,7 @@ class BoxBatchDatumText extends React.Component {
       <div>
         <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
-        <input value={metaKeyForm.data.text} onChange={(e) => this.debouncedOnChange(event.target.value)}/>
+        <input value={metaKeyForm.data.text} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
       </div>
     )
   }
