@@ -11,6 +11,8 @@ import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 module.exports = (last, props, trigger, realProps) => {
 
+  var cachedAllMetaKeysById = null
+
   var next = () => {
 
     if(props.event.event == 'mount') {
@@ -22,7 +24,6 @@ module.exports = (last, props, trigger, realProps) => {
       return {
         data: {
           metaMetaData: [],
-          cachedAllMetaKeysById: {},
           open: false
         },
         components: {
@@ -33,7 +34,6 @@ module.exports = (last, props, trigger, realProps) => {
       return {
         data: {
           metaMetaData: nextData(),
-          cachedAllMetaKeysById: nextCachedAllMetaKeysById(),
           open: nextOpen()
         },
         components: {
@@ -44,31 +44,6 @@ module.exports = (last, props, trigger, realProps) => {
   }
 
 
-  var nextCachedAllMetaKeysById = () => {
-
-    var allMetaKeysById = () => {
-      var metaMetaData = last.data.metaMetaData
-
-      return l.reduce(
-        metaMetaData,
-        (memo, mmd) => {
-          return l.merge(
-            memo,
-            mmd.data.meta_key_by_meta_key_id
-          )
-        },
-        {}
-      )
-    }
-
-    if(props.event.event == 'data-loaded' && nextData().length == 2) {
-      return allMetaKeysById()
-    } else {
-      return last.data.cachedAllMetaKeysById
-    }
-
-  }
-
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
@@ -77,7 +52,22 @@ module.exports = (last, props, trigger, realProps) => {
 
 
     var findMetaKey = (metaKeyId) => {
-      return last.data.cachedAllMetaKeysById[metaKeyId]
+
+      if(!cachedAllMetaKeysById) {
+        cachedAllMetaKeysById = l.reduce(
+          last.data.metaMetaData,
+          (memo, mmd) => {
+            return l.merge(
+              memo,
+              mmd.data.meta_key_by_meta_key_id
+            )
+          },
+          {}
+        )
+      }
+
+
+      return cachedAllMetaKeysById[metaKeyId]
     }
 
     // var createText = () => {
