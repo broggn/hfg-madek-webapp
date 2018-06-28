@@ -739,7 +739,10 @@ module.exports = React.createClass
         })
 
 
-      batchButton = <BoxBatchEditButton stateBatch={BoxRedux.prettyState(@state.stateBatch, @stateBatchTrigger)} onBatchButton={(e) => @onBatchButton(e)} />
+      batchButton = <BoxBatchEditButton
+        stateBatch={BoxRedux.prettyState(@state.stateBatch, @stateBatchTrigger)}
+        onBatchButton={(e) => @onBatchButton(e)}
+      />
 
 
       filterToggleLink = BoxSetUrlParams(
