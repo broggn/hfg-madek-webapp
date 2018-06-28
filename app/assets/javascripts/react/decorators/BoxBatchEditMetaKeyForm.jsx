@@ -11,32 +11,36 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     super(props)
   }
 
-  renderText() {
-    return (
-      <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} />
-    )
-  }
-
-  renderers() {
-    return {
-      'MetaDatum::Text': () => this.renderText()
-    }
-  }
-
-  renderForm() {
-    var type = this.props.metaKeyForm.metaKey.value_type
-    var renderer = this.renderers()[type]
-    if(!renderer) throw 'not implemented for ' + type
-    return renderer()
-  }
+  // renderText() {
+  //   return (
+  //     <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} />
+  //   )
+  // }
+  //
+  // renderers() {
+  //   return {
+  //     'MetaDatum::Text': () => this.renderText()
+  //   }
+  // }
+  //
+  // renderForm() {
+  //   var type = this.props.metaKeyForm.metaKey.value_type
+  //   var renderer = this.renderers()[type]
+  //   if(!renderer) throw 'not implemented for ' + type
+  //   return renderer()
+  // }
+  //
+  // render() {
+  //
+  //   return (
+  //     <div>
+  //       {this.renderForm()}
+  //     </div>
+  //   )
+  // }
 
   render() {
-
-    return (
-      <div>
-        {this.renderForm()}
-      </div>
-    )
+    return <div>todo</div>
   }
 }
 

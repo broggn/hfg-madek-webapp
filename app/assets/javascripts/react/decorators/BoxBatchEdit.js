@@ -5,6 +5,7 @@ import async from 'async'
 import url from 'url'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
+import BoxBatchTextInput from './BoxBatchTextInput.js'
 
 
 module.exports = (last, props, trigger) => {
@@ -110,16 +111,14 @@ module.exports = (last, props, trigger) => {
             (c) => {
               return {
                 reset: false,
-                reduce: (last, props, trigger) => {
-                  return {
-                    data: {},
-                    components: {}
-                  }
-                }
+                reduce: BoxBatchTextInput
               }
             }
           ),
-          []
+          {
+            reset: false,
+            reduce: BoxBatchTextInput
+          }
         )
         //
         //
@@ -129,7 +128,15 @@ module.exports = (last, props, trigger) => {
         //   createMetaKeyForm(props.event.metaKeyId)
         // )
       } else {
-        return last.data.metaKeyForms
+        return l.map(
+          last.data.metaKeyForms,
+          (c) => {
+            return {
+              reset: false,
+              reduce: BoxBatchTextInput
+            }
+          }
+        )
       }
 
   }
