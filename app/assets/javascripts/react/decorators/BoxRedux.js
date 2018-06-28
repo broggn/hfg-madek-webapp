@@ -156,7 +156,8 @@ var buildChild2 = function(v, last, rootTrigger, eventTree, path) {
   var r = {
     component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path),
     id: cid,
-    path: path
+    path: path,
+    dangerousProps: cDef.props
   }
   r.child = function(ck) { return r.component.components[ck] }
   r.data = function() { return r.component.data }
@@ -271,6 +272,7 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
       return __.map(n, (ni) => prettyState(ni))
     } else {
       return {
+        props: n.dangerousProps,
         data: n.component.data,
         components: __.mapValues(n.component.components, (c) => prettyState(c))
       }
@@ -292,7 +294,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   var next = def.reduce(
     prettyState(last),
     prettyEvent(eventTree),
-    (e) => info.trigger(e)
+    (e) => info.trigger(e),
+    def.props
   )
 
   return buildChildren2(next, last, rootTrigger, eventTree, path)
@@ -318,6 +321,7 @@ module.exports = {
         return __.map(n, (ni) => prettyState(ni))
       } else {
         return {
+          props: n.dangerousProps,
           data: n.component.data,
           components: __.mapValues(n.component.components, (c) => prettyState(c))
         }

@@ -8,7 +8,7 @@ import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchTextInput from './BoxBatchTextInput.js'
 
 
-module.exports = (last, props, trigger) => {
+module.exports = (last, props, trigger, realProps) => {
 
   var next = () => {
 
@@ -111,13 +111,19 @@ module.exports = (last, props, trigger) => {
             (c) => {
               return {
                 reset: false,
-                reduce: BoxBatchTextInput
+                reduce: BoxBatchTextInput,
+                props: {
+                  metaKeyId: c.props.metaKeyId
+                }
               }
             }
           ),
           {
             reset: false,
-            reduce: BoxBatchTextInput
+            reduce: BoxBatchTextInput,
+            props: {
+              metaKeyId: props.event.metaKeyId
+            }
           }
         )
         //
@@ -129,11 +135,14 @@ module.exports = (last, props, trigger) => {
         // )
       } else {
         return l.map(
-          last.data.metaKeyForms,
+          last.components.metaKeyForms,
           (c) => {
             return {
               reset: false,
-              reduce: BoxBatchTextInput
+              reduce: BoxBatchTextInput,
+              props: {
+                metaKeyId: c.props.metaKeyId
+              }
             }
           }
         )
