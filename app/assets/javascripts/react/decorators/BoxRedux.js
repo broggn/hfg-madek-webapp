@@ -180,7 +180,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
           var childPath = __.concat(path, [[k, i]])
           return reduceComponent(
             vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath,
-            merged.components[k][i]
+            merged.components[k] && i < merged.components[k].length ? merged.components[k][i] : null
           )
         }
       )

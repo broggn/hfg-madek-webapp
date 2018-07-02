@@ -10,41 +10,41 @@ import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
 module.exports = (component, trigger, merged) => {
-  
-  debugger
 
-  var last = component.last
-  var event = component.event
-  var props = component.props
+  if(!merged) {
+    return {
+      data: {
+        metaMetaData: [],
+        open: false
+      },
+      components: {
+        metaKeyForms: []
+      }
+    }
+  }
+
+
+  // var last = component.last
+  var event = merged.event
+  // var props = component.props
 
   var cachedAllMetaKeysById = null
 
   var next = () => {
 
-    if(event.event.event == 'mount') {
+    if(event.event == 'mount') {
       asyncLoadData('MediaEntry')
       asyncLoadData('Collection')
     }
 
-    if(!last) {
-      return {
-        data: {
-          metaMetaData: [],
-          open: false
-        },
-        components: {
-          metaKeyForms: []
-        }
-      }
-    } else {
-      return {
-        data: {
-          metaMetaData: nextData(),
-          open: nextOpen()
-        },
-        components: {
-          metaKeyForms: nextMetaKeyForms()
-        }
+
+    return {
+      data: {
+        metaMetaData: nextData(),
+        open: nextOpen()
+      },
+      components: {
+        metaKeyForms: nextMetaKeyForms()
       }
     }
   }
@@ -53,7 +53,7 @@ module.exports = (component, trigger, merged) => {
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == event.event.metaKeyId)
+      return l.find(merged.components.metaKeyForms, (f) => f.props.metaKeyId == event.metaKeyId)
     }
 
 
@@ -63,7 +63,7 @@ module.exports = (component, trigger, merged) => {
         cachedAllMetaKeysById = l.fromPairs(
           l.flatten(
             l.map(
-              last.data.metaMetaData,
+              merged.data.metaMetaData,
               (mmd) => l.map(
                 mmd.data.meta_key_by_meta_key_id,
                 (m, k) => [k, m]
@@ -116,7 +116,7 @@ module.exports = (component, trigger, merged) => {
 
     var withoutClosed = () => {
       return l.filter(
-        last.components.metaKeyForms,
+        merged.components.metaKeyForms,
         (f) => {
           return f.event.event != 'close'
         }
@@ -124,6 +124,7 @@ module.exports = (component, trigger, merged) => {
     }
 
     var mapExisting = () => {
+      debugger
       return l.map(
         withoutClosed(),
         (c) => {
@@ -150,16 +151,16 @@ module.exports = (component, trigger, merged) => {
     }
 
 
-    if(event.event.event == 'select-key') {
-      if(!findMetaKeyForm(event.event.metaKeyId)) {
+    if(event.event == 'select-key') {
+      if(!findMetaKeyForm(event.metaKeyId)) {
         return l.concat(
           mapExisting(),
           {
             reset: false,
-            reduce: decideReduce(event.event.metaKeyId),
+            reduce: decideReduce(event.metaKeyId),
             props: {
-              metaKeyId: event.event.metaKeyId,
-              metaKey: findMetaKey(event.event.metaKeyId)
+              metaKeyId: event.metaKeyId,
+              metaKey: findMetaKey(event.metaKeyId)
             }
           }
         )
@@ -175,28 +176,28 @@ module.exports = (component, trigger, merged) => {
   var nextOpen = () => {
 
     var ready = () => {
-      return last.data.metaMetaData.length == 2
+      return merged.data.metaMetaData.length == 2
     }
 
-    if(event.event.event == 'toggle') {
-      if(ready() && !last.data.open) {
+    if(event.event == 'toggle') {
+      if(ready() && !merged.data.open) {
         return true
       } else {
         return false
       }
     } else {
-      return last.data.open
+      return merged.data.open
     }
   }
 
   var nextData = () => {
-    if(event.event.event == 'data-loaded') {
-      return last.data.metaMetaData.concat({
-        data: event.event.data,
-        type: event.event.type
+    if(event.event == 'data-loaded') {
+      return merged.data.metaMetaData.concat({
+        data: event.data,
+        type: event.type
       })
     } else {
-      return last.data.metaMetaData
+      return merged.data.metaMetaData
     }
   }
 
