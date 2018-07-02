@@ -9,7 +9,7 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = (component, trigger) => {
+module.exports = (component, trigger, merged) => {
 
   var last = component.last
   var event = component.event

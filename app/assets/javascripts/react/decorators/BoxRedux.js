@@ -78,7 +78,7 @@ var build = function(definition, last, rootTrigger, rootEventTree, merged) {
   }
 
   // console.log(JSON.stringify(rootEventTree, null, '  '))
-  return reduceComponent(definition, last, rootTrigger, rootEventTree, [])
+  return reduceComponent(definition, last, rootTrigger, rootEventTree, [], merged)
 };
 
 
@@ -135,7 +135,7 @@ var verifyEventId2 = function(llast, leventTree) {
 }
 
 
-var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
+var reduceComponent = function(definition, last, rootTrigger, eventTree, path, merged) {
 
   var cid = null
 
@@ -146,7 +146,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
     nextId++
   }
 
-  var reduceResult = buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path)
+  var reduceResult = buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path, merged)
 
   var r = {
     component: reduceResult,
@@ -158,7 +158,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
 }
 
 
-var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
+var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) {
 
   if(!next.components) {
     return null
@@ -178,20 +178,26 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
         function(vi, i) {
           var lastChild = last && last.component.components[k] && i < last.component.components[k].length ? last.component.components[k][i] : null
           var childPath = __.concat(path, [[k, i]])
-          return reduceComponent(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
+          return reduceComponent(
+            vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath,
+            merged.components[k][i]
+          )
         }
       )
     }
     else {
       var lastChild = last ? last.component.components[k] : null
       var childPath = __.concat(path, k)
-      return reduceComponent(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
+      return reduceComponent(
+        v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath,
+        merged.components[k]
+      )
     }
   }))
 }
 
 
-var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
+var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merged) {
 
   var info = {
     trigger: function(event) {
@@ -246,11 +252,12 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
       props: def.props
     },
     (e) => info.trigger(e),
+    merged
   )
 
   return {
     data: next.data,
-    components:  buildChildren2(next, last, rootTrigger, eventTree, path)
+    components:  buildChildren2(next, last, rootTrigger, eventTree, path, merged)
   }
 
 };

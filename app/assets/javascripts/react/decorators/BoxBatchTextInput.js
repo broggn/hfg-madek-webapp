@@ -7,7 +7,7 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 
-module.exports = (component, trigger) => {
+module.exports = (component, trigger, merged) => {
 
   var next = () => {
 
