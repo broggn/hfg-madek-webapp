@@ -70,7 +70,7 @@ var compactObject = function(o) {
   )
 }
 
-var build = function(v, last, rootTrigger, rootEventTree) {
+var build = function(definition, last, rootTrigger, rootEventTree) {
 
   if(last && !verifyEventId2(last, rootEventTree)) {
     console.log('not valid tree anymore ' + JSON.stringify(rootEventTree))
@@ -78,7 +78,7 @@ var build = function(v, last, rootTrigger, rootEventTree) {
   }
 
   // console.log(JSON.stringify(rootEventTree, null, '  '))
-  return buildChild2(v, last, rootTrigger, rootEventTree, [])
+  return reduceComponent(definition, last, rootTrigger, rootEventTree, [])
 };
 
 
@@ -135,7 +135,7 @@ var verifyEventId2 = function(llast, leventTree) {
 }
 
 
-var buildChild2 = function(v, last, rootTrigger, eventTree, path) {
+var reduceComponent = function(v, last, rootTrigger, eventTree, path) {
 
   var cid = null
 
@@ -189,7 +189,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
           var lastChild = last && last.component.components[k] && i < last.component.components[k].length ? last.component.components[k][i] : null
           var childPath = __.concat(path, [[k, i]])
           // debugger
-          return buildChild2(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
+          return reduceComponent(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
 
         }
       )
@@ -199,7 +199,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
     // if(v.type == 'state') {
       var lastChild = last ? last.component.components[k] : null
       var childPath = __.concat(path, k)
-      return buildChild2(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
+      return reduceComponent(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
     // } else {
     //   var r = {
     //     component: v
