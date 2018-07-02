@@ -135,23 +135,22 @@ var verifyEventId2 = function(llast, leventTree) {
 }
 
 
-var reduceComponent = function(v, last, rootTrigger, eventTree, path) {
+var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
 
   var cid = null
 
-  if(last && !v.reset) {
+  if(last && !definition.reset) {
     cid = last.id
   } else {
     cid = nextId
     nextId++
   }
 
-  var cDef = v
   var r = {
-    component: buildComponent2(cid, cDef, (last && !v.reset ? last : null), rootTrigger, eventTree, path),
+    component: buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path),
     id: cid,
     path: path,
-    dangerousProps: cDef.props
+    dangerousProps: definition.props
   }
   return r
 }
