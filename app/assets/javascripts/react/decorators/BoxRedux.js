@@ -146,8 +146,10 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
     nextId++
   }
 
+  var reduceResult = buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path)
+
   var r = {
-    component: buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path),
+    component: reduceResult,
     id: cid,
     path: path,
     dangerousProps: definition.props
