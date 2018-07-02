@@ -9,13 +9,13 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = (last, props, trigger, realProps) => {
+module.exports = (last, event, trigger, realProps) => {
 
   var cachedAllMetaKeysById = null
 
   var next = () => {
 
-    if(props.event.event == 'mount') {
+    if(event.event.event == 'mount') {
       asyncLoadData('MediaEntry')
       asyncLoadData('Collection')
     }
@@ -47,7 +47,7 @@ module.exports = (last, props, trigger, realProps) => {
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
-      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == props.event.metaKeyId)
+      return l.find(last.components.metaKeyForms, (f) => f.props.metaKeyId == event.event.metaKeyId)
     }
 
 
@@ -144,16 +144,16 @@ module.exports = (last, props, trigger, realProps) => {
     }
 
 
-    if(props.event.event == 'select-key') {
-      if(!findMetaKeyForm(props.event.metaKeyId)) {
+    if(event.event.event == 'select-key') {
+      if(!findMetaKeyForm(event.event.metaKeyId)) {
         return l.concat(
           mapExisting(),
           {
             reset: false,
-            reduce: decideReduce(props.event.metaKeyId),
+            reduce: decideReduce(event.event.metaKeyId),
             props: {
-              metaKeyId: props.event.metaKeyId,
-              metaKey: findMetaKey(props.event.metaKeyId)
+              metaKeyId: event.event.metaKeyId,
+              metaKey: findMetaKey(event.event.metaKeyId)
             }
           }
         )
@@ -172,7 +172,7 @@ module.exports = (last, props, trigger, realProps) => {
       return last.data.metaMetaData.length == 2
     }
 
-    if(props.event.event == 'toggle') {
+    if(event.event.event == 'toggle') {
       if(ready() && !last.data.open) {
         return true
       } else {
@@ -184,10 +184,10 @@ module.exports = (last, props, trigger, realProps) => {
   }
 
   var nextData = () => {
-    if(props.event.event == 'data-loaded') {
+    if(event.event.event == 'data-loaded') {
       return last.data.metaMetaData.concat({
-        data: props.event.data,
-        type: props.event.type
+        data: event.event.data,
+        type: event.event.type
       })
     } else {
       return last.data.metaMetaData
