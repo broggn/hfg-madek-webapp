@@ -70,7 +70,7 @@ var compactObject = function(o) {
   )
 }
 
-var build = function(definition, last, rootTrigger, rootEventTree) {
+var build = function(definition, last, rootTrigger, rootEventTree, merged) {
 
   if(last && !verifyEventId2(last, rootEventTree)) {
     console.log('not valid tree anymore ' + JSON.stringify(rootEventTree))
@@ -256,10 +256,70 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 };
 
 
+var mergeStateAndEvents = function(lastState, eventTree) {
+
+  if(!lastState) {
+    return null
+  } else {
+    return {
+      data: lastState.component.data,
+      components: compactObject(
+        __.mapValues(
+          lastState.component.components,
+
+
+          function(v, k) {
+
+            if(!v) {
+              return null
+            }
+
+            if(Array.isArray(v)) {
+
+              return __.map(
+                v,
+                function(vi, i) {
+                  var lastChild = lastState && lastState.component.components[k] && i < lastState.component.components[k].length ? lastState.component.components[k][i] : null
+                  return mergeStateAndEvents(
+                    lastChild,
+                    (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null)
+                  )
+                  // var childPath = __.concat(path, [[k, i]])
+                  // return reduceComponent(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
+                }
+              )
+            }
+            else {
+              return mergeStateAndEvents(
+                lastState.component.components[k],
+                (eventTree ? eventTree.children[k] : null)
+              )
+              // // var lastChild = lastState ? lastState.component.components[k] : null
+              // var childPath = __.concat(path, k)
+              // return reduceComponent(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
+            }
+          }
+
+
+
+
+        )
+      ),
+      event: (eventTree ? eventTree.event : {})
+    }
+  }
+
+  return null
+}
+
+
 module.exports = {
 
   build: function(stateReduction, lastState, eventTree, trigger) {
-    return build(stateReduction, lastState, trigger, eventTree);
+
+    var merged = mergeStateAndEvents(lastState, eventTree)
+
+    return build(stateReduction, lastState, trigger, eventTree, merged);
   },
 
   prettyState: function(state, rootTrigger) {
