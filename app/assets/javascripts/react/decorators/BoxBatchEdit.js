@@ -9,10 +9,11 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = (trigger, merged) => {
+module.exports = (merged) => {
 
   // var last = component.last
   var event = merged.event
+  var trigger = merged.trigger
   // var props = component.props
 
   var cachedAllMetaKeysById = null

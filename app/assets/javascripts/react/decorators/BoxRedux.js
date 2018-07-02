@@ -221,9 +221,9 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
 
 
   merged.initial = !last
+  merged.trigger = (e) => info.trigger(e)
 
   var next = def.reduce(
-    (e) => info.trigger(e),
     merged
   )
 
