@@ -158,16 +158,12 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path) {
 
 var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
 
-  if(!next) {
+  if(!next.components) {
     return null
   }
 
-  var newMachines = null
 
-  if(next.components) {
-
-
-  var newMachines = compactObject(__.mapValues(next.components, function(v, k) {
+  return compactObject(__.mapValues(next.components, function(v, k) {
 
     if(!v) {
       return null
@@ -178,38 +174,18 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
       return __.map(
         v,
         function(vi, i) {
-
           var lastChild = last && last.component.components[k] && i < last.component.components[k].length ? last.component.components[k][i] : null
           var childPath = __.concat(path, [[k, i]])
-          // debugger
           return reduceComponent(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
-
         }
       )
     }
-    else
-
-    // if(v.type == 'state') {
+    else {
       var lastChild = last ? last.component.components[k] : null
       var childPath = __.concat(path, k)
       return reduceComponent(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
-    // } else {
-    //   var r = {
-    //     component: v
-    //   }
-    //   r.getValue = function() { return r.component.value }
-    //   return r
-    // }
+    }
   }))
-
-  }
-
-
-  return {
-    data: next.data,
-    components: newMachines
-  }
-
 }
 
 
@@ -270,7 +246,10 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
     (e) => info.trigger(e),
   )
 
-  return buildChildren2(next, last, rootTrigger, eventTree, path)
+  return {
+    data: next.data,
+    components:  buildChildren2(next, last, rootTrigger, eventTree, path)
+  }
 
 };
 
