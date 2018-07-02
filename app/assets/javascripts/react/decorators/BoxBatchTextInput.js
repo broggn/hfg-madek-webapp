@@ -9,6 +9,8 @@ import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 module.exports = (component, trigger, merged) => {
 
+  debugger
+  
   var next = () => {
 
     if(!component.last) {

@@ -10,6 +10,8 @@ import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
 module.exports = (component, trigger, merged) => {
+  
+  debugger
 
   var last = component.last
   var event = component.event
