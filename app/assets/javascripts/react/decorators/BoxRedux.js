@@ -60,12 +60,6 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
 
 var nextId = 0
 
-var machine = function(def, reset) {
-  return {
-    def: def
-  }
-}
-
 var compactObject = function(o) {
   return __.fromPairs(
     __.compact(
@@ -228,19 +222,6 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path) {
 
 var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
 
-  // if(!eventTree) {
-  //   debugger
-  // }
-
-  // TODO TODO TODO TODO TODO until now we check only if there was a state before already.
-  // however we should also check if it is still of the same type.
-  // perhaps a property is once a value and then a state, or first a state of class a and the of class b.
-
-  // if(!last && eventPath && eventPath.length == 0) {
-  //   throw 'not possible'
-  // }
-
-
   var info = {
     trigger: function(event) {
 
@@ -250,21 +231,12 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
         children: {}
       }
 
-    var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
-
-
+      var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
 
       rootTrigger(newEventTree)
-    },
-    eventTree: function() {return eventTree},
-    eventPath: function() { return eventPath },
-    lastData: function() { return last.component.data },
-    lastValue: function(key) { /*TODO support array*/ return last.component.data[key] },
-    isInitial: function() { return !last },
+    }
   }
 
-  info.child = function(key) { return last.component.components[key] }
-  info.lastLength = function(key) { return last.component.components[key].length }
 
   var prettyState = (n, eventTree) => {
     if(!n) return null
@@ -312,10 +284,6 @@ module.exports = {
 
   build: function(stateReduction, lastState, eventTree, trigger) {
     return build(stateReduction, lastState, trigger, eventTree);
-  },
-
-  machine: function(stateReduction, reset) {
-    return machine(stateReduction, reset);
   },
 
   prettyState: function(state, rootTrigger) {
