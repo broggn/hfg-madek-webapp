@@ -11,19 +11,6 @@ import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 module.exports = (component, trigger, merged) => {
 
-  if(!merged) {
-    return {
-      data: {
-        metaMetaData: [],
-        open: false
-      },
-      components: {
-        metaKeyForms: []
-      }
-    }
-  }
-
-
   // var last = component.last
   var event = merged.event
   // var props = component.props
@@ -37,16 +24,28 @@ module.exports = (component, trigger, merged) => {
       asyncLoadData('Collection')
     }
 
-
-    return {
-      data: {
-        metaMetaData: nextData(),
-        open: nextOpen()
-      },
-      components: {
-        metaKeyForms: nextMetaKeyForms()
+    if(merged.initial) {
+      return {
+        data: {
+          metaMetaData: [],
+          open: false
+        },
+        components: {
+          metaKeyForms: []
+        }
+      }
+    } else {
+      return {
+        data: {
+          metaMetaData: nextData(),
+          open: nextOpen()
+        },
+        components: {
+          metaKeyForms: nextMetaKeyForms()
+        }
       }
     }
+
   }
 
 

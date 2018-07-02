@@ -11,7 +11,7 @@ module.exports = (component, trigger, merged) => {
 
   var next = () => {
 
-    if(!component.last) {
+    if(merged.initial) {
       return {
         data: {
           text: ''
@@ -28,10 +28,10 @@ module.exports = (component, trigger, merged) => {
 
 
   var nextText = () => {
-    if(component.event && component.event.event.event == 'new-text'){
-      return component.event.event.text
+    if(merged.event.event == 'new-text'){
+      return merged.event.text
     } else {
-      return component.last.data.text
+      return merged.data.text
     }
   }
 

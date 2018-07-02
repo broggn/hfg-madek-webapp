@@ -180,7 +180,12 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
           var childPath = __.concat(path, [[k, i]])
           return reduceComponent(
             vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath,
-            merged.components[k] && i < merged.components[k].length ? merged.components[k][i] : null
+            merged.components[k] && i < merged.components[k].length ? merged.components[k][i] : {
+              data: {},
+              components: {},
+              props: {},
+              event: {}
+            }
           )
         }
       )
@@ -245,6 +250,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
     }
   }
 
+  merged.initial = !last
+
   var next = def.reduce(
     {
       last: prettyState(last, eventTree),
@@ -267,10 +274,15 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
 var mergeStateAndEvents = function(lastState, eventTree) {
 
   if(!lastState) {
-    return null
+    return {
+      data: {},
+      components: {},
+      props: {},
+      event: {}
+    }
   } else {
     return {
-      data: lastState.component.data,
+      data: (lastState.component.data ? lastState.component.data : {}),
       components: compactObject(
         __.mapValues(
           lastState.component.components,
@@ -313,7 +325,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
 
         )
       ),
-      props: lastState.component.props,
+      props: (lastState.component.props ? lastState.component.props : {}),
       event: (eventTree ? eventTree.event : {})
     }
   }
