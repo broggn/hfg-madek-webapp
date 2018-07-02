@@ -153,12 +153,6 @@ var reduceComponent = function(v, last, rootTrigger, eventTree, path) {
     path: path,
     dangerousProps: cDef.props
   }
-  // r.child = function(ck) { return r.component.components[ck] }
-  // r.data = function() { return r.component.data }
-  // r.childValue = function(ck) {
-  //   return r.component.data[ck]
-  // }
-  // r.getValue = function() { return r.component.value }
   return r
 }
 
