@@ -128,7 +128,7 @@ module.exports = React.createClass
     }
     return BoxRedux.build(this.stateBatchRoot(), null, eventTree, (e) => this.stateBatchTrigger(e))
 
-  stateBatchTransition: (event)  ->
+  stateBatchRootEvent: (event)  ->
     eventTree = {
       componentId: 0,
       event: event,
@@ -138,10 +138,10 @@ module.exports = React.createClass
     @setState({stateBatch: next})
 
   onBatchButton: (event) ->
-    @stateBatchTransition({ event: 'toggle' })
+    @stateBatchRootEvent({ event: 'toggle' })
 
   onClickKey: (event, metaKeyId) ->
-    @stateBatchTransition({ event: 'select-key', metaKeyId: metaKeyId})
+    @stateBatchRootEvent({ event: 'select-key', metaKeyId: metaKeyId})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -303,7 +303,7 @@ module.exports = React.createClass
       config: resourceListParams(window.location)
     )
 
-    this.stateBatchTransition({ event: 'mount' })
+    this.stateBatchRootEvent({ event: 'mount' })
 
 
   # - custom actions:
