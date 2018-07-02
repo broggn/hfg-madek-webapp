@@ -124,7 +124,6 @@ module.exports = (component, trigger, merged) => {
     }
 
     var mapExisting = () => {
-      debugger
       return l.map(
         withoutClosed(),
         (c) => {

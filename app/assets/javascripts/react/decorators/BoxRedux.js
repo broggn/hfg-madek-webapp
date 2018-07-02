@@ -257,7 +257,8 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
 
   return {
     data: next.data,
-    components:  buildChildren2(next, last, rootTrigger, eventTree, path, merged)
+    components:  buildChildren2(next, last, rootTrigger, eventTree, path, merged),
+    props: def.props
   }
 
 };
@@ -312,6 +313,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
 
         )
       ),
+      props: lastState.component.props,
       event: (eventTree ? eventTree.event : {})
     }
   }
