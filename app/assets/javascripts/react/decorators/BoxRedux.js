@@ -253,11 +253,6 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
   merged.initial = !last
 
   var next = def.reduce(
-    {
-      last: prettyState(last, eventTree),
-      event: prettyEvent(eventTree),
-      props: def.props
-    },
     (e) => info.trigger(e),
     merged
   )
