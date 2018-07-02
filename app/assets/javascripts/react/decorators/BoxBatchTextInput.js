@@ -7,11 +7,11 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 
-module.exports = (last, event, trigger, props) => {
+module.exports = (component, trigger) => {
 
   var next = () => {
 
-    if(!last) {
+    if(!component.last) {
       return {
         data: {
           text: ''
@@ -28,10 +28,10 @@ module.exports = (last, event, trigger, props) => {
 
 
   var nextText = () => {
-    if(event && event.event.event == 'new-text'){
-      return event.event.text
+    if(component.event && component.event.event.event == 'new-text'){
+      return component.event.event.text
     } else {
-      return last.data.text
+      return component.last.data.text
     }
   }
 

@@ -269,10 +269,12 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path) {
   }
 
   var next = def.reduce(
-    prettyState(last, eventTree),
-    prettyEvent(eventTree),
+    {
+      last: prettyState(last, eventTree),
+      event: prettyEvent(eventTree),
+      props: def.props
+    },
     (e) => info.trigger(e),
-    def.props
   )
 
   return buildChildren2(next, last, rootTrigger, eventTree, path)
