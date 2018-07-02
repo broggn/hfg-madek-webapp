@@ -220,36 +220,6 @@ var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merg
   }
 
 
-  var prettyState = (n, eventTree) => {
-    if(!n) return null
-    if(Array.isArray(n)) {
-      return __.map(n, (ni, i) => {
-        return prettyState(ni, (eventTree ? eventTree.arrYyy[i] : null))
-      })
-    } else {
-      return {
-        props: n.dangerousProps,
-        data: n.component.data,
-        components: __.mapValues(n.component.components, (c, k) => {
-          return prettyState(c, (eventTree ? eventTree.children[k] : null))
-        }),
-        event: (eventTree ? eventTree.event : {})
-      }
-    }
-  }
-
-  var prettyEvent = (n) => {
-    if(!n) return null
-    if(n.isArray) {
-      return __.map(n.arrYyy, (ni) => prettyEvent(ni))
-    } else {
-      return {
-        event: n.event,
-        components: __.mapValues(n.children, (e) => prettyEvent(e))
-      }
-    }
-  }
-
   merged.initial = !last
 
   var next = def.reduce(
