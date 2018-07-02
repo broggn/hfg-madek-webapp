@@ -4,6 +4,7 @@ import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
+import BoxBatchEditFormKeyBubbles from './BoxBatchEditFormKeyBubbles.jsx'
 
 class BoxBatchEditForm extends React.Component {
 
@@ -21,26 +22,6 @@ class BoxBatchEditForm extends React.Component {
         cachedMetaKeysWithTypes: metaKeysWithTypes(this.props.stateBatch.data.metaMetaData)
       })
     }
-  }
-
-
-  renderKey(k) {
-    return (
-      <div
-        key={k.metaKeyId}
-        style={{cursor: 'pointer', display: 'inline-block', backgroundColor: 'white', borderRadius: '5px', padding: '0px 10px', marginRight: '5px', marginBottom: '5px'}}
-        onClick={(e) => this.props.onClickKey(e, k.metaKeyId)}
-      >
-        {k.metaKey.label}
-      </div>
-    )
-  }
-
-  renderKeys() {
-    return l.map(
-      this.state.cachedMetaKeysWithTypes,
-      (k) => this.renderKey(k)
-    )
   }
 
   renderMetaKeyForm(metaKeyForm) {
@@ -67,9 +48,10 @@ class BoxBatchEditForm extends React.Component {
     } else {
       return (
         <div className='ui-resources-holder pam'>
-          <div>
-            {this.renderKeys()}
-          </div>
+          <BoxBatchEditFormKeyBubbles
+            metaKeysWithTypes={this.state.cachedMetaKeysWithTypes}
+            onClickKey={this.props.onClickKey}
+          />
           <div>
             {this.renderKeyForms()}
           </div>

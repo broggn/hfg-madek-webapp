@@ -12,6 +12,11 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     super(props)
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
+  }
+
   // renderText() {
   //   return (
   //     <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} />

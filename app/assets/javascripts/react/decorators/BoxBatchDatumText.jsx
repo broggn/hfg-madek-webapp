@@ -13,6 +13,11 @@ class BoxBatchDatumText extends React.Component {
     this.debouncedOnChange = l.debounce(this.onChange)
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
+  }
+
   onChange(text) {
     this.props.metaKeyForm.trigger({event: 'new-text', text: text})
   }
