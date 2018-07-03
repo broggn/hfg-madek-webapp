@@ -146,16 +146,35 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
     nextId++
   }
 
-  var reduceResult = buildComponent2(cid, definition, (last && !definition.reset ? last : null), rootTrigger, eventTree, path, merged)
+  var useLast = (last && !definition.reset ? last : null)
 
-  var r = {
-    data: reduceResult.data,
-    components: reduceResult.components,
-    props: reduceResult.props,
+  merged.initial = !useLast
+
+  merged.trigger = function(event) {
+
+    var newEventTree = {
+      componentId: 0,
+      event: {},
+      children: {}
+    }
+
+    var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
+
+    rootTrigger(newEventTree)
+  }
+
+
+  var next = definition.reduce(
+    merged
+  )
+
+  return {
+    data: next.data,
+    components: buildChildren2(next, useLast, rootTrigger, eventTree, path, merged),
+    props: definition.props,
     id: cid,
     path: path
   }
-  return r
 }
 
 
@@ -202,35 +221,6 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
   }))
 }
 
-
-var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merged) {
-
-  merged.initial = !last
-
-  merged.trigger = function(event) {
-
-    var newEventTree = {
-      componentId: 0,
-      event: {},
-      children: {}
-    }
-
-    var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
-
-    rootTrigger(newEventTree)
-  }
-
-  var next = def.reduce(
-    merged
-  )
-
-  return {
-    data: next.data,
-    components:  buildChildren2(next, last, rootTrigger, eventTree, path, merged),
-    props: def.props
-  }
-
-};
 
 
 var mergeStateAndEvents = function(lastState, eventTree) {
