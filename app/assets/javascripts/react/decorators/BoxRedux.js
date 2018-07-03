@@ -204,24 +204,20 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
 var buildComponent2 = function(id, def, last, rootTrigger, eventTree, path, merged) {
 
-  var info = {
-    trigger: function(event) {
-
-      var newEventTree = {
-        componentId: 0,
-        event: {},
-        children: {}
-      }
-
-      var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
-
-      rootTrigger(newEventTree)
-    }
-  }
-
-
   merged.initial = !last
-  merged.trigger = (e) => info.trigger(e)
+
+  merged.trigger = function(event) {
+
+    var newEventTree = {
+      componentId: 0,
+      event: {},
+      children: {}
+    }
+
+    var newEventTree = fireTreeEvent2(newEventTree, path, id, event)
+
+    rootTrigger(newEventTree)
+  }
 
   var next = def.reduce(
     merged
