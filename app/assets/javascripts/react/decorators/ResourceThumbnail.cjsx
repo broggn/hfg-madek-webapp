@@ -203,6 +203,7 @@ module.exports = React.createClass
         deleteProps={deleteProps}
         statusProps={statusProps}
         style={@props.style}
+        onBatchEditApply={@props.onBatchEditApply}
         />
     else if @props.listThumb
       <ListThumbnail
@@ -218,6 +219,7 @@ module.exports = React.createClass
         favoriteProps={favoriteProps}
         deleteProps={deleteProps}
         get={get}
+        onBatchEditApply={@props.onBatchEditApply}
         />
     else
       <ResourceThumbnailRenderer
@@ -233,6 +235,7 @@ module.exports = React.createClass
         selectProps={selectProps}
         textProps={textProps}
         style={@props.style}
+        onBatchEditApply={@props.onBatchEditApply}
         />
 
 

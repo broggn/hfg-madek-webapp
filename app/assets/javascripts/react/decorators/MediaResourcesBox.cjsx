@@ -538,6 +538,10 @@ module.exports = React.createClass
     @setState(batchRemoveFromSet: false)
     @setState(batchDestroyResourcesModal: false)
 
+
+  _onBatchEditApply: (event, resourceId) ->
+    debugger
+
   setLayout: (layoutMode)=> # NOTE: this is a hack and goes around the router :/
     unless f.includes(f.map(BoxUtil.allowedLayoutModes(@props.disableListMode), 'mode'), layoutMode)
       throw new Error "Invalid Layout!"
@@ -872,6 +876,12 @@ module.exports = React.createClass
                 listMods={listMods}
                 pagination={@props.get.pagination}
                 perPage={@props.get.config.per_page}
+                onBatchEditApply={
+                  if @state.stateBatch.data.open
+                    (e, rid) => @_onBatchEditApply(e, rid)
+                  else
+                    null
+                }
               />
 
             }

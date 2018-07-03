@@ -73,6 +73,8 @@ module.exports = React.createClass
         {badgeLeft}
       </div>
 
+    badgeMiddle = @props.badgeMiddle
+
 
     bubbles = []
 
@@ -148,6 +150,7 @@ module.exports = React.createClass
     <div className={classes}>
       {flyoutTop}
       {badgeLeft}
+      {badgeMiddle}
       {badgeRight}
       {bubbleElements if useBubbles}
       {

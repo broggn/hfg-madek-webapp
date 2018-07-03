@@ -114,6 +114,37 @@ module.exports = React.createClass
       disableLink: get.disableLink
       editMetaDataByContextUrl: get.edit_meta_data_by_context_url
 
+      badgeMiddle: if @props.onBatchEditApply
+        <div style={{
+          display: 'block',
+          position: 'absolute',
+          top: '16px',
+          left: '0px',
+          right: '0px',
+          marginLeft: '16px',
+          marginRight: '16px',
+          zIndex: '10',
+          textAlign: 'center'
+        }}>
+          <span
+            style={{
+              display: 'inline-block',
+              borderRadius: '5px',
+              backgroundColor: '#000',
+              color: '#fff'
+              padding: '0px 10px',
+              marginRight: '5px',
+              marginBottom: '5px',
+              fontSize: '10px',
+              cursor: 'crosshair'
+            }}
+            onClick={(e) => @props.onBatchEditApply(e, @props.get.uuid)}
+          >
+            {'apply'}
+          </span>
+        </div>
+
+
     classes = {'ui-resource': true, 'ui-selected': true if (selectProps and selectProps.isSelected)}
 
     <Element
