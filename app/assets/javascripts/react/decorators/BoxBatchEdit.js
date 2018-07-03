@@ -52,7 +52,15 @@ module.exports = ({event, trigger, initial, components, data}) => {
         return {
           action: 'apply',
           resourceId: event.resourceId,
-          metaKeyForms: components.metaKeyForms
+          metaKeyForms: l.map(
+            components.metaKeyForms,
+            (mkf) => {
+              return {
+                data: mkf.data,
+                pros: mkf.props
+              }
+            }
+          )
         }
       } else {
         return {}
