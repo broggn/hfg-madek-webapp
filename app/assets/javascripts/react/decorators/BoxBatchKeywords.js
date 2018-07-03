@@ -55,7 +55,10 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
       })
     }
     else if(event.action == 'select-keyword') {
-      return data.keywords
+      return data.keywords.concat({
+        id: event.keywordId,
+        label: event.keywordLabel
+      })
     }
     else {
       return data.keywords

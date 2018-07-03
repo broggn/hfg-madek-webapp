@@ -45,6 +45,19 @@ class BoxBatchDatumKeywords extends React.Component {
     ), ', ')
   }
 
+  onKeywordSelect(event, keywordId, keywordLabel) {
+    this.props.metaKeyForm.trigger({action: 'select-keyword', keywordId: keywordId, keywordLabel})
+  }
+
+  renderKeywordProposal(k) {
+    return (
+      <div key={k.uuid} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
+        {k.label}
+      </div>
+    )
+
+  }
+
   renderKeywordProposals() {
     if(!this.props.metaKeyForm.data.showProposals) {
       return null
@@ -53,10 +66,10 @@ class BoxBatchDatumKeywords extends React.Component {
       return 'Loading...'
     }
     else {
-      return l.join(l.map(
+      return l.map(
         this.props.metaKeyForm.data.keywordProposals,
-        (k) => k.label
-      ), ', ')
+        (k) => this.renderKeywordProposal(k)
+      )
     }
   }
 
@@ -68,9 +81,7 @@ class BoxBatchDatumKeywords extends React.Component {
         <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
         <input value={metaKeyForm.data.text} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
-        <div>
-          {this.renderKeywords()}
-        </div>
+        {this.renderKeywords()}
         <div>
           {this.renderKeywordProposals()}
         </div>
