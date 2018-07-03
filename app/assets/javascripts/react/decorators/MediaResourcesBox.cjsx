@@ -143,6 +143,9 @@ module.exports = React.createClass
   onClickKey: (event, metaKeyId) ->
     @stateBatchRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
 
+  _onBatchEditApply: (event, resourceId) ->
+    @stateBatchRootEvent({ action: 'apply-meta-data', resourceId: resourceId})
+
   # kick of client-side mode:
   getInitialState: ()-> {
     isClient: false,
@@ -537,10 +540,6 @@ module.exports = React.createClass
     @setState(batchAddToSet: false)
     @setState(batchRemoveFromSet: false)
     @setState(batchDestroyResourcesModal: false)
-
-
-  _onBatchEditApply: (event, resourceId) ->
-    debugger
 
   setLayout: (layoutMode)=> # NOTE: this is a hack and goes around the router :/
     unless f.includes(f.map(BoxUtil.allowedLayoutModes(@props.disableListMode), 'mode'), layoutMode)

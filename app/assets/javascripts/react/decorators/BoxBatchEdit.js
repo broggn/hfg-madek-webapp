@@ -9,6 +9,7 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 import BoxBatchKeywords from './BoxBatchKeywords.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
+import BoxBatchApplyMetaData from './BoxBatchApplyMetaData.js'
 
 
 module.exports = ({event, trigger, initial, components, data}) => {
@@ -24,7 +25,8 @@ module.exports = ({event, trigger, initial, components, data}) => {
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
-          metaKeyForms: []
+          metaKeyForms: [],
+          applyMetaData: nextApplyMetaData(),
         }
       }
     } else {
@@ -34,13 +36,34 @@ module.exports = ({event, trigger, initial, components, data}) => {
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
-          metaKeyForms: nextMetaKeyForms()
+          metaKeyForms: nextMetaKeyForms(),
+          applyMetaData: nextApplyMetaData()
         }
       }
     }
 
   }
 
+
+  var nextApplyMetaData = () => {
+
+    var applyProps = () => {
+      if(event.action == 'apply-meta-data') {
+        return {
+          action: 'apply',
+          resourceId: event.resourceId
+        }
+      } else {
+        return {}
+      }
+    }
+
+    return {
+      reset: false,
+      reduce: BoxBatchApplyMetaData,
+      props: applyProps()
+    }
+  }
 
   var nextLoadMetaMetaData = () => {
     return {
