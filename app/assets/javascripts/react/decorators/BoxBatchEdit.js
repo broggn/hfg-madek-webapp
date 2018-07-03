@@ -118,19 +118,22 @@ module.exports = ({event, trigger, initial, components, data}) => {
       )
     }
 
+    var createBoxBatchEdit = (metaKeyId) => {
+      return {
+        reset: false,
+        reduce: decideReduce(metaKeyId),
+        props: {
+          metaKeyId: metaKeyId,
+          metaKey: findMetaKey(metaKeyId)
+        }
+      }
+
+    }
+
     var mapExisting = () => {
       return l.map(
         withoutClosed(),
-        (c) => {
-          return {
-            reset: false,
-            reduce: decideReduce(c.props.metaKeyId),
-            props: {
-              metaKeyId: c.props.metaKeyId,
-              metaKey: findMetaKey(c.props.metaKeyId)
-            }
-          }
-        }
+        (c) => createBoxBatchEdit(c.props.metaKeyId)
       )
     }
 
@@ -145,18 +148,12 @@ module.exports = ({event, trigger, initial, components, data}) => {
     }
 
 
+
     if(event.action == 'select-key') {
       if(!findMetaKeyForm(event.metaKeyId)) {
         return l.concat(
           mapExisting(),
-          {
-            reset: false,
-            reduce: decideReduce(event.metaKeyId),
-            props: {
-              metaKeyId: event.metaKeyId,
-              metaKey: findMetaKey(event.metaKeyId)
-            }
-          }
+          createBoxBatchEdit(event.metaKeyId)
         )
       } else {
         return mapExisting()
