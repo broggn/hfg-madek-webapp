@@ -51,7 +51,8 @@ module.exports = ({event, trigger, initial, components, data}) => {
       if(event.action == 'apply-meta-data') {
         return {
           action: 'apply',
-          resourceId: event.resourceId
+          resourceId: event.resourceId,
+          metaKeyForms: components.metaKeyForms
         }
       } else {
         return {}

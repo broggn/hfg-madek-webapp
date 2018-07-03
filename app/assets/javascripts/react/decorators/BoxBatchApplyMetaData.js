@@ -14,7 +14,10 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   var next = () => {
 
     if(nextProps.action == 'apply') {
-      alert('apply ' + nextProps.resourceId)
+      applyMetaData({
+        resourceId: nextProps.resourceId,
+        metaKeyForms: nextProps.metaKeyForms
+      })
     }
 
     if(initial) {
@@ -28,6 +31,10 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         components: {}
       }
     }
+  }
+
+  var applyMetaData = ({resourceId, metaKeyForms}) => {
+    debugger
   }
 
   return next()
