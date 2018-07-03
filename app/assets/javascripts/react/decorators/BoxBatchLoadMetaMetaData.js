@@ -21,17 +21,73 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(initial) {
       return {
         data: {
-          metaMetaData: []
+          metaMetaData: [],
+          metaKeysWithTypes: null
         },
         components: {}
       }
     } else {
       return {
         data: {
-          metaMetaData: nextData()
+          metaMetaData: nextData(),
+          metaKeysWithTypes: nextMetaKeysWithTypes()
         },
         components: {}
       }
+    }
+  }
+
+  var nextMetaKeysWithTypes = () => {
+    if(event.action == 'data-loaded' && nextData().length == 2) {
+
+
+      var metaKeysWithTypes = (metaMetaData) => {
+
+        var allMetaKeyIds = () => {
+          return l.uniq(l.flatten(l.map(
+            metaMetaData,
+            (mmd) => l.keys(mmd.data.meta_key_by_meta_key_id)
+          )))
+
+        }
+
+        var allMetaKeysById = () => {
+          return l.reduce(
+            metaMetaData,
+            (memo, mmd) => {
+              return l.merge(
+                memo,
+                mmd.data.meta_key_by_meta_key_id
+              )
+            },
+            {}
+          )
+        }
+
+        return l.map(
+          allMetaKeyIds(),
+          (k) => {
+            return {
+              metaKeyId: k,
+              types: l.map(
+                l.filter(
+                  metaMetaData,
+                  (mmd) => {
+                    return l.has(mmd.data.meta_key_by_meta_key_id, k)
+                  }
+                ),
+                (m) => m.type
+              ),
+              metaKey: allMetaKeysById()[k]
+            }
+          }
+        )
+      }
+
+      return metaKeysWithTypes(data.metaMetaData)
+
+    } else {
+      return data.metaKeysWithTypes
     }
   }
 

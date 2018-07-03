@@ -10,23 +10,11 @@ class BoxBatchEditForm extends React.Component {
 
   constructor(props) {
     super(props)
-
-    let {components} = this.props.stateBatch
-
-    this.state = {
-      cachedMetaKeysWithTypes: metaKeysWithTypes(components.loadMetaMetaData.data.metaMetaData)
-    }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    var lastMetaMetaData = this.props.stateBatch.components.loadMetaMetaData.data.metaMetaData
-    var nextMetaMetaData = prevProps.stateBatch.components.loadMetaMetaData.data.metaMetaData
-
-    if(!l.isEqual(lastMetaMetaData, nextMetaMetaData)) {
-      this.setState({
-        cachedMetaKeysWithTypes: metaKeysWithTypes(nextMetaMetaData)
-      })
-    }
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }
 
   renderMetaKeyForm(metaKeyForm) {
@@ -48,7 +36,7 @@ class BoxBatchEditForm extends React.Component {
 
   render() {
 
-    let {data} = this.props.stateBatch
+    let {data, components} = this.props.stateBatch
 
     if(!data.open) {
       return null
@@ -56,7 +44,7 @@ class BoxBatchEditForm extends React.Component {
       return (
         <div className='ui-resources-holder pam'>
           <BoxBatchEditFormKeyBubbles
-            metaKeysWithTypes={this.state.cachedMetaKeysWithTypes}
+            metaKeysWithTypes={components.loadMetaMetaData.data.metaKeysWithTypes}
             onClickKey={this.props.onClickKey}
           />
           <div>
@@ -69,47 +57,3 @@ class BoxBatchEditForm extends React.Component {
 }
 
 module.exports = BoxBatchEditForm
-
-
-var metaKeysWithTypes = (metaMetaData) => {
-
-  var allMetaKeyIds = () => {
-    return l.uniq(l.flatten(l.map(
-      metaMetaData,
-      (mmd) => l.keys(mmd.data.meta_key_by_meta_key_id)
-    )))
-
-  }
-
-  var allMetaKeysById = () => {
-    return l.reduce(
-      metaMetaData,
-      (memo, mmd) => {
-        return l.merge(
-          memo,
-          mmd.data.meta_key_by_meta_key_id
-        )
-      },
-      {}
-    )
-  }
-
-  return l.map(
-    allMetaKeyIds(),
-    (k) => {
-      return {
-        metaKeyId: k,
-        types: l.map(
-          l.filter(
-            metaMetaData,
-            (mmd) => {
-              return l.has(mmd.data.meta_key_by_meta_key_id, k)
-            }
-          ),
-          (m) => m.type
-        ),
-        metaKey: allMetaKeysById()[k]
-      }
-    }
-  )
-}
