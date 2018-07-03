@@ -108,7 +108,7 @@ class BoxBatchDatumKeywords extends React.Component {
 
     return (
       <div>
-        <span onClick={(e) => this.onClose(e)}>close</span>
+        <span onClick={(e) => this.onClose(e)}>[x]</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
         <div>
           <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
