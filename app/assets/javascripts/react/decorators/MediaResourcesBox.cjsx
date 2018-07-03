@@ -138,10 +138,10 @@ module.exports = React.createClass
     @setState({stateBatch: next})
 
   onBatchButton: (event) ->
-    @stateBatchRootEvent({ event: 'toggle' })
+    @stateBatchRootEvent({ action: 'toggle' })
 
   onClickKey: (event, metaKeyId) ->
-    @stateBatchRootEvent({ event: 'select-key', metaKeyId: metaKeyId})
+    @stateBatchRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -303,7 +303,7 @@ module.exports = React.createClass
       config: resourceListParams(window.location)
     )
 
-    this.stateBatchRootEvent({ event: 'mount' })
+    this.stateBatchRootEvent({ action: 'mount' })
 
 
   # - custom actions:

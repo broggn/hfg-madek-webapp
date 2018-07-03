@@ -28,7 +28,7 @@ module.exports = (merged) => {
 
 
   var nextText = () => {
-    if(merged.event.event == 'new-text'){
+    if(merged.event.action == 'new-text'){
       return merged.event.text
     } else {
       return merged.data.text

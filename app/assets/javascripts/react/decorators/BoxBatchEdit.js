@@ -20,7 +20,7 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    if(event.event == 'mount') {
+    if(event.action == 'mount') {
       asyncLoadData('MediaEntry')
       asyncLoadData('Collection')
     }
@@ -118,7 +118,7 @@ module.exports = (merged) => {
       return l.filter(
         merged.components.metaKeyForms,
         (f) => {
-          return f.event.event != 'close'
+          return f.event.action != 'close'
         }
       )
     }
@@ -150,7 +150,7 @@ module.exports = (merged) => {
     }
 
 
-    if(event.event == 'select-key') {
+    if(event.action == 'select-key') {
       if(!findMetaKeyForm(event.metaKeyId)) {
         return l.concat(
           mapExisting(),
@@ -178,7 +178,7 @@ module.exports = (merged) => {
       return merged.data.metaMetaData.length == 2
     }
 
-    if(event.event == 'toggle') {
+    if(event.action == 'toggle') {
       if(ready() && !merged.data.open) {
         return true
       } else {
@@ -190,7 +190,7 @@ module.exports = (merged) => {
   }
 
   var nextData = () => {
-    if(event.event == 'data-loaded') {
+    if(event.action == 'data-loaded') {
       return merged.data.metaMetaData.concat({
         data: event.data,
         type: event.type
@@ -217,7 +217,7 @@ module.exports = (merged) => {
           return
         } else {
           trigger({
-            event: 'data-loaded',
+            action: 'data-loaded',
             type: type,
             data: json
           })
