@@ -154,16 +154,11 @@ module.exports = ({event, trigger, initial, components, data}) => {
     }
 
 
-
-    if(event.action == 'select-key') {
-      if(!findMetaKeyForm(event.metaKeyId)) {
-        return l.concat(
-          mapExisting(),
-          createBoxBatchEdit(event.metaKeyId)
-        )
-      } else {
-        return mapExisting()
-      }
+    if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
+      return l.concat(
+        mapExisting(),
+        createBoxBatchEdit(event.metaKeyId)
+      )
     } else {
       return mapExisting()
     }
