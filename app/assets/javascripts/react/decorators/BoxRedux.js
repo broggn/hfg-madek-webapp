@@ -103,7 +103,7 @@ var verifyEventId2 = function(llast, leventTree) {
       }
 
       if(childTree.isArray) {
-        // debugger
+
         for(var i in childTree.arrYyy) {
 
           if(!childLast[i]) {

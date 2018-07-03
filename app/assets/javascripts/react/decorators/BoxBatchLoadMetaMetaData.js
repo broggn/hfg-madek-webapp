@@ -62,7 +62,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         if(err) {
           return
         } else {
-          debugger
           trigger({
             action: 'data-loaded',
             type: type,
