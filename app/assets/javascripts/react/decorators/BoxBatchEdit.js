@@ -9,7 +9,7 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = ({event, trigger, initial, components, data} = merged) => {
+module.exports = ({event, trigger, initial, components, data}) => {
 
   var cachedAllMetaKeysById = null
 
