@@ -74,53 +74,13 @@ module.exports = ({event, trigger, initial, components, data}) => {
         )
       }
 
-
       return cachedAllMetaKeysById[metaKeyId]
     }
-
-    // var createText = () => {
-    //   return {
-    //     value: ''
-    //   }
-    // }
-    //
-    // var createForm = (metaKey) => {
-    //   var formCreators = {
-    //     'MetaDatum::Text': () => createText()
-    //   }
-    //   var creator = formCreators[metaKey.value_type]
-    //   if(!creator) throw 'not implemented for ' + metaKey.vlaue_type
-    //   return creator()
-    // }
-    //
-    // var createMetaKeyForm = (metaKeyId) => {
-    //   var metaKey = findMetaKey(metaKeyId)
-    //   return {
-    //     metaKeyId: metaKeyId,
-    //     metaKey: metaKey,
-    //     form: createForm(metaKey)
-    //   }
-    // }
-    //
-    // if(props.event.event == 'select-key') {
-    //   if(!findMetaKeyForm(props.event.metaKeyId)) {
-    //     return l.concat(
-    //       last.data.metaKeyForms,
-    //       createMetaKeyForm(props.event.metaKeyId)
-    //     )
-    //   } else {
-    //     return last.data.metaKeyForms
-    //   }
-    // } else {
-    //   return last.data.metaKeyForms
-    // }
 
     var withoutClosed = () => {
       return l.filter(
         components.metaKeyForms,
-        (f) => {
-          return f.event.action != 'close'
-        }
+        (f) => f.event.action != 'close'
       )
     }
 
@@ -133,7 +93,6 @@ module.exports = ({event, trigger, initial, components, data}) => {
           metaKey: findMetaKey(metaKeyId)
         }
       }
-
     }
 
     var mapExisting = () => {
@@ -153,7 +112,6 @@ module.exports = ({event, trigger, initial, components, data}) => {
       return mapping[type]
     }
 
-
     if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
       return l.concat(
         mapExisting(),
@@ -162,7 +120,6 @@ module.exports = ({event, trigger, initial, components, data}) => {
     } else {
       return mapExisting()
     }
-
   }
 
   var nextOpen = () => {
