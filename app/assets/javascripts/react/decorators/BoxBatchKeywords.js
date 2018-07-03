@@ -14,24 +14,43 @@ module.exports = ({event, data, initial}) => {
     if(initial) {
       return {
         data: {
-          text: ''
+          text: '',
+          keywords: []
         }
       }
     } else {
       return {
         data: {
-          text: nextText()
+          text: nextText(),
+          keywords: nextKeywords()
         }
       }
     }
   }
 
-
   var nextText = () => {
-    if(event.action == 'new-text'){
+    if(event.action == 'new-keyword') {
+      return ''
+    }
+    else if(event.action == 'new-text') {
       return event.text
-    } else {
+    }
+    else {
       return data.text
+    }
+  }
+
+  var nextKeywords = () => {
+    if(event.action == 'new-keyword'){
+      return data.keywords.concat({
+        label: data.text
+      })
+    }
+    else if(event.action == 'select-keyword') {
+      return data.keywords
+    }
+    else {
+      return data.keywords
     }
   }
 

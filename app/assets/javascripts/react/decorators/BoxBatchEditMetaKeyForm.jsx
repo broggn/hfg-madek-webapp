@@ -5,6 +5,7 @@ import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchDatumText from './BoxBatchDatumText.jsx'
 import BoxBatchDatumDate from './BoxBatchDatumDate.jsx'
+import BoxBatchDatumKeywords from './BoxBatchDatumKeywords.jsx'
 
 class BoxBatchEditMetaKeyForm extends React.Component {
 
@@ -23,11 +24,17 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     )
   }
 
+  renderKeywords() {
+    return (
+      <BoxBatchDatumKeywords metaKeyForm={this.props.metaKeyForm} />
+    )
+  }
+
   renderers() {
     return {
       'MetaDatum::Text': () => this.renderText(),
       'MetaDatum::TextDate': () => this.renderText(),
-      'MetaDatum::Keywords': () => this.renderText()
+      'MetaDatum::Keywords': () => this.renderKeywords()
     }
   }
 
