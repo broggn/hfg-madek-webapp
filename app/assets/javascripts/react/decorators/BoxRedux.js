@@ -151,8 +151,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
   var r = {
     component: reduceResult,
     id: cid,
-    path: path,
-    dangerousProps: definition.props
+    path: path
   }
   return r
 }
@@ -312,7 +311,7 @@ module.exports = {
         return __.map(n, (ni) => prettyState(ni))
       } else {
         return {
-          props: n.dangerousProps,
+          props: n.component.props,
           data: n.component.data,
           components: __.mapValues(n.component.components, (c) => prettyState(c)),
           trigger: (event) => {
