@@ -49,7 +49,19 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var nextKeywords = () => {
-    if(event.action == 'new-keyword'){
+    if(event.action == 'remove-keyword-by-label') {
+      return l.filter(
+        data.keywords,
+        (k) => k.label != event.label
+      )
+    }
+    else if(event.action == 'remove-keyword-by-id') {
+      return l.filter(
+        data.keywords,
+        (k) => k.id != event.id
+      )
+    }
+    else if(event.action == 'new-keyword'){
       return data.keywords.concat({
         label: data.text
       })

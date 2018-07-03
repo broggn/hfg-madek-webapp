@@ -33,21 +33,42 @@ class BoxBatchDatumKeywords extends React.Component {
     this.props.metaKeyForm.trigger({action: 'close'})
   }
 
-  renderKeywords() {
-    return l.join(l.map(
-      this.props.metaKeyForm.data.keywords,
-      (k) => {
-        if(k.id) {
-          return k.label
-        } else {
-          return k.label + '*'
+  removeKeyword(k) {
+
+    var event = () => {
+      if(k.id) {
+        return {
+          action: 'remove-keyword-by-id',
+          id: k.id
+        }
+      } else {
+        return {
+          action: 'remove-keyword-by-label',
+          label: k.label
         }
       }
-    ), ', ')
+    }
+    this.props.metaKeyForm.trigger(event())
+  }
+
+  renderKeyword(k, i) {
+    return (
+      <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal')}}>
+        <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>[x]</span>
+        {k.label}
+      </span>
+    )
+  }
+
+  renderKeywords() {
+    return l.map(
+      this.props.metaKeyForm.data.keywords,
+      (k, i) => this.renderKeyword(k, i)
+    )
   }
 
   onKeywordSelect(event, keywordId, keywordLabel) {
-    this.props.metaKeyForm.trigger({action: 'select-keyword', keywordId: keywordId, keywordLabel})
+    this.props.metaKeyForm.trigger({action: 'select-keyword', keywordId: keywordId, keywordLabel: keywordLabel})
   }
 
   onFocus(event) {
