@@ -16,6 +16,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(nextProps.action == 'apply') {
       applyMetaData({
         resourceId: nextProps.resourceId,
+        resourceType: nextProps.resourceType,
         formData: nextProps.metaKeyForms
       })
     }
@@ -33,7 +34,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
-  var applyMetaData = ({resourceId, formData}) => {
+  var applyMetaData = ({resourceId, resourceType, formData}) => {
     debugger
   }
 

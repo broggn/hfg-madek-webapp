@@ -138,7 +138,7 @@ module.exports = React.createClass
               fontSize: '10px',
               cursor: 'crosshair'
             }}
-            onClick={(e) => @props.onBatchEditApply(e, @props.get.uuid)}
+            onClick={(e) => @props.onBatchEditApply(e, @props.get.uuid, @props.get.type)}
           >
             {'apply'}
           </span>

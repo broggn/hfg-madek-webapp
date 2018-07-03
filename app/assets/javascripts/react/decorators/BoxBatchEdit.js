@@ -52,6 +52,7 @@ module.exports = ({event, trigger, initial, components, data}) => {
         return {
           action: 'apply',
           resourceId: event.resourceId,
+          resourceType: event.resourceType,
           metaKeyForms: l.map(
             components.metaKeyForms,
             (mkf) => {

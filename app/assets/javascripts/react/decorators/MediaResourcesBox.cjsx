@@ -143,8 +143,8 @@ module.exports = React.createClass
   onClickKey: (event, metaKeyId) ->
     @stateBatchRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
 
-  _onBatchEditApply: (event, resourceId) ->
-    @stateBatchRootEvent({ action: 'apply-meta-data', resourceId: resourceId})
+  _onBatchEditApply: (event, resourceId, resourceType) ->
+    @stateBatchRootEvent({ action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -877,7 +877,7 @@ module.exports = React.createClass
                 perPage={@props.get.config.per_page}
                 onBatchEditApply={
                   if @state.stateBatch.data.open
-                    (e, rid) => @_onBatchEditApply(e, rid)
+                    @_onBatchEditApply
                   else
                     null
                 }
