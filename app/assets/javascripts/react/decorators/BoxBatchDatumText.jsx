@@ -19,7 +19,7 @@ class BoxBatchDatumText extends React.Component {
   }
 
   onChange(text) {
-    this.props.metaKeyForm.trigger({action: 'new-text', text: text})
+    this.props.metaKeyForm.trigger({action: 'change-text', text: text})
   }
 
   onClose(event) {

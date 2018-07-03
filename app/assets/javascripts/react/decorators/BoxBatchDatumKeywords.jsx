@@ -19,7 +19,7 @@ class BoxBatchDatumKeywords extends React.Component {
   }
 
   onChange(text) {
-    this.props.metaKeyForm.trigger({action: 'new-text', text: text})
+    this.props.metaKeyForm.trigger({action: 'change-text', text: text})
   }
 
   onKeyDown(event) {
@@ -32,6 +32,34 @@ class BoxBatchDatumKeywords extends React.Component {
     this.props.metaKeyForm.trigger({action: 'close'})
   }
 
+  renderKeywords() {
+    return l.join(l.map(
+      this.props.metaKeyForm.data.keywords,
+      (k) => {
+        if(k.id) {
+          return k.label
+        } else {
+          return k.label + '*'
+        }
+      }
+    ), ', ')
+  }
+
+  renderKeywordProposals() {
+    if(!this.props.metaKeyForm.data.showProposals) {
+      return null
+    }
+    else if(!this.props.metaKeyForm.data.keywordProposals) {
+      return 'Loading...'
+    }
+    else {
+      return l.join(l.map(
+        this.props.metaKeyForm.data.keywordProposals,
+        (k) => k.label
+      ), ', ')
+    }
+  }
+
   render() {
     var metaKeyForm = this.props.metaKeyForm
 
@@ -40,18 +68,12 @@ class BoxBatchDatumKeywords extends React.Component {
         <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
         <input value={metaKeyForm.data.text} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
-        {
-          l.join(l.map(
-            metaKeyForm.data.keywords,
-            (k) => {
-              if(k.id) {
-                return k.label
-              } else {
-                return k.label + '*'
-              }
-            }
-          ), ', ')
-        }
+        <div>
+          {this.renderKeywords()}
+        </div>
+        <div>
+          {this.renderKeywordProposals()}
+        </div>
       </div>
     )
   }

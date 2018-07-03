@@ -28,7 +28,7 @@ module.exports = ({event, data, initial}) => {
 
 
   var nextText = () => {
-    if(event.action == 'new-text'){
+    if(event.action == 'change-text'){
       return event.text
     } else {
       return data.text
