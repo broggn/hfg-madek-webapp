@@ -9,12 +9,7 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = (merged) => {
-
-  // var last = component.last
-  var event = merged.event
-  var trigger = merged.trigger
-  // var props = component.props
+module.exports = ({event, trigger, initial, components, data} = merged) => {
 
   var cachedAllMetaKeysById = null
 
@@ -25,7 +20,7 @@ module.exports = (merged) => {
       asyncLoadData('Collection')
     }
 
-    if(merged.initial) {
+    if(initial) {
       return {
         data: {
           metaMetaData: [],
@@ -53,7 +48,7 @@ module.exports = (merged) => {
   var nextMetaKeyForms = () => {
 
     var findMetaKeyForm = (metaKeyId) => {
-      return l.find(merged.components.metaKeyForms, (f) => f.props.metaKeyId == event.metaKeyId)
+      return l.find(components.metaKeyForms, (f) => f.props.metaKeyId == event.metaKeyId)
     }
 
 
@@ -63,7 +58,7 @@ module.exports = (merged) => {
         cachedAllMetaKeysById = l.fromPairs(
           l.flatten(
             l.map(
-              merged.data.metaMetaData,
+              data.metaMetaData,
               (mmd) => l.map(
                 mmd.data.meta_key_by_meta_key_id,
                 (m, k) => [k, m]
@@ -116,7 +111,7 @@ module.exports = (merged) => {
 
     var withoutClosed = () => {
       return l.filter(
-        merged.components.metaKeyForms,
+        components.metaKeyForms,
         (f) => {
           return f.event.action != 'close'
         }
@@ -175,28 +170,28 @@ module.exports = (merged) => {
   var nextOpen = () => {
 
     var ready = () => {
-      return merged.data.metaMetaData.length == 2
+      return data.metaMetaData.length == 2
     }
 
     if(event.action == 'toggle') {
-      if(ready() && !merged.data.open) {
+      if(ready() && !data.open) {
         return true
       } else {
         return false
       }
     } else {
-      return merged.data.open
+      return data.open
     }
   }
 
   var nextData = () => {
     if(event.action == 'data-loaded') {
-      return merged.data.metaMetaData.concat({
+      return data.metaMetaData.concat({
         data: event.data,
         type: event.type
       })
     } else {
-      return merged.data.metaMetaData
+      return data.metaMetaData
     }
   }
 

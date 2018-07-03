@@ -7,11 +7,11 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 
-module.exports = (merged) => {
+module.exports = ({event, data, initial} = merged) => {
 
   var next = () => {
 
-    if(merged.initial) {
+    if(initial) {
       return {
         data: {
           text: ''
@@ -28,10 +28,10 @@ module.exports = (merged) => {
 
 
   var nextText = () => {
-    if(merged.event.action == 'new-text'){
-      return merged.event.text
+    if(event.action == 'new-text'){
+      return event.text
     } else {
-      return merged.data.text
+      return data.text
     }
   }
 
