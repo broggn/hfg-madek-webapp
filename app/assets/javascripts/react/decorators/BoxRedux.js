@@ -256,8 +256,6 @@ var mergeStateAndEvents = function(lastState, eventTree) {
                     lastChild,
                     (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null)
                   )
-                  // var childPath = __.concat(path, [[k, i]])
-                  // return reduceComponent(vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath)
                 }
               )
             }
@@ -266,9 +264,6 @@ var mergeStateAndEvents = function(lastState, eventTree) {
                 lastState.components[k],
                 (eventTree ? eventTree.children[k] : null)
               )
-              // // var lastChild = lastState ? lastState.component.components[k] : null
-              // var childPath = __.concat(path, k)
-              // return reduceComponent(v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath)
             }
           }
 
