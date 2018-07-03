@@ -76,7 +76,7 @@ class BoxRenderResources extends React.Component {
           <ResourceThumbnail elm='div'
             style={style}
             get={item}
-            isClient={isClient} fetchRelations={fetchRelations}
+            isClient={isClient} fetchRelations={(this.props.onBatchEditApply ? null : fetchRelations)}
             isSelected={isSelected} onSelect={onSelect} onClick={onClick}
             authToken={authToken} key={key}
             pinThumb={config.layout == 'tiles'}
