@@ -196,10 +196,12 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
       return __.map(
         v,
         function(vi, i) {
-          var lastChild = last && last.components[k] && i < last.components[k].length ? last.components[k][i] : null
-          var childPath = __.concat(path, [[k, i]])
           return reduceComponent(
-            vi, lastChild, rootTrigger, (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null), childPath,
+            vi,
+            componentsArrayChild(last, k, i),
+            rootTrigger,
+            eventTreeArrayChild(eventTree, k, i),
+            __.concat(path, [[k, i]]),
             merged.components[k] && i < merged.components[k].length ? merged.components[k][i] : {
               data: {},
               components: {},
@@ -211,16 +213,34 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
       )
     }
     else {
-      var lastChild = last ? last.components[k] : null
-      var childPath = __.concat(path, k)
       return reduceComponent(
-        v, lastChild, rootTrigger, (eventTree ? eventTree.children[k] : null), childPath,
+        v,
+        componentsChild(last, k),
+        rootTrigger,
+        eventTreeChild(eventTree, k),
+        __.concat(path, k),
         merged.components[k]
       )
     }
   }))
 }
 
+
+var eventTreeArrayChild = function(eventTree, k, i) {
+  return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null)
+}
+
+var eventTreeChild = function(eventTree, k) {
+  return (eventTree ? eventTree.children[k] : null)
+}
+
+var componentsArrayChild = function(lastState, k, i) {
+  return (lastState && lastState.components[k] && i < lastState.components[k].length ? lastState.components[k][i] : null)
+}
+
+var componentsChild = function(last, k) {
+  return last ? last.components[k] : null
+}
 
 
 var mergeStateAndEvents = function(lastState, eventTree) {
@@ -251,10 +271,9 @@ var mergeStateAndEvents = function(lastState, eventTree) {
               return __.map(
                 v,
                 function(vi, i) {
-                  var lastChild = lastState && lastState.components[k] && i < lastState.components[k].length ? lastState.components[k][i] : null
                   return mergeStateAndEvents(
-                    lastChild,
-                    (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null)
+                    componentsArrayChild(lastState, k, i),
+                    eventTreeArrayChild(eventTree, k, i)
                   )
                 }
               )
