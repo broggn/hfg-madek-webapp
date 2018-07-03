@@ -202,7 +202,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
             rootTrigger,
             eventTreeArrayChild(eventTree, k, i),
             __.concat(path, [[k, i]]),
-            merged.components[k] && i < merged.components[k].length ? merged.components[k][i] : {
+            merged.components[k] && i < merged.components[k].length && merged.components[k][i] ? merged.components[k][i] : {
               data: {},
               components: {},
               props: {},
@@ -219,7 +219,12 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
         rootTrigger,
         eventTreeChild(eventTree, k),
         __.concat(path, k),
-        merged.components[k]
+        merged.components[k] ? merged.components[k] : {
+          data: {},
+          components: {},
+          props: {},
+          event: {}
+        }
       )
     }
   }))
