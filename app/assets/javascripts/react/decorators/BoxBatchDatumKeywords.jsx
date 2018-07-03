@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
+import BoxPopup from './BoxPopup.jsx'
 
 
 
@@ -49,9 +50,17 @@ class BoxBatchDatumKeywords extends React.Component {
     this.props.metaKeyForm.trigger({action: 'select-keyword', keywordId: keywordId, keywordLabel})
   }
 
+  onFocus(event) {
+    this.props.metaKeyForm.trigger({action: 'input-focus'})
+  }
+
+  onCloseProposals() {
+    this.props.metaKeyForm.trigger({action: 'close-proposals'})
+  }
+
   renderKeywordProposal(k) {
     return (
-      <div key={k.uuid} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
+      <div key={k.uuid} style={{cursor: 'pointer'}} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
         {k.label}
       </div>
     )
@@ -80,11 +89,32 @@ class BoxBatchDatumKeywords extends React.Component {
       <div>
         <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
-        <input value={metaKeyForm.data.text} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
-        {this.renderKeywords()}
         <div>
-          {this.renderKeywordProposals()}
+          <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
+          {this.renderKeywords()}
+          <div style={{position: 'relative'}}>
+            <BoxPopup
+              onClose={() => this.onCloseProposals()}
+              style={{
+                position: 'absolute',
+                zIndex: '10000',
+                backgroundColor: '#fff',
+                borderRadius: '5px',
+                padding: '0px 10px',
+                marginRight: '5px',
+                marginBottom: '5px',
+                WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+                MozBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+                boxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+                maxHeight: '200px',
+                overflowY: 'auto'
+              }}
+            >
+              {this.renderKeywordProposals()}
+            </BoxPopup>
+          </div>
         </div>
+
       </div>
     )
   }

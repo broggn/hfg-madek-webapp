@@ -66,9 +66,13 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var nextShowProposals = () => {
-    if(event.action == 'change-text') {
+    if(event.action == 'change-text' || (event.action == 'input-focus' && data.keywordProposals)) {
       return true
-    } else {
+    }
+    else if(event.action == 'close-proposals') {
+      return false
+    }
+    else {
       return data.showProposals
     }
   }
@@ -86,7 +90,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var loadKeywords = () => {
-    var url = '/keywords?search_term=' + encodeURIComponent(data.text) + '&meta_key_id=' + encodeURIComponent(nextProps.metaKeyId)
+    var url = '/keywords?search_term=' + encodeURIComponent(nextText()) + '&meta_key_id=' + encodeURIComponent(nextProps.metaKeyId)
     xhr(
       {
         url: url,
