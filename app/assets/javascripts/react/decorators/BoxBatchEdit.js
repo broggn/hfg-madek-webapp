@@ -7,6 +7,7 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
+import BoxBatchKeywords from './BoxBatchKeywords.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 
 
@@ -105,7 +106,8 @@ module.exports = ({event, trigger, initial, components, data}) => {
     var decideReduce = (metaKeyId) => {
       var mapping = {
         'MetaDatum::Text': BoxBatchTextInput,
-        'MetaDatum::TextDate': BoxBatchDateInput
+        'MetaDatum::TextDate': BoxBatchDateInput,
+        'MetaDatum::Keywords': BoxBatchKeywords
       }
       var type = findMetaKey(metaKeyId).value_type
       if(!mapping[type]) throw 'not implemented for ' + type
