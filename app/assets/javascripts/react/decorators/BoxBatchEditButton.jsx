@@ -14,10 +14,9 @@ class BoxBatchEditButton extends React.Component {
 
   render() {
 
-    var stateBatch = this.props.stateBatch
-    var data = stateBatch.data
+    let {components, data, props, trigger} = this.props.stateBatch
 
-    if(data.metaMetaData.length != 2) {
+    if(components.loadMetaMetaData.data.metaMetaData.length != 2) {
       return (
         <a className={cx('link button dropdown-toggle btn btn-default ui-link active')}>
           Loading...

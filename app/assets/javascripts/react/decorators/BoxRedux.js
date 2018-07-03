@@ -150,6 +150,8 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
 
   merged.initial = !useLast
 
+  merged.nextProps = definition.props
+
   merged.trigger = function(event) {
 
     var newEventTree = {
@@ -205,7 +207,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
             merged.components[k] && i < merged.components[k].length && merged.components[k][i] ? merged.components[k][i] : {
               data: {},
               components: {},
-              props: {},
+              // props: vi.props,
               event: {}
             }
           )
@@ -222,7 +224,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
         merged.components[k] ? merged.components[k] : {
           data: {},
           components: {},
-          props: {},
+          // props: v.props,
           event: {}
         }
       )

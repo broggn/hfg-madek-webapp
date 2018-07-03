@@ -11,15 +11,20 @@ class BoxBatchEditForm extends React.Component {
   constructor(props) {
     super(props)
 
+    let {components} = this.props.stateBatch
+
     this.state = {
-      cachedMetaKeysWithTypes: metaKeysWithTypes(props.stateBatch.data.metaMetaData)
+      cachedMetaKeysWithTypes: metaKeysWithTypes(components.loadMetaMetaData.data.metaMetaData)
     }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if(!l.isEqual(this.props.stateBatch.data.metaMetaData, prevProps.stateBatch.data.metaMetaData)) {
+    var lastMetaMetaData = this.props.stateBatch.components.loadMetaMetaData.data.metaMetaData
+    var nextMetaMetaData = prevProps.stateBatch.components.loadMetaMetaData.data.metaMetaData
+
+    if(!l.isEqual(lastMetaMetaData, nextMetaMetaData)) {
       this.setState({
-        cachedMetaKeysWithTypes: metaKeysWithTypes(this.props.stateBatch.data.metaMetaData)
+        cachedMetaKeysWithTypes: metaKeysWithTypes(nextMetaMetaData)
       })
     }
   }
@@ -33,17 +38,19 @@ class BoxBatchEditForm extends React.Component {
   }
 
   renderKeyForms() {
+    let {components} = this.props.stateBatch
+
     return l.map(
-      this.props.stateBatch.components.metaKeyForms,
+      components.metaKeyForms,
       (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm)
     )
   }
 
   render() {
 
-    var stateBatch = this.props.stateBatch
+    let {data} = this.props.stateBatch
 
-    if(!stateBatch.data.open) {
+    if(!data.open) {
       return null
     } else {
       return (

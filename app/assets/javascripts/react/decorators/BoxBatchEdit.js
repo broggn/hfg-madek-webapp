@@ -7,6 +7,7 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
+import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 
 
 module.exports = ({event, trigger, initial, components, data}) => {
@@ -15,28 +16,23 @@ module.exports = ({event, trigger, initial, components, data}) => {
 
   var next = () => {
 
-    if(event.action == 'mount') {
-      asyncLoadData('MediaEntry')
-      asyncLoadData('Collection')
-    }
-
     if(initial) {
       return {
         data: {
-          metaMetaData: [],
           open: false
         },
         components: {
+          loadMetaMetaData: nextLoadMetaMetaData(),
           metaKeyForms: []
         }
       }
     } else {
       return {
         data: {
-          metaMetaData: nextData(),
           open: nextOpen()
         },
         components: {
+          loadMetaMetaData: nextLoadMetaMetaData(),
           metaKeyForms: nextMetaKeyForms()
         }
       }
@@ -44,6 +40,16 @@ module.exports = ({event, trigger, initial, components, data}) => {
 
   }
 
+
+  var nextLoadMetaMetaData = () => {
+    return {
+      reset: false,
+      reduce: BoxBatchLoadMetaMetaData,
+      props: {
+        mount: event.action == 'mount'
+      }
+    }
+  }
 
   var nextMetaKeyForms = () => {
 
@@ -58,7 +64,7 @@ module.exports = ({event, trigger, initial, components, data}) => {
         cachedAllMetaKeysById = l.fromPairs(
           l.flatten(
             l.map(
-              data.metaMetaData,
+              components.loadMetaMetaData.data.metaMetaData,
               (mmd) => l.map(
                 mmd.data.meta_key_by_meta_key_id,
                 (m, k) => [k, m]
@@ -167,7 +173,7 @@ module.exports = ({event, trigger, initial, components, data}) => {
   var nextOpen = () => {
 
     var ready = () => {
-      return data.metaMetaData.length == 2
+      return components.loadMetaMetaData.data.metaMetaData.length == 2
     }
 
     if(event.action == 'toggle') {
@@ -179,43 +185,6 @@ module.exports = ({event, trigger, initial, components, data}) => {
     } else {
       return data.open
     }
-  }
-
-  var nextData = () => {
-    if(event.action == 'data-loaded') {
-      return data.metaMetaData.concat({
-        data: event.data,
-        type: event.type
-      })
-    } else {
-      return data.metaMetaData
-    }
-  }
-
-  var asyncLoadData = (type) => {
-    var url = '/meta_meta_data?type=' + type
-    xhr(
-      {
-        url: url,
-        method: 'GET',
-        json: true,
-        headers: {
-          'Accept': 'application/json',
-          'X-CSRF-Token': getRailsCSRFToken()
-        }
-      },
-      (err, res, json) => {
-        if(err) {
-          return
-        } else {
-          trigger({
-            action: 'data-loaded',
-            type: type,
-            data: json
-          })
-        }
-      }
-    )
   }
 
   return next()
