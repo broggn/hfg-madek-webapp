@@ -58,7 +58,7 @@ module.exports = ({event, trigger, initial, components, data}) => {
             (mkf) => {
               return {
                 data: mkf.data,
-                pros: mkf.props
+                props: mkf.props
               }
             }
           )

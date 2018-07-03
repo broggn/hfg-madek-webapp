@@ -35,7 +35,70 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var applyMetaData = ({resourceId, resourceType, formData}) => {
+
+    var pathType = () => {
+      return {
+        'MediaEntry': 'entries',
+        'Collection': 'sets'
+      }[resourceType]
+    }
+
+    var url = '/' + pathType() + '/' + resourceId + '/meta_data'
+
+    var property = () => {
+      return {
+        'MediaEntry': 'media_entry',
+        'Collection': 'set'
+      }[resourceType]
+    }
+
+    var formToDataText = (data) => {
+      return [data.text]
+    }
+
+    var formToData = (fd) => {
+      return {
+        'MetaDatum::Text': formToDataText
+      }[fd.props.metaKey.value_type](fd.data)
+    }
+
+    var metaData = () => {
+      return l.fromPairs(
+        l.map(
+          formData,
+          (fd) => [
+            fd.props.metaKeyId,
+            formToData(fd)
+          ]
+        )
+      )
+    }
+
+    var data = {
+      [property()]: {
+        meta_data: metaData()
+      }
+    }
+
     debugger
+
+    xhr(
+      {
+        url: url,
+        method: 'PUT',
+        body: $.param(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/x-www-form-urlencoded',
+          'X-CSRF-Token': getRailsCSRFToken()
+
+        }
+      },
+      (err, res, json) => {
+        alert('done')
+      }
+    )
+
   }
 
   return next()
