@@ -84,7 +84,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         )
       }
 
-      return metaKeysWithTypes(data.metaMetaData)
+      return metaKeysWithTypes(nextData())
 
     } else {
       return data.metaKeysWithTypes
