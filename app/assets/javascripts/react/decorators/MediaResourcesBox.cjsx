@@ -105,7 +105,7 @@ module.exports = React.createClass
       reset: false,
       reduce: (m) => BoxState(m),
       props: if props.initial then {get: @props.get} else {
-        get: @props.get,
+        get: @_mergeGet(@props, @state),#@props.get,
         currentUrl: @_currentUrl(),
         getJsonPath: @getJsonPath
       }
@@ -169,7 +169,6 @@ module.exports = React.createClass
     batchDestroyResourcesModal: false
     batchDestroyResourcesWaiting: false
     showSelectionLimit: false
-    listJobQueue: [],
     reduc: this.reducInitial({})
   }
 
@@ -214,73 +213,7 @@ module.exports = React.createClass
   requestId: Math.random()
 
   fetchListData: () ->
-    # jobQueue = BoxFetchListData.todo(
-    #   this.state.listJobQueue,
-    #   this.state.resources
-    # )
-    #
-    # this.setState({
-    #   listJobQueue: jobQueue
-    # },
-    # () =>
-    #   BoxFetchListData.loadJobs(this.state.listJobQueue, () =>
-    #     this.setState({
-    #       resources: this.state.resources
-    #     }, () =>
-    #       this.fetchListData()
-    #     )
-    #   )
-    #
-    # )
-
-
-
-  fetchNext: (callback) ->
-
-    # @state.resources.fetchNext(@_mergeGet(@props, @state).config.layout == 'list', c)
-
-    pagination = @props.get.pagination
-
-
-    pageSize = this.props.get.config.per_page
-
-    page = Math.ceil(@state.resources.length / pageSize)
-
-    nextPage = page + 1
-
-
-    nextUrl = setUrlParams(
-      @_currentUrl(),
-      {list: {page: nextPage}},
-      {___sparse: JSON.stringify(f.set({}, @getJsonPath(), {}))})
-
-    # We compare the request id when sending started
-    # with the request id when the answer arrives and
-    # only process the answer when its still the same id.
-    localRequestId = @requestId
-
-    return xhr.get(
-      {url: nextUrl, json: true },
-      (err, res, body) => (
-
-        if @requestId != localRequestId
-          return
-
-        if err || res.statusCode > 400
-          return callback(err || body)
-
-        this.setState({
-          resources: this.state.resources.concat(
-            f.get(body, @getJsonPath())
-          )
-        }, () =>
-          callback(null)
-        )
-
-        if @_mergeGet(@props, @state).config.layout == 'list'
-          @fetchListData()
-    ))
-
+    this.reducRootEvent({ action: 'fetch-list-data' })
 
   componentDidMount: ()->
     if @_mergeGet(@props, @state).config.layout == 'list'
@@ -291,13 +224,6 @@ module.exports = React.createClass
         @setState(selectedResources: selection) if @isMounted()
       )
 
-    if @state.resources
-      @fetchNextPage = f.throttle(
-        ((c) =>
-          this.fetchNext(c)
-        )
-      , 1000)
-      @doOnUnmount.push(@fetchNextPage.cancel())
     @setState(
       isClient: true,
       selectedResources: selection,
@@ -307,15 +233,13 @@ module.exports = React.createClass
     this.reducRootEvent({ action: 'mount' })
 
 
+  forceFetchNextPage: () ->
+    this.reducRootEvent({ action: 'force-fetch-next-page' })
+
   # - custom actions:
   _onFetchNextPage: (event)->
     return if @state.reduc.data.loadingNextPage
-    # return if @state.loadingNextPage
     this.reducRootEvent({ action: 'fetch-next-page' })
-    # @setState(loadingNextPage: true)
-    # @fetchNextPage (err, newUrl)=>
-    #   if err then console.error(err)
-    #   @setState(loadingNextPage: false) if @isMounted()
 
   _onFilterChange: (event, newParams)->
     event.preventDefault() if event && f.isFunction(event.preventDefault)
@@ -582,7 +506,6 @@ module.exports = React.createClass
         <Link mods='mlx weak' href={resetFilterHref}>
           <Icon i='undo'/> {t('resources_box_reset_filter')}</Link>
 
-
   render: ()->
     {
       get, mods, initial, fallback, heading, listMods
@@ -591,8 +514,7 @@ module.exports = React.createClass
 
     get = @_mergeGet(@props, @state)
 
-    # FIXME: always get from state!
-    resources = @state.reduc.data.resources#@state.resources || get.resources
+    resources = @state.reduc.data.resources
 
     config = get.config
 
@@ -635,7 +557,6 @@ module.exports = React.createClass
         return if isNewTab(event)
 
         event.preventDefault()
-        @fetchNextPage.cancel()
 
         href = getLocalLink(event)
         routerGoto(href)
@@ -650,20 +571,9 @@ module.exports = React.createClass
             #   pathname: url.pathname,
             #   query: url.query
             # })
-            @setState({
-              loadingNextPage: true,
-              # resources: [],
-              requestId: Math.random()
-            }, () =>
 
-              @fetchNextPage (err, newUrl) =>
-                if err then console.error(err)
-                @setState(loadingNextPage: false) if @isMounted()
-
-              @_persistListConfig(list_config: {order: itemKey})
-
-            )
-
+            this.forceFetchNextPage()
+            @_persistListConfig(list_config: {order: itemKey})
         )
 
 
@@ -796,7 +706,7 @@ module.exports = React.createClass
         resources={resources}
         staticPagination={staticPagination}
         onFetchNextPage={@_onFetchNextPage}
-        loadingNextPage={@state.loadingNextPage}
+        loadingNextPage={@state.reduc.data.loadingNextPage}
         isClient={@state.isClient}
         permaLink={BoxSetUrlParams(@_currentUrl(), currentQuery)}
         currentUrl={currentUrl}
@@ -847,7 +757,7 @@ module.exports = React.createClass
           {# main list:}
           <div className='ui-container table-cell table-substance'>
             {children}
-            {if resources.length == 0 && @state.loadingNextPage
+            {if resources.length == 0 && @state.reduc.data.loadingNextPage
               <Preloader />
             else if not f.present(resources) or resources.length == 0 then do () =>
               BoxSetFallback = require('./BoxSetFallback.jsx')
@@ -894,7 +804,7 @@ module.exports = React.createClass
         if @state.clipboardModal != 'hidden'
           <Clipboard type={@state.clipboardModal}
             onClose={() => @setState(clipboardModal: 'hidden')}
-            resources={@state.resources}
+            resources={@state.reduc.data.resources}
             selectedResources={@state.selectedResources}
             pagination={@props.get.pagination}
             jsonPath={@getJsonPath()}

@@ -36,15 +36,22 @@ module.exports = {
       (err, res, json) => {
 
         if(err || res.statusCode > 400) {
-          job.state = 'initial'
-          callback()
+          // job.state = 'initial'
+          callback({
+            status: 'failure',
+            job: job
+          })
           return
         }
 
-        job.resource.list_meta_data = json
-        job.state = 'done'
+        // job.resource.list_meta_data = json
+        // job.state = 'done'
 
-        callback()
+        callback({
+          status: 'success',
+          job: job,
+          json: json
+        })
       }
     )
   },
