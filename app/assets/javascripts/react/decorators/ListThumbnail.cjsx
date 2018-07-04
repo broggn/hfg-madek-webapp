@@ -192,6 +192,7 @@ module.exports = React.createClass
             <div className="ui-thumbnail-privacy">
               <i className="icon-privacy-group"></i>
             </div>
+            {@props.batchApplyButton}
             <Image innerImage={innerImage} mediaUrl={mediaUrl} />
             <Titles />
           </div>

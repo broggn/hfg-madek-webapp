@@ -15,6 +15,7 @@ BoxFetchRelations = require('./BoxFetchRelations.js')
 BoxFavorite = require('./BoxFavorite.js')
 BoxDelete = require('./BoxDelete.js')
 getMediaType = require('../../models/shared/get-media-type.js')
+BoxBatchApplyButton = require('./BoxBatchApplyButton.jsx')
 
 CURSOR_SELECT_STYLE = {cursor: 'cell'}
 
@@ -186,6 +187,12 @@ module.exports = React.createClass
     else
       getMediaType(f.get(@props.get, 'media_file.content_type'))
 
+    batchApplyButton = if @props.onBatchEditApply
+      <BoxBatchApplyButton
+        onBatchEditApply={@props.onBatchEditApply}
+        get={get}
+        big={@props.pinThumb}
+      />
 
     if @props.pinThumb
       <PinThumbnail
@@ -203,7 +210,7 @@ module.exports = React.createClass
         deleteProps={deleteProps}
         statusProps={statusProps}
         style={@props.style}
-        onBatchEditApply={@props.onBatchEditApply}
+        batchApplyButton={batchApplyButton}
         />
     else if @props.listThumb
       <ListThumbnail
@@ -219,7 +226,7 @@ module.exports = React.createClass
         favoriteProps={favoriteProps}
         deleteProps={deleteProps}
         get={get}
-        onBatchEditApply={@props.onBatchEditApply}
+        batchApplyButton={batchApplyButton}
         />
     else
       <ResourceThumbnailRenderer
@@ -235,7 +242,7 @@ module.exports = React.createClass
         selectProps={selectProps}
         textProps={textProps}
         style={@props.style}
-        onBatchEditApply={@props.onBatchEditApply}
+        batchApplyButton={batchApplyButton}
         />
 
 

@@ -876,7 +876,7 @@ module.exports = React.createClass
                 pagination={@props.get.pagination}
                 perPage={@props.get.config.per_page}
                 onBatchEditApply={
-                  if @state.stateBatch.data.open
+                  if @state.stateBatch.data.open && @state.stateBatch.components.metaKeyForms.length > 0
                     @_onBatchEditApply
                   else
                     null

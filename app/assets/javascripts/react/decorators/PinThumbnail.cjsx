@@ -100,6 +100,7 @@ module.exports = React.createClass
               )
             }
           </ul>
+          {@props.batchApplyButton}
           <ul className='ui-tile__actions right by-right'>
             {
               f.map(
