@@ -12,7 +12,7 @@ import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 import BoxBatchApplyMetaData from './BoxBatchApplyMetaData.js'
 
 
-module.exports = ({event, trigger, initial, components, data}) => {
+module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var cachedAllMetaKeysById = null
 
@@ -80,7 +80,7 @@ module.exports = ({event, trigger, initial, components, data}) => {
       reset: false,
       reduce: BoxBatchLoadMetaMetaData,
       props: {
-        mount: event.action == 'mount'
+        mount: nextProps.mount
       }
     }
   }

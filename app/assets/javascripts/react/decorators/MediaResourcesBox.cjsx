@@ -62,6 +62,7 @@ BoxBatchEditButton = require('./BoxBatchEditButton.jsx')
 BoxBatchEditForm = require('./BoxBatchEditForm.jsx')
 
 BoxRedux = require('./BoxRedux.js')
+BoxState = require('./BoxState.js')
 
 # Props/Config overview:
 # - props.get.has_user = should the UI offer any interaction
@@ -99,42 +100,42 @@ module.exports = React.createClass
     fallback: true
 
 
-  stateBatchRoot: () ->
+  reducRoot: () ->
     return {
       reset: false,
-      reduce: (m) => BoxBatchEdit(m)
+      reduce: (m) => BoxState(m)
     }
 
-  stateBatchTrigger: (eventTree) ->
-    next = BoxRedux.build(this.stateBatchRoot(), f.cloneDeep(@state.stateBatch), eventTree, (e) => this.stateBatchTrigger(e))
-    @setState({stateBatch: next})
+  reducTrigger: (eventTree) ->
+    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    @setState({reduc: next})
 
 
-  stateBatchInitial: (event) ->
+  reducInitial: (event) ->
     eventTree = {
       componentId: 0,
       event: event,
       children: {}
     }
-    return BoxRedux.build(this.stateBatchRoot(), null, eventTree, (e) => this.stateBatchTrigger(e))
+    return BoxRedux.build(this.reducRoot(), null, eventTree, (e) => this.reducTrigger(e))
 
-  stateBatchRootEvent: (event)  ->
+  reducRootEvent: (event)  ->
     eventTree = {
       componentId: 0,
       event: event,
       children: {}
     }
-    next = BoxRedux.build(this.stateBatchRoot(), f.cloneDeep(@state.stateBatch), eventTree, (e) => this.stateBatchTrigger(e))
-    @setState({stateBatch: next})
+    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    @setState({reduc: next})
 
   onBatchButton: (event) ->
-    @stateBatchRootEvent({ action: 'toggle' })
+    @reducRootEvent({ action: 'toggle' })
 
   onClickKey: (event, metaKeyId) ->
-    @stateBatchRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
+    @reducRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
 
   _onBatchEditApply: (event, resourceId, resourceType) ->
-    @stateBatchRootEvent({ action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
+    @reducRootEvent({ action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -154,7 +155,7 @@ module.exports = React.createClass
     batchDestroyResourcesWaiting: false
     showSelectionLimit: false
     listJobQueue: [],
-    stateBatch: this.stateBatchInitial({})
+    reduc: this.reducInitial({})
   }
 
   doOnUnmount: [] # to be filled with functions to be called on unmount
@@ -296,7 +297,7 @@ module.exports = React.createClass
       config: resourceListParams(window.location)
     )
 
-    this.stateBatchRootEvent({ action: 'mount' })
+    this.reducRootEvent({ action: 'mount' })
 
 
   # - custom actions:
@@ -733,7 +734,7 @@ module.exports = React.createClass
 
 
       batchButton = <BoxBatchEditButton
-        stateBatch={BoxRedux.prettyState(@state.stateBatch, @stateBatchTrigger)}
+        stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
         onBatchButton={(e) => @onBatchButton(e)}
       />
 
@@ -826,7 +827,7 @@ module.exports = React.createClass
       {boxToolBar()}
 
       <BoxBatchEditForm
-        stateBatch={BoxRedux.prettyState(@state.stateBatch, @stateBatchTrigger)}
+        stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
         onClickKey={(e, k) => @onClickKey(e, k)}
       />
 
@@ -866,7 +867,7 @@ module.exports = React.createClass
                 pagination={@props.get.pagination}
                 perPage={@props.get.config.per_page}
                 onBatchEditApply={
-                  if @state.stateBatch.data.open && @state.stateBatch.components.metaKeyForms.length > 0
+                  if @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0
                     @_onBatchEditApply
                   else
                     null
