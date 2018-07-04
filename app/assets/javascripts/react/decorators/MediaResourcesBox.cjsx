@@ -103,16 +103,6 @@ module.exports = React.createClass
     return {
       reset: false,
       reduce: (m) => BoxBatchEdit(m)
-      # (lastState, eventTree, localTrigger) =>
-      #   {
-      #     data: {
-      #       'data1': 'data1',
-      #       'data2': 'data2'
-      #     },
-      #     components: {
-      #       'component1': this.testComponent1()
-      #     }
-      #   }
     }
 
   stateBatchTrigger: (eventTree) ->
