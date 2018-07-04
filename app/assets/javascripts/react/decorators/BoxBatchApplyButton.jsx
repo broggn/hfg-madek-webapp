@@ -33,7 +33,7 @@ class BoxBatchApplyButton extends React.Component {
             marginRight: '5px',
             marginBottom: '5px',
             fontSize: (this.props.big ? '18px' : '10px'),
-            cursor: 'crosshair'
+            cursor: 'pointer'
           }}
           onClick={(e) => this.props.onBatchEditApply(e, this.props.get.uuid, this.props.get.type)}
         >
