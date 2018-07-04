@@ -100,14 +100,19 @@ module.exports = React.createClass
     fallback: true
 
 
-  reducRoot: () ->
+  reducRoot: (props) ->
     return {
       reset: false,
-      reduce: (m) => BoxState(m)
+      reduce: (m) => BoxState(m),
+      props: if props.initial then {get: @props.get} else {
+        get: @props.get,
+        currentUrl: @_currentUrl(),
+        getJsonPath: @getJsonPath
+      }
     }
 
   reducTrigger: (eventTree) ->
-    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
 
@@ -117,7 +122,7 @@ module.exports = React.createClass
       event: event,
       children: {}
     }
-    return BoxRedux.build(this.reducRoot(), null, eventTree, (e) => this.reducTrigger(e))
+    return BoxRedux.build(this.reducRoot({initial: true}), null, eventTree, (e) => this.reducTrigger(e))
 
   reducRootEvent: (event)  ->
     eventTree = {
@@ -125,7 +130,7 @@ module.exports = React.createClass
       event: event,
       children: {}
     }
-    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
   reducComponentEvent: (component, event)  ->
@@ -135,7 +140,7 @@ module.exports = React.createClass
       children: {}
     }
     eventTree = BoxRedux.fireTreeEvent(eventTree, component.path, component.id, event)
-    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
   onBatchButton: (event) ->
@@ -206,35 +211,27 @@ module.exports = React.createClass
       return 'resources'
 
 
-  componentWillMount: ()->
-    resources = if f.get(@props, 'get.resources.isCollection')
-      throw new Error('is collection') # should not be the case anymore after uploader is not using this box anymore
-    else
-      @props.get.resources
-    @setState(resources: resources)
-
-
   requestId: Math.random()
 
   fetchListData: () ->
-    jobQueue = BoxFetchListData.todo(
-      this.state.listJobQueue,
-      this.state.resources
-    )
-
-    this.setState({
-      listJobQueue: jobQueue
-    },
-    () =>
-      BoxFetchListData.loadJobs(this.state.listJobQueue, () =>
-        this.setState({
-          resources: this.state.resources
-        }, () =>
-          this.fetchListData()
-        )
-      )
-
-    )
+    # jobQueue = BoxFetchListData.todo(
+    #   this.state.listJobQueue,
+    #   this.state.resources
+    # )
+    #
+    # this.setState({
+    #   listJobQueue: jobQueue
+    # },
+    # () =>
+    #   BoxFetchListData.loadJobs(this.state.listJobQueue, () =>
+    #     this.setState({
+    #       resources: this.state.resources
+    #     }, () =>
+    #       this.fetchListData()
+    #     )
+    #   )
+    #
+    # )
 
 
 
@@ -312,11 +309,13 @@ module.exports = React.createClass
 
   # - custom actions:
   _onFetchNextPage: (event)->
-    return if @state.loadingNextPage
-    @setState(loadingNextPage: true)
-    @fetchNextPage (err, newUrl)=>
-      if err then console.error(err)
-      @setState(loadingNextPage: false) if @isMounted()
+    return if @state.reduc.data.loadingNextPage
+    # return if @state.loadingNextPage
+    this.reducRootEvent({ action: 'fetch-next-page' })
+    # @setState(loadingNextPage: true)
+    # @fetchNextPage (err, newUrl)=>
+    #   if err then console.error(err)
+    #   @setState(loadingNextPage: false) if @isMounted()
 
   _onFilterChange: (event, newParams)->
     event.preventDefault() if event && f.isFunction(event.preventDefault)
@@ -593,7 +592,7 @@ module.exports = React.createClass
     get = @_mergeGet(@props, @state)
 
     # FIXME: always get from state!
-    resources = @state.resources || get.resources
+    resources = @state.reduc.data.resources#@state.resources || get.resources
 
     config = get.config
 
@@ -653,7 +652,7 @@ module.exports = React.createClass
             # })
             @setState({
               loadingNextPage: true,
-              resources: [],
+              # resources: [],
               requestId: Math.random()
             }, () =>
 
