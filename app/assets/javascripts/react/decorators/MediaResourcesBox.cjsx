@@ -128,14 +128,24 @@ module.exports = React.createClass
     next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
+  reducComponentEvent: (component, event)  ->
+    eventTree = {
+      componentId: 0,
+      event: event,
+      children: {}
+    }
+    eventTree = BoxRedux.fireTreeEvent(eventTree, component.path, component.id, event)
+    next = BoxRedux.build(this.reducRoot(), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    @setState({reduc: next})
+
   onBatchButton: (event) ->
-    @reducRootEvent({ action: 'toggle' })
+    @reducComponentEvent(this.state.reduc.components.batch, { action: 'toggle' })
 
   onClickKey: (event, metaKeyId) ->
-    @reducRootEvent({ action: 'select-key', metaKeyId: metaKeyId})
+    @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId})
 
   _onBatchEditApply: (event, resourceId, resourceType) ->
-    @reducRootEvent({ action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
+    @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
 
   # kick of client-side mode:
   getInitialState: ()-> {

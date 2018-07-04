@@ -165,6 +165,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
     rootTrigger(newEventTree)
   }
 
+  merged.event = merged.event ? merged.event : {}
 
   var next = definition.reduce(
     merged
@@ -234,11 +235,11 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
 
 var eventTreeArrayChild = function(eventTree, k, i) {
-  return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : null)
+  return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
 }
 
 var eventTreeChild = function(eventTree, k) {
-  return (eventTree ? eventTree.children[k] : null)
+  return (eventTree ? eventTree.children[k] : {})
 }
 
 var componentsArrayChild = function(lastState, k, i) {
@@ -299,7 +300,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
         )
       ),
       props: (lastState.props ? lastState.props : {}),
-      event: (eventTree ? eventTree.event : {})
+      event: (eventTree && eventTree.event ? eventTree.event : {})
     }
   }
 
@@ -315,6 +316,8 @@ module.exports = {
 
     return build(stateReduction, lastState, trigger, eventTree, merged);
   },
+
+  fireTreeEvent: fireTreeEvent2,
 
   prettyState: function(state, rootTrigger) {
 
