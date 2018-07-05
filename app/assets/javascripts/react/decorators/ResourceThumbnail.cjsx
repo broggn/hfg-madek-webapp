@@ -190,7 +190,7 @@ module.exports = React.createClass
     batchApplyButton = if @props.onBatchEditApply
       <BoxBatchApplyButton
         onBatchEditApply={@props.onBatchEditApply}
-        get={get}
+        resourceState={@props.resourceState}
         big={@props.pinThumb}
       />
 

@@ -148,8 +148,8 @@ module.exports = React.createClass
   onClickKey: (event, metaKeyId) ->
     @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId})
 
-  _onBatchEditApply: (event, resourceId, resourceType) ->
-    @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
+  # _onBatchEditApply: (event, resourceId, resourceType) ->
+  #   @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
 
   # kick of client-side mode:
   getInitialState: ()-> {
@@ -776,7 +776,12 @@ module.exports = React.createClass
             else
               BoxRenderResources = require('./BoxRenderResources.jsx')
               <BoxRenderResources
-                resources={@state.reduc.components.resources}
+                resources={
+                  f.map(
+                    @state.reduc.components.resources,
+                    (r) => BoxRedux.prettyState(r, @reducTrigger)
+                  )
+                }
                 actionsDropdownParameters={actionsDropdownParameters}
                 selectedResources={@state.selectedResources}
                 isClient={@state.isClient}
@@ -792,7 +797,7 @@ module.exports = React.createClass
                 perPage={@props.get.config.per_page}
                 onBatchEditApply={
                   if @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0
-                    @_onBatchEditApply
+                    true#@_onBatchEditApply
                   else
                     null
                 }

@@ -9,7 +9,7 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 import BoxBatchKeywords from './BoxBatchKeywords.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
-import BoxBatchApplyMetaData from './BoxBatchApplyMetaData.js'
+// import BoxBatchApplyMetaData from './BoxBatchApplyMetaData.js'
 
 
 module.exports = ({event, trigger, initial, components, data, nextProps}) => {
@@ -25,8 +25,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
-          metaKeyForms: [],
-          applyMetaData: nextApplyMetaData(),
+          metaKeyForms: []
         }
       }
     } else {
@@ -36,8 +35,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
-          metaKeyForms: nextMetaKeyForms(),
-          applyMetaData: nextApplyMetaData()
+          metaKeyForms: nextMetaKeyForms()
         }
       }
     }
@@ -45,35 +43,35 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
 
-  var nextApplyMetaData = () => {
-
-    var applyProps = () => {
-      if(event.action == 'apply-meta-data') {
-        return {
-          action: 'apply',
-          resourceId: event.resourceId,
-          resourceType: event.resourceType,
-          metaKeyForms: l.map(
-            components.metaKeyForms,
-            (mkf) => {
-              return {
-                data: mkf.data,
-                props: mkf.props
-              }
-            }
-          )
-        }
-      } else {
-        return {}
-      }
-    }
-
-    return {
-      reset: false,
-      reduce: BoxBatchApplyMetaData,
-      props: applyProps()
-    }
-  }
+  // var nextApplyMetaData = () => {
+  //
+  //   var applyProps = () => {
+  //     if(event.action == 'apply-meta-data') {
+  //       return {
+  //         action: 'apply',
+  //         resourceId: event.resourceId,
+  //         resourceType: event.resourceType,
+  //         metaKeyForms: l.map(
+  //           components.metaKeyForms,
+  //           (mkf) => {
+  //             return {
+  //               data: mkf.data,
+  //               props: mkf.props
+  //             }
+  //           }
+  //         )
+  //       }
+  //     } else {
+  //       return {}
+  //     }
+  //   }
+  //
+  //   return {
+  //     reset: false,
+  //     reduce: BoxBatchApplyMetaData,
+  //     props: applyProps()
+  //   }
+  // }
 
   var nextLoadMetaMetaData = () => {
     return {
@@ -173,6 +171,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return data.open
     }
   }
+
+
+
 
   return next()
 }

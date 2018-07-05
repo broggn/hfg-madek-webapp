@@ -15,6 +15,34 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
+    var resourcesWithApplyEvent = l.filter(
+      components.resources,
+      (r) => r.event.action == 'apply'
+    )
+
+    if(!l.isEmpty(resourcesWithApplyEvent)) {
+      l.each(
+        resourcesWithApplyEvent,
+        (r) => {
+          applyMetaData(
+            {
+              resourceId: r.event.uuid,
+              resourceType: r.event.type,
+              formData: l.map(
+                components.batch.components.metaKeyForms,
+                (mkf) => {
+                  return {
+                    data: mkf.data,
+                    props: mkf.props
+                  }
+                }
+              )
+            }
+          )
+        }
+      )
+    }
+
 
     if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
       fetchNextPage()
@@ -72,6 +100,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       props: {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false)
+        // formData: l.map(
+        //   components.batch.components.metaKeyForms,
+        //   (mkf) => {
+        //     return {
+        //       data: mkf.data,
+        //       props: mkf.props
+        //     }
+        //   }
+        // )
       }
     }
   }
@@ -197,6 +234,77 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       }
     )
   }
+
+
+
+
+
+  var applyMetaData = ({resourceId, resourceType, formData}) => {
+
+    var pathType = () => {
+      return {
+        'MediaEntry': 'entries',
+        'Collection': 'sets'
+      }[resourceType]
+    }
+
+    var url = '/' + pathType() + '/' + resourceId + '/meta_data'
+
+    var property = () => {
+      return {
+        'MediaEntry': 'media_entry',
+        'Collection': 'set'
+      }[resourceType]
+    }
+
+    var formToDataText = (data) => {
+      return [data.text]
+    }
+
+    var formToData = (fd) => {
+      return {
+        'MetaDatum::Text': formToDataText
+      }[fd.props.metaKey.value_type](fd.data)
+    }
+
+    var metaData = () => {
+      return l.fromPairs(
+        l.map(
+          formData,
+          (fd) => [
+            fd.props.metaKeyId,
+            formToData(fd)
+          ]
+        )
+      )
+    }
+
+    var data = {
+      [property()]: {
+        meta_data: metaData()
+      }
+    }
+
+    xhr(
+      {
+        url: url,
+        method: 'PUT',
+        body: $.param(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/x-www-form-urlencoded',
+          'X-CSRF-Token': getRailsCSRFToken()
+
+        }
+      },
+      (err, res, json) => {
+        // todo
+      }
+    )
+
+  }
+
+
 
   return next()
 }

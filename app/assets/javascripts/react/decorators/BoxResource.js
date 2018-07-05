@@ -20,6 +20,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
+    // if(event.action == 'apply') {
+    //   debugger
+    //   // applyMetaData(event.uuid, event.type, nextProps.formData)
+    // }
+
     if(nextProps.loadMetaData || event.action == 'load-meta-data-failure') {
       loadMetaData()
     }
@@ -29,7 +34,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         data: {
           resource: nextProps.resource,
           listMetaData: null,
-          loadingListMetaData: false
+          loadingListMetaData: false,
+          applyingMetaData: false
         },
         components: {
         }
@@ -39,12 +45,23 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         data: {
           resource: nextResource(),
           listMetaData: nextListMetaData(),
-          loadingListMetaData: nextLoadingListMetaData()
+          loadingListMetaData: nextLoadingListMetaData(),
+          applyingMetaData: nextApplyingMetaData()
         },
         components: {
         }
       }
     }
+  }
+
+  var nextApplyingMetaData = () => {
+    if(event.action == 'apply') {
+      return true
+    } else {
+      return data.applyingMetaData
+    }
+
+
   }
 
   var nextLoadingListMetaData = () => {
@@ -98,6 +115,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     )
 
   }
+
+
+
 
   return next()
 }
