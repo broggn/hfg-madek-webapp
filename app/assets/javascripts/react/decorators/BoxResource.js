@@ -33,6 +33,10 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       reloadResource()
     }
 
+    if(event.action == 'reload-success') {
+      reloadMetaData()
+    }
+
     if(initial) {
       return {
         data: {
@@ -71,9 +75,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextLoadingListMetaData = () => {
-    if(nextProps.loadMetaData) {
+    if(nextProps.loadMetaData || event.action == 'apply') {
       return true
-    } else if(event.action == 'load-meta-data-success') {
+    } else if(event.action == 'load-meta-data-success' || event.action == 'reload-meta-data-success') {
       return false
     } else {
       return data.loadingListMetaData
@@ -81,7 +85,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextListMetaData = () => {
-    if(event.action == 'load-meta-data-success') {
+    if(event.action == 'apply') {
+      return null
+    } else if(event.action == 'load-meta-data-success') {
+      return event.json
+    } else if(event.action == 'reload-meta-data-success') {
       return event.json
     } else {
       return data.listMetaData
@@ -101,8 +109,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
-  var loadMetaData = () => {
 
+  var sharedLoadMetaData = ({success, error}) => {
     var currentQuery = parseQuery(
       parseUrl(window.location.toString()).query
     )
@@ -122,13 +130,27 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       },
       (err, res, json) => {
         if(err || res.statusCode > 400) {
-          trigger({action: 'load-meta-data-failure'})
+          error()
         } else {
-          trigger({action: 'load-meta-data-success', json: json})
+          success(json)
         }
       }
     )
 
+  }
+
+  var reloadMetaData = () => {
+    sharedLoadMetaData({
+      success: (json) => trigger({action: 'load-meta-data-success', json: json}),
+      error: () => trigger({action: 'load-meta-data-failure'})
+    })
+  }
+
+  var loadMetaData = () => {
+    sharedLoadMetaData({
+      success: (json) => trigger({action: 'reload-meta-data-success', json: json}),
+      error: () => trigger({action: 'reload-meta-data-failure'})
+    })
   }
 
 
