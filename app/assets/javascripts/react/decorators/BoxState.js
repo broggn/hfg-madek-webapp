@@ -8,6 +8,7 @@ import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
 import BoxResource from './BoxResource.js'
+import qs from 'qs'
 
 var requestId = Math.random()
 
@@ -264,9 +265,36 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return [data.text]
     }
 
+    var formToDataKeywords = (data) => {
+      return l.map(
+        data.keywords,
+        (k) => {
+          if(k.id) {
+            return k.id
+          } else {
+            return {
+              term: k.label
+            }
+          }
+        }
+      )
+    }
+
+    var formToDataPeople = (data) => {
+      return l.map(
+        data.keywords,
+        (k) => {
+          return k.id
+        }
+      )
+    }
+
+
     var formToData = (fd) => {
       return {
-        'MetaDatum::Text': formToDataText
+        'MetaDatum::Text': formToDataText,
+        'MetaDatum::Keywords': formToDataKeywords,
+        'MetaDatum::People': formToDataPeople
       }[fd.props.metaKey.value_type](fd.data)
     }
 
@@ -288,16 +316,22 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       }
     }
 
+    var body = qs.stringify(
+      data,
+      {
+        arrayFormat: 'brackets' // NOTE: Do it like rails.
+      }
+    )
+
     xhr(
       {
         url: url,
         method: 'PUT',
-        body: $.param(data),
+        body: body,
         headers: {
           'Accept': 'application/json',
           'Content-type': 'application/x-www-form-urlencoded',
           'X-CSRF-Token': getRailsCSRFToken()
-
         }
       },
       (err, res, json) => {

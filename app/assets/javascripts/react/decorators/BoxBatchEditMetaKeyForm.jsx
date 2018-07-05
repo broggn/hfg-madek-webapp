@@ -6,6 +6,7 @@ import cx from 'classnames/dedupe'
 import BoxBatchDatumText from './BoxBatchDatumText.jsx'
 import BoxBatchDatumDate from './BoxBatchDatumDate.jsx'
 import BoxBatchDatumKeywords from './BoxBatchDatumKeywords.jsx'
+import BoxBatchDatumPeople from './BoxBatchDatumPeople.jsx'
 
 class BoxBatchEditMetaKeyForm extends React.Component {
 
@@ -30,11 +31,18 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     )
   }
 
+  renderPeople() {
+    return (
+      <BoxBatchDatumPeople metaKeyForm={this.props.metaKeyForm} />
+    )
+  }
+
   renderers() {
     return {
       'MetaDatum::Text': () => this.renderText(),
       'MetaDatum::TextDate': () => this.renderText(),
-      'MetaDatum::Keywords': () => this.renderKeywords()
+      'MetaDatum::Keywords': () => this.renderKeywords(),
+      'MetaDatum::People': () => this.renderPeople()
     }
   }
 
