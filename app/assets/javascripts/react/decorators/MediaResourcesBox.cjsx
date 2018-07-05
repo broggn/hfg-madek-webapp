@@ -177,6 +177,12 @@ module.exports = React.createClass
     f.each(f.compact(@doOnUnmount), (fn)->
       if f.isFunction(fn) then fn() else console.error("Not a Function!", fn))
 
+  getResources: () ->
+    f.map(
+      @state.reduc.components.resources,
+      (r) => r.data.resource
+    )
+
   getJsonPath: () ->
 
     if @props.get.json_path
@@ -514,7 +520,7 @@ module.exports = React.createClass
 
     get = @_mergeGet(@props, @state)
 
-    resources = @state.reduc.data.resources
+    resources = @getResources()
 
     config = get.config
 
@@ -804,7 +810,7 @@ module.exports = React.createClass
         if @state.clipboardModal != 'hidden'
           <Clipboard type={@state.clipboardModal}
             onClose={() => @setState(clipboardModal: 'hidden')}
-            resources={@state.reduc.data.resources}
+            resources={@getResources()}
             selectedResources={@state.selectedResources}
             pagination={@props.get.pagination}
             jsonPath={@getJsonPath()}

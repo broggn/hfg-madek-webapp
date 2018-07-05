@@ -8,6 +8,7 @@ import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
 import BoxFetchListData from './BoxFetchListData.js'
+import BoxResource from './BoxResource.js'
 
 var requestId = Math.random()
 
@@ -35,22 +36,22 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(initial) {
       return {
         data: {
-          resources: nextProps.get.resources,
           loadingNextPage: false,
           listJobQueue: []
         },
         components: {
+          resources: nextResources(),
           batch: nextBatch()
         }
       }
     } else {
       return {
         data: {
-          resources: nextResources(),
           loadingNextPage: nextLoadingNextPage(),
           listJobQueue: nextListJobQueue()
         },
         components: {
+          resources: nextResources(),
           batch: nextBatch()
         }
       }
@@ -79,19 +80,47 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
+  var mapResource = (resource) => {
+    return {
+      reset: false,
+      reduce: BoxResource,
+      props: {
+        resource: resource
+      }
+    }
+  }
+
+  var mapResources = (resources) => {
+    return l.map(
+      resources,
+      (r) => mapResource(r)
+    )
+  }
+
+  var extractResources = () => {
+    return l.map(
+      components.resources,
+      (r) => r.data.resource
+    )
+  }
+
   var nextResources = () => {
-    if(event.action == 'force-fetch-next-page') {
+
+    if(initial) {
+      return mapResources(nextProps.get.resources)
+    }
+    else if(event.action == 'force-fetch-next-page') {
       return []
     }
     else if(event.action == 'page-loaded') {
-      return l.concat(
-        data.resources,
+      return mapResources(l.concat(
+        extractResources(),
         event.resources
-      )
+      ))
     }
     else if(event.action == 'finish-list-meta-data-job') {
-      return l.map(
-        data.resources,
+      return mapResources(l.map(
+        extractResources,
         (r) => {
           if(r.uuid == event.job.uuid) {
             return l.merge(
@@ -102,11 +131,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
             return r
           }
         }
-      )
+      ))
 
     }
     else {
-      return data.resources
+      return mapResources(extractResources())
     }
   }
 
@@ -119,12 +148,12 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
             data.listJobQueue,
             (j) => j.uuid != event.job.uuid
           ),
-          _.merge(
+          l.merge(
             j,
             {state: 'initial'}
           )
         ),
-        data.resources
+        extractResources()
       )
     }
     else if(event.action == 'finish-list-meta-data-job') {
@@ -133,13 +162,13 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           data.listJobQueue,
           (j) => j.uuid != event.job.uuid
         ),
-        data.resources
+        extractResources()
       )
     }
     else if(needsFetchListData()) {
       return BoxFetchListData.todo(
         data.listJobQueue,
-        data.resources
+        extractResources()
       )
     } else {
       return data.listJobQueue
