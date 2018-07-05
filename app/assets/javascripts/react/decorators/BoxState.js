@@ -18,9 +18,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       || event.action == 'fetch-list-data'
       || event.action == 'reset-list-meta-data-job'
       || event.action == 'finish-list-meta-data-job'
-
-      // ||
-      // event.action == 'list-data-loaded-with-resources-implicitely-updated-in-state'
   }
 
   var next = () => {
@@ -191,25 +188,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           action: 'page-loaded',
           resources: l.get(body, nextProps.getJsonPath())
         })
-
-        // if err || res.statusCode > 400
-        //   return callback(err || body)
-        //
-        // this.setState({
-        //   resources: this.state.resources.concat(
-        //     f.get(body, @getJsonPath())
-        //   )
-        // }, () =>
-        //   callback(null)
-        // )
-        //
-        // if @_mergeGet(@props, @state).config.layout == 'list'
-        //   @fetchListData()
-
       }
     )
-
-
   }
 
   var fetchListData = () => {
