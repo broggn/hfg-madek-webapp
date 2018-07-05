@@ -110,7 +110,7 @@ class BoxRenderResources extends React.Component {
             isClient={isClient}
             showSelectionLimit={showSelectionLimit}
             resources={resources}
-            pageResources={page}
+            pageResources={f.map(page, (i) => i.data.resource)}
             selectionLimit={selectionLimit}
             pagination={pagination}
             perPage={this.props.perPage}
