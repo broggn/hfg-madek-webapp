@@ -138,7 +138,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     var decideReduce = (metaKeyId) => {
       var mapping = {
         'MetaDatum::Text': BoxBatchTextInput,
-        'MetaDatum::TextDate': BoxBatchDateInput,
+        'MetaDatum::TextDate': BoxBatchTextInput,
         'MetaDatum::Keywords': BoxBatchKeywords,
         'MetaDatum::People': BoxBatchPeople
       }

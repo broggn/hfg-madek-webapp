@@ -293,6 +293,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     var formToData = (fd) => {
       return {
         'MetaDatum::Text': formToDataText,
+        'MetaDatum::TextDate': formToDataText,
         'MetaDatum::Keywords': formToDataKeywords,
         'MetaDatum::People': formToDataPeople
       }[fd.props.metaKey.value_type](fd.data)
