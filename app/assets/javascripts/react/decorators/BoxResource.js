@@ -29,6 +29,10 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       loadMetaData()
     }
 
+    if(event.action == 'apply-success') {
+      reloadResource()
+    }
+
     if(initial) {
       return {
         data: {
@@ -57,6 +61,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   var nextApplyingMetaData = () => {
     if(event.action == 'apply') {
       return true
+    } else if(event.action == 'reload-success') {
+      return false
     } else {
       return data.applyingMetaData
     }
@@ -83,7 +89,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextResource = () => {
-    return data.resource
+    if(event.action == 'reload-success') {
+      return event.json
+    } else {
+      return data.resource
+    }
   }
 
   var loadMetaData = () => {
@@ -116,6 +126,23 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   }
 
+
+  var reloadResource = () => {
+
+    xhr.get(
+      {
+        url: nextProps.resource.url,
+        json: true
+      },
+      (err, res, json) => {
+        if(err || res.statusCode > 400) {
+          // trigger({action: 'load-meta-data-failure'})
+        } else {
+          trigger({action: 'reload-success', json: json})
+        }
+      }
+    )
+  }
 
 
 

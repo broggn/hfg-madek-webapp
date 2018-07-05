@@ -26,8 +26,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         (r) => {
           applyMetaData(
             {
-              resourceId: r.event.uuid,
-              resourceType: r.event.type,
+              resourceState: r,
               formData: l.map(
                 components.batch.components.metaKeyForms,
                 (mkf) => {
@@ -239,7 +238,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
 
-  var applyMetaData = ({resourceId, resourceType, formData}) => {
+  var applyMetaData = ({resourceState, formData}) => {
+
+    var resourceId = resourceState.event.uuid
+    var resourceType = resourceState.event.type
+
 
     var pathType = () => {
       return {
@@ -298,7 +301,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         }
       },
       (err, res, json) => {
-        // todo
+        resourceState.trigger({action: 'apply-success'})
       }
     )
 
