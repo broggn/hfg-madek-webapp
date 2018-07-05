@@ -34,6 +34,43 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  renderHint() {
+    if(this.props.stateBatch.components.metaKeyForms.length == 0) {
+      return null
+    }
+
+    if(this.props.allLoaded) {
+      return ''
+    } else {
+      return 'Note: loading pages, not all will be updated'
+    }
+  }
+
+  renderApplyAll() {
+
+    if(this.props.stateBatch.components.metaKeyForms.length == 0) {
+      return null
+    }
+    return (
+      <div
+        onClick={this.props.onClickApplyAll}
+        style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          backgroundColor: '#000',
+          color: '#fff',
+          padding: '0px 10px',
+          marginRight: '5px',
+          marginBottom: '5px',
+          fontSize: '14px',
+          cursor: 'pointer'
+        }}
+      >
+        Auf alle anwenden
+      </div>
+    )
+  }
+
   render() {
 
     let {data, components} = this.props.stateBatch
@@ -49,6 +86,10 @@ class BoxBatchEditForm extends React.Component {
           />
           <div>
             {this.renderKeyForms()}
+          </div>
+          <div>
+            {this.renderApplyAll()}
+            {this.renderHint()}
           </div>
         </div>
       )

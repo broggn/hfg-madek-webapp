@@ -111,7 +111,7 @@ module.exports = React.createClass
     }
 
   reducTrigger: (eventTree) ->
-    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
 
@@ -129,7 +129,7 @@ module.exports = React.createClass
       event: event,
       children: {}
     }
-    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
   reducComponentEvent: (component, event)  ->
@@ -139,7 +139,7 @@ module.exports = React.createClass
       children: {}
     }
     eventTree = BoxRedux.fireTreeEvent(eventTree, component.path, component.id, event)
-    next = BoxRedux.build(this.reducRoot({initial: false}), f.cloneDeep(@state.reduc), eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
     @setState({reduc: next})
 
   onBatchButton: (event) ->
@@ -147,6 +147,25 @@ module.exports = React.createClass
 
   onClickKey: (event, metaKeyId) ->
     @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId})
+
+  onClickApplyAll: (event) ->
+
+    eventTree = {
+      componentId: 0,
+      event: {},
+      children: {}
+    }
+    f.each(
+      @state.reduc.components.resources,
+      (r) => eventTree = BoxRedux.fireTreeEvent(eventTree, r.path, r.id, {
+        action: 'apply',
+        uuid: r.data.resource.uuid,
+        type: r.data.resource.type
+      })
+    )
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
+    @setState({reduc: next})
+
 
   # _onBatchEditApply: (event, resourceId, resourceType) ->
   #   @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
@@ -753,6 +772,8 @@ module.exports = React.createClass
       <BoxBatchEditForm
         stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
         onClickKey={(e, k) => @onClickKey(e, k)}
+        onClickApplyAll={(e) => @onClickApplyAll(e)}
+        allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
       />
 
       <div className='ui-resources-holder pam'>
