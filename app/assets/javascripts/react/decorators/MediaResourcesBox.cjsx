@@ -777,7 +777,7 @@ module.exports = React.createClass
             else
               BoxRenderResources = require('./BoxRenderResources.jsx')
               <BoxRenderResources
-                resources={resources}
+                resources={@state.reduc.components.resources}
                 actionsDropdownParameters={actionsDropdownParameters}
                 selectedResources={@state.selectedResources}
                 isClient={@state.isClient}

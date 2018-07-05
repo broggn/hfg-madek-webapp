@@ -14,13 +14,6 @@ var requestId = Math.random()
 
 module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
-  var needsFetchListData = () => {
-    return (event.action == 'page-loaded' &&  nextProps.get.config.layout == 'list')
-      || event.action == 'fetch-list-data'
-      || event.action == 'reset-list-meta-data-job'
-      || event.action == 'finish-list-meta-data-job'
-  }
-
   var next = () => {
 
 
@@ -29,15 +22,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
 
 
-    if(needsFetchListData()) {
-      fetchListData()
-    }
+    // if(needsFetchListData()) {
+    //   fetchListData()
+    // }
 
     if(initial) {
       return {
         data: {
-          loadingNextPage: false,
-          listJobQueue: []
+          loadingNextPage: false
+          // listJobQueue: []
         },
         components: {
           resources: nextResources(),
@@ -47,8 +40,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     } else {
       return {
         data: {
-          loadingNextPage: nextLoadingNextPage(),
-          listJobQueue: nextListJobQueue()
+          loadingNextPage: nextLoadingNextPage()
+          // listJobQueue: nextListJobQueue()
         },
         components: {
           resources: nextResources(),
@@ -80,20 +73,21 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
-  var mapResource = (resource) => {
+  var mapResource = (resource, todoLoadMetaData) => {
     return {
       reset: false,
       reduce: BoxResource,
       props: {
-        resource: resource
+        resource: resource,
+        loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false)
       }
     }
   }
 
-  var mapResources = (resources) => {
+  var mapResources = (resources, todoLoadMetaData) => {
     return l.map(
       resources,
-      (r) => mapResource(r)
+      (r) => mapResource(r, todoLoadMetaData)
     )
   }
 
@@ -106,74 +100,107 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var nextResources = () => {
 
+    var todoLoadMetaData = () => {
+      debugger
+
+      return l.fromPairs(
+        l.map(
+          l.slice(
+            l.filter(
+              components.resources,
+              (r) => {
+                return r.data.listMetadata == null && (!r.data.loadingListMetaData || r.event.action == 'reset-list-meta-data')
+              }
+            ),
+            0, 10
+          ),
+          (r) => [r.data.resource.uuid, r.data.resource.uuid]
+        )
+      )
+    }
+
     if(initial) {
-      return mapResources(nextProps.get.resources)
+      return mapResources(nextProps.get.resources, {})
     }
     else if(event.action == 'force-fetch-next-page') {
       return []
     }
     else if(event.action == 'page-loaded') {
-      return mapResources(l.concat(
-        extractResources(),
-        event.resources
-      ))
-    }
-    else if(event.action == 'finish-list-meta-data-job') {
-      return mapResources(l.map(
-        extractResources,
-        (r) => {
-          if(r.uuid == event.job.uuid) {
-            return l.merge(
-              r,
-              {list_meta_data: event.json}
-            )
-          } else {
-            return r
-          }
-        }
-      ))
-
-    }
-    else {
-      return mapResources(extractResources())
-    }
-  }
-
-  var nextListJobQueue = () => {
-
-    if(event.action == 'reset-list-meta-data-job') {
-      return BoxFetchListData.todo(
+      return mapResources(
         l.concat(
-          l.filter(
-            data.listJobQueue,
-            (j) => j.uuid != event.job.uuid
-          ),
-          l.merge(
-            j,
-            {state: 'initial'}
-          )
+          extractResources(),
+          event.resources
         ),
-        extractResources()
+        (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
       )
     }
-    else if(event.action == 'finish-list-meta-data-job') {
-      return BoxFetchListData.todo(
-        l.filter(
-          data.listJobQueue,
-          (j) => j.uuid != event.job.uuid
-        ),
-        extractResources()
+    // else if(event.action == 'finish-list-meta-data-job') {
+    //   return mapResources(l.map(
+    //     extractResources,
+    //     (r) => {
+    //       if(r.uuid == event.job.uuid) {
+    //         return l.merge(
+    //           r,
+    //           {list_meta_data: event.json}
+    //         )
+    //       } else {
+    //         return r
+    //       }
+    //     }
+    //   ))
+    //
+    // }
+    else {
+
+      var hasChildMetaDataFetchEvent = !l.isEmpty(l.filter(
+        components.resources,
+        (r) => r.event.action == 'load-meta-data-success'
+      ))
+
+      var needsFetchListData = hasChildMetaDataFetchEvent || event.action == 'fetch-list-data'
+
+      return mapResources(
+        extractResources(),
+        (needsFetchListData ? todoLoadMetaData() : {})
       )
-    }
-    else if(needsFetchListData()) {
-      return BoxFetchListData.todo(
-        data.listJobQueue,
-        extractResources()
-      )
-    } else {
-      return data.listJobQueue
     }
   }
+
+  // var nextListJobQueue = () => {
+  //
+  //   if(event.action == 'reset-list-meta-data-job') {
+  //     return BoxFetchListData.todo(
+  //       l.concat(
+  //         l.filter(
+  //           data.listJobQueue,
+  //           (j) => j.uuid != event.job.uuid
+  //         ),
+  //         l.merge(
+  //           j,
+  //           {state: 'initial'}
+  //         )
+  //       ),
+  //       extractResources()
+  //     )
+  //   }
+  //   else if(event.action == 'finish-list-meta-data-job') {
+  //     return BoxFetchListData.todo(
+  //       l.filter(
+  //         data.listJobQueue,
+  //         (j) => j.uuid != event.job.uuid
+  //       ),
+  //       extractResources()
+  //     )
+  //   }
+  //   else if(needsFetchListData()) {
+  //     return BoxFetchListData.todo(
+  //       data.listJobQueue,
+  //       extractResources()
+  //     )
+  //   } else {
+  //     return data.listJobQueue
+  //   }
+  // }
 
   var fetchNextPage = () => {
 
@@ -221,18 +248,18 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     )
   }
 
-  var fetchListData = () => {
-    BoxFetchListData.loadJobs(
-      nextListJobQueue(),
-      (result) => {
-        if(result.status == 'failure') {
-          trigger({action: 'reset-list-meta-data-job', job: result.job})
-        } else {
-          trigger({action: 'finish-list-meta-data-job', job: result.job, json: result.json})
-        }
-      }
-    )
-  }
+  // var fetchListData = () => {
+  //   BoxFetchListData.loadJobs(
+  //     nextListJobQueue(),
+  //     (result) => {
+  //       if(result.status == 'failure') {
+  //         trigger({action: 'reset-list-meta-data-job', job: result.job})
+  //       } else {
+  //         trigger({action: 'finish-list-meta-data-job', job: result.job, json: result.json})
+  //       }
+  //     }
+  //   )
+  // }
 
   return next()
 }

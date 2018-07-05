@@ -42,7 +42,10 @@ class BoxRenderResources extends React.Component {
 
     var renderPage = (page, i) => {
 
-      var renderItem = (item) => {
+      var renderItem = (itemState) => {
+
+        var item = itemState.data.resource
+
         if(!item.uuid) {
           // should not be the case anymore after uploader is not using this box anymore
           throw new Error('no uuid')
@@ -81,7 +84,7 @@ class BoxRenderResources extends React.Component {
             authToken={authToken} key={key}
             pinThumb={config.layout == 'tiles'}
             listThumb={config.layout == 'list'}
-            list_meta_data={item.list_meta_data}
+            list_meta_data={itemState.data.listMetaData}
             onBatchEditApply={this.props.onBatchEditApply}
           />
         )
