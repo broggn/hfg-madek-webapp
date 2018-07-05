@@ -90,7 +90,12 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var nextResource = () => {
     if(event.action == 'reload-success') {
-      return event.json
+      // NOTE: Better give json back directly. But the reload answer does for
+      // example not contain list_meta_data_url. Thats why we merge here.
+      return l.merge(
+        data.resource,
+        event.json
+      )
     } else {
       return data.resource
     }
