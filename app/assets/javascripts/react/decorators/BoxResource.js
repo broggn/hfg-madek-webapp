@@ -6,7 +6,6 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
-import BoxFetchListData from './BoxFetchListData.js'
 
 import url from 'url'
 import qs from 'qs'

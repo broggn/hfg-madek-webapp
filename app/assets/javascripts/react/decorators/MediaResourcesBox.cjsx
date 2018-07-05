@@ -53,7 +53,6 @@ libUrl = require('url')
 qs = require('qs')
 
 BoxUtil = require('./BoxUtil.js')
-BoxFetchListData = require('./BoxFetchListData.js')
 
 BoxSetUrlParams = require('./BoxSetUrlParams.jsx')
 

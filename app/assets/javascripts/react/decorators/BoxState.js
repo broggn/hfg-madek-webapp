@@ -7,7 +7,6 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
-import BoxFetchListData from './BoxFetchListData.js'
 import BoxResource from './BoxResource.js'
 
 var requestId = Math.random()
@@ -21,16 +20,10 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       fetchNextPage()
     }
 
-
-    // if(needsFetchListData()) {
-    //   fetchListData()
-    // }
-
     if(initial) {
       return {
         data: {
           loadingNextPage: false
-          // listJobQueue: []
         },
         components: {
           resources: nextResources(),
@@ -41,7 +34,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           loadingNextPage: nextLoadingNextPage()
-          // listJobQueue: nextListJobQueue()
         },
         components: {
           resources: nextResources(),
@@ -100,20 +92,30 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var nextResources = () => {
 
-    var todoLoadMetaData = () => {
-      debugger
+    var toLoadOrLoading = () => {
+      return l.filter(
+        components.resources,
+        (r) => {
+          return r.data.listMetaData == null && !(r.event.action == 'load-meta-data-success')
+        }
+      )
+    }
 
+    var loadQueue = () => {
+      return l.slice(toLoadOrLoading(), 0, 10)
+    }
+
+    var loadQueueToTrigger = () => {
+      return l.filter(
+        loadQueue(),
+        (r) => !r.data.loadingListMetaData
+      )
+    }
+
+    var todoLoadMetaData = () => {
       return l.fromPairs(
         l.map(
-          l.slice(
-            l.filter(
-              components.resources,
-              (r) => {
-                return r.data.listMetadata == null && (!r.data.loadingListMetaData || r.event.action == 'reset-list-meta-data')
-              }
-            ),
-            0, 10
-          ),
+          loadQueueToTrigger(),
           (r) => [r.data.resource.uuid, r.data.resource.uuid]
         )
       )
@@ -134,22 +136,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
       )
     }
-    // else if(event.action == 'finish-list-meta-data-job') {
-    //   return mapResources(l.map(
-    //     extractResources,
-    //     (r) => {
-    //       if(r.uuid == event.job.uuid) {
-    //         return l.merge(
-    //           r,
-    //           {list_meta_data: event.json}
-    //         )
-    //       } else {
-    //         return r
-    //       }
-    //     }
-    //   ))
-    //
-    // }
     else {
 
       var hasChildMetaDataFetchEvent = !l.isEmpty(l.filter(
@@ -165,42 +151,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       )
     }
   }
-
-  // var nextListJobQueue = () => {
-  //
-  //   if(event.action == 'reset-list-meta-data-job') {
-  //     return BoxFetchListData.todo(
-  //       l.concat(
-  //         l.filter(
-  //           data.listJobQueue,
-  //           (j) => j.uuid != event.job.uuid
-  //         ),
-  //         l.merge(
-  //           j,
-  //           {state: 'initial'}
-  //         )
-  //       ),
-  //       extractResources()
-  //     )
-  //   }
-  //   else if(event.action == 'finish-list-meta-data-job') {
-  //     return BoxFetchListData.todo(
-  //       l.filter(
-  //         data.listJobQueue,
-  //         (j) => j.uuid != event.job.uuid
-  //       ),
-  //       extractResources()
-  //     )
-  //   }
-  //   else if(needsFetchListData()) {
-  //     return BoxFetchListData.todo(
-  //       data.listJobQueue,
-  //       extractResources()
-  //     )
-  //   } else {
-  //     return data.listJobQueue
-  //   }
-  // }
 
   var fetchNextPage = () => {
 
@@ -247,19 +197,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       }
     )
   }
-
-  // var fetchListData = () => {
-  //   BoxFetchListData.loadJobs(
-  //     nextListJobQueue(),
-  //     (result) => {
-  //       if(result.status == 'failure') {
-  //         trigger({action: 'reset-list-meta-data-job', job: result.job})
-  //       } else {
-  //         trigger({action: 'finish-list-meta-data-job', job: result.job, json: result.json})
-  //       }
-  //     }
-  //   )
-  // }
 
   return next()
 }
