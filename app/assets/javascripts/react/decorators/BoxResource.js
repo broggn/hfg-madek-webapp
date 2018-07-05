@@ -43,6 +43,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           resource: nextProps.resource,
           listMetaData: null,
           loadingListMetaData: false,
+          applyPending: false,
           applyingMetaData: false
         },
         components: {
@@ -54,6 +55,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           resource: nextResource(),
           listMetaData: nextListMetaData(),
           loadingListMetaData: nextLoadingListMetaData(),
+          applyPending: nextApplyPending(),
           applyingMetaData: nextApplyingMetaData()
         },
         components: {
@@ -62,10 +64,21 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
-  var nextApplyingMetaData = () => {
+  var nextApplyPending = () => {
     if(event.action == 'apply') {
       return true
-    } else if(event.action == 'reload-success') {
+    } else if(event.action == 'apply-success') {
+      return false
+    } else {
+      return data.applyPending
+    }
+  }
+
+  var nextApplyingMetaData = () => {
+    if(nextProps.startApply) {
+      return true
+    }
+    else if(event.action == 'reload-meta-data-success') {
       return false
     } else {
       return data.applyingMetaData
@@ -141,15 +154,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var reloadMetaData = () => {
     sharedLoadMetaData({
-      success: (json) => trigger({action: 'load-meta-data-success', json: json}),
-      error: () => trigger({action: 'load-meta-data-failure'})
+      success: (json) => trigger({action: 'reload-meta-data-success', json: json}),
+      error: () => trigger({action: 'reload-meta-data-failure'})
     })
   }
 
   var loadMetaData = () => {
     sharedLoadMetaData({
-      success: (json) => trigger({action: 'reload-meta-data-success', json: json}),
-      error: () => trigger({action: 'reload-meta-data-failure'})
+      success: (json) => trigger({action: 'load-meta-data-success', json: json}),
+      error: () => trigger({action: 'load-meta-data-failure'})
     })
   }
 

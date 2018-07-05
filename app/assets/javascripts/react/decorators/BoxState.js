@@ -14,35 +14,207 @@ var requestId = Math.random()
 
 module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
-  var next = () => {
 
-    var resourcesWithApplyEvent = l.filter(
-      components.resources,
-      (r) => r.event.action == 'apply'
-    )
 
-    if(!l.isEmpty(resourcesWithApplyEvent)) {
-      l.each(
-        resourcesWithApplyEvent,
-        (r) => {
-          applyMetaData(
-            {
-              resourceState: r,
-              formData: l.map(
-                components.batch.components.metaKeyForms,
-                (mkf) => {
-                  return {
-                    data: mkf.data,
-                    props: mkf.props
-                  }
-                }
-              )
+
+
+  var applyMetaData = ({resourceState, formData}) => {
+
+    var resourceId = resourceState.data.resource.uuid
+    var resourceType = resourceState.data.resource.type
+
+
+    var pathType = () => {
+      return {
+        'MediaEntry': 'entries',
+        'Collection': 'sets'
+      }[resourceType]
+    }
+
+    var url = '/' + pathType() + '/' + resourceId + '/meta_data'
+
+    var property = () => {
+      return {
+        'MediaEntry': 'media_entry',
+        'Collection': 'set'
+      }[resourceType]
+    }
+
+    var formToDataText = (data) => {
+      return [data.text]
+    }
+
+    var formToDataKeywords = (data) => {
+      return l.map(
+        data.keywords,
+        (k) => {
+          if(k.id) {
+            return k.id
+          } else {
+            return {
+              term: k.label
             }
-          )
+          }
         }
       )
     }
 
+    var formToDataPeople = (data) => {
+      return l.map(
+        data.keywords,
+        (k) => {
+          return k.id
+        }
+      )
+    }
+
+
+    var formToData = (fd) => {
+      return {
+        'MetaDatum::Text': formToDataText,
+        'MetaDatum::TextDate': formToDataText,
+        'MetaDatum::Keywords': formToDataKeywords,
+        'MetaDatum::People': formToDataPeople
+      }[fd.props.metaKey.value_type](fd.data)
+    }
+
+    var metaData = () => {
+      return l.fromPairs(
+        l.map(
+          formData,
+          (fd) => [
+            fd.props.metaKeyId,
+            formToData(fd)
+          ]
+        )
+      )
+    }
+
+    var data = {
+      [property()]: {
+        meta_data: metaData()
+      }
+    }
+
+    var body = qs.stringify(
+      data,
+      {
+        arrayFormat: 'brackets' // NOTE: Do it like rails.
+      }
+    )
+
+    xhr(
+      {
+        url: url,
+        method: 'PUT',
+        body: body,
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/x-www-form-urlencoded',
+          'X-CSRF-Token': getRailsCSRFToken()
+        }
+      },
+      (err, res, json) => {
+        resourceState.trigger({action: 'apply-success'})
+      }
+    )
+
+  }
+
+
+
+
+
+  var resourcesWithApplyEvent = () => {
+    return l.filter(
+      components.resources,
+      (r) => r.event.action == 'apply' || r.event.action == 'reload-meta-data-success'
+    )
+  }
+
+  var anyResourceApplyEvent = () => {
+    return !l.isEmpty(resourcesWithApplyEvent())
+  }
+
+  console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
+
+  var toApplyMetaData = () => {
+
+    if(!anyResourceApplyEvent()) {
+      return []
+    }
+
+    var candidates = () => {
+      return l.filter(
+        components.resources,
+        (r) => {
+          return !r.data.applyingMetaData && (
+            r.data.applyPending || r.event.action == 'apply'
+          ) && !(r.event.action == 'reload-meta-data-success')
+        }
+      )
+    }
+
+    var loading = () => {
+      return l.filter(
+        components.resources,
+        (r) => r.data.applyingMetaData
+      )
+    }
+
+    console.log('loading = ' + loading())
+
+    return l.slice(candidates(), 0, 5 - loading().length)
+
+
+    // l.each(
+    //   l.slice(candidates(), 0, 3),
+    //   (r) => {
+    //     applyMetaData(
+    //       {
+    //         resourceState: r,
+    //         formData: l.map(
+    //           components.batch.components.metaKeyForms,
+    //           (mkf) => {
+    //             return {
+    //               data: mkf.data,
+    //               props: mkf.props
+    //             }
+    //           }
+    //         )
+    //       }
+    //     )
+    //   }
+    // )
+
+  }
+
+  var cachedToApplyMetaData = toApplyMetaData()
+
+
+  l.each(
+    cachedToApplyMetaData,
+    (r) => applyMetaData(
+      {
+        resourceState: r,
+        formData: l.map(
+          components.batch.components.metaKeyForms,
+          (mkf) => {
+            return {
+              data: mkf.data,
+              props: mkf.props
+            }
+          }
+        )
+      }
+    )
+  )
+
+
+
+
+
+  var next = () => {
 
     if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
       fetchNextPage()
@@ -99,7 +271,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       reduce: BoxResource,
       props: {
         resource: resource,
-        loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false)
+        loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
+        startApply: l.includes(
+          l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
+          resource.uuid
+        )
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {
@@ -233,113 +409,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         })
       }
     )
-  }
-
-
-
-
-
-  var applyMetaData = ({resourceState, formData}) => {
-
-    var resourceId = resourceState.event.uuid
-    var resourceType = resourceState.event.type
-
-
-    var pathType = () => {
-      return {
-        'MediaEntry': 'entries',
-        'Collection': 'sets'
-      }[resourceType]
-    }
-
-    var url = '/' + pathType() + '/' + resourceId + '/meta_data'
-
-    var property = () => {
-      return {
-        'MediaEntry': 'media_entry',
-        'Collection': 'set'
-      }[resourceType]
-    }
-
-    var formToDataText = (data) => {
-      return [data.text]
-    }
-
-    var formToDataKeywords = (data) => {
-      return l.map(
-        data.keywords,
-        (k) => {
-          if(k.id) {
-            return k.id
-          } else {
-            return {
-              term: k.label
-            }
-          }
-        }
-      )
-    }
-
-    var formToDataPeople = (data) => {
-      return l.map(
-        data.keywords,
-        (k) => {
-          return k.id
-        }
-      )
-    }
-
-
-    var formToData = (fd) => {
-      return {
-        'MetaDatum::Text': formToDataText,
-        'MetaDatum::TextDate': formToDataText,
-        'MetaDatum::Keywords': formToDataKeywords,
-        'MetaDatum::People': formToDataPeople
-      }[fd.props.metaKey.value_type](fd.data)
-    }
-
-    var metaData = () => {
-      return l.fromPairs(
-        l.map(
-          formData,
-          (fd) => [
-            fd.props.metaKeyId,
-            formToData(fd)
-          ]
-        )
-      )
-    }
-
-    var data = {
-      [property()]: {
-        meta_data: metaData()
-      }
-    }
-
-    var body = qs.stringify(
-      data,
-      {
-        arrayFormat: 'brackets' // NOTE: Do it like rails.
-      }
-    )
-
-    xhr(
-      {
-        url: url,
-        method: 'PUT',
-        body: body,
-        headers: {
-          'Accept': 'application/json',
-          'Content-type': 'application/x-www-form-urlencoded',
-          'X-CSRF-Token': getRailsCSRFToken()
-        }
-      },
-      (err, res, json) => {
-        resourceState.trigger({action: 'apply-success'})
-      }
-    )
-
   }
 
 
