@@ -243,14 +243,14 @@ module.exports = React.createClass
     if @_mergeGet(@props, @state).config.layout == 'list'
       @fetchListData()
 
-    if f.includes(['MediaResources', 'MediaEntries', 'Collections'], @props.get.type)
-      selection = Selection.createEmpty(() =>
-        @setState(selectedResources: selection) if @isMounted()
-      )
+    # if f.includes(['MediaResources', 'MediaEntries', 'Collections'], @props.get.type)
+    #   selection = Selection.createEmpty(() =>
+    #     @setState(selectedResources: selection) if @isMounted()
+    #   )
 
     @setState(
       isClient: true,
-      selectedResources: selection,
+      # selectedResources: selection,
       config: resourceListParams(window.location)
     )
 
@@ -339,11 +339,11 @@ module.exports = React.createClass
 
   _onSelectResource: (resource, event)-> # toggles selection item
     event.preventDefault()
-    selection = @state.selectedResources
-    if !selection.contains(resource) && selection.length() > @_selectionLimit() - 1
+    selection = @state.reduc.data.selectedResources
+    if !f.find(selection, (s) => s.uuid == resource.uuid) && selection.length > @_selectionLimit() - 1
       @_showSelectionLimit('single-selection')
     else
-      selection.toggle(resource)
+      this.reducRootEvent({ action: 'toggle-resource-selection', resourceUuid: resource.uuid})
 
   _showSelectionLimit: (version) ->
     @setState(showSelectionLimit: version)
@@ -456,7 +456,7 @@ module.exports = React.createClass
     return false
 
   _selectedResourceIdsWithTypes: () ->
-    @state.selectedResources.selection.map (model) ->
+    @state.reduc.data.selectedResources.map (model) ->
       {
         uuid: model.uuid
         type: model.type
@@ -529,6 +529,14 @@ module.exports = React.createClass
       if f.present(config.filter) or f.present(config.accordion)
         <Link mods='mlx weak' href={resetFilterHref}>
           <Icon i='undo'/> {t('resources_box_reset_filter')}</Link>
+
+
+  unselectResources: (resources) ->
+      this.reducRootEvent({ action: 'unselect-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
+
+
+  selectResources: (resources) ->
+      this.reducRootEvent({ action: 'select-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
 
   render: ()->
     {
@@ -641,7 +649,7 @@ module.exports = React.createClass
     actionsDropdownParameters = {
       totalCount: @props.get.pagination.total_count if @props.get.pagination
       withActions: get.has_user
-      selection: f.presence(@state.selectedResources) or false
+      selection: @state.reduc.data.selectedResources or false
       saveable: (saveable or false)
       draftsView: @props.draftsView
       isClient: @state.isClient
@@ -804,7 +812,7 @@ module.exports = React.createClass
                   )
                 }
                 actionsDropdownParameters={actionsDropdownParameters}
-                selectedResources={@state.selectedResources}
+                selectedResources={@state.reduc.data.selectedResources}
                 isClient={@state.isClient}
                 showSelectionLimit={@_showSelectionLimit}
                 selectionLimit={@_selectionLimit()}
@@ -822,6 +830,8 @@ module.exports = React.createClass
                   else
                     null
                 }
+                unselectResources={@unselectResources}
+                selectResources={@selectResources}
               />
 
             }
@@ -836,7 +846,7 @@ module.exports = React.createClass
           <Clipboard type={@state.clipboardModal}
             onClose={() => @setState(clipboardModal: 'hidden')}
             resources={@getResources()}
-            selectedResources={@state.selectedResources}
+            selectedResources={@state.reduc.data.selectedResources}
             pagination={@props.get.pagination}
             jsonPath={@getJsonPath()}
           />

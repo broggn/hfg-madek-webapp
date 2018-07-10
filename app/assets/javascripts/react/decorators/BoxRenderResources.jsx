@@ -17,10 +17,10 @@ class BoxRenderResources extends React.Component {
     super(props)
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   var l = require('lodash')
-  //   return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
+  }
 
   render() {
 
@@ -86,6 +86,8 @@ class BoxRenderResources extends React.Component {
             pagination={pagination}
             perPage={this.props.perPage}
             pageIndex={i}
+            unselectResources={this.props.unselectResources}
+            selectResources={this.props.selectResources}
           />
         )
       }

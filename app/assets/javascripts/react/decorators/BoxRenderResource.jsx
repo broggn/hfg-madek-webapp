@@ -83,11 +83,11 @@ class BoxRenderResource extends React.Component {
     // selection defined means selection is enabled
     var showActions = ActionsDropdown.showActionsConfig(actionsDropdownParameters)
     if(isClient && selection && f.any(f.values(showActions))) {
-      var isSelected = selectedResources.contains(item)
+      var isSelected = f.find(selectedResources, (sr) => sr.uuid == item.uuid)
       var onSelect = (e) => this.onSelect(e)
       // if in selection mode, intercept clicks as 'select toggle'
       var onClick = null
-      if(config.layout == 'miniature' && !selection.empty()) {
+      if(config.layout == 'miniature' && selection.length > 0) {
         onClick = onSelect
       }
 

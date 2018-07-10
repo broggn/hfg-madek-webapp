@@ -231,7 +231,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(initial) {
       return {
         data: {
-          loadingNextPage: false
+          loadingNextPage: false,
+          selectedResources: null
         },
         components: {
           resources: nextResources(),
@@ -241,13 +242,48 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     } else {
       return {
         data: {
-          loadingNextPage: nextLoadingNextPage()
+          loadingNextPage: nextLoadingNextPage(),
+          selectedResources: nextSelectedResources()
         },
         components: {
           resources: nextResources(),
           batch: nextBatch()
         }
       }
+    }
+  }
+
+  var nextSelectedResources = () => {
+    if(event.action == 'mount' && l.includes(['MediaResources', 'MediaEntries', 'Collections'], nextProps.get.type)) {
+      return []
+    } else if(event.action == 'toggle-resource-selection') {
+      if(l.find(data.selectedResources, (sr) => sr.uuid == event.resourceUuid)) {
+        return l.reject(
+          data.selectedResources,
+          (sr) => sr.uuid == event.resourceUuid
+        )
+      } else {
+        return l.concat(
+          data.selectedResources,
+          l.find(components.resources, (cr) => cr.data.resource.uuid == event.resourceUuid).data.resource
+        )
+      }
+    } else if(event.action == 'unselect-resources') {
+      return l.reject(
+        data.selectedResources,
+        (sr) => l.includes(event.resourceUuids, sr.uuid)
+      )
+    } else if(event.action == 'select-resources') {
+      return l.concat(
+        data.selectedResources,
+        l.map(
+          event.resourceUuids,
+          (rid) => l.find(components.resources, (cr) => cr.data.resource.uuid == rid).data.resource
+        )
+
+      )
+    } else {
+      return data.selectedResources
     }
   }
 

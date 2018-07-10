@@ -11,7 +11,6 @@ class BoxBatchDatumKeywords extends React.Component {
 
   constructor(props) {
     super(props)
-    this.debouncedOnChange = l.debounce(this.onChange)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -111,7 +110,7 @@ class BoxBatchDatumKeywords extends React.Component {
         <span onClick={(e) => this.onClose(e)}>[x]</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
         <div>
-          <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
+          <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.onChange(e.target.value)}/>
           {this.renderKeywords()}
           <div style={{position: 'relative'}}>
             <BoxPopup

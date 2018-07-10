@@ -10,7 +10,6 @@ class BoxBatchDatumDate extends React.Component {
 
   constructor(props) {
     super(props)
-    this.debouncedOnChange = l.debounce(this.onChange)
   }
 
   onChange(text) {
@@ -28,7 +27,7 @@ class BoxBatchDatumDate extends React.Component {
       <div>
         <span onClick={(e) => this.onClose(e)}>close</span>
         {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
-        <input value={metaKeyForm.data.text} onChange={(e) => this.debouncedOnChange(e.target.value)}/>
+        <input value={metaKeyForm.data.text} onChange={(e) => this.onChange(e.target.value)}/>
       </div>
     )
   }
