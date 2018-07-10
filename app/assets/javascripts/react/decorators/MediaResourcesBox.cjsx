@@ -63,6 +63,8 @@ BoxBatchEditForm = require('./BoxBatchEditForm.jsx')
 BoxRedux = require('./BoxRedux.js')
 BoxState = require('./BoxState.js')
 
+BoxFilterButton = require('./BoxFilterButton.jsx')
+
 # Props/Config overview:
 # - props.get.has_user = should the UI offer any interaction
 # - state.isClient = is component in client-side mode
@@ -703,17 +705,14 @@ module.exports = React.createClass
       filterToggleLink = BoxSetUrlParams(
         currentUrl, {list: {show_filter: (not config.show_filter)}})
 
-      not_is_clipboard = true # !@props.initial || !@props.initial.is_clipboard
       filterBarProps =
-        left: if get.can_filter && not_is_clipboard then do =>
-          name = t('resources_box_filter')
-          <div>
-            <Button data-test-id='filter-button' name={name} mods={'active': config.show_filter}
-              href={filterToggleLink} onClick={(e) => @_onFilterToggle(e, not config.show_filter)}>
-              <Icon i='filter' mods='small'/> {name}
-            </Button>
-            {if f.present(config.filter) then @_resetFilterLink(config)}
-          </div>
+        left: <BoxFilterButton
+          get={get}
+          config={config}
+          _onFilterToggle={@_onFilterToggle}
+          filterToggleLink={filterToggleLink}
+          resetFilterLink={if f.present(config.filter) then @_resetFilterLink(config)}
+        />
 
         right: if actionsDropdown
           <div>{batchButton}{actionsDropdown}</div>
