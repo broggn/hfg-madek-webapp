@@ -495,22 +495,28 @@ module.exports = React.createClass
     @setState(config: f.merge(@state.config, {layout: layoutMode}))
 
   _mergeGet: (props, state) ->
-    # TODO: refactor this + currentQuery into @getInitialState + @getCurrentQuery
-    get = defaultsDeep \      # combine config in order:
-      {},
-      {config: state.config},  # - client-side state
-      props.get,                      # - presenter & config (from params)
-      {config: props.initial},        # - per-view initial default config
-      config:                   # - config saved for set
-        layout: state.savedLayout
-        order: state.savedOrder
-      ,
-      {config: props.get.config.user}
-      ,
-      config:                   # - default config
-        layout: 'grid'
-        order: 'last_change'
-        show_filter: false
+    f.extend(
+      props.get,
+      {
+        config: defaultsDeep(
+          {},
+          state.config,
+          props.get.config,
+          props.initial,
+          {
+            layout: state.savedLayout
+            order: state.savedOrder
+          },
+          props.get.config.user,
+          {
+            layout: 'grid'
+            order: 'last_change'
+            show_filter: false
+          }
+        )
+      }
+    )
+
 
   _supportsFilesearch: () ->
     get = @props.get
