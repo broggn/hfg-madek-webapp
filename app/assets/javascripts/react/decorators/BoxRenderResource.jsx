@@ -19,34 +19,34 @@ class BoxRenderResource extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     var l = require('lodash')
 
-    console.log('is equal = ' + !(!l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)))
-    console.log('is equal state = ' + l.isEqual(this.state, nextState))
-    console.log('is equal props = ' + l.isEqual(this.props, nextProps))
-    if(!l.isEqual(this.props, nextProps)) {
-      l.each(
-        this.props,
-        (p, k) => {
-          if(!l.isEqual(p, nextProps[k])) {
-            console.log('not equal prop = ' + k)
-
-
-            l.each(
-              p,
-              (cp, ck) => {
-                if(!l.isEqual(cp, nextProps[k][ck])) {
-                  console.log('not equal child prop = ' + ck)
-
-                }
-              }
-
-            )
-
-
-
-          }
-        }
-      )
-    }
+    // console.log('is equal = ' + !(!l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)))
+    // console.log('is equal state = ' + l.isEqual(this.state, nextState))
+    // console.log('is equal props = ' + l.isEqual(this.props, nextProps))
+    // if(!l.isEqual(this.props, nextProps)) {
+    //   l.each(
+    //     this.props,
+    //     (p, k) => {
+    //       if(!l.isEqual(p, nextProps[k])) {
+    //         console.log('not equal prop = ' + k)
+    //
+    //
+    //         l.each(
+    //           p,
+    //           (cp, ck) => {
+    //             if(!l.isEqual(cp, nextProps[k][ck])) {
+    //               console.log('not equal child prop = ' + ck)
+    //
+    //             }
+    //           }
+    //
+    //         )
+    //
+    //
+    //
+    //       }
+    //     }
+    //   )
+    // }
 
     return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }

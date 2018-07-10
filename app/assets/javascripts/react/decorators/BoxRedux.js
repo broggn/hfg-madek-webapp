@@ -176,7 +176,19 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
     components: buildChildren2(next, useLast, rootTrigger, eventTree, path, merged),
     props: definition.props,
     id: cid,
-    path: path
+    path: path,
+    trigger: (last ? last.trigger : function(event) {
+
+      var newEventTree = {
+        componentId: 0,
+        event: {},
+        children: {}
+      }
+
+      var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
+
+      rootTrigger(newEventTree)
+    })
   }
 }
 
@@ -330,15 +342,16 @@ module.exports = {
           props: n.props,
           data: n.data,
           components: __.mapValues(n.components, (c) => prettyState(c)),
-          trigger: (event) => {
-            var newEventTree = {
-              componentId: 0,
-              event: {},
-              children: {}
-            }
-            var newEventTree = fireTreeEvent2(newEventTree, n.path, n.id, event)
-            rootTrigger(newEventTree)
-          }
+          trigger: n.trigger
+          // (event) => {
+          //   var newEventTree = {
+          //     componentId: 0,
+          //     event: {},
+          //     children: {}
+          //   }
+          //   var newEventTree = fireTreeEvent2(newEventTree, n.path, n.id, event)
+          //   rootTrigger(newEventTree)
+          // }
         }
       }
     }
