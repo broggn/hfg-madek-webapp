@@ -538,11 +538,11 @@ module.exports = React.createClass
 
 
   unselectResources: (resources) ->
-      this.reducRootEvent({ action: 'unselect-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
+    this.reducRootEvent({ action: 'unselect-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
 
 
   selectResources: (resources) ->
-      this.reducRootEvent({ action: 'select-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
+    this.reducRootEvent({ action: 'select-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
 
 
   onSortItemClick: (event, itemKey) ->
