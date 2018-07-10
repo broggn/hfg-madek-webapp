@@ -34,6 +34,11 @@ module.exports = React.createClass
     resource: React.PropTypes.shape
       type: React.PropTypes.oneOf(['MediaEntry'])
 
+  shouldComponentUpdate: (nextProps, nextState) ->
+    l = require('lodash')
+    return !l.isEqual(@state, nextState) || !l.isEqual(@props, nextProps)
+
+
   relationsTrigger: (props) ->
     this.relationsTransition(props)
 

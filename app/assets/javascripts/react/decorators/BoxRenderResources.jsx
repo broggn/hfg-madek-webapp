@@ -9,6 +9,7 @@ import setsFallbackUrl from '../../lib/sets-fallback-url.coffee'
 import Preloader from '../ui-components/Preloader.cjsx'
 import ActionsDropdown from './resourcesbox/ActionsDropdown.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
+import BoxRenderResource from './BoxRenderResource.jsx'
 
 class BoxRenderResources extends React.Component {
 
@@ -44,49 +45,18 @@ class BoxRenderResources extends React.Component {
 
       var renderItem = (itemState) => {
 
-        var item = itemState.data.resource
-
-        if(!item.uuid) {
-          // should not be the case anymore after uploader is not using this box anymore
-          throw new Error('no uuid')
-        }
-
-        var key = item.uuid // or item.cid
-
-        var style = null
-        var selection = selectedResources
-        // selection defined means selection is enabled
-        var showActions = ActionsDropdown.showActionsConfig(actionsDropdownParameters)
-        if(isClient && selection && f.any(f.values(showActions))) {
-          var isSelected = selectedResources.contains(item)
-          var onSelect = f.curry(onSelectResource)(item)
-          // if in selection mode, intercept clicks as 'select toggle'
-          var onClick = null
-          if(config.layout == 'miniature' && !selection.empty()) {
-            onClick = onSelect
-          }
-
-          //  when hightlighting editables, we just dim everything else:
-          if(ActionsDropdown.isResourceNotInScope(item, isSelected, hoverMenuId)) {
-            style = {opacity: 0.35}
-          }
-
-        }
-
-
-        // TODO: get={model}
         return (
-          <ResourceThumbnail elm='div'
-            style={style}
-            get={item}
+          <BoxRenderResource
+            selectedResources={selectedResources}
             resourceState={itemState}
-            isClient={isClient} fetchRelations={(this.props.onBatchEditApply ? null : fetchRelations)}
-            isSelected={isSelected} onSelect={onSelect} onClick={onClick}
-            authToken={authToken} key={key}
-            pinThumb={config.layout == 'tiles'}
-            listThumb={config.layout == 'list'}
-            list_meta_data={itemState.data.listMetaData}
+            actionsDropdownParameters={actionsDropdownParameters}
+            isClient={isClient}
+            onSelectResource={onSelectResource}
+            config={config}
+            hoverMenuId={hoverMenuId}
             onBatchEditApply={this.props.onBatchEditApply}
+            fetchRelations={fetchRelations}
+            key={itemState.data.resource.uuid}
           />
         )
       }
