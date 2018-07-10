@@ -25,8 +25,25 @@ class BoxRenderResource extends React.Component {
     if(!l.isEqual(this.props, nextProps)) {
       l.each(
         this.props,
-        (p) => {
-          if(!l.isEqual())
+        (p, k) => {
+          if(!l.isEqual(p, nextProps[k])) {
+            console.log('not equal prop = ' + k)
+
+
+            l.each(
+              p,
+              (cp, ck) => {
+                if(!l.isEqual(cp, nextProps[k][ck])) {
+                  console.log('not equal child prop = ' + ck)
+
+                }
+              }
+
+            )
+
+
+
+          }
         }
       )
     }

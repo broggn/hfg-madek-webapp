@@ -111,7 +111,7 @@ module.exports = React.createClass
     }
 
   reducTrigger: (eventTree) ->
-    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 
 
@@ -121,7 +121,7 @@ module.exports = React.createClass
       event: event,
       children: {}
     }
-    return BoxRedux.build(this.reducRoot({initial: true}), null, eventTree, (e) => this.reducTrigger(e))
+    return BoxRedux.build(this.reducRoot({initial: true}), null, eventTree, this.reducTrigger)
 
   reducRootEvent: (event)  ->
     eventTree = {
@@ -129,7 +129,7 @@ module.exports = React.createClass
       event: event,
       children: {}
     }
-    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 
   reducComponentEvent: (component, event)  ->
@@ -139,7 +139,7 @@ module.exports = React.createClass
       children: {}
     }
     eventTree = BoxRedux.fireTreeEvent(eventTree, component.path, component.id, event)
-    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 
   onBatchButton: (event) ->
@@ -163,7 +163,7 @@ module.exports = React.createClass
         type: r.data.resource.type
       })
     )
-    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, (e) => this.reducTrigger(e))
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 
 
