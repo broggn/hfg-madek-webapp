@@ -696,7 +696,7 @@ module.exports = React.createClass
 
       batchButton = <BoxBatchEditButton
         stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
-        onBatchButton={(e) => @onBatchButton(e)}
+        onBatchButton={@onBatchButton}
       />
 
 

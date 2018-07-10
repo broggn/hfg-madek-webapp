@@ -11,6 +11,10 @@ ActionsDropdownHelper = require('./ActionsDropdownHelper.cjsx')
 module.exports = React.createClass
   displayName: 'ActionsDropdown'
 
+  shouldComponentUpdate: (nextProps, nextState) ->
+    l = require('lodash')
+    return !l.isEqual(@state, nextState) || !l.isEqual(@props, nextProps)
+
   render: () ->
 
     parameters = @props.parameters
