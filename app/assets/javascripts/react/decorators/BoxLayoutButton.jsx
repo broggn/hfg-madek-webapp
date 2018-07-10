@@ -21,7 +21,6 @@ class BoxLayoutButton extends React.Component {
   }
 
   onClick(event) {
-    debugger
     this.props.onLayoutClick(event, this.props.layout)
   }
 
