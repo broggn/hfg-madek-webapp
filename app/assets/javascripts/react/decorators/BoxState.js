@@ -125,32 +125,40 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
 
-  var resourcesWithApplyEvent = () => {
-    return l.filter(
-      components.resources,
-      (r) => r.event.action == 'apply' || r.event.action == 'reload-meta-data-success'
-    )
-  }
-
-  var anyResourceApplyEvent = () => {
-    return !l.isEmpty(resourcesWithApplyEvent())
-  }
-
-  console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
+  // var resourcesWithApplyEvent = () => {
+  //   return l.filter(
+  //     components.resources,
+  //     (r) => r.event.action == 'apply' || r.event.action == 'reload-meta-data-success'
+  //   )
+  // }
+  //
+  // var anyResourceApplyEvent = () => {
+  //   return !l.isEmpty(resourcesWithApplyEvent())
+  // }
+  //
+  // console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
 
   var toApplyMetaData = () => {
 
-    if(!anyResourceApplyEvent()) {
-      return []
+    // if(!anyResourceApplyEvent()) {
+    //   return []
+    // }
+
+    var resourceNeedsApply = (r) => {
+      return !r.data.applyingMetaData && (
+        r.data.applyPending || r.event.action == 'apply'
+      ) && !(r.event.action == 'reload-meta-data-success')
+    }
+
+    var resourceIsApplying = (r) => {
+      return r.data.applyingMetaData
     }
 
     var candidates = () => {
       return l.filter(
         components.resources,
         (r) => {
-          return !r.data.applyingMetaData && (
-            r.data.applyPending || r.event.action == 'apply'
-          ) && !(r.event.action == 'reload-meta-data-success')
+          return resourceNeedsApply(r)
         }
       )
     }
@@ -158,11 +166,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     var loading = () => {
       return l.filter(
         components.resources,
-        (r) => r.data.applyingMetaData
+        (r) => resourceIsApplying(r)
       )
     }
 
-    console.log('loading = ' + loading())
+    // console.log('loading = ' + loading())
 
     return l.slice(candidates(), 0, 5 - loading().length)
 
