@@ -544,6 +544,65 @@ module.exports = React.createClass
   selectResources: (resources) ->
       this.reducRootEvent({ action: 'select-resources', resourceUuids: f.map(resources, (r) => r.uuid)})
 
+
+  onSortItemClick: (event, itemKey) ->
+
+    return if isNewTab(event)
+
+    event.preventDefault()
+
+    href = getLocalLink(event)
+    routerGoto(href)
+
+    @setState(
+      config: f.merge(@state.config, {order: itemKey}),
+      windowHref: href
+      ,
+      () =>
+        url = parseUrl(BoxSetUrlParams(@_currentUrl(), {list: {order: itemKey}}))
+        # @state.resources.clearPages({
+        #   pathname: url.pathname,
+        #   query: url.query
+        # })
+
+        this.forceFetchNextPage()
+        @_persistListConfig(list_config: {order: itemKey})
+    )
+
+  onLayoutClick: (event, layoutMode) ->
+    return if isNewTab(event)
+    event.preventDefault()
+    href = getLocalLink(event)
+    routerGoto(href)
+    @setState(
+      config: f.merge(@state.config, {layout: layoutMode.mode}),
+      windowHref: href
+      ,
+      () =>
+        if layoutMode.mode == 'list'
+          @fetchListData()
+        @_persistListConfig(list_config: {layout: layoutMode.mode})
+    )
+
+  layoutSave: (event) ->
+    event.preventDefault()
+    config = @_mergeGet(@props, @state).config
+    layout = config.layout
+    order = config.order
+    simpleXhr(
+      {
+        method: 'PATCH',
+        url: @props.collectionData.url,
+        body: 'collection[layout]=' + layout + '\&collection[sorting]=' + order
+      },
+      (error) =>
+        if error
+          alert(error)
+        else
+          @setState(savedLayout: layout, savedOrder: order)
+    )
+    return false
+
   render: ()->
     {
       get, mods, initial, fallback, heading, listMods
@@ -574,63 +633,7 @@ module.exports = React.createClass
         f.merge layoutMode,
           mods: {'active': layoutMode.mode == layout}
           href: href
-          onClick: (event) =>
-            return if isNewTab(event)
-            event.preventDefault()
-            href = getLocalLink(event)
-            routerGoto(href)
-            @setState(
-              config: f.merge(@state.config, {layout: layoutMode.mode}),
-              windowHref: href
-              ,
-              () =>
-                if layoutMode.mode == 'list'
-                  @fetchListData()
-                @_persistListConfig(list_config: {layout: layoutMode.mode})
-            )
 
-
-      onSortItemClick = (event, itemKey) =>
-
-        return if isNewTab(event)
-
-        event.preventDefault()
-
-        href = getLocalLink(event)
-        routerGoto(href)
-
-        @setState(
-          config: f.merge(@state.config, {order: itemKey}),
-          windowHref: href
-          ,
-          () =>
-            url = parseUrl(BoxSetUrlParams(@_currentUrl(), {list: {order: itemKey}}))
-            # @state.resources.clearPages({
-            #   pathname: url.pathname,
-            #   query: url.query
-            # })
-
-            this.forceFetchNextPage()
-            @_persistListConfig(list_config: {order: itemKey})
-        )
-
-
-
-      layoutSave = (event) =>
-        event.preventDefault()
-        simpleXhr(
-          {
-            method: 'PATCH',
-            url: @props.collectionData.url,
-            body: 'collection[layout]=' + layout + '\&collection[sorting]=' + order
-          },
-          (error) =>
-            if error
-              alert(error)
-            else
-              @setState(savedLayout: layout, savedOrder: order)
-        )
-        return false
 
       BoxTitlebar = require('./BoxTitlebar.jsx')
       <BoxTitlebar
@@ -639,16 +642,17 @@ module.exports = React.createClass
         order={order}
         savedLayout={@state.savedLayout}
         savedOrder={@state.savedOrder}
-        layoutSave={layoutSave}
+        layoutSave={@layoutSave}
         collectionData={@props.collectionData}
         heading={heading}
         totalCount={totalCount}
         mods={mods}
         layouts={layouts}
-        onSortItemClick={onSortItemClick}
+        onSortItemClick={@onSortItemClick}
         selectedSort={order}
         enableOrdering={@props.enableOrdering}
         currentUrl={currentUrl}
+        onLayoutClick={@onLayoutClick}
       />
 
 
