@@ -198,7 +198,7 @@ createActionsDropdown = (parameters, callbacks) ->
             createHoverActionItem(
               if selection.length > 0 then f.curry(callbacks.onBatchRemoveFromClipboard)(selection),
               'remove_from_clipboard',
-              selection.length(),
+              selection.length,
               'close',
               t('resources_box_batch_actions_removefromclipboard'))}
 
