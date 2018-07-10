@@ -672,9 +672,9 @@ module.exports = React.createClass
 
     boxToolBar = () =>
 
-      actionsDropdown = ActionsDropdown.createActionsDropdown(
-        actionsDropdownParameters,
-        {
+      actionsDropdown = <ActionsDropdown
+        parameters={actionsDropdownParameters}
+        callbacks={{
           onBatchAddAllToClipboard: @_onBatchAddAllToClipboard
           onBatchAddSelectedToClipboard: @_onBatchAddSelectedToClipboard
           onBatchRemoveAllFromClipboard: @_onBatchRemoveAllFromClipboard
@@ -691,8 +691,8 @@ module.exports = React.createClass
           onBatchTransferResponsibilityEdit: @_onBatchTransferResponsibilityEdit
           onBatchTransferResponsibilitySetsEdit: @_onBatchTransferResponsibilitySetsEdit
           onHoverMenu: @_onHoverMenu
-        })
-
+        }}
+      />
 
       batchButton = <BoxBatchEditButton
         stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
