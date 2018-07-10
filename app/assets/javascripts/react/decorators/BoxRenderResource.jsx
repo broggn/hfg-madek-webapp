@@ -7,7 +7,7 @@ import cx from 'classnames/dedupe'
 import boxSetUrlParams from './BoxSetUrlParams.jsx'
 import setsFallbackUrl from '../../lib/sets-fallback-url.coffee'
 import Preloader from '../ui-components/Preloader.cjsx'
-import ActionsDropdown from './resourcesbox/ActionsDropdown.cjsx'
+import ActionsDropdownHelper from './resourcesbox/ActionsDropdownHelper.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
 
 class BoxRenderResource extends React.Component {
@@ -81,7 +81,7 @@ class BoxRenderResource extends React.Component {
     var style = null
     var selection = selectedResources
     // selection defined means selection is enabled
-    var showActions = ActionsDropdown.showActionsConfig(actionsDropdownParameters)
+    var showActions = ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)
     if(isClient && selection && f.any(f.values(showActions))) {
       var isSelected = f.find(selectedResources, (sr) => sr.uuid == item.uuid)
       var onSelect = (e) => this.onSelect(e)
@@ -92,7 +92,7 @@ class BoxRenderResource extends React.Component {
       }
 
       //  when hightlighting editables, we just dim everything else:
-      if(ActionsDropdown.isResourceNotInScope(item, isSelected, hoverMenuId)) {
+      if(ActionsDropdownHelper.isResourceNotInScope(item, isSelected, hoverMenuId)) {
         style = {opacity: 0.35}
       }
 

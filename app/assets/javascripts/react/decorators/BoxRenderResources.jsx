@@ -7,7 +7,7 @@ import cx from 'classnames/dedupe'
 import boxSetUrlParams from './BoxSetUrlParams.jsx'
 import setsFallbackUrl from '../../lib/sets-fallback-url.coffee'
 import Preloader from '../ui-components/Preloader.cjsx'
-import ActionsDropdown from './resourcesbox/ActionsDropdown.cjsx'
+import ActionsDropdownHelper from './resourcesbox/ActionsDropdownHelper.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
 import BoxRenderResource from './BoxRenderResource.jsx'
 
@@ -76,7 +76,7 @@ class BoxRenderResources extends React.Component {
         var BoxPageCounter = require('./BoxPageCounter.jsx')
         return (
           <BoxPageCounter
-            showActions={ActionsDropdown.showActionsConfig(actionsDropdownParameters)}
+            showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
             selectedResources={selectedResources}
             isClient={isClient}
             showSelectionLimit={showSelectionLimit}
