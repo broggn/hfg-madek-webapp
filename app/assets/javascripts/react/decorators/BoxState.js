@@ -15,14 +15,14 @@ var requestId = Math.random()
 module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
-  var cachedToApplyMetaData = toApplyMetaData(components)
-
-  applyMetaData(components, cachedToApplyMetaData)
-
+  var cachedToApplyMetaData = toApplyMetaData(event, components)
 
 
 
   var next = () => {
+
+    applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
+
 
     if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
       fetchNextPage()
@@ -32,7 +32,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           loadingNextPage: false,
-          selectedResources: null
+          selectedResources: null,
+          applyFormData: null
         },
         components: {
           resources: nextResources(),
@@ -43,13 +44,38 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           loadingNextPage: nextLoadingNextPage(),
-          selectedResources: nextSelectedResources()
+          selectedResources: nextSelectedResources(),
+          applyFormData: nextApplyFormData()
         },
         components: {
           resources: nextResources(),
           batch: nextBatch()
         }
       }
+    }
+  }
+
+  var nextApplyFormData = () => {
+
+    var anyApply = () => {
+      return l.filter(
+        components.resources,
+        (r) => r.event.action == 'apply'
+      ).length > 0
+    }
+
+    if(event.action == 'apply' || anyApply()) {
+      return l.map(
+        components.batch.components.metaKeyForms,
+        (mkf) => {
+          return {
+            data: mkf.data,
+            props: mkf.props
+          }
+        }
+      )
+    } else {
+      return data.applyFormData
     }
   }
 
@@ -120,7 +146,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
           resource.uuid
         ),
-        cancelApply: event.action == 'cancel-all'
+        cancelApply: event.action == 'cancel-all',
+        waitApply: event.action == 'apply'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {
@@ -264,21 +291,13 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
 
-var applyMetaData = (components, cachedToApplyMetaData) => {
+var applyMetaData = (data, components, cachedToApplyMetaData, formData) => {
   l.each(
     cachedToApplyMetaData,
     (r) => applyResourceMetaData(
       {
         resourceState: r,
-        formData: l.map(
-          components.batch.components.metaKeyForms,
-          (mkf) => {
-            return {
-              data: mkf.data,
-              props: mkf.props
-            }
-          }
-        )
+        formData: formData
       }
     )
   )
@@ -405,7 +424,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
 //
 // console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
 
-var toApplyMetaData = (components) => {
+var toApplyMetaData = (event, components) => {
 
   // if(!anyResourceApplyEvent()) {
   //   return []
@@ -413,7 +432,7 @@ var toApplyMetaData = (components) => {
 
   var resourceNeedsApply = (r) => {
     return !r.data.applyingMetaData && (
-      r.data.applyPending || r.event.action == 'apply'
+      r.data.applyPending || r.event.action == 'apply' || event.action == 'apply'
     ) && !(r.event.action == 'reload-meta-data-success')
   }
 

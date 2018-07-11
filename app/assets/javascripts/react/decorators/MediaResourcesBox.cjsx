@@ -154,17 +154,19 @@ module.exports = React.createClass
 
     eventTree = {
       componentId: 0,
-      event: {},
+      event: {
+        action: 'apply'
+      },
       children: {}
     }
-    f.each(
-      @state.reduc.components.resources,
-      (r) => eventTree = BoxRedux.fireTreeEvent(eventTree, r.path, r.id, {
-        action: 'apply',
-        uuid: r.data.resource.uuid,
-        type: r.data.resource.type
-      })
-    )
+    # f.each(
+    #   @state.reduc.components.resources,
+    #   (r) => eventTree = BoxRedux.fireTreeEvent(eventTree, r.path, r.id, {
+    #     action: 'apply',
+    #     uuid: r.data.resource.uuid,
+    #     type: r.data.resource.type
+    #   })
+    # )
     next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 

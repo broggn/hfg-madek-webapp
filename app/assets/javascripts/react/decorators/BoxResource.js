@@ -20,7 +20,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
-    // if(event.action == 'apply') {
+    // if(nextProps.waitApply || event.action == 'apply') {
     //   debugger
     //   // applyMetaData(event.uuid, event.type, nextProps.formData)
     // }
@@ -65,7 +65,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyPending = () => {
-    if(event.action == 'apply') {
+    if(nextProps.waitApply || event.action == 'apply' || event.action == 'apply') {
       return true
     } else if(event.action == 'apply-success' || nextProps.cancelApply) {
       return false
@@ -88,7 +88,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextLoadingListMetaData = () => {
-    if(nextProps.loadMetaData || event.action == 'apply') {
+    if(nextProps.loadMetaData || nextProps.waitApply || event.action == 'apply') {
       return true
     } else if(event.action == 'load-meta-data-success' || event.action == 'reload-meta-data-success') {
       return false
@@ -98,7 +98,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextListMetaData = () => {
-    if(event.action == 'apply') {
+    if(nextProps.waitApply || event.action == 'apply') {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json
