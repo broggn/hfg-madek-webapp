@@ -168,6 +168,8 @@ module.exports = React.createClass
     next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 
+  onClickCancel: (event) ->
+    this.reducRootEvent({action: 'cancel-all'})
 
   # _onBatchEditApply: (event, resourceId, resourceType) ->
   #   @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
@@ -790,6 +792,7 @@ module.exports = React.createClass
         stateBox={BoxRedux.prettyState(@state.reduc, @reducTrigger)}
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}
+        onClickCancel={(e) => @onClickCancel(e)}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
       />
 

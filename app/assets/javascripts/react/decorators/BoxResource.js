@@ -67,7 +67,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   var nextApplyPending = () => {
     if(event.action == 'apply') {
       return true
-    } else if(event.action == 'apply-success') {
+    } else if(event.action == 'apply-success' || nextProps.cancelApply) {
       return false
     } else {
       return data.applyPending

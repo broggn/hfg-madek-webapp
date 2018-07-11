@@ -33,6 +33,17 @@ class BoxBatchEditForm extends React.Component {
     return this.stateBox().components.batch
   }
 
+  toApplyCount() {
+    return l.filter(
+      this.stateBox().components.resources,
+      (r) => r.data.applyPending || r.data.applyingMetaData
+    ).length
+  }
+
+  totalCount() {
+    return this.stateBox().components.resources.length
+  }
+
   renderKeyForms() {
     let {components} = this.stateBatch()
 
@@ -61,7 +72,33 @@ class BoxBatchEditForm extends React.Component {
     }
     return (
       <div
-        onClick={this.props.onClickApplyAll}
+        onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
+        style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
+          color: '#fff',
+          padding: '0px 10px',
+          marginRight: '5px',
+          marginBottom: '5px',
+          fontSize: '14px',
+          cursor: 'pointer'
+        }}
+      >
+        Auf alle anwenden
+      </div>
+    )
+  }
+
+  renderCancel() {
+
+    if(this.toApplyCount() == 0) {
+      return null
+    }
+
+    return (
+      <div
+        onClick={this.props.onClickCancel}
         style={{
           display: 'inline-block',
           borderRadius: '5px',
@@ -74,7 +111,23 @@ class BoxBatchEditForm extends React.Component {
           cursor: 'pointer'
         }}
       >
-        Auf alle anwenden
+        Abbrechen
+      </div>
+    )
+  }
+
+
+  renderProgress() {
+    var total = this.totalCount()
+    var toApply = this.toApplyCount()
+
+    if(toApply == 0) {
+      return null
+    }
+
+    return (
+      <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px'}}>
+        {this.toApplyCount()}
       </div>
     )
   }
@@ -99,6 +152,8 @@ class BoxBatchEditForm extends React.Component {
             {this.renderApplyAll()}
             {this.renderHint()}
           </div>
+          {this.renderProgress()}
+          {this.renderCancel()}
         </div>
       )
     }

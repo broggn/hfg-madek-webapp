@@ -119,7 +119,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         startApply: l.includes(
           l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
           resource.uuid
-        )
+        ),
+        cancelApply: event.action == 'cancel-all'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {
