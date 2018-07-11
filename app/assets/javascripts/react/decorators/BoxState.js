@@ -25,8 +25,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     (r) => r.event.action == 'reload-meta-data-success'
   ).length > 0
 
-  console.log('processing done = ' + processingDone)
-
 
   var next = () => {
 
