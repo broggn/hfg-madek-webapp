@@ -185,7 +185,9 @@ class BoxBatchEditForm extends React.Component {
           cursor: 'pointer',
           float: 'right',
           marginTop: '1px'
-        }}>
+        }}
+        onClick={this.props.onClickCancel}
+      >
           Abbrechen
         </div>
       </div>

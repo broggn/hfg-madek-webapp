@@ -89,7 +89,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyPending = () => {
-    if(nextProps.waitApply || (nextProps.startApply && event.action == 'apply')) {
+    if(nextProps.waitApply || (!nextProps.startApply && event.action == 'apply')) {
       return true
     } else if(nextProps.startApply/*event.action == 'apply-success'*/ || nextProps.cancelApply) {
       return false
