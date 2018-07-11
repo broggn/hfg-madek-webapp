@@ -11,10 +11,8 @@ class BoxBatchApplyButton extends React.Component {
   }
 
   onApply(event) {
-    var get = this.props.resourceState.data.resource
-    // //  this.props.onBatchEditApply(e, get.uuid, get.type)
-    // debugger
-    this.props.resourceState.trigger({action: 'apply', uuid: get.uuid, type: get.type})
+    var resource = this.props.resourceState.data.resource
+    this.props.resourceState.trigger({action: 'apply', uuid: resource.uuid, type: resource.type})
   }
 
   renderApply() {
@@ -29,6 +27,18 @@ class BoxBatchApplyButton extends React.Component {
           }}
           className='ui-preloader small'
         />
+      )
+    } else if(data.applyPending) {
+      return (
+        <span
+          style={{
+            width: '80px',
+            height: '20px',
+            display: 'inline-block'
+          }}
+        >
+          {'waiting'}
+        </span>
       )
     } else {
       return (
@@ -53,9 +63,6 @@ class BoxBatchApplyButton extends React.Component {
   }
 
   render() {
-
-    var get = this.props.resourceState.data.resource
-
     return (
       <div style={{
         display: 'block',
