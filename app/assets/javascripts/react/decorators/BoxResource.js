@@ -122,7 +122,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextListMetaData = () => {
-    if(nextProps.waitApply) {
+    if((!nextProps.startApply && event.action == 'apply') || nextProps.startApply) {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json
