@@ -22,7 +22,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(initial) {
       return {
         data: {
-          open: false
+          open: false,
+          selectedVocabulary: null
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -32,7 +33,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     } else {
       return {
         data: {
-          open: nextOpen()
+          open: nextOpen(),
+          selectedVocabulary: nextSelectedVocabulary()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -43,6 +45,18 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   }
 
+
+  var nextSelectedVocabulary = () => {
+    if(event.action == 'select-vocabulary') {
+      if(event.vocabulary == data.selectedVocabulary) {
+        return null
+      } else {
+        return event.vocabulary        
+      }
+    } else {
+      return data.selectedVocabulary
+    }
+  }
 
   // var nextApplyMetaData = () => {
   //

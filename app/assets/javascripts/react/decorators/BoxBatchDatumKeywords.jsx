@@ -88,10 +88,11 @@ class BoxBatchDatumKeywords extends React.Component {
   }
 
   renderKeywordProposals() {
-    if(!this.props.metaKeyForm.data.showProposals) {
-      return null
-    }
-    else if(!this.props.metaKeyForm.data.keywordProposals) {
+    // if(!this.props.metaKeyForm.data.showProposals) {
+    //   return null
+    // }
+    // else
+    if(!this.props.metaKeyForm.data.keywordProposals) {
       return 'Loading...'
     }
     else {
@@ -100,6 +101,37 @@ class BoxBatchDatumKeywords extends React.Component {
         (k) => this.renderKeywordProposal(k)
       )
     }
+  }
+
+  renderPopup() {
+
+    if(!this.props.metaKeyForm.data.showProposals) {
+      return null
+    }
+
+    return (
+      <div style={{position: 'relative'}}>
+        <BoxPopup
+          onClose={() => this.onCloseProposals()}
+          style={{
+            position: 'absolute',
+            zIndex: '10000',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            padding: '0px 10px',
+            marginRight: '5px',
+            marginBottom: '5px',
+            WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            MozBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            boxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}
+        >
+          {this.renderKeywordProposals()}
+        </BoxPopup>
+      </div>
+    )
   }
 
   render() {
@@ -112,27 +144,7 @@ class BoxBatchDatumKeywords extends React.Component {
         <div>
           <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.onChange(e.target.value)}/>
           {this.renderKeywords()}
-          <div style={{position: 'relative'}}>
-            <BoxPopup
-              onClose={() => this.onCloseProposals()}
-              style={{
-                position: 'absolute',
-                zIndex: '10000',
-                backgroundColor: '#fff',
-                borderRadius: '5px',
-                padding: '0px 10px',
-                marginRight: '5px',
-                marginBottom: '5px',
-                WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                MozBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                boxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}
-            >
-              {this.renderKeywordProposals()}
-            </BoxPopup>
-          </div>
+          {this.renderPopup()}
         </div>
 
       </div>

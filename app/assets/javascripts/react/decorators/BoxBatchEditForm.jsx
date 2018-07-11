@@ -210,17 +210,64 @@ class BoxBatchEditForm extends React.Component {
           (mk) => l.find(metaKeysWithTypes, (mkt) => mkt.metaKeyId == mk)
         )
 
+        var isSelected = () => {
+          return this.stateBatch().data.selectedVocabulary == k
+        }
+
+        var renderBubbles = () => {
+          if(!isSelected()) {
+            return null
+          }
+          return (
+            <BoxBatchEditFormKeyBubbles
+              metaKeysWithTypes={vocabMetaKeysWithTypes}
+              onClickKey={this.props.onClickKey}
+            />
+          )
+        }
+
         return (
-          <div key={k} style={{width: '50%', float: 'left'}}>
-            <div style={{paddingRight: '10px', paddingTop: '10px'}}>
-              <div style={{padding: '10px', backgroundColor: '#fff', borderRadius: '10px'}}>
-                <div>
-                  {v.label}
+          <div key={k}>
+            <div
+              style={{
+                // paddingRight: '10px',
+                // paddingTop: '10px'
+              }}
+            >
+              <div
+                style={{
+                  /*
+                  padding: '10px',
+                  backgroundColor: '#fff',
+                  borderRadius: '5px'
+                  */
+                  marginBottom: (isSelected() ? '10px' : '0px')
+                }}
+              >
+                <div
+                  className={(isSelected() ? 'open' : null)}
+                  style={{
+                    cursor: 'pointer'/*,
+                    // fontSize: '16px',
+                    marginBottom: (isSelected() ? '10px' : '0px')*/
+                  }}
+                >
+                  <i
+                    className={'ui-side-filter-lvl1-marker'}
+                    style={{
+                      position: 'static',
+                      float: 'left',
+                      width: '20px',
+                      marginTop: '4px'
+                    }}
+                  />
+                  <span onClick={(e) => this.stateBatch().trigger({action: 'select-vocabulary', vocabulary: k})}>
+                    {v.label}
+                  </span>
                 </div>
-                <BoxBatchEditFormKeyBubbles
-                  metaKeysWithTypes={vocabMetaKeysWithTypes}
-                  onClickKey={this.props.onClickKey}
-                />
+                <div style={{marginLeft: '20px', marginTop: '5px'}}>
+                  {renderBubbles()}
+                </div>
               </div>
             </div>
           </div>
@@ -238,15 +285,18 @@ class BoxBatchEditForm extends React.Component {
     } else {
       return (
         <div className='ui-resources-holder pam'>
-          {this.renderVocabularies()}
-          <div>
+          <div style={{width: '50%', float: 'left'}}>
+            {this.renderVocabularies()}
+          </div>
+          <div style={{width: '50%', float: 'right'}}>
             {this.renderKeyForms()}
+
+            <div style={{marginTop: '20px'}}>
+              {this.renderApplyAll()}
+              {this.renderHint()}
+            </div>
+            {this.renderProgress()}
           </div>
-          <div>
-            {this.renderApplyAll()}
-            {this.renderHint()}
-          </div>
-          {this.renderProgress()}
         </div>
       )
     }
