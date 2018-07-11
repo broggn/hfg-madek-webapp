@@ -5,8 +5,6 @@ module Modules
 
       include EmbedHelper
       EMBED_SUPPORTED_MEDIA = Madek::Constants::Webapp::EMBED_SUPPORTED_MEDIA
-      EMBED_INTERNAL_HOST_WHITELIST = Madek::Constants::Webapp::\
-        EMBED_INTERNAL_HOST_WHITELIST
 
       included do
         layout false, only: [:embedded]

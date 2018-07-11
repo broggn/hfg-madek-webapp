@@ -5,8 +5,6 @@ module EmbedHelper
   UI_MIN_WIDTH = Madek::Constants::Webapp::EMBED_UI_MIN_WIDTH
   UI_MIN_HEIGHT = Madek::Constants::Webapp::EMBED_UI_MIN_HEIGHT
   UI_DEFAULT_RATIO = Madek::Constants::Webapp::EMBED_UI_DEFAULT_RATIO
-  EMBED_INTERNAL_HOST_WHITELIST = Madek::Constants::Webapp::
-    EMBED_INTERNAL_HOST_WHITELIST
 
   def scale_preview_sizes(maxwidth: nil, ratio: nil)
     # support param of form "16:9"
@@ -30,8 +28,15 @@ module EmbedHelper
   def embed_whitelisted?
     from_origin = request.env['HTTP_REFERER']
     return false unless from_origin
-    EMBED_INTERNAL_HOST_WHITELIST
+    embed_internal_host_whitelist
       .any? { |h| URI.join(h, '/') == URI.join(from_origin, '/') }
+  end
+
+  def embed_internal_host_whitelist
+    [
+      Madek::Constants::Webapp::EMBED_INTERNAL_HOST_WHITELIST,
+      AppSetting.first.allowed_internal_embeds
+    ].flatten.compact
   end
 
 end
