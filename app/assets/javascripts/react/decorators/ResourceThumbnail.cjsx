@@ -192,12 +192,11 @@ module.exports = React.createClass
     else
       getMediaType(f.get(@props.get, 'media_file.content_type'))
 
-    batchApplyButton = if @props.onBatchEditApply
-      <BoxBatchApplyButton
-        onBatchEditApply={@props.onBatchEditApply}
-        resourceState={@props.resourceState}
-        big={@props.pinThumb}
-      />
+    batchApplyButton = <BoxBatchApplyButton
+      resourceState={@props.resourceState}
+      big={@props.pinThumb}
+      showBatchButtons={@props.showBatchButtons}
+    />
 
     if @props.pinThumb
       <PinThumbnail

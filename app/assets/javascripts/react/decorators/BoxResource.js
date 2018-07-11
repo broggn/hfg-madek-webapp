@@ -45,7 +45,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           loadingListMetaData: false,
           applyPending: false,
           applyingMetaData: false,
-          applyDone: false
+          applyDone: false,
+          applyCancelled: false
         },
         components: {
         }
@@ -58,7 +59,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           loadingListMetaData: nextLoadingListMetaData(),
           applyPending: nextApplyPending(),
           applyingMetaData: nextApplyingMetaData(),
-          applyDone: nextApplyDone()
+          applyDone: nextApplyDone(),
+          applyCancelled: nextApplyCancelled()
         },
         components: {
         }
@@ -66,8 +68,18 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
+  var nextApplyCancelled = () => {
+    if(nextProps.cancelApply && data.applyPending) {
+      return true
+    } else if(nextProps.resetStatus) {
+      return false
+    } else {
+      return data.applyCancelled
+    }
+  }
+
   var nextApplyDone = () => {
-    if(nextProps.waitApply || event.action == 'apply' || nextProps.cancelApply) {
+    if(nextProps.waitApply || event.action == 'apply' || nextProps.cancelApply || nextProps.resetStatus) {
       return false
     } else if(event.action == 'reload-meta-data-success') {
       return true

@@ -17,6 +17,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var cachedToApplyMetaData = toApplyMetaData(event, components)
 
+  var processingDone = l.filter(
+    components.resources,
+    (r) => (r.data.applyPending || r.data.applyingMetaData) && r.event.action != 'reload-meta-data-success'
+  ).length == 0 && l.filter(
+    components.resources,
+    (r) => r.event.action == 'reload-meta-data-success'
+  ).length > 0
+
+  console.log('processing done = ' + processingDone)
 
 
   var next = () => {
@@ -147,7 +156,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           resource.uuid
         ),
         cancelApply: event.action == 'cancel-all',
-        waitApply: event.action == 'apply'
+        waitApply: event.action == 'apply',
+        resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {

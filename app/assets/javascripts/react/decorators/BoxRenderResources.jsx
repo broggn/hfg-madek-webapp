@@ -54,7 +54,7 @@ class BoxRenderResources extends React.Component {
             onSelectResource={onSelectResource}
             config={config}
             hoverMenuId={hoverMenuId}
-            onBatchEditApply={this.props.onBatchEditApply}
+            showBatchButtons={this.props.showBatchButtons}
             fetchRelations={fetchRelations}
             key={itemState.data.resource.uuid}
           />

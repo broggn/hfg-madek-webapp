@@ -838,11 +838,14 @@ module.exports = React.createClass
                 listMods={listMods}
                 pagination={@props.get.pagination}
                 perPage={@props.get.config.per_page}
-                onBatchEditApply={
-                  if @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0
-                    true#@_onBatchEditApply
-                  else
-                    null
+                showBatchButtons={
+                  {
+                    editMode: @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0,
+                    processing: f.filter(
+                      this.state.reduc.components.resources,
+                      (r) => r.data.applyPending || r.data.applyingMetaData
+                    ).length > 0
+                  }
                 }
                 unselectResources={@unselectResources}
                 selectResources={@selectResources}

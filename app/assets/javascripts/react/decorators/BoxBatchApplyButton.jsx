@@ -52,7 +52,19 @@ class BoxBatchApplyButton extends React.Component {
           {'waiting'}
         </span>
       )
-    } else {
+    } else if(data.applyCancelled) {
+      return (
+        <span
+          style={{
+            width: '80px',
+            height: '20px',
+            display: 'inline-block'
+          }}
+        >
+          {'cancelled'}
+        </span>
+      )
+    } else if(this.props.showBatchButtons.editMode){
       return (
         <span
           style={{
@@ -71,6 +83,8 @@ class BoxBatchApplyButton extends React.Component {
           {'apply'}
         </span>
       )
+    } else {
+      return null
     }
   }
 

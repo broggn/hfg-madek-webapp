@@ -111,7 +111,7 @@ class BoxRenderResource extends React.Component {
         pinThumb={config.layout == 'tiles'}
         listThumb={config.layout == 'list'}
         list_meta_data={itemState.data.listMetaData}
-        onBatchEditApply={this.props.onBatchEditApply}
+        showBatchButtons={this.props.showBatchButtons}
       />
     )
   }
