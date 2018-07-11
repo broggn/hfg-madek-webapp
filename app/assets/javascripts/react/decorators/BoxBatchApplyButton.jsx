@@ -28,6 +28,18 @@ class BoxBatchApplyButton extends React.Component {
           className='ui-preloader small'
         />
       )
+    } else if(data.applyDone) {
+      return (
+        <span
+          style={{
+            width: '80px',
+            height: '20px',
+            display: 'inline-block'
+          }}
+        >
+          {'done'}
+        </span>
+      )
     } else if(data.applyPending) {
       return (
         <span
