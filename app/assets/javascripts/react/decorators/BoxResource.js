@@ -79,7 +79,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyDone = () => {
-    if(nextProps.waitApply || nextProps.cancelApply || nextProps.resetStatus) {
+    if(nextProps.waitApply || nextProps.resetStatus) {
       return false
     } else if(event.action == 'reload-meta-data-success') {
       return true
