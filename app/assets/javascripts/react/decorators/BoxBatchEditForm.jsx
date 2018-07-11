@@ -115,31 +115,31 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
-  renderCancel() {
-
-    if(this.toApplyCount() == 0) {
-      return null
-    }
-
-    return (
-      <div
-        onClick={this.props.onClickCancel}
-        style={{
-          display: 'inline-block',
-          borderRadius: '5px',
-          backgroundColor: '#000',
-          color: '#fff',
-          padding: '0px 10px',
-          marginRight: '5px',
-          marginBottom: '5px',
-          fontSize: '14px',
-          cursor: 'pointer'
-        }}
-      >
-        Abbrechen
-      </div>
-    )
-  }
+  // renderCancel() {
+  //
+  //   if(this.toApplyCount() == 0) {
+  //     return null
+  //   }
+  //
+  //   return (
+  //     <div
+  //       onClick={this.props.onClickCancel}
+  //       style={{
+  //         display: 'inline-block',
+  //         borderRadius: '5px',
+  //         backgroundColor: '#000',
+  //         color: '#fff',
+  //         padding: '0px 10px',
+  //         marginRight: '5px',
+  //         marginBottom: '5px',
+  //         fontSize: '14px',
+  //         cursor: 'pointer'
+  //       }}
+  //     >
+  //       Abbrechen
+  //     </div>
+  //   )
+  // }
 
 
   renderProgress() {
@@ -173,8 +173,21 @@ class BoxBatchEditForm extends React.Component {
 
 
     return (
-      <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px'}}>
+      <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
         {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+        <div style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          backgroundColor: '#3c3c3c',
+          color: '#fff',
+          padding: '0px 10px',
+          fontSize: '14px',
+          cursor: 'pointer',
+          float: 'right',
+          marginTop: '1px'
+        }}>
+          Abbrechen
+        </div>
       </div>
     )
   }
@@ -200,7 +213,6 @@ class BoxBatchEditForm extends React.Component {
             {this.renderHint()}
           </div>
           {this.renderProgress()}
-          {this.renderCancel()}
         </div>
       )
     }
