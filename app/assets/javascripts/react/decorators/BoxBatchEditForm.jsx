@@ -194,6 +194,41 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  renderVocabularies() {
+
+    var metaMetaData = this.stateBox().components.batch.components.loadMetaMetaData.data.metaMetaData[0].data
+    var vocabularies = metaMetaData.vocabularies_by_vocabulary_id
+    var vocabMetaKeys = metaMetaData.meta_key_ids_by_vocabulary_id
+
+    var metaKeysWithTypes = this.stateBatch().components.loadMetaMetaData.data.metaKeysWithTypes
+
+    return l.map(
+      vocabularies,
+      (v, k) => {
+        var vocabMetaKeysWithTypes = l.map(
+          vocabMetaKeys[k],
+          (mk) => l.find(metaKeysWithTypes, (mkt) => mkt.metaKeyId == mk)
+        )
+
+        return (
+          <div key={k} style={{width: '50%', float: 'left'}}>
+            <div style={{paddingRight: '10px', paddingTop: '10px'}}>
+              <div style={{padding: '10px', backgroundColor: '#fff', borderRadius: '10px'}}>
+                <div>
+                  {v.label}
+                </div>
+                <BoxBatchEditFormKeyBubbles
+                  metaKeysWithTypes={vocabMetaKeysWithTypes}
+                  onClickKey={this.props.onClickKey}
+                />
+              </div>
+            </div>
+          </div>
+        )
+      }
+    )
+  }
+
   render() {
 
     let {data, components} = this.stateBatch()
@@ -203,10 +238,7 @@ class BoxBatchEditForm extends React.Component {
     } else {
       return (
         <div className='ui-resources-holder pam'>
-          <BoxBatchEditFormKeyBubbles
-            metaKeysWithTypes={components.loadMetaMetaData.data.metaKeysWithTypes}
-            onClickKey={this.props.onClickKey}
-          />
+          {this.renderVocabularies()}
           <div>
             {this.renderKeyForms()}
           </div>
