@@ -245,23 +245,23 @@ class BoxBatchEditForm extends React.Component {
                 }}
               >
                 <div
-                  className={(isSelected() ? 'open' : null)}
+
                   style={{
-                    cursor: 'pointer'/*,
+                    /*,
                     // fontSize: '16px',
                     marginBottom: (isSelected() ? '10px' : '0px')*/
                   }}
                 >
-                  <i
-                    className={'ui-side-filter-lvl1-marker'}
-                    style={{
-                      position: 'static',
-                      float: 'left',
-                      width: '20px',
-                      marginTop: '4px'
-                    }}
-                  />
-                  <span onClick={(e) => this.stateBatch().trigger({action: 'select-vocabulary', vocabulary: k})}>
+                  <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.stateBatch().trigger({action: 'select-vocabulary', vocabulary: k})}>
+                    <i
+                      className={'ui-side-filter-lvl1-marker'}
+                      style={{
+                        position: 'static',
+                        float: 'left',
+                        width: '20px',
+                        marginTop: '4px'
+                      }}
+                    />
                     {v.label}
                   </span>
                 </div>
