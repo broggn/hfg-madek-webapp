@@ -17,23 +17,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var cachedToApplyMetaData = toApplyMetaData(components)
 
-  l.each(
-    cachedToApplyMetaData,
-    (r) => applyMetaData(
-      {
-        resourceState: r,
-        formData: l.map(
-          components.batch.components.metaKeyForms,
-          (mkf) => {
-            return {
-              data: mkf.data,
-              props: mkf.props
-            }
-          }
-        )
-      }
-    )
-  )
+  applyMetaData(components, cachedToApplyMetaData)
+
 
 
 
@@ -278,9 +263,29 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
 
+var applyMetaData = (components, cachedToApplyMetaData) => {
+  l.each(
+    cachedToApplyMetaData,
+    (r) => applyResourceMetaData(
+      {
+        resourceState: r,
+        formData: l.map(
+          components.batch.components.metaKeyForms,
+          (mkf) => {
+            return {
+              data: mkf.data,
+              props: mkf.props
+            }
+          }
+        )
+      }
+    )
+  )
+
+}
 
 
-var applyMetaData = ({resourceState, formData}) => {
+var applyResourceMetaData = ({resourceState, formData}) => {
 
   var resourceId = resourceState.data.resource.uuid
   var resourceType = resourceState.data.resource.type
