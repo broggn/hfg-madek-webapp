@@ -151,7 +151,6 @@ module.exports = React.createClass
     @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId})
 
   onClickApplyAll: (event) ->
-
     eventTree = {
       componentId: 0,
       event: {
@@ -795,6 +794,7 @@ module.exports = React.createClass
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}
         onClickCancel={(e) => @onClickCancel(e)}
+        totalCount={@props.get.pagination.total_count}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
       />
 

@@ -145,18 +145,21 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var mapResource = (resource, todoLoadMetaData) => {
+
+    var startApply = l.includes(
+      l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
+      resource.uuid
+    )
+
     return {
       reset: false,
       reduce: BoxResource,
       props: {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: l.includes(
-          l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
-          resource.uuid
-        ),
+        startApply: startApply,
         cancelApply: event.action == 'cancel-all',
-        waitApply: event.action == 'apply',
+        waitApply: !startApply && event.action == 'apply',
         resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,

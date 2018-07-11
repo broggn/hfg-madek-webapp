@@ -54,18 +54,43 @@ class BoxBatchEditForm extends React.Component {
   }
 
   renderHint() {
-    if(this.stateBatch().components.metaKeyForms.length == 0) {
-      return null
-    }
+    return null
 
-    if(this.props.allLoaded) {
-      return ''
-    } else {
-      return 'Note: loading pages, not all will be updated'
-    }
+    // if(this.stateBatch().components.metaKeyForms.length == 0) {
+    //   return null
+    // }
+    //
+    // if(this.props.allLoaded) {
+    //   return ''
+    // } else {
+    //   return 'Note: loading pages, not all will be updated'
+    // }
   }
 
   renderApplyAll() {
+
+    if(this.toApplyCount() > 0) {
+      return null
+    }
+
+    var renderText = () => {
+
+      var totalCount = () => {
+        return this.props.totalCount
+      }
+
+      var loadedCount = () => {
+        return this.stateBox().components.resources.length
+      }
+
+      if(loadedCount() == totalCount()) {
+        return 'Auf alle anwenden'
+      } else {
+        return 'Auf ersten ' + loadedCount() + ' anwenden (' + (totalCount() - loadedCount()) + ' ungeladen)'
+      }
+
+      // Auf alle anwenden
+    }
 
     if(this.stateBatch().components.metaKeyForms.length == 0) {
       return null
@@ -85,7 +110,7 @@ class BoxBatchEditForm extends React.Component {
           cursor: 'pointer'
         }}
       >
-        Auf alle anwenden
+        {renderText()}
       </div>
     )
   }
@@ -125,9 +150,31 @@ class BoxBatchEditForm extends React.Component {
       return null
     }
 
+    var pendingCount = () => {
+      return l.filter(
+        this.stateBox().components.resources,
+        (r) => r.data.applyPending
+      ).length
+    }
+
+    var applyingCount = () => {
+      return l.filter(
+        this.stateBox().components.resources,
+        (r) => r.data.applyingMetaData
+      ).length
+    }
+
+    var doneCount = () => {
+      return l.filter(
+        this.stateBox().components.resources,
+        (r) => r.data.applyDone
+      ).length
+    }
+
+
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px'}}>
-        {this.toApplyCount()}
+        {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
       </div>
     )
   }

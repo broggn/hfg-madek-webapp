@@ -79,7 +79,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyDone = () => {
-    if(nextProps.waitApply || event.action == 'apply' || nextProps.cancelApply || nextProps.resetStatus) {
+    if(nextProps.waitApply || nextProps.cancelApply || nextProps.resetStatus) {
       return false
     } else if(event.action == 'reload-meta-data-success') {
       return true
@@ -89,9 +89,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyPending = () => {
-    if(nextProps.waitApply || event.action == 'apply') {
+    if(nextProps.waitApply) {
       return true
-    } else if(event.action == 'apply-success' || nextProps.cancelApply) {
+    } else if(nextProps.startApply/*event.action == 'apply-success'*/ || nextProps.cancelApply) {
       return false
     } else {
       return data.applyPending
@@ -112,7 +112,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextLoadingListMetaData = () => {
-    if(nextProps.loadMetaData || nextProps.waitApply || event.action == 'apply') {
+    if(nextProps.loadMetaData || nextProps.waitApply) {
       return true
     } else if(event.action == 'load-meta-data-success' || event.action == 'reload-meta-data-success') {
       return false
@@ -122,7 +122,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextListMetaData = () => {
-    if(nextProps.waitApply || event.action == 'apply') {
+    if(nextProps.waitApply) {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json
