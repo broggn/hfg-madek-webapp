@@ -787,7 +787,7 @@ module.exports = React.createClass
       {boxToolBar()}
 
       <BoxBatchEditForm
-        stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
+        stateBox={BoxRedux.prettyState(@state.reduc, @reducTrigger)}
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}

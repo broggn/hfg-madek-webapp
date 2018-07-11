@@ -25,8 +25,16 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  stateBox() {
+    return this.props.stateBox
+  }
+
+  stateBatch() {
+    return this.stateBox().components.batch
+  }
+
   renderKeyForms() {
-    let {components} = this.props.stateBatch
+    let {components} = this.stateBatch()
 
     return l.map(
       components.metaKeyForms,
@@ -35,7 +43,7 @@ class BoxBatchEditForm extends React.Component {
   }
 
   renderHint() {
-    if(this.props.stateBatch.components.metaKeyForms.length == 0) {
+    if(this.stateBatch().components.metaKeyForms.length == 0) {
       return null
     }
 
@@ -48,7 +56,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderApplyAll() {
 
-    if(this.props.stateBatch.components.metaKeyForms.length == 0) {
+    if(this.stateBatch().components.metaKeyForms.length == 0) {
       return null
     }
     return (
@@ -73,7 +81,7 @@ class BoxBatchEditForm extends React.Component {
 
   render() {
 
-    let {data, components} = this.props.stateBatch
+    let {data, components} = this.stateBatch()
 
     if(!data.open) {
       return null
