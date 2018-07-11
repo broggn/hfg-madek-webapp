@@ -175,19 +175,20 @@ class BoxBatchEditForm extends React.Component {
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
         {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
-        <div style={{
-          display: 'inline-block',
-          borderRadius: '5px',
-          backgroundColor: '#3c3c3c',
-          color: '#fff',
-          padding: '0px 10px',
-          fontSize: '14px',
-          cursor: 'pointer',
-          float: 'right',
-          marginTop: '1px'
-        }}
-        onClick={this.props.onClickCancel}
-      >
+        <div
+          style={{
+            display: 'inline-block',
+            borderRadius: '5px',
+            backgroundColor: '#3c3c3c',
+            color: '#fff',
+            padding: '0px 10px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            float: 'right',
+            marginTop: '1px'
+          }}
+          onClick={this.props.onClickCancel}
+        >
           Abbrechen
         </div>
       </div>
