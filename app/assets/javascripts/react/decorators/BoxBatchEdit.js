@@ -131,8 +131,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       )
     }
 
-    var createBoxBatchEdit = (metaKeyId) => {
+    var createBoxBatchEdit = (componentId, metaKeyId) => {
       return {
+        reuseId: componentId,
         reset: false,
         reduce: decideReduce(metaKeyId),
         props: {
@@ -145,7 +146,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     var mapExisting = () => {
       return l.map(
         withoutClosed(),
-        (c) => createBoxBatchEdit(c.props.metaKeyId)
+        (c) => createBoxBatchEdit(c.id, c.props.metaKeyId)
       )
     }
 
@@ -164,7 +165,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
       return l.concat(
         mapExisting(),
-        createBoxBatchEdit(event.metaKeyId)
+        createBoxBatchEdit(null, event.metaKeyId)
       )
     } else {
       return mapExisting()

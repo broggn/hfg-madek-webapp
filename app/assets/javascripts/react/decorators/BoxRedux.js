@@ -208,21 +208,41 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
     if(Array.isArray(v)) {
 
+      var componentsArrayChild2 = function(vi, lastState, k, i) {
+        if(typeof vi.reuseId == 'number') {
+          return __.find(lastState.components[k], (ck) => ck.id == vi.reuseId)
+        } else {
+          return (lastState && lastState.components[k] && i < lastState.components[k].length ? lastState.components[k][i] : null)
+        }
+
+      }
+
+
+      var mergedChild = function(vi, merged, k, i) {
+        if(typeof vi.reuseId == 'number') {
+          return __.find(merged.components[k], (ck) => ck.id == vi.reuseId)
+        } else {
+          return merged.components[k] && i < merged.components[k].length && merged.components[k][i] ? merged.components[k][i] : {
+            data: {},
+            components: {},
+            // props: vi.props,
+            event: {}
+          }
+        }
+
+      }
+
+
       return __.map(
         v,
         function(vi, i) {
           return reduceComponent(
             vi,
-            componentsArrayChild(last, k, i),
+            componentsArrayChild2(vi, last, k, i),
             rootTrigger,
             eventTreeArrayChild(eventTree, k, i),
             __.concat(path, [[k, i]]),
-            merged.components[k] && i < merged.components[k].length && merged.components[k][i] ? merged.components[k][i] : {
-              data: {},
-              components: {},
-              // props: vi.props,
-              event: {}
-            }
+            mergedChild(vi, merged, k, i)
           )
         }
       )
@@ -274,6 +294,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
     }
   } else {
     return {
+      id: lastState.id,
       data: (lastState.data ? lastState.data : {}),
       components: compactObject(
         __.mapValues(
