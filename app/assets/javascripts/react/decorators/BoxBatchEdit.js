@@ -51,7 +51,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       if(event.vocabulary == data.selectedVocabulary) {
         return null
       } else {
-        return event.vocabulary        
+        return event.vocabulary
       }
     } else {
       return data.selectedVocabulary
