@@ -19,7 +19,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderMetaKeyForm(metaKeyForm) {
     return (
-      <div key={metaKeyForm.props.metaKeyId}>
+      <div key={metaKeyForm.props.metaKeyId} style={{backgroundColor: '#fff', borderRadius: '5px', border: '1px solid #ddd', padding: '10px', marginBottom: '5px'}}>
         <BoxBatchEditMetaKeyForm metaKeyForm={metaKeyForm} />
       </div>
     )

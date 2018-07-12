@@ -31,7 +31,7 @@ class BoxBatchDatumText extends React.Component {
     return (
       <div>
         <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-          <i className="icon-close"></i>
+          <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
           {' '}
         </span>
         {metaKeyForm.props.metaKey.label}

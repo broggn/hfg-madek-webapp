@@ -11,7 +11,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
 
   var next = () => {
 
-    if(event.action == 'change-text') {
+    if(event.action == 'change-text' || event.action == 'input-focus' && nextProps.metaKey.show_checkboxes) {
       loadKeywords()
     }
 
@@ -78,7 +78,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var nextShowProposals = () => {
-    if(event.action == 'change-text' || (event.action == 'input-focus' && data.keywordProposals)) {
+    if(event.action == 'change-text' || event.action == 'keywords-loaded' || (event.action == 'input-focus' && data.keywordProposals)) {
       return true
     }
     else if(event.action == 'close-proposals') {
