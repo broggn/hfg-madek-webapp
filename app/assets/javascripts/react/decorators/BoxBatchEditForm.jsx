@@ -67,11 +67,58 @@ class BoxBatchEditForm extends React.Component {
     // }
   }
 
+  renderApplySelected() {
+
+    if(this.toApplyCount() > 0) {
+      return null
+    }
+    if(this.stateBatch().components.metaKeyForms.length == 0) {
+      return null
+    }
+
+    var selectedCount = () => {
+      return this.stateBox().data.selectedResources.length
+    }
+
+    if(selectedCount() == 0) {
+      return null
+    }
+
+
+    var renderText = () => {
+      return 'Auf ' + selectedCount() + ' selektierte anwenden'
+    }
+
+    return (
+      <div
+        onClick={this.props.onClickApplySelected}
+        style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
+          color: '#fff',
+          padding: '0px 10px',
+          marginRight: '5px',
+          marginBottom: '5px',
+          fontSize: '14px',
+          cursor: 'pointer'
+        }}
+      >
+        {renderText()}
+      </div>
+    )
+
+  }
+
   renderApplyAll() {
 
     if(this.toApplyCount() > 0) {
       return null
     }
+    if(this.stateBatch().components.metaKeyForms.length == 0) {
+      return null
+    }
+
 
     var renderText = () => {
 
@@ -86,15 +133,12 @@ class BoxBatchEditForm extends React.Component {
       if(loadedCount() == totalCount()) {
         return 'Auf alle anwenden'
       } else {
-        return 'Auf ersten ' + loadedCount() + ' anwenden (' + (totalCount() - loadedCount()) + ' ungeladen)'
+        return 'Auf ' + loadedCount() + ' anwenden (' + (totalCount() - loadedCount()) + ' ungeladen)'
       }
 
       // Auf alle anwenden
     }
 
-    if(this.stateBatch().components.metaKeyForms.length == 0) {
-      return null
-    }
     return (
       <div
         onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
@@ -294,6 +338,7 @@ class BoxBatchEditForm extends React.Component {
 
             <div style={{marginTop: '20px'}}>
               {this.renderApplyAll()}
+              {this.renderApplySelected()}
               {this.renderHint()}
             </div>
             {this.renderProgress()}

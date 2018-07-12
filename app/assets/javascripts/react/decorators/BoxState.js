@@ -15,7 +15,7 @@ var requestId = Math.random()
 module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
 
-  var cachedToApplyMetaData = toApplyMetaData(event, components)
+  var cachedToApplyMetaData = toApplyMetaData(event, components, data)
 
   var processingDone = l.filter(
     components.resources,
@@ -71,7 +71,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       ).length > 0
     }
 
-    if(event.action == 'apply' || anyApply()) {
+    if(event.action == 'apply' || event.action == 'apply-selected' || anyApply()) {
       return l.map(
         components.batch.components.metaKeyForms,
         (mkf) => {
@@ -149,6 +149,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       resource.uuid
     )
 
+    var hasSelectedApply = () => {
+      return event.action == 'apply-selected'
+        && l.find(
+          data.selectedResources,
+          (sr) => sr.uuid == resource.uuid
+        )
+    }
+
+
     return {
       reset: false,
       reduce: BoxResource,
@@ -157,7 +166,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: startApply,
         cancelApply: event.action == 'cancel-all',
-        waitApply: !startApply && event.action == 'apply',
+        waitApply: !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply()),
         resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
@@ -435,15 +444,24 @@ var applyResourceMetaData = ({resourceState, formData}) => {
 //
 // console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
 
-var toApplyMetaData = (event, components) => {
+var toApplyMetaData = (event, components, data) => {
 
   // if(!anyResourceApplyEvent()) {
   //   return []
   // }
 
   var resourceNeedsApply = (r) => {
+
+    var hasSelectedApply = () => {
+      return event.action == 'apply-selected'
+        && l.find(
+          data.selectedResources,
+          (sr) => sr.uuid == r.data.resource.uuid
+        )
+    }
+
     return !r.data.applyingMetaData && (
-      r.data.applyPending || r.event.action == 'apply' || event.action == 'apply'
+      r.data.applyPending || r.event.action == 'apply' || event.action == 'apply' || hasSelectedApply()
     ) && !(r.event.action == 'reload-meta-data-success')
   }
 
@@ -469,7 +487,7 @@ var toApplyMetaData = (event, components) => {
 
   // console.log('loading = ' + loading())
 
-  return l.slice(candidates(), 0, 5 - loading().length)
+  return l.slice(candidates(), 0, 12 - loading().length)
 
 
   // l.each(

@@ -158,16 +158,21 @@ module.exports = React.createClass
       },
       children: {}
     }
-    # f.each(
-    #   @state.reduc.components.resources,
-    #   (r) => eventTree = BoxRedux.fireTreeEvent(eventTree, r.path, r.id, {
-    #     action: 'apply',
-    #     uuid: r.data.resource.uuid,
-    #     type: r.data.resource.type
-    #   })
-    # )
     next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
+
+  onClickApplySelected: (event) ->
+    eventTree = {
+      componentId: 0,
+      event: {
+        action: 'apply-selected'
+      },
+      children: {}
+    }
+    next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
+    @setState({reduc: next})
+
+
 
   onClickCancel: (event) ->
     this.reducRootEvent({action: 'cancel-all'})
@@ -793,6 +798,7 @@ module.exports = React.createClass
         stateBox={BoxRedux.prettyState(@state.reduc, @reducTrigger)}
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}
+        onClickApplySelected={(e) => @onClickApplySelected(e)}
         onClickCancel={(e) => @onClickCancel(e)}
         totalCount={@props.get.pagination.total_count}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
