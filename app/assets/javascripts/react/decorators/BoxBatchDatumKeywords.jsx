@@ -53,7 +53,11 @@ class BoxBatchDatumKeywords extends React.Component {
   renderKeyword(k, i) {
     return (
       <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal')}}>
-        <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>[x]</span>
+
+        <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>
+          <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '3px'}}></i>
+          {' '}
+        </span>
         {k.label}
       </span>
     )
@@ -147,6 +151,7 @@ class BoxBatchDatumKeywords extends React.Component {
         {' '}
         <div style={{marginLeft: '25px'}}>
           <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.onChange(e.target.value)}/>
+          {' '}
           {this.renderKeywords()}
           {this.renderPopup()}
         </div>
