@@ -37,7 +37,10 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var nextText = () => {
-    if(event.action == 'change-text') {
+    if(event.action == 'select-keyword') {
+      return ''
+    }
+    else if(event.action == 'change-text') {
       return event.text
     }
     else {
@@ -67,7 +70,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
     if(event.action == 'change-text' || (event.action == 'input-focus' && data.keywordProposals)) {
       return true
     }
-    else if(event.action == 'close-proposals') {
+    else if(event.action == 'close-proposals' || event.action == 'select-keyword') {
       return false
     }
     else {
@@ -76,7 +79,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
   }
 
   var nextKeywordProposals = () => {
-    if(event.action == 'change-text') {
+    if(event.action == 'change-text' || event.action == 'select-keyword') {
       return null
     }
     else if(event.action == 'keywords-loaded') {

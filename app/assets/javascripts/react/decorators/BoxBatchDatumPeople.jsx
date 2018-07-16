@@ -39,8 +39,12 @@ class BoxBatchDatumPeople extends React.Component {
 
   renderKeyword(k, i) {
     return (
-      <span key={i} style={{fontStyle: 'normal'}}>
-        <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>[x]</span>
+      <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal'), marginRight: '10px', color: (!k.id ? '#aaa' : '#000')}}>
+
+        <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>
+          <i className='icon-close' style={{position: 'relative', top: '1px', marginRight: '0px', fontSize: '12px'}}></i>
+          {' '}
+        </span>
         {k.label}
       </span>
     )
@@ -75,10 +79,11 @@ class BoxBatchDatumPeople extends React.Component {
   }
 
   renderKeywordProposals() {
-    if(!this.props.metaKeyForm.data.showProposals) {
-      return null
-    }
-    else if(!this.props.metaKeyForm.data.keywordProposals) {
+    // if(!this.props.metaKeyForm.data.showProposals) {
+    //   return null
+    // }
+    // else
+    if(!this.props.metaKeyForm.data.keywordProposals) {
       return 'Loading...'
     }
     else {
@@ -89,39 +94,81 @@ class BoxBatchDatumPeople extends React.Component {
     }
   }
 
+  renderPopup() {
+
+    if(!this.props.metaKeyForm.data.showProposals) {
+      return null
+    }
+
+    return (
+      <div style={{position: 'relative'}}>
+        <BoxPopup
+          onClose={() => this.onCloseProposals()}
+          style={{
+            position: 'absolute',
+            zIndex: '10000',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            padding: '0px 10px',
+            marginRight: '5px',
+            marginBottom: '5px',
+            WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            MozBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            boxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}
+        >
+          {this.renderKeywordProposals()}
+        </BoxPopup>
+      </div>
+    )
+  }
+
   render() {
+
     var metaKeyForm = this.props.metaKeyForm
 
     return (
       <div>
-        <span onClick={(e) => this.onClose(e)}>[x]</span>
-        {metaKeyForm.props.metaKey.label + ' (' + metaKeyForm.props.metaKeyId + ')'}
-        <div>
-          <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onChange={(e) => this.onChange(e.target.value)}/>
-          {this.renderKeywords()}
-          <div style={{position: 'relative'}}>
-            <BoxPopup
-              onClose={() => this.onCloseProposals()}
-              style={{
-                position: 'absolute',
-                zIndex: '10000',
-                backgroundColor: '#fff',
-                borderRadius: '5px',
-                padding: '0px 10px',
-                marginRight: '5px',
-                marginBottom: '5px',
-                WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                MozBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                boxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}
-            >
-              {this.renderKeywordProposals()}
-            </BoxPopup>
-          </div>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '30%',
+            verticalAlign: 'top'
+          }}
+        >
+          <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
+            <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
+            {' '}
+          </span>
+          {metaKeyForm.props.metaKey.label}
         </div>
-
+        <div
+          style={{
+            display: 'inline-block',
+            width: '70%',
+            verticalAlign: 'top'
+          }}
+        >
+          {this.renderKeywords()}
+          <input
+            style={{
+              borderRadius: '5px',
+              border: '1px solid #ddd',
+              padding: '5px',
+              boxSizing: 'border-box',
+              width: '100%',
+              height: '30px',
+              fontSize: '12px'
+            }}
+            value={metaKeyForm.data.text}
+            onFocus={(e) => this.onFocus(e)}
+            onChange={(e) => this.onChange(e.target.value)}
+          />
+          {' '}
+          {this.renderPopup()}
+        </div>
       </div>
     )
   }
