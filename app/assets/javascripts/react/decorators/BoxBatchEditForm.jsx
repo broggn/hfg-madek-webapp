@@ -233,7 +233,7 @@ class BoxBatchEditForm extends React.Component {
           }}
           onClick={this.props.onClickCancel}
         >
-          Abbrechen
+          wartende abbrechen
         </div>
       </div>
     )
