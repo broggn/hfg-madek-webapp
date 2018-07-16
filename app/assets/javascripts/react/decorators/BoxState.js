@@ -343,7 +343,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
   var property = () => {
     return {
       'MediaEntry': 'media_entry',
-      'Collection': 'set'
+      'Collection': 'collection'
     }[resourceType]
   }
 
