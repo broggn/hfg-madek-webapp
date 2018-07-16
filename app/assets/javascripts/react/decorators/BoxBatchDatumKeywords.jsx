@@ -52,10 +52,10 @@ class BoxBatchDatumKeywords extends React.Component {
 
   renderKeyword(k, i) {
     return (
-      <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal')}}>
+      <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal'), marginRight: '10px', color: (!k.id ? '#aaa' : '#000')}}>
 
         <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>
-          <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '3px'}}></i>
+          <i className='icon-close' style={{position: 'relative', top: '1px', marginRight: '0px', fontSize: '12px'}}></i>
           {' '}
         </span>
         {k.label}
@@ -143,19 +143,45 @@ class BoxBatchDatumKeywords extends React.Component {
 
     return (
       <div>
-        <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-          <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
-          {' '}
-        </span>
-        {metaKeyForm.props.metaKey.label}
-        {' '}
-        <div style={{marginLeft: '25px'}}>
-          <input value={metaKeyForm.data.text} onFocus={(e) => this.onFocus(e)} onKeyDown={(e) => this.onKeyDown(e)} onChange={(e) => this.onChange(e.target.value)}/>
-          {' '}
+        <div
+          style={{
+            display: 'inline-block',
+            width: '30%',
+            verticalAlign: 'top'
+          }}
+        >
+          <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
+            <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
+            {' '}
+          </span>
+          {metaKeyForm.props.metaKey.label}
+        </div>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '70%',
+            verticalAlign: 'top'
+          }}
+        >
           {this.renderKeywords()}
+          <input
+            style={{
+              borderRadius: '5px',
+              border: '1px solid #ddd',
+              padding: '5px',
+              boxSizing: 'border-box',
+              width: '100%',
+              height: '30px',
+              fontSize: '12px'
+            }}
+            value={metaKeyForm.data.text}
+            onFocus={(e) => this.onFocus(e)}
+            onKeyDown={(e) => this.onKeyDown(e)}
+            onChange={(e) => this.onChange(e.target.value)}
+          />
+          {' '}
           {this.renderPopup()}
         </div>
-
       </div>
     )
   }

@@ -33,7 +33,8 @@ class BoxBatchDatumText extends React.Component {
         <div
           style={{
             display: 'inline-block',
-            width: '30%'
+            width: '30%',
+            verticalAlign: 'top'
           }}
         >
           <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
@@ -45,7 +46,8 @@ class BoxBatchDatumText extends React.Component {
         <div
           style={{
             display: 'inline-block',
-            width: '70%'
+            width: '70%',
+            verticalAlign: 'top'
           }}
         >
           <input
