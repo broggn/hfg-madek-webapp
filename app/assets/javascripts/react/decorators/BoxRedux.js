@@ -72,10 +72,10 @@ var compactObject = function(o) {
 
 var build = function(definition, last, rootTrigger, rootEventTree, merged) {
 
-  if(last && !verifyEventId2(last, rootEventTree)) {
-    console.log('not valid tree anymore ' + JSON.stringify(rootEventTree))
-    return last
-  }
+  // if(last && !verifyEventId2(last, rootEventTree)) {
+  //   console.log('not valid tree anymore ' + JSON.stringify(rootEventTree))
+  //   return last
+  // }
 
   // console.log(JSON.stringify(rootEventTree, null, '  '))
   return reduceComponent(definition, last, rootTrigger, rootEventTree, [], merged)
@@ -232,16 +232,39 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
       }
 
+      var eventTreeArrayChild2 = function(vi, last, eventTree, k, i) {
+        if(typeof vi.reuseId == 'number') {
+          return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
+        } else {
+          return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
+        }
+        // if(typeof vi.reuseId == 'number') {
+        //   return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
+        // } else {
+        //   return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
+        // }
+      }
+
+      var path2 = function(vi, last, eventTree, k, i, path) {
+        if(typeof vi.reuseId == 'number') {
+          var ind = __.findIndex(last.components[k], (ck) => ck.id == vi.reuseId)
+          return __.concat(path, [[k, ind]])
+        } else {
+          return __.concat(path, [[k, i]])
+        }
+
+      }
+
 
       return __.map(
         v,
         function(vi, i) {
           return reduceComponent(
             vi,
-            componentsArrayChild2(vi, last, k, i),
+            componentsArrayChild2(vi, merged, k, i),
             rootTrigger,
-            eventTreeArrayChild(eventTree, k, i),
-            __.concat(path, [[k, i]]),
+            eventTreeArrayChild2(vi, merged, eventTree, k, i),
+            path2(vi, merged, eventTree, k, i, path),
             mergedChild(vi, merged, k, i)
           )
         }
