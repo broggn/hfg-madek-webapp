@@ -30,13 +30,38 @@ class BoxBatchDatumText extends React.Component {
 
     return (
       <div>
-        <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-          <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
-          {' '}
-        </span>
-        {metaKeyForm.props.metaKey.label}
-        {' '}
-        <input value={metaKeyForm.data.text} onChange={(e) => this.onChange(e.target.value)}/>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '30%'
+          }}
+        >
+          <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
+            <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
+            {' '}
+          </span>
+          {metaKeyForm.props.metaKey.label}
+        </div>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '70%'
+          }}
+        >
+          <input
+            style={{
+              borderRadius: '5px',
+              border: '1px solid #ddd',
+              padding: '5px',
+              boxSizing: 'border-box',
+              width: '100%',
+              height: '30px',
+              fontSize: '12px'
+            }}
+            value={metaKeyForm.data.text}
+            onChange={(e) => this.onChange(e.target.value)}
+          />
+        </div>
       </div>
     )
   }
