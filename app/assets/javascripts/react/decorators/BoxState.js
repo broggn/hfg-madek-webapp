@@ -330,6 +330,12 @@ var applyResourceMetaData = ({resourceState, formData}) => {
   var resourceId = resourceState.data.resource.uuid
   var resourceType = resourceState.data.resource.type
 
+  var mapScope = () => {
+    return {
+      'MediaEntry': 'Entries',
+      'Collection': 'Sets'
+    }[resourceType]
+  }
 
   var pathType = () => {
     return {
@@ -388,13 +394,24 @@ var applyResourceMetaData = ({resourceState, formData}) => {
   var metaData = () => {
     return l.fromPairs(
       l.map(
-        formData,
+        l.filter(
+          formData,
+          (fd) => l.includes(fd.props.metaKey.scope, mapScope())
+        ),
         (fd) => [
           fd.props.metaKeyId,
           formToData(fd)
         ]
       )
     )
+  }
+
+  if(l.isEmpty(metaData())) {
+    setTimeout(
+      () => resourceState.trigger({action: 'apply-success'}),
+      0
+    )
+    return
   }
 
   var data = {

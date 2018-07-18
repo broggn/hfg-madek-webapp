@@ -4,7 +4,6 @@ import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchDatumText from './BoxBatchDatumText.jsx'
-import BoxBatchDatumDate from './BoxBatchDatumDate.jsx'
 import BoxBatchDatumKeywords from './BoxBatchDatumKeywords.jsx'
 import BoxBatchDatumPeople from './BoxBatchDatumPeople.jsx'
 
@@ -53,10 +52,46 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     return renderer()
   }
 
+  renderScope() {
+    var metaKey = this.props.metaKeyForm.props.metaKey
+
+    if(l.size(metaKey.scope) > 1) {
+      return null
+    }
+
+    var scopeText = () => {
+      if(l.includes(metaKey.scope, 'Entries')) {
+        return 'Dieser Wert wird nur auf Medien Einträge angewendet'
+      } else if(l.includes(metaKey.scope, 'Sets')) {
+        return 'Dieser Wert wird nur auf Sets angewendet'
+      } else {
+        return null
+      }
+    }
+
+    return (
+      <div style={{marginBottom: '10px', color: '#b59d6e', textAlign: 'right'}}>
+        <i
+          className='icon-bang'
+          style={{
+            display: 'inline-block',
+            width: '20px',
+            position: 'relative',
+            top: '2px'
+          }}
+        />
+        {' '}
+        {scopeText()}
+      </div>
+    )
+  }
+
+
   render() {
 
     return (
       <div>
+        {this.renderScope()}
         {this.renderForm()}
       </div>
     )

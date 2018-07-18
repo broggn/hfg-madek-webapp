@@ -151,7 +151,15 @@ class BoxBatchDatumKeywords extends React.Component {
           }}
         >
           <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-            <i className='icon-close' style={{position: 'relative', top: '2px', marginRight: '10px'}}></i>
+            <i
+              className='icon-close'
+              style={{
+                display: 'inline-block',
+                width: '20px',
+                position: 'relative',
+                top: '2px'
+              }}
+            />
             {' '}
           </span>
           {metaKeyForm.props.metaKey.label}
