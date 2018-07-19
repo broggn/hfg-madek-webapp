@@ -28,7 +28,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
-    if(!l.isEmpty(cachedToApplyMetaData)) {      
+    if(!l.isEmpty(cachedToApplyMetaData)) {
       applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
     }
 
