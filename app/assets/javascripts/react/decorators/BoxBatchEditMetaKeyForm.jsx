@@ -52,6 +52,38 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     return renderer()
   }
 
+  renderMandatory() {
+
+    var mandatoryForTypes = this.props.metaKeyForm.props.mandatoryForTypes
+
+    if(mandatoryForTypes.length == 0) {
+      return null
+    }
+
+    var mandatoryText = () => {
+      if(mandatoryForTypes.length == 1 && mandatoryForTypes[0] == 'MediaEntry') {
+        return 'Pflichtfeld für Medien Einträge'
+      }
+      return 'Pflichtfeld'
+    }
+
+    return (
+      <div style={{marginBottom: '10px', color: '#5982a7', textAlign: 'right'}}>
+        <i
+          className='icon-bang'
+          style={{
+            display: 'inline-block',
+            width: '20px',
+            position: 'relative',
+            top: '2px'
+          }}
+        />
+        {' '}
+        {mandatoryText()}
+      </div>
+    )
+  }
+
   renderScope() {
     var metaKey = this.props.metaKeyForm.props.metaKey
 
@@ -91,6 +123,7 @@ class BoxBatchEditMetaKeyForm extends React.Component {
 
     return (
       <div>
+        {this.renderMandatory()}
         {this.renderScope()}
         {this.renderForm()}
       </div>

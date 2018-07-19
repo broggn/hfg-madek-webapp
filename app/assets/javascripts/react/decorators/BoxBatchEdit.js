@@ -104,9 +104,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return l.find(components.metaKeyForms, (f) => f.props.metaKeyId == event.metaKeyId)
     }
 
-
-    var findMetaKey = (metaKeyId) => {
-
+    var allMetaKeysById = () => {
       if(!cachedAllMetaKeysById) {
         cachedAllMetaKeysById = l.fromPairs(
           l.flatten(
@@ -120,8 +118,23 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           )
         )
       }
+      return cachedAllMetaKeysById
+    }
 
-      return cachedAllMetaKeysById[metaKeyId]
+    var mandatoryForTypes = (metaKeyId) => {
+
+      return l.map(
+        l.filter(
+          components.loadMetaMetaData.data.metaMetaData,
+          (mmd) => l.includes(l.keys(mmd.data.mandatory_by_meta_key_id), metaKeyId)
+        ),
+        (mmd) => mmd.type
+      )
+    }
+
+
+    var findMetaKey = (metaKeyId) => {
+      return allMetaKeysById()[metaKeyId]
     }
 
     var withoutClosed = () => {
@@ -138,7 +151,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         reduce: decideReduce(metaKeyId),
         props: {
           metaKeyId: metaKeyId,
-          metaKey: findMetaKey(metaKeyId)
+          metaKey: findMetaKey(metaKeyId),
+          mandatoryForTypes: mandatoryForTypes(metaKeyId)
         }
       }
     }

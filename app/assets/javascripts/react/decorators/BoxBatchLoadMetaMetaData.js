@@ -78,7 +78,16 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
                 ),
                 (m) => m.type
               ),
-              metaKey: allMetaKeysById()[k]
+              metaKey: allMetaKeysById()[k],
+              mandatoryByType: l.fromPairs(
+                l.map(
+                  metaMetaData,
+                  (mmd) => [
+                    mmd.type,
+                    l.keys(mmd.data.mandatory_by_meta_key_id)
+                  ]
+                )
+              )
             }
           }
         )
