@@ -70,7 +70,7 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     return (
       <div style={{marginBottom: '10px', color: '#5982a7', textAlign: 'right'}}>
         <i
-          className='icon-bang'
+          className='icon-question'
           style={{
             display: 'inline-block',
             width: '20px',
@@ -93,7 +93,7 @@ class BoxBatchEditMetaKeyForm extends React.Component {
 
     var scopeText = () => {
       if(l.includes(metaKey.scope, 'Entries')) {
-        return 'Dieser Wert wird nur auf Medien Einträge angewendet'
+        return 'Dieser Wert wird nur auf Medien Einträge angewendet, nicht auf Sets'
       } else if(l.includes(metaKey.scope, 'Sets')) {
         return 'Dieser Wert wird nur auf Sets angewendet'
       } else {
