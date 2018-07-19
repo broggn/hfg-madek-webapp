@@ -28,7 +28,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
-    applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
+    if(!l.isEmpty(cachedToApplyMetaData)) {      
+      applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
+    }
 
 
     if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
