@@ -239,6 +239,44 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  findMetaKeysWithTypes(metaKeyIds) {
+    var metaKeysWithTypes = this.stateBatch().components.loadMetaMetaData.data.metaKeysWithTypes
+    return l.map(
+      metaKeyIds,
+      (k) => l.find(metaKeysWithTypes, (mkt) => mkt.metaKeyId == k)
+    )
+  }
+
+  renderMandatories() {
+    var metaKeyIds = l.uniq(
+      l.flatten(
+        l.map(
+          this.stateBatch().components.loadMetaMetaData.data.metaMetaData,
+          (mmd) => l.keys(mmd.data.mandatory_by_meta_key_id)
+        )
+      )
+    )
+
+    return (
+      <div>
+        {'Pflichtfelder:'}
+        {' '}
+        <div
+          style={{
+            display: 'inline-block',
+            marginLeft: '10px',
+            marginBottom: '20px'
+          }}
+        >
+          <BoxBatchEditFormKeyBubbles
+            metaKeysWithTypes={this.findMetaKeysWithTypes(metaKeyIds)}
+            onClickKey={this.props.onClickKey}
+          />
+        </div>
+      </div>
+    )
+  }
+
   renderVocabularies() {
 
     var metaMetaData = this.stateBox().components.batch.components.loadMetaMetaData.data.metaMetaData[0].data
@@ -250,10 +288,6 @@ class BoxBatchEditForm extends React.Component {
     return l.map(
       vocabularies,
       (v, k) => {
-        var vocabMetaKeysWithTypes = l.map(
-          vocabMetaKeys[k],
-          (mk) => l.find(metaKeysWithTypes, (mkt) => mkt.metaKeyId == mk)
-        )
 
         var isSelected = () => {
           return this.stateBatch().data.selectedVocabulary == k
@@ -265,7 +299,7 @@ class BoxBatchEditForm extends React.Component {
           }
           return (
             <BoxBatchEditFormKeyBubbles
-              metaKeysWithTypes={vocabMetaKeysWithTypes}
+              metaKeysWithTypes={this.findMetaKeysWithTypes(vocabMetaKeys[k])}
               onClickKey={this.props.onClickKey}
             />
           )
@@ -323,6 +357,7 @@ class BoxBatchEditForm extends React.Component {
       return (
         <div className='ui-resources-holder pam'>
           <div style={{width: '50%', float: 'left'}}>
+            {this.renderMandatories()}
             {this.renderVocabularies()}
           </div>
           <div style={{width: '50%', float: 'right'}}>
