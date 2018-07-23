@@ -321,6 +321,19 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  renderInvalidMessage() {
+
+    if(l.isEmpty(this.props.stateBox.components.batch.data.invalidMetaKeyUuids)) {
+      return null
+    }
+
+    return (
+      <div style={{color: '#f00'}}>
+        Bitte alle Felder ausfüllen oder leere entfernen.
+      </div>
+    )
+  }
+
   render() {
 
     let {data, components} = this.stateBatch()
@@ -334,6 +347,7 @@ class BoxBatchEditForm extends React.Component {
             {this.renderVocabularies()}
           </div>
           <div style={{width: '50%', float: 'right'}}>
+            {this.renderInvalidMessage()}
             {this.renderKeyForms()}
 
             <div style={{marginTop: '20px'}}>

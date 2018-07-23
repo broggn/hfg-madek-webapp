@@ -23,7 +23,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           open: false,
-          selectedVocabulary: null
+          selectedVocabulary: null,
+          invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -34,7 +35,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           open: nextOpen(),
-          selectedVocabulary: nextSelectedVocabulary()
+          selectedVocabulary: nextSelectedVocabulary(),
+          invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -45,6 +47,16 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   }
 
+  var nextInvalidMetaKeyUuids = () => {
+    if(initial) {
+      return []
+    }
+    else if(nextProps.invalidMetaKeyUuids) {
+      return nextProps.invalidMetaKeyUuids
+    } else {
+      return data.invalidMetaKeyUuids
+    }
+  }
 
   var nextSelectedVocabulary = () => {
     if(event.action == 'select-vocabulary') {
@@ -152,7 +164,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         props: {
           metaKeyId: metaKeyId,
           metaKey: findMetaKey(metaKeyId),
-          mandatoryForTypes: mandatoryForTypes(metaKeyId)
+          mandatoryForTypes: mandatoryForTypes(metaKeyId),
+          invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId)
         }
       }
     }

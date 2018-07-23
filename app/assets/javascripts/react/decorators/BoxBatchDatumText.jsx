@@ -34,7 +34,8 @@ class BoxBatchDatumText extends React.Component {
           style={{
             display: 'inline-block',
             width: '30%',
-            verticalAlign: 'top'
+            verticalAlign: 'top',
+            color: (this.props.metaKeyForm.props.invalid ? '#f00' : null)
           }}
         >
           <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>

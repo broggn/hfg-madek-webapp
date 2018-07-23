@@ -28,7 +28,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var next = () => {
 
-    if(!l.isEmpty(cachedToApplyMetaData)) {
+    if(!l.isEmpty(cachedToApplyMetaData) && formsValid()) {
       applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
     }
 
@@ -64,6 +64,51 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
+  var determineInvalids = () => {
+
+    if(initial) {
+      return []
+    }
+
+    var validateForm = (f) => {
+
+      var validateText = () => {
+        return !l.isEmpty(f.data.text)
+      }
+
+      var validateKeywords = () => {
+        return !l.isEmpty(f.data.keywords)
+      }
+
+      var decideValidation = (type) => {
+        var mapping = {
+          'MetaDatum::Text': validateText,
+          'MetaDatum::TextDate': validateText,
+          'MetaDatum::Keywords': validateKeywords,
+          'MetaDatum::People': validateKeywords
+        }
+        return mapping[type]
+      }
+
+
+      var validator = decideValidation(f.props.metaKey.value_type)
+      return validator(f)
+    }
+
+    return l.filter(
+      components.batch.components.metaKeyForms,
+      (mkf) => !validateForm(mkf)
+    )
+  }
+
+  var formsValid = () => {
+    if(initial) {
+      return false
+    }
+    return l.isEmpty(determineInvalids())
+  }
+
+
   var nextApplyFormData = () => {
 
     var anyApply = () => {
@@ -73,7 +118,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       ).length > 0
     }
 
-    if(event.action == 'apply' || event.action == 'apply-selected' || anyApply()) {
+    if(formsValid() && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
       return l.map(
         components.batch.components.metaKeyForms,
         (mkf) => {
@@ -139,19 +184,26 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       reset: false,
       reduce: BoxBatchEdit,
       props: {
-        mount: event.action == 'mount'
+        mount: event.action == 'mount',
+        invalidMetaKeyUuids: (
+          event.action == 'apply' || event.action == 'apply-selected' || l.find(
+            components.resources, (rs) => rs.event.action == 'apply'
+          )
+          ? l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
+          : null  
+        )
       }
     }
   }
-  
+
   var mapResourceState = (resourceState, todoLoadMetaData) => {
     return mapResource(
-      resourceState.data.resource, 
-      resourceState.event.action == 'apply', 
+      resourceState.data.resource,
+      resourceState.event.action == 'apply',
       todoLoadMetaData
     )
   }
-  
+
   var mapResource = (resource, hasApplyEvent, todoLoadMetaData) => {
 
     var startApply = l.includes(
@@ -174,9 +226,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       props: {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: startApply,
+        startApply: formsValid() && startApply,
         cancelApply: event.action == 'cancel-all',
-        waitApply: !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        waitApply: formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
         resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
@@ -222,7 +274,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       )
     }
 
-    if(initial) {      
+    if(initial) {
       return l.map(
         nextProps.get.resources,
         (r) => mapResource(r, false, {})
@@ -232,9 +284,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return []
     }
     else if(event.action == 'page-loaded') {
-      
+
       var todo = (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
-      
+
       return l.concat(
         l.map(
           components.resources,
@@ -244,7 +296,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           event.resources,
           (r) => mapResource(r, false, todo)
         )
-      )      
+      )
     }
     else {
 
