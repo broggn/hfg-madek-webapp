@@ -143,7 +143,11 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       }
     }
   }
-
+  
+  var mapResourceState = (resourceState, todoLoadMetaData) => {
+    return mapResource(resourceState.data.resource, todoLoadMetaData)
+  }
+  
   var mapResource = (resource, todoLoadMetaData) => {
 
     var startApply = l.includes(
@@ -183,20 +187,6 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     }
   }
 
-  var mapResources = (resources, todoLoadMetaData) => {
-    return l.map(
-      resources,
-      (r) => mapResource(r, todoLoadMetaData)
-    )
-  }
-
-  var extractResources = () => {
-    return l.map(
-      components.resources,
-      (r) => r.data.resource
-    )
-  }
-
   var nextResources = () => {
 
     var toLoadOrLoading = () => {
@@ -228,20 +218,29 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       )
     }
 
-    if(initial) {
-      return mapResources(nextProps.get.resources, {})
+    if(initial) {      
+      return l.map(
+        nextProps.get.resources,
+        (r) => mapResource(r, {})
+      )
     }
     else if(event.action == 'force-fetch-next-page') {
       return []
     }
     else if(event.action == 'page-loaded') {
-      return mapResources(
-        l.concat(
-          extractResources(),
-          event.resources
+      
+      var todo = (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
+      
+      return l.concat(
+        l.map(
+          components.resources,
+          (rs) => mapResourceState(rs, todo)
         ),
-        (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
-      )
+        l.map(
+          event.resources,
+          (r) => mapResource(r, todo)
+        )
+      )      
     }
     else {
 
@@ -252,9 +251,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
       var needsFetchListData = hasChildMetaDataFetchEvent || event.action == 'fetch-list-data'
 
-      return mapResources(
-        extractResources(),
-        (needsFetchListData ? todoLoadMetaData() : {})
+      return l.map(
+        components.resources,
+        (rs) => mapResourceState(rs, (needsFetchListData ? todoLoadMetaData() : {}))
       )
     }
   }
