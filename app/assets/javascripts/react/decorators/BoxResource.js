@@ -89,7 +89,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextApplyPending = () => {
-    if(nextProps.waitApply || (!nextProps.startApply && event.action == 'apply')) {
+    if(nextProps.waitApply) {
       return true
     } else if(nextProps.startApply/*event.action == 'apply-success'*/ || nextProps.cancelApply) {
       return false
@@ -122,7 +122,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextListMetaData = () => {
-    if((!nextProps.startApply && event.action == 'apply') || nextProps.startApply) {
+    if(nextProps.waitApply || nextProps.startApply) {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json

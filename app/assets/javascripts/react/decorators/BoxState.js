@@ -145,10 +145,14 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
   
   var mapResourceState = (resourceState, todoLoadMetaData) => {
-    return mapResource(resourceState.data.resource, todoLoadMetaData)
+    return mapResource(
+      resourceState.data.resource, 
+      resourceState.event.action == 'apply', 
+      todoLoadMetaData
+    )
   }
   
-  var mapResource = (resource, todoLoadMetaData) => {
+  var mapResource = (resource, hasApplyEvent, todoLoadMetaData) => {
 
     var startApply = l.includes(
       l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
@@ -172,7 +176,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: startApply,
         cancelApply: event.action == 'cancel-all',
-        waitApply: !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply()),
+        waitApply: !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
         resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
@@ -221,7 +225,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
     if(initial) {      
       return l.map(
         nextProps.get.resources,
-        (r) => mapResource(r, {})
+        (r) => mapResource(r, false, {})
       )
     }
     else if(event.action == 'force-fetch-next-page') {
@@ -238,7 +242,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         ),
         l.map(
           event.resources,
-          (r) => mapResource(r, todo)
+          (r) => mapResource(r, false, todo)
         )
       )      
     }
