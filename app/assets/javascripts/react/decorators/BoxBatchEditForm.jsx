@@ -273,30 +273,9 @@ class BoxBatchEditForm extends React.Component {
 
         return (
           <div key={k}>
-            <div
-              style={{
-                // paddingRight: '10px',
-                // paddingTop: '10px'
-              }}
-            >
-              <div
-                style={{
-                  /*
-                  padding: '10px',
-                  backgroundColor: '#fff',
-                  borderRadius: '5px'
-                  */
-                  marginBottom: (isSelected() ? '10px' : '0px')
-                }}
-              >
-                <div
-
-                  style={{
-                    /*,
-                    // fontSize: '16px',
-                    marginBottom: (isSelected() ? '10px' : '0px')*/
-                  }}
-                >
+            <div>
+              <div style={{marginBottom: (isSelected() ? '10px' : '0px')}}>
+                <div>
                   <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.stateBatch().trigger({action: 'select-vocabulary', vocabulary: k})}>
                     <i
                       className={'ui-side-filter-lvl1-marker'}
