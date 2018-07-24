@@ -97,7 +97,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
     return l.filter(
       components.batch.components.metaKeyForms,
-      (mkf) => !validateForm(mkf)
+      (mkf) => mkf.event.action != 'close' && !validateForm(mkf)
     )
   }
 
@@ -186,11 +186,20 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       props: {
         mount: event.action == 'mount',
         invalidMetaKeyUuids: (
-          event.action == 'apply' || event.action == 'apply-selected' || l.find(
-            components.resources, (rs) => rs.event.action == 'apply'
+          initial
+          ? []
+          : (
+            !l.isEmpty(
+              l.filter(
+                components.batch.components.metaKeyForms,
+                (mkf) => mkf.event.action == 'close'
+              )
+            ) || event.action == 'apply' || event.action == 'apply-selected' || l.find(
+              components.resources, (rs) => rs.event.action == 'apply'
+            )
+            ? l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
+            : null
           )
-          ? l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
-          : null
         )
       }
     }

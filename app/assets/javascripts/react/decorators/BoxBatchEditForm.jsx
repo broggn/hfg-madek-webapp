@@ -54,17 +54,34 @@ class BoxBatchEditForm extends React.Component {
   }
 
   renderHint() {
-    return null
 
-    // if(this.stateBatch().components.metaKeyForms.length == 0) {
-    //   return null
-    // }
-    //
-    // if(this.props.allLoaded) {
-    //   return ''
-    // } else {
-    //   return 'Note: loading pages, not all will be updated'
-    // }
+    if(this.toApplyCount() == 0) {
+      return null
+    }
+
+    return (
+      <div
+        style={{
+          textAlign: 'center',
+          fontSize: '16px',
+          color: '#b59d6e',
+          marginBottom: '20px',
+          marginTop: '40px'
+        }}
+      >
+        <i
+          className='icon-bang'
+          style={{
+            display: 'inline-block',
+            width: '40px',
+            position: 'relative',
+            top: '2px',
+            fontSize: '24px'
+          }}
+        />
+        Bitte warten und die Ansicht nicht verlassen.
+      </div>
+    )
   }
 
   renderApplySelected() {
