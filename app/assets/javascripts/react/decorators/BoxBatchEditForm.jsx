@@ -84,6 +84,29 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  editableSelectedCount() {
+    return l.size(
+      l.filter(
+        this.stateBox().data.selectedResources,
+        (sr) => sr.editable
+      )
+    )
+  }
+
+  editableCount() {
+    return l.size(
+      l.filter(
+        this.stateBox().components.resources,
+        (rs) => rs.data.resource.editable
+      )
+    )
+  }
+
+  selectedCount() {
+    return this.stateBox().data.selectedResources.length
+  }
+
+
   renderApplySelected() {
 
     if(this.toApplyCount() > 0) {
@@ -93,39 +116,58 @@ class BoxBatchEditForm extends React.Component {
       return null
     }
 
-    var selectedCount = () => {
-      return this.stateBox().data.selectedResources.length
-    }
 
-    if(selectedCount() == 0) {
+    if(this.selectedCount() == 0) {
       return null
     }
 
 
     var renderText = () => {
-      return 'Auf ' + selectedCount() + ' selektierte anwenden'
+      return 'Auf ' + this.editableSelectedCount() + ' selektierte anwenden'
     }
 
     return (
       <div
-        onClick={this.props.onClickApplySelected}
         style={{
-          display: 'inline-block',
+          float: 'left',
+          backgroundColor: '#fff',
           borderRadius: '5px',
-          backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
-          color: '#fff',
-          padding: '0px 10px',
-          marginRight: '5px',
-          marginBottom: '5px',
-          fontSize: '14px',
-          cursor: 'pointer'
+          border: '1px solid rgb(221, 221, 221)',
+          padding: '10px',
+          marginLeft: '5px'
         }}
       >
-        {renderText()}
+        <div>
+          <div>&nbsp;</div>
+          <div>selektiert: {this.selectedCount()}</div>
+          <div>davon editierbar: {this.editableSelectedCount()}</div>
+        </div>
+        <div
+          onClick={this.props.onClickApplySelected}
+          style={{
+            display: 'inline-block',
+            borderRadius: '5px',
+            backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
+            color: '#fff',
+            padding: '0px 10px',
+            marginRight: '5px',
+            marginBottom: '5px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            marginTop: '5px'
+          }}
+        >
+          {renderText()}
+        </div>
       </div>
     )
 
   }
+
+  loadedCount() {
+    return this.stateBox().components.resources.length
+  }
+
 
   renderApplyAll() {
 
@@ -143,14 +185,10 @@ class BoxBatchEditForm extends React.Component {
         return this.props.totalCount
       }
 
-      var loadedCount = () => {
-        return this.stateBox().components.resources.length
-      }
-
-      if(loadedCount() == totalCount()) {
-        return 'Auf alle anwenden'
+      if(this.loadedCount() == totalCount()) {
+        return 'Auf alle ' + this.editableCount() + ' anwenden'
       } else {
-        return 'Auf ' + loadedCount() + ' anwenden (' + (totalCount() - loadedCount()) + ' ungeladen)'
+        return 'Auf alle ' + this.editableCount() + ' geladenen anwenden'
       }
 
       // Auf alle anwenden
@@ -158,20 +196,36 @@ class BoxBatchEditForm extends React.Component {
 
     return (
       <div
-        onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
         style={{
-          display: 'inline-block',
+          float: 'left',
+          backgroundColor: '#fff',
           borderRadius: '5px',
-          backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
-          color: '#fff',
-          padding: '0px 10px',
-          marginRight: '5px',
-          marginBottom: '5px',
-          fontSize: '14px',
-          cursor: 'pointer'
+          border: '1px solid rgb(221, 221, 221)',
+          padding: '10px'
         }}
       >
-        {renderText()}
+        <div>
+          <div>Total: {this.props.totalCount}</div>
+          <div>davon geladen: {this.loadedCount()}</div>
+          <div>davon editierbar: {this.editableCount()}</div>
+        </div>
+        <div
+          onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
+          style={{
+            display: 'inline-block',
+            borderRadius: '5px',
+            backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
+            color: '#fff',
+            padding: '0px 10px',
+            marginRight: '5px',
+            marginBottom: '5px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            marginTop: '5px'
+          }}
+        >
+          {renderText()}
+        </div>
       </div>
     )
   }
@@ -232,6 +286,10 @@ class BoxBatchEditForm extends React.Component {
       ).length
     }
 
+    var processingTotalCount = () => {
+      return pendingCount() + applyingCount() + doneCount()
+    }
+
     var renderCancel = () => {
 
       if(pendingCount() == 0) {
@@ -260,7 +318,7 @@ class BoxBatchEditForm extends React.Component {
 
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
-        {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+        {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
         {renderCancel()}
       </div>
     )
@@ -394,9 +452,11 @@ class BoxBatchEditForm extends React.Component {
             <div style={{marginTop: '20px'}}>
               {this.renderApplyAll()}
               {this.renderApplySelected()}
-              {this.renderHint()}
             </div>
-            {this.renderProgress()}
+            <div>
+              {this.renderHint()}
+              {this.renderProgress()}
+            </div>
           </div>
         </div>
       )
