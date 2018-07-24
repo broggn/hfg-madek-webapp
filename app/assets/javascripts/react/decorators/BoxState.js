@@ -190,7 +190,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
             components.resources, (rs) => rs.event.action == 'apply'
           )
           ? l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
-          : null  
+          : null
         )
       }
     }
@@ -226,9 +226,9 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       props: {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: formsValid() && startApply,
+        startApply: formsValid() && startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
-        waitApply: formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        waitApply: resource.editable && formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
         resetStatus: processingDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
@@ -534,7 +534,7 @@ var toApplyMetaData = (event, components, data) => {
         )
     }
 
-    return !r.data.applyingMetaData && (
+    return r.data.resource.editable && !r.data.applyingMetaData && (
       r.data.applyPending || r.event.action == 'apply' || event.action == 'apply' || hasSelectedApply()
     ) && !(r.event.action == 'reload-meta-data-success')
   }
