@@ -232,10 +232,13 @@ class BoxBatchEditForm extends React.Component {
       ).length
     }
 
+    var renderCancel = () => {
 
-    return (
-      <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
-        {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+      if(pendingCount() == 0) {
+        return null
+      }
+
+      return (
         <div
           style={{
             display: 'inline-block',
@@ -252,6 +255,13 @@ class BoxBatchEditForm extends React.Component {
         >
           wartende abbrechen
         </div>
+      )
+    }
+
+    return (
+      <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
+        {applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+        {renderCancel()}
       </div>
     )
   }
