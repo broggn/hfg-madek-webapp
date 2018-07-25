@@ -286,6 +286,13 @@ class BoxBatchEditForm extends React.Component {
       ).length
     }
 
+    var errorCount = () => {
+      return l.filter(
+        this.stateBox().components.resources,
+        (r) => r.data.applyError && !r.data.applyingMetaData
+      ).length
+    }
+
     var processingTotalCount = () => {
       return pendingCount() + applyingCount() + doneCount()
     }
@@ -316,9 +323,25 @@ class BoxBatchEditForm extends React.Component {
       )
     }
 
+    var renderErrors = () => {
+      if(errorCount() == 0) {
+        return null
+      }
+
+      return (
+        <span>
+          {', '}
+          <span style={{color: '#f00'}}>
+            {errorCount() + ' failed'}
+          </span>
+        </span>
+      )
+    }
+
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
         {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+        {renderErrors()}
         {renderCancel()}
       </div>
     )
