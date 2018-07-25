@@ -17,19 +17,37 @@ class BoxBatchApplyButton extends React.Component {
 
   renderApply() {
     var data = this.props.resourceState.data
-    if(data.applyError) {
+    if(data.applyError && !data.applyingMetaData) {
       return (
         <span
           style={{
-            width: '80px',
-            height: '20px',
             display: 'inline-block',
-            color: '#f00'
+            borderRadius: '5px',
+            backgroundColor: '#f00',
+            color: '#fff',
+            padding: '0px 10px',
+            marginRight: '5px',
+            marginBottom: '5px',
+            fontSize: (this.props.big ? '18px' : '10px'),
+            cursor: 'pointer'
           }}
+          onClick={(e) => this.onApply(e)}
         >
-          {'error'}
+          {'error - retry'}
         </span>
       )
+      // return (
+      //   <span
+      //     style={{
+      //       width: '80px',
+      //       height: '20px',
+      //       display: 'inline-block',
+      //       color: '#f00'
+      //     }}
+      //   >
+      //     {'error'}
+      //   </span>
+      // )
     } else if(data.applyingMetaData) {
       return (
         <span

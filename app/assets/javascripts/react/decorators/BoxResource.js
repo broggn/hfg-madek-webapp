@@ -74,7 +74,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   var nextApplyError = () => {
     if(event.action == 'apply-error') {
       return true
-    } else if(nextProps.resetStatus) {
+    } else if(nextProps.waitApply || nextProps.startApply) {
       return false
     } else {
       return data.applyError
