@@ -180,27 +180,61 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   }
 
   var nextBatch = () => {
+
+    var anyApplyAction = () => {
+      return event.action == 'apply' || event.action == 'apply-selected' || l.find(
+        components.resources, (rs) => rs.event.action == 'apply'
+      )
+    }
+
+    var invalidUuids = () => {
+      return l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
+    }
+
+    var formsWithClose = () => {
+      return l.filter(
+        components.batch.components.metaKeyForms,
+        (mkf) => mkf.event.action == 'close'
+      )
+
+    }
+
+    var anyCloseAction = () => {
+      return !l.isEmpty(formsWithClose())
+    }
+
+    var rejectClosed = () => {
+      return l.reject(
+        components.batch.data.invalidMetaKeyUuids,
+        (id) => l.find(formsWithClose(), (f) => {
+          return f.props.metaKeyId == id
+        })
+      )
+    }
+
+    var updateInvalids = () => {
+      if(initial) {
+        return []
+      }
+      else if(anyApplyAction()) {
+        return invalidUuids()
+      }
+      else if(anyCloseAction()) {
+        return rejectClosed()
+      }
+      else {
+        return null
+      }
+
+    }
+
+
     return {
       reset: false,
       reduce: BoxBatchEdit,
       props: {
         mount: event.action == 'mount',
-        invalidMetaKeyUuids: (
-          initial
-          ? []
-          : (
-            !l.isEmpty(
-              l.filter(
-                components.batch.components.metaKeyForms,
-                (mkf) => mkf.event.action == 'close'
-              )
-            ) || event.action == 'apply' || event.action == 'apply-selected' || l.find(
-              components.resources, (rs) => rs.event.action == 'apply'
-            )
-            ? l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
-            : null
-          )
-        )
+        invalidMetaKeyUuids: updateInvalids()
       }
     }
   }
