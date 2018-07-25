@@ -29,7 +29,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       loadMetaData()
     }
 
-    if(event.action == 'apply-success') {
+    if(event.action == 'apply-success' || event.action == 'apply-error') {
       reloadResource()
     }
 
@@ -46,7 +46,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           applyPending: false,
           applyingMetaData: false,
           applyDone: false,
-          applyCancelled: false
+          applyCancelled: false,
+          applyError: false
         },
         components: {
         }
@@ -60,11 +61,23 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           applyPending: nextApplyPending(),
           applyingMetaData: nextApplyingMetaData(),
           applyDone: nextApplyDone(),
-          applyCancelled: nextApplyCancelled()
+          applyCancelled: nextApplyCancelled(),
+          applyError: nextApplyError()
         },
         components: {
         }
       }
+    }
+  }
+
+
+  var nextApplyError = () => {
+    if(event.action == 'apply-error') {
+      return true
+    } else if(nextProps.resetStatus) {
+      return false
+    } else {
+      return data.applyError
     }
   }
 

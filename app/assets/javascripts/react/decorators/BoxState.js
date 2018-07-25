@@ -539,7 +539,11 @@ var applyResourceMetaData = ({resourceState, formData}) => {
       }
     },
     (err, res, json) => {
-      resourceState.trigger({action: 'apply-success'})
+      if(err || res.statusCode != 200) {
+        resourceState.trigger({action: 'apply-error'})
+      } else {
+        resourceState.trigger({action: 'apply-success'})
+      }
     }
   )
 

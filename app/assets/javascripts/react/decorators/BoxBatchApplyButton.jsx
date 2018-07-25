@@ -17,7 +17,20 @@ class BoxBatchApplyButton extends React.Component {
 
   renderApply() {
     var data = this.props.resourceState.data
-    if(data.applyingMetaData) {
+    if(data.applyError) {
+      return (
+        <span
+          style={{
+            width: '80px',
+            height: '20px',
+            display: 'inline-block',
+            color: '#f00'
+          }}
+        >
+          {'error'}
+        </span>
+      )
+    } else if(data.applyingMetaData) {
       return (
         <span
           style={{
