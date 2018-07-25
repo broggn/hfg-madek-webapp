@@ -387,9 +387,31 @@ class BoxBatchEditForm extends React.Component {
 
   renderVocabularies() {
 
-    var metaMetaData = this.stateBox().components.batch.components.loadMetaMetaData.data.metaMetaData[0].data
-    var vocabularies = metaMetaData.vocabularies_by_vocabulary_id
-    var vocabMetaKeys = metaMetaData.meta_key_ids_by_vocabulary_id
+    var metaMetaDataForTypes = this.stateBox().components.batch.components.loadMetaMetaData.data.metaMetaData
+
+    var vocabularies = l.reduce(
+      metaMetaDataForTypes,
+      (memo, mmd) => {
+        l.each(
+          mmd.data.vocabularies_by_vocabulary_id,
+          (v, k) => memo[k] = v
+        )
+        return memo
+      },
+      {}
+    )
+
+    var vocabMetaKeys = l.reduce(
+      l.map(metaMetaDataForTypes, (mmd) => mmd.data.meta_key_ids_by_vocabulary_id),
+      (memo, vocab2Key) => {
+        l.each(
+          vocab2Key,
+          (v, k) => memo[k] = l.uniq(l.concat((memo[k] ? memo[k] : []), v))
+        )
+        return memo
+      },
+      {}
+    )
 
     var metaKeysWithTypes = this.stateBatch().components.loadMetaMetaData.data.metaKeysWithTypes
 
