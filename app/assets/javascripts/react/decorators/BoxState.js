@@ -587,7 +587,7 @@ var toApplyMetaData = (event, components, data) => {
   }
 
   var resourceIsApplying = (r) => {
-    return r.data.applyingMetaData
+    return r.data.applyingMetaData && !(r.event.action == 'reload-meta-data-success')
   }
 
   var candidates = () => {
