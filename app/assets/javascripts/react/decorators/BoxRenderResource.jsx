@@ -87,7 +87,7 @@ class BoxRenderResource extends React.Component {
       var onSelect = (e) => this.onSelect(e)
       // if in selection mode, intercept clicks as 'select toggle'
       var onClick = null
-      if(config.layout == 'miniature' && selection.length > 0) {
+      if(config.layout == 'miniature') {// && selection.length > 0) {
         onClick = onSelect
       }
 
