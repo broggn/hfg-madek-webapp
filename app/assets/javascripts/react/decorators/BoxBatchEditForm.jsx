@@ -375,7 +375,7 @@ class BoxBatchEditForm extends React.Component {
         <div className='ui-resources-holder pam'>
 
           <div style={{width: '50%', float: 'left'}}>
-            <BoxMetaKeySelector stateBox={this.props.stateBox} onClickKey={this.props.onClickKey} />
+            <BoxMetaKeySelector loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
           </div>
           <div style={{width: '50%', float: 'right'}}>
             {this.renderInvalidMessage()}

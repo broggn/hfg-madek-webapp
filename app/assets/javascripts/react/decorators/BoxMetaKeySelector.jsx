@@ -17,16 +17,8 @@ class BoxMetaKeySelector extends React.Component {
     return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }
 
-  stateBox() {
-    return this.props.stateBox
-  }
-
-  stateBatch() {
-    return this.stateBox().components.batch
-  }
-
   findMetaKeysWithTypes(metaKeyIds) {
-    var metaKeysWithTypes = this.stateBatch().components.loadMetaMetaData.data.metaKeysWithTypes
+    var metaKeysWithTypes = this.props.loadMetaMetaData.data.metaKeysWithTypes
     return l.map(
       metaKeyIds,
       (k) => l.find(metaKeysWithTypes, (mkt) => mkt.metaKeyId == k)
@@ -37,7 +29,7 @@ class BoxMetaKeySelector extends React.Component {
     var metaKeyIds = l.uniq(
       l.flatten(
         l.map(
-          this.stateBatch().components.loadMetaMetaData.data.metaMetaData,
+          this.props.loadMetaMetaData.data.metaMetaData,
           (mmd) => l.keys(mmd.data.mandatory_by_meta_key_id)
         )
       )
@@ -65,7 +57,7 @@ class BoxMetaKeySelector extends React.Component {
 
   renderVocabularies() {
 
-    var metaMetaDataForTypes = this.stateBox().components.batch.components.loadMetaMetaData.data.metaMetaData
+    var metaMetaDataForTypes = this.props.loadMetaMetaData.data.metaMetaData
 
     var vocabularies = l.reduce(
       metaMetaDataForTypes,
@@ -91,14 +83,14 @@ class BoxMetaKeySelector extends React.Component {
       {}
     )
 
-    var metaKeysWithTypes = this.stateBatch().components.loadMetaMetaData.data.metaKeysWithTypes
+    var metaKeysWithTypes = this.props.loadMetaMetaData.data.metaKeysWithTypes
 
     return l.map(
       vocabularies,
       (v, k) => {
 
         var isSelected = () => {
-          return this.stateBatch().data.selectedVocabulary == k
+          return this.props.loadMetaMetaData.data.selectedVocabulary == k
         }
 
         var renderBubbles = () => {
@@ -118,7 +110,7 @@ class BoxMetaKeySelector extends React.Component {
             <div>
               <div style={{marginBottom: (isSelected() ? '10px' : '0px')}}>
                 <div>
-                  <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.stateBatch().trigger(this.stateBatch(), {action: 'select-vocabulary', vocabulary: k})}>
+                  <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.props.loadMetaMetaData.trigger(this.props.loadMetaMetaData, {action: 'select-vocabulary', vocabulary: k})}>
                     <i
                       className={'ui-side-filter-lvl1-marker'}
                       style={{

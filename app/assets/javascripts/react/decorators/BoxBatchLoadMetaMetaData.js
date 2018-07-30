@@ -23,6 +23,7 @@ module.exports = (merged) => {
     if(initial) {
       return {
         data: {
+          selectedVocabulary: null,
           metaMetaData: [],
           metaKeysWithTypes: null
         },
@@ -31,11 +32,24 @@ module.exports = (merged) => {
     } else {
       return {
         data: {
+          selectedVocabulary: nextSelectedVocabulary(),
           metaMetaData: nextData(),
           metaKeysWithTypes: nextMetaKeysWithTypes()
         },
         components: {}
       }
+    }
+  }
+
+  var nextSelectedVocabulary = () => {
+    if(event.action == 'select-vocabulary') {
+      if(event.vocabulary == data.selectedVocabulary) {
+        return null
+      } else {
+        return event.vocabulary
+      }
+    } else {
+      return data.selectedVocabulary
     }
   }
 
