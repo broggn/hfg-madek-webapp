@@ -35,7 +35,20 @@ module.exports = (merged) => {
   var next = () => {
 
     if(!l.isEmpty(cachedToApplyMetaData) && formsValid()) {
-      applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData())
+      applyMetaData(
+        data,
+        components,
+        cachedToApplyMetaData,
+        l.map(
+          components.batch.components.metaKeyForms,
+          (mkf) => {
+            return {
+              data: mkf.data,
+              props: mkf.props
+            }
+          }
+        )
+      )
     }
 
 
@@ -47,8 +60,7 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: false,
-          selectedResources: null,
-          applyFormData: null
+          selectedResources: null
         },
         components: {
           resources: nextResources(),
@@ -59,8 +71,7 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: nextLoadingNextPage(),
-          selectedResources: nextSelectedResources(),
-          applyFormData: nextApplyFormData()
+          selectedResources: nextSelectedResources()
         },
         components: {
           resources: nextResources(),
@@ -112,31 +123,6 @@ module.exports = (merged) => {
       return false
     }
     return l.isEmpty(determineInvalids())
-  }
-
-
-  var nextApplyFormData = () => {
-
-    var anyApply = () => {
-      return l.filter(
-        components.resources,
-        (r) => r.event.action == 'apply'
-      ).length > 0
-    }
-
-    if(formsValid() && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
-      return l.map(
-        components.batch.components.metaKeyForms,
-        (mkf) => {
-          return {
-            data: mkf.data,
-            props: mkf.props
-          }
-        }
-      )
-    } else {
-      return data.applyFormData
-    }
   }
 
   var nextSelectedResources = () => {
