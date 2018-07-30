@@ -23,6 +23,10 @@ class BoxBatchDatumKeywords extends React.Component {
   }
 
   onKeyDown(event) {
+    if(!this.props.metaKeyForm.props.metaKey.is_extensible) {
+      return null
+    }
+
     if(event.keyCode == 13) {
       this.props.metaKeyForm.trigger({action: 'new-keyword'})
     }
