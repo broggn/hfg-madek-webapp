@@ -145,6 +145,14 @@ class BoxBatchDatumKeywords extends React.Component {
   render() {
     var metaKeyForm = this.props.metaKeyForm
 
+    var keyDownHandler = () => {
+      if (!this.props.metaKeyForm.props.metaKey.is_extensible) {
+        return null
+      } else {
+        return (e) => this.onKeyDown(e)
+      }
+    }
+
     return (
       <div>
         <div
@@ -189,7 +197,7 @@ class BoxBatchDatumKeywords extends React.Component {
             }}
             value={metaKeyForm.data.text}
             onFocus={(e) => this.onFocus(e)}
-            onKeyDown={(e) => this.onKeyDown(e)}
+            onKeyDown={keyDownHandler()}
             onChange={(e) => this.onChange(e.target.value)}
           />
           {' '}
