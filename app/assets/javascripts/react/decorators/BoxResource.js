@@ -22,11 +22,6 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    // if(nextProps.waitApply || event.action == 'apply') {
-    //   debugger
-    //   // applyMetaData(event.uuid, event.type, nextProps.formData)
-    // }
-
     if(nextProps.loadMetaData || event.action == 'load-meta-data-failure') {
       loadMetaData()
     }

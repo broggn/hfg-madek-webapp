@@ -244,7 +244,7 @@ module.exports = (merged) => {
   var mapResourceState = (resourceState, todoLoadMetaData) => {
     return mapResource(
       resourceState.data.resource,
-      resourceState.event.action == 'apply',
+      resourceState.event.action == 'apply' || resourceState.event.action == 'retry',
       todoLoadMetaData
     )
   }
@@ -552,26 +552,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
 }
 
 
-
-
-// var resourcesWithApplyEvent = () => {
-//   return l.filter(
-//     components.resources,
-//     (r) => r.event.action == 'apply' || r.event.action == 'reload-meta-data-success'
-//   )
-// }
-//
-// var anyResourceApplyEvent = () => {
-//   return !l.isEmpty(resourcesWithApplyEvent())
-// }
-//
-// console.log('resources with event = ' + JSON.stringify(l.map(resourcesWithApplyEvent(), (r) => r.data.resource.uuid)))
-
 var toApplyMetaData = (event, components, data) => {
-
-  // if(!anyResourceApplyEvent()) {
-  //   return []
-  // }
 
   var resourceNeedsApply = (r) => {
 
@@ -584,7 +565,7 @@ var toApplyMetaData = (event, components, data) => {
     }
 
     return r.data.resource.editable && !r.data.applyingMetaData && (
-      r.data.applyPending || r.event.action == 'apply' || event.action == 'apply' || hasSelectedApply()
+      r.data.applyPending || r.event.action == 'apply' || r.event.action == 'retry' || event.action == 'apply' || hasSelectedApply()
     ) && !(r.event.action == 'reload-meta-data-success')
   }
 

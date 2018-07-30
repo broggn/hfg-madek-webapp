@@ -13,7 +13,11 @@ class BoxBatchApplyButton extends React.Component {
   onApply(event) {
     var resource = this.props.resourceState.data.resource
     this.props.resourceState.trigger(this.props.resourceState, {action: 'apply', uuid: resource.uuid, type: resource.type})
-    // this.props.resourceState.trigger({action: 'apply', uuid: resource.uuid, type: resource.type})
+  }
+
+  onRetry(event) {
+    var resource = this.props.resourceState.data.resource
+    this.props.resourceState.trigger(this.props.resourceState, {action: 'retry', uuid: resource.uuid, type: resource.type})
   }
 
   renderApply() {
@@ -67,7 +71,7 @@ class BoxBatchApplyButton extends React.Component {
             fontSize: (this.props.big ? '18px' : '10px'),
             cursor: 'pointer'
           }}
-          onClick={(e) => this.onApply(e)}
+          onClick={(e) => this.onRetry(e)}
         >
           {'retry'}
         </span>
