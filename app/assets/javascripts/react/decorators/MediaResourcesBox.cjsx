@@ -112,7 +112,17 @@ module.exports = React.createClass
       }
     }
 
-  reducTrigger: (eventTree) ->
+  reducTrigger: (component, event) ->
+
+    eventTree = {
+      componentId: 0,
+      event: {},
+      children: {}
+    }
+
+    eventTree = BoxRedux.fireTreeEvent(eventTree, component.path, component.id, event)
+
+
     next = BoxRedux.build(this.reducRoot({initial: false}), @state.reduc, eventTree, this.reducTrigger)
     @setState({reduc: next})
 

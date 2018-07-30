@@ -12,7 +12,9 @@ import qs from 'qs'
 
 var requestId = Math.random()
 
-module.exports = ({event, trigger, initial, components, data, nextProps}) => {
+module.exports = (merged) => {
+
+  let {event, trigger, initial, components, data, nextProps} = merged
 
 
   var cachedToApplyMetaData = toApplyMetaData(event, components, data)
@@ -395,7 +397,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
           return
         }
 
-        trigger({
+        trigger(merged, {
           action: 'page-loaded',
           resources: l.get(body, nextProps.getJsonPath())
         })
@@ -508,7 +510,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
 
   if(l.isEmpty(metaData())) {
     setTimeout(
-      () => resourceState.trigger({action: 'apply-success'}),
+      () => resourceState.trigger(resourceState, {action: 'apply-success'}),
       0
     )
     return
@@ -540,9 +542,9 @@ var applyResourceMetaData = ({resourceState, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        resourceState.trigger({action: 'apply-error'})
+        resourceState.trigger(resourceState, {action: 'apply-error'})
       } else {
-        resourceState.trigger({action: 'apply-success'})
+        resourceState.trigger(resourceState, {action: 'apply-success'})
       }
     }
   )

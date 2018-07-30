@@ -7,7 +7,9 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 
-module.exports = ({event, data, initial, trigger, nextProps}) => {
+module.exports = (merged) => {
+
+  let {event, data, initial, trigger, nextProps} = merged
 
   var next = () => {
 
@@ -106,7 +108,7 @@ module.exports = ({event, data, initial, trigger, nextProps}) => {
         if(err) {
           return
         } else {
-          trigger({
+          trigger(merged, {
             action: 'keywords-loaded',
             keywords: json
           })

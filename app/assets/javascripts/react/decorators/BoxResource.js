@@ -16,7 +16,9 @@ var buildQuery = qs.stringify
 var parseQuery = qs.parse
 
 
-module.exports = ({event, trigger, initial, components, data, nextProps}) => {
+module.exports = (merged) => {
+
+  let {event, trigger, initial, components, data, nextProps} = merged
 
   var next = () => {
 
@@ -191,15 +193,15 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
 
   var reloadMetaData = () => {
     sharedLoadMetaData({
-      success: (json) => trigger({action: 'reload-meta-data-success', json: json}),
-      error: () => trigger({action: 'reload-meta-data-failure'})
+      success: (json) => trigger(merged, {action: 'reload-meta-data-success', json: json}),
+      error: () => trigger(merged, {action: 'reload-meta-data-failure'})
     })
   }
 
   var loadMetaData = () => {
     sharedLoadMetaData({
-      success: (json) => trigger({action: 'load-meta-data-success', json: json}),
-      error: () => trigger({action: 'load-meta-data-failure'})
+      success: (json) => trigger(merged, {action: 'load-meta-data-success', json: json}),
+      error: () => trigger(merged, {action: 'load-meta-data-failure'})
     })
   }
 
@@ -215,7 +217,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         if(err || res.statusCode > 400) {
           // trigger({action: 'load-meta-data-failure'})
         } else {
-          trigger({action: 'reload-success', json: json})
+          trigger(merged, {action: 'reload-success', json: json})
         }
       }
     )

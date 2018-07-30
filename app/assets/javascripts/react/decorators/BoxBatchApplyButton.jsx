@@ -12,7 +12,8 @@ class BoxBatchApplyButton extends React.Component {
 
   onApply(event) {
     var resource = this.props.resourceState.data.resource
-    this.props.resourceState.trigger({action: 'apply', uuid: resource.uuid, type: resource.type})
+    this.props.resourceState.trigger(this.props.resourceState, {action: 'apply', uuid: resource.uuid, type: resource.type})
+    // this.props.resourceState.trigger({action: 'apply', uuid: resource.uuid, type: resource.type})
   }
 
   renderApply() {

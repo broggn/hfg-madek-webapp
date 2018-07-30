@@ -7,6 +7,9 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
   var path = componentPath
   var newEventTree = eventTree
   var current = newEventTree
+  if(!path) {
+    debugger
+  }
   for(var i = 0; i < path.length; i++) {
     var pi = path[i]
 
@@ -152,18 +155,19 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
 
   merged.nextProps = definition.props
 
-  merged.trigger = function(event) {
-
-    var newEventTree = {
-      componentId: 0,
-      event: {},
-      children: {}
-    }
-
-    var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
-
-    rootTrigger(newEventTree)
-  }
+  merged.trigger = rootTrigger
+  // function(event) {
+  //
+    // var newEventTree = {
+    //   componentId: 0,
+    //   event: {},
+    //   children: {}
+    // }
+    //
+    // var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
+    //
+    // rootTrigger(newEventTree)
+  // }
 
   merged.event = merged.event ? merged.event : {}
 
@@ -177,18 +181,19 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
     props: definition.props,
     id: cid,
     path: path,
-    trigger: (last ? last.trigger : function(event) {
-
-      var newEventTree = {
-        componentId: 0,
-        event: {},
-        children: {}
-      }
-
-      var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
-
-      rootTrigger(newEventTree)
-    })
+    trigger: rootTrigger
+    // (last ? last.trigger : function(event) {
+    //
+    //   var newEventTree = {
+    //     componentId: 0,
+    //     event: {},
+    //     children: {}
+    //   }
+    //
+    //   var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
+    //
+    //   rootTrigger(newEventTree)
+    // })
   }
 }
 
@@ -312,6 +317,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
     return {
       data: {},
       components: {},
+      path: [],
       props: {},
       event: {}
     }
@@ -356,7 +362,8 @@ var mergeStateAndEvents = function(lastState, eventTree) {
         )
       ),
       props: (lastState.props ? lastState.props : {}),
-      event: (eventTree && eventTree.event ? eventTree.event : {})
+      event: (eventTree && eventTree.event ? eventTree.event : {}),
+      path: lastState.path
     }
   }
 
@@ -386,7 +393,8 @@ module.exports = {
           props: n.props,
           data: n.data,
           components: __.mapValues(n.components, (c) => prettyState(c)),
-          trigger: n.trigger
+          trigger: n.trigger,
+          path: n.path
           // (event) => {
           //   var newEventTree = {
           //     componentId: 0,

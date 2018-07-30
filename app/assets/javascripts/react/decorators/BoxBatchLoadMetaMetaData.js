@@ -9,7 +9,9 @@ import BoxBatchTextInput from './BoxBatchTextInput.js'
 import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
-module.exports = ({event, trigger, initial, components, data, nextProps}) => {
+module.exports = (merged) => {
+
+  let {event, trigger, initial, components, data, nextProps} = merged
 
   var next = () => {
 
@@ -127,7 +129,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
         if(err) {
           return
         } else {
-          trigger({
+          trigger(merged, {
             action: 'data-loaded',
             type: type,
             data: json

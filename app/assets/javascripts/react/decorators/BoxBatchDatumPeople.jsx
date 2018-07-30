@@ -19,11 +19,11 @@ class BoxBatchDatumPeople extends React.Component {
   }
 
   onChange(text) {
-    this.props.metaKeyForm.trigger({action: 'change-text', text: text})
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'change-text', text: text})
   }
 
   onClose(event) {
-    this.props.metaKeyForm.trigger({action: 'close'})
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'close'})
   }
 
   removeKeyword(k) {
@@ -34,7 +34,7 @@ class BoxBatchDatumPeople extends React.Component {
         id: k.id
       }
     }
-    this.props.metaKeyForm.trigger(event())
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, event())
   }
 
   renderKeyword(k, i) {
@@ -58,15 +58,15 @@ class BoxBatchDatumPeople extends React.Component {
   }
 
   onKeywordSelect(event, keywordId, keywordLabel) {
-    this.props.metaKeyForm.trigger({action: 'select-keyword', keywordId: keywordId, keywordLabel: keywordLabel})
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'select-keyword', keywordId: keywordId, keywordLabel: keywordLabel})
   }
 
   onFocus(event) {
-    this.props.metaKeyForm.trigger({action: 'input-focus'})
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'input-focus'})
   }
 
   onCloseProposals() {
-    this.props.metaKeyForm.trigger({action: 'close-proposals'})
+    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'close-proposals'})
   }
 
   renderKeywordProposal(k) {
