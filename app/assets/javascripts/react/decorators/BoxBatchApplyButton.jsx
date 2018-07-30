@@ -69,7 +69,7 @@ class BoxBatchApplyButton extends React.Component {
           }}
           onClick={(e) => this.onApply(e)}
         >
-          {'error - retry'}
+          {'retry'}
         </span>
       )
     } else if(data.applyingMetaData) {

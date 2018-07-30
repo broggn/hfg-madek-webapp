@@ -110,9 +110,10 @@ class BoxBatchEditForm extends React.Component {
 
   renderApplySelected() {
 
-    if(this.toApplyCount() > 0) {
+    if(this.showProgressBar()) {
       return null
     }
+
     if(this.stateBatch().components.metaKeyForms.length == 0) {
       return null
     }
@@ -169,12 +170,25 @@ class BoxBatchEditForm extends React.Component {
     return this.stateBox().components.resources.length
   }
 
+  showProgressBar() {
+    var toApply = this.toApplyCount()
+
+    var errorCount = () => {
+      return l.filter(
+        this.stateBox().components.resources,
+        (r) => r.data.applyError && !r.data.applyingMetaData
+      ).length
+    }
+
+    return toApply > 0 || errorCount() > 0
+  }
 
   renderApplyAll() {
 
-    if(this.toApplyCount() > 0) {
+    if(this.showProgressBar()) {
       return null
     }
+
     if(this.stateBatch().components.metaKeyForms.length == 0) {
       return null
     }
@@ -259,12 +273,13 @@ class BoxBatchEditForm extends React.Component {
 
 
   renderProgress() {
-    var total = this.totalCount()
-    var toApply = this.toApplyCount()
 
-    if(toApply == 0) {
+    if(!this.showProgressBar()) {
       return null
     }
+
+    var total = this.totalCount()
+    var toApply = this.toApplyCount()
 
     var pendingCount = () => {
       return l.filter(
@@ -292,6 +307,10 @@ class BoxBatchEditForm extends React.Component {
         this.stateBox().components.resources,
         (r) => r.data.applyError && !r.data.applyingMetaData
       ).length
+    }
+
+    if(toApply == 0 && errorCount() == 0) {
+      return null
     }
 
     var processingTotalCount = () => {
