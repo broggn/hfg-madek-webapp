@@ -187,6 +187,9 @@ module.exports = React.createClass
   onClickCancel: (event) ->
     this.reducRootEvent({action: 'cancel-all'})
 
+  onClickIgnore: (event) ->
+    this.reducRootEvent({action: 'ignore-all'})
+
   # _onBatchEditApply: (event, resourceId, resourceType) ->
   #   @reducComponentEvent(this.state.reduc.components.batch, { action: 'apply-meta-data', resourceId: resourceId, resourceType: resourceType})
 
@@ -810,6 +813,7 @@ module.exports = React.createClass
         onClickApplyAll={(e) => @onClickApplyAll(e)}
         onClickApplySelected={(e) => @onClickApplySelected(e)}
         onClickCancel={(e) => @onClickCancel(e)}
+        onClickIgnore={(e) => @onClickIgnore(e)}
         totalCount={@props.get.pagination.total_count}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
       />

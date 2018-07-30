@@ -245,31 +245,6 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
-  // renderCancel() {
-  //
-  //   if(this.toApplyCount() == 0) {
-  //     return null
-  //   }
-  //
-  //   return (
-  //     <div
-  //       onClick={this.props.onClickCancel}
-  //       style={{
-  //         display: 'inline-block',
-  //         borderRadius: '5px',
-  //         backgroundColor: '#000',
-  //         color: '#fff',
-  //         padding: '0px 10px',
-  //         marginRight: '5px',
-  //         marginBottom: '5px',
-  //         fontSize: '14px',
-  //         cursor: 'pointer'
-  //       }}
-  //     >
-  //       Abbrechen
-  //     </div>
-  //   )
-  // }
 
 
   renderProgress() {
@@ -315,6 +290,36 @@ class BoxBatchEditForm extends React.Component {
 
     var processingTotalCount = () => {
       return pendingCount() + applyingCount() + doneCount()
+    }
+
+    var renderIgnoreFailures = () => {
+
+      var showIgnore = () => {
+        return pendingCount() == 0 && applyingCount() == 0 && toApply == 0 && errorCount() > 0
+      }
+
+      if(!showIgnore()) {
+        return null
+      }
+
+      return (
+        <div
+          style={{
+            display: 'inline-block',
+            borderRadius: '5px',
+            backgroundColor: '#f00',
+            color: '#fff',
+            padding: '0px 10px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            float: 'right',
+            marginTop: '1px'
+          }}
+          onClick={this.props.onClickIgnore}
+        >
+          Fehler ignorieren
+        </div>
+      )
     }
 
     var renderCancel = () => {
@@ -363,6 +368,7 @@ class BoxBatchEditForm extends React.Component {
         {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
         {renderErrors()}
         {renderCancel()}
+        {renderIgnoreFailures()}
       </div>
     )
   }

@@ -273,6 +273,7 @@ module.exports = (merged) => {
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: formsValid() && startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
+        ignoreFailure: event.action == 'ignore-all',
         waitApply: resource.editable && formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
         resetStatus: processingDone
         // formData: l.map(

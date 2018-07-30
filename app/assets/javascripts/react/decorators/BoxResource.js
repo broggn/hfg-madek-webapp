@@ -71,7 +71,7 @@ module.exports = (merged) => {
   var nextApplyError = () => {
     if(event.action == 'apply-error') {
       return true
-    } else if(nextProps.waitApply || nextProps.startApply) {
+    } else if(nextProps.waitApply || nextProps.startApply || nextProps.ignoreFailure) {
       return false
     } else {
       return data.applyError
