@@ -20,19 +20,19 @@ class BoxBatchEditMetaKeyForm extends React.Component {
 
   renderText() {
     return (
-      <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} />
+      <BoxBatchDatumText metaKeyForm={this.props.metaKeyForm} editable={this.props.editable} />
     )
   }
 
   renderKeywords() {
     return (
-      <BoxBatchDatumKeywords metaKeyForm={this.props.metaKeyForm} />
+      <BoxBatchDatumKeywords metaKeyForm={this.props.metaKeyForm} editable={this.props.editable} />
     )
   }
 
   renderPeople() {
     return (
-      <BoxBatchDatumPeople metaKeyForm={this.props.metaKeyForm} />
+      <BoxBatchDatumPeople metaKeyForm={this.props.metaKeyForm} editable={this.props.editable} />
     )
   }
 

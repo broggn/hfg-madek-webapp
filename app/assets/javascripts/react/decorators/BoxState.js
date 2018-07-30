@@ -19,13 +19,17 @@ module.exports = (merged) => {
 
   var cachedToApplyMetaData = toApplyMetaData(event, components, data)
 
-  var processingDone = l.filter(
-    components.resources,
-    (r) => (r.data.applyPending || r.data.applyingMetaData) && r.event.action != 'reload-meta-data-success'
-  ).length == 0 && l.filter(
+  var anyResourceJustFinished = l.filter(
     components.resources,
     (r) => r.event.action == 'reload-meta-data-success'
   ).length > 0
+
+  var thereAreUnfinishedOrFailures = l.filter(
+    components.resources,
+    (r) => r.data.applyError || (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'reload-meta-data-success')
+  ).length > 0
+
+  var processingJustDone = !thereAreUnfinishedOrFailures && anyResourceJustFinished
 
 
   var next = () => {
@@ -275,7 +279,7 @@ module.exports = (merged) => {
         cancelApply: event.action == 'cancel-all',
         ignoreFailure: event.action == 'ignore-all',
         waitApply: resource.editable && formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        resetStatus: processingDone
+        resetStatus: processingJustDone
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {

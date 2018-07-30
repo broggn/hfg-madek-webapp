@@ -4,6 +4,7 @@ import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxPopup from './BoxPopup.jsx'
+import BoxRenderLabel from './BoxRenderLabel.jsx'
 
 
 
@@ -142,8 +143,26 @@ class BoxBatchDatumKeywords extends React.Component {
     )
   }
 
-  render() {
-    var metaKeyForm = this.props.metaKeyForm
+  renderValue() {
+
+    if(!this.props.editable) {
+      return (
+        <div
+          style={{
+            display: 'inline-block',
+            width: '70%',
+            verticalAlign: 'top'
+          }}
+        >
+          {
+            l.join(l.map(
+              this.props.metaKeyForm.data.keywords,
+              (k, i) => k.label
+            ), ', ')
+          }
+        </div>
+      )
+    }
 
     var keyDownHandler = () => {
       if (!this.props.metaKeyForm.props.metaKey.is_extensible) {
@@ -154,55 +173,45 @@ class BoxBatchDatumKeywords extends React.Component {
     }
 
     return (
+      <div
+        style={{
+          display: 'inline-block',
+          width: '70%',
+          verticalAlign: 'top'
+        }}
+      >
+        {this.renderKeywords()}
+        <input
+          style={{
+            borderRadius: '5px',
+            border: '1px solid #ddd',
+            padding: '5px',
+            boxSizing: 'border-box',
+            width: '100%',
+            height: '30px',
+            fontSize: '12px'
+          }}
+          value={this.props.metaKeyForm.data.text}
+          onFocus={(e) => this.onFocus(e)}
+          onKeyDown={keyDownHandler()}
+          onChange={(e) => this.onChange(e.target.value)}
+        />
+        {' '}
+        {this.renderPopup()}
+      </div>
+    )
+  }
+
+  render() {
+    var metaKeyForm = this.props.metaKeyForm
+
+    return (
       <div>
-        <div
-          style={{
-            display: 'inline-block',
-            width: '30%',
-            verticalAlign: 'top',
-            color: (this.props.metaKeyForm.props.invalid ? '#f00' : null)
-          }}
-        >
-          <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-            <i
-              className='icon-close'
-              style={{
-                display: 'inline-block',
-                width: '20px',
-                position: 'relative',
-                top: '2px'
-              }}
-            />
-            {' '}
-          </span>
-          {metaKeyForm.props.metaKey.label}
-        </div>
-        <div
-          style={{
-            display: 'inline-block',
-            width: '70%',
-            verticalAlign: 'top'
-          }}
-        >
-          {this.renderKeywords()}
-          <input
-            style={{
-              borderRadius: '5px',
-              border: '1px solid #ddd',
-              padding: '5px',
-              boxSizing: 'border-box',
-              width: '100%',
-              height: '30px',
-              fontSize: '12px'
-            }}
-            value={metaKeyForm.data.text}
-            onFocus={(e) => this.onFocus(e)}
-            onKeyDown={keyDownHandler()}
-            onChange={(e) => this.onChange(e.target.value)}
-          />
-          {' '}
-          {this.renderPopup()}
-        </div>
+        <BoxRenderLabel
+          metaKeyForm={this.props.metaKeyForm}
+          editable={this.props.editable}
+        />
+        {this.renderValue()}
       </div>
     )
   }
