@@ -19,6 +19,33 @@ class BoxRenderResources extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     var l = require('lodash')
+
+
+    var rs1 = this.props.resources
+    var rs2 = nextProps.resources
+    l.each(
+      rs1,
+      (r, i) => {
+        var r1 = rs1[i]
+        var r2 = rs2[i]
+        if(!l.isEqual(r1, r2)) {
+
+          l.each(
+            r1,
+            (v, k) => {
+              if(!l.isEqual(v, r2[k])) {
+                console.log('not equal = ' + k)
+              }
+            }
+          )
+
+
+        }
+      }
+
+    )
+
+    // console.log('state = ' + l.isEqual(this.state, nextState) + ' props = ' + l.isEqual(this.props, nextProps))
     return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }
 
