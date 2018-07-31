@@ -24,12 +24,17 @@ module.exports = (merged) => {
     (r) => r.event.action == 'apply-success'
   ).length > 0
 
-  var thereAreUnfinishedOrFailures = l.filter(
+  var thereAreUnfinished = l.filter(
     components.resources,
-    (r) => r.data.applyError || (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'apply-success')
+    (r) => (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'apply-success')
   ).length > 0
 
-  var processingJustDone = !thereAreUnfinishedOrFailures && anyResourceJustFinished
+  var thereAreFailures = l.filter(
+    components.resources,
+    (r) => r.data.applyError
+  ).length > 0
+
+  var processingJustDone = !(thereAreUnfinished || thereAreFailures) && anyResourceJustFinished
 
 
   var next = () => {
@@ -296,7 +301,7 @@ module.exports = (merged) => {
     var loadQueueToTrigger = () => {
       return l.filter(
         loadQueue(),
-        (r) => !r.data.loadingListMetaData
+        (r) => !r.data.loadingListMetaData || r.event.action == 'load-meta-data-failure'
       )
     }
 
@@ -320,7 +325,7 @@ module.exports = (merged) => {
     }
     else if(event.action == 'page-loaded') {
 
-      var todo = (nextProps.get.config.layout == 'list' ? todoLoadMetaData() : {})
+      var todo = (nextProps.get.config.layout == 'list' && !thereAreUnfinished ? todoLoadMetaData() : {})
 
       return l.concat(
         l.map(
@@ -340,7 +345,7 @@ module.exports = (merged) => {
         (r) => r.event.action == 'load-meta-data-success' || r.event.action == 'load-meta-data-failure'
       ))
 
-      var needsFetchListData = (hasChildMetaDataFetchEvent || event.action == 'fetch-list-data') && nextProps.get.config.layout == 'list'
+      var needsFetchListData = (processingJustDone || hasChildMetaDataFetchEvent || event.action == 'fetch-list-data') && nextProps.get.config.layout == 'list' && !thereAreUnfinished
 
       return l.map(
         components.resources,

@@ -153,7 +153,7 @@ module.exports = (merged) => {
   }
 
   var nextLoadingListMetaData = () => {
-    if(nextProps.loadMetaData || nextProps.waitApply) {
+    if(nextProps.loadMetaData/* || nextProps.waitApply*/) {
       return true
     } else if(event.action == 'load-meta-data-success' || event.action == 'load-meta-data-failure') {// || event.action == 'reload-meta-data-success') {
       return false
