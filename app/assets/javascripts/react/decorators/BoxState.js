@@ -340,7 +340,7 @@ module.exports = (merged) => {
         (r) => r.event.action == 'load-meta-data-success' || r.event.action == 'load-meta-data-failure'
       ))
 
-      var needsFetchListData = hasChildMetaDataFetchEvent || event.action == 'fetch-list-data'
+      var needsFetchListData = (hasChildMetaDataFetchEvent || event.action == 'fetch-list-data') && nextProps.get.config.layout == 'list'
 
       return l.map(
         components.resources,
