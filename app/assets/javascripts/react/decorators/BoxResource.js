@@ -22,24 +22,24 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    if(nextProps.loadMetaData || event.action == 'load-meta-data-failure') {
+    if(nextProps.loadMetaData) {// || event.action == 'load-meta-data-failure') {
       loadMetaData()
     }
 
-    if(event.action == 'apply-success' || event.action == 'apply-error') {
-      // reloadResource()
-    }
+    // if(event.action == 'apply-success' || event.action == 'apply-error') {
+    //   // reloadResource()
+    // }
 
-    if(event.action == 'reload-success') {
-      reloadMetaData()
-    }
+    // if(event.action == 'reload-success') {
+    //   reloadMetaData()
+    // }
 
     if(initial) {
       return {
         data: {
           resource: nextProps.resource,
           thumbnailMetaData: null,
-          listMetaData: null,
+          listMetaData: (nextProps.resource.list_meta_data ? nextProps.resource.list_meta_data : null),
           loadingListMetaData: false,
           applyPending: false,
           applyingMetaData: false,
@@ -133,7 +133,7 @@ module.exports = (merged) => {
   var nextLoadingListMetaData = () => {
     if(nextProps.loadMetaData || nextProps.waitApply) {
       return true
-    } else if(event.action == 'load-meta-data-success' || event.action == 'reload-meta-data-success') {
+    } else if(event.action == 'load-meta-data-success') {// || event.action == 'reload-meta-data-success') {
       return false
     } else {
       return data.loadingListMetaData
@@ -145,8 +145,8 @@ module.exports = (merged) => {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json
-    } else if(event.action == 'reload-meta-data-success') {
-      return event.json
+    // } else if(event.action == 'reload-meta-data-success') {
+    //   return event.json
     } else {
       return data.listMetaData
     }
@@ -195,12 +195,12 @@ module.exports = (merged) => {
 
   }
 
-  var reloadMetaData = () => {
-    sharedLoadMetaData({
-      success: (json) => trigger(merged, {action: 'reload-meta-data-success', json: json}),
-      error: () => trigger(merged, {action: 'reload-meta-data-failure'})
-    })
-  }
+  // var reloadMetaData = () => {
+  //   sharedLoadMetaData({
+  //     success: (json) => trigger(merged, {action: 'reload-meta-data-success', json: json}),
+  //     error: () => trigger(merged, {action: 'reload-meta-data-failure'})
+  //   })
+  // }
 
   var loadMetaData = () => {
     sharedLoadMetaData({
@@ -210,22 +210,22 @@ module.exports = (merged) => {
   }
 
 
-  var reloadResource = () => {
-
-    xhr.get(
-      {
-        url: nextProps.resource.url,
-        json: true
-      },
-      (err, res, json) => {
-        if(err || res.statusCode > 400) {
-          // trigger({action: 'load-meta-data-failure'})
-        } else {
-          trigger(merged, {action: 'reload-success', json: json})
-        }
-      }
-    )
-  }
+  // var reloadResource = () => {
+  //
+  //   xhr.get(
+  //     {
+  //       url: nextProps.resource.url,
+  //       json: true
+  //     },
+  //     (err, res, json) => {
+  //       if(err || res.statusCode > 400) {
+  //         // trigger({action: 'load-meta-data-failure'})
+  //       } else {
+  //         trigger(merged, {action: 'reload-success', json: json})
+  //       }
+  //     }
+  //   )
+  // }
 
 
 

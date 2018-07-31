@@ -587,11 +587,11 @@ var toApplyMetaData = (event, components, data) => {
 
     return r.data.resource.editable && !r.data.applyingMetaData && (
       r.data.applyPending || r.event.action == 'apply' || r.event.action == 'retry' || event.action == 'apply' || hasSelectedApply()
-    ) && !(r.event.action == 'reload-meta-data-success')
+    ) && !(r.event.action == 'apply-success')
   }
 
   var resourceIsApplying = (r) => {
-    return r.data.applyingMetaData && !(r.event.action == 'reload-meta-data-success')
+    return r.data.applyingMetaData && !(r.event.action == 'apply-success')
   }
 
   var candidates = () => {
