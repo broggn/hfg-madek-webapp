@@ -99,11 +99,64 @@ class BoxRenderResource extends React.Component {
     }
 
 
+    var overrideTexts = () => {
+      var l = require('lodash')
+
+      var metaData = itemState.data.thumbnailMetaData
+      if(!metaData) {
+        return null
+      }
+
+      var getTitle = () => {
+        if(metaData.title) {
+          return metaData.title
+        } else {
+          return null
+        }
+        // var value = l.find(
+        //   metaData,
+        //   (md) => md.meta_key_id == 'madek_core:title'
+        // )
+        // if(!value) {
+        //   return null
+        // } else {
+        //   return value.string
+        // }
+      }
+
+      var getSubtitle = () => {
+        if(metaData.authors) {
+          return metaData.authors
+        } else {
+          return null
+        }
+        // var value = l.find(
+        //   metaData,
+        //   (md) => md.meta_key_id == 'madek_core:authors'
+        // )
+        // if(!value) {
+        //   return null
+        // } else {
+        //   debugger
+        //   return l.join(value.values, '; ')
+        // }
+      }
+
+      return {
+        title: getTitle(),
+        subtitle: getSubtitle()
+      }
+
+
+    }
+
+
     // TODO: get={model}
     return (
       <ResourceThumbnail elm='div'
         style={style}
         get={item}
+        overrideTexts={overrideTexts()}
         resourceState={itemState}
         isClient={isClient} fetchRelations={(this.props.onBatchEditApply ? null : fetchRelations)}
         isSelected={isSelected} onSelect={(e) => onSelect(e)} onClick={onClick}

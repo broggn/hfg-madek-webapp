@@ -27,7 +27,7 @@ module.exports = (merged) => {
     }
 
     if(event.action == 'apply-success' || event.action == 'apply-error') {
-      reloadResource()
+      // reloadResource()
     }
 
     if(event.action == 'reload-success') {
@@ -38,6 +38,7 @@ module.exports = (merged) => {
       return {
         data: {
           resource: nextProps.resource,
+          thumbnailMetaData: null,
           listMetaData: null,
           loadingListMetaData: false,
           applyPending: false,
@@ -53,6 +54,7 @@ module.exports = (merged) => {
       return {
         data: {
           resource: nextResource(),
+          thumbnailMetaData: nextThumbnailMetaData(),
           listMetaData: nextListMetaData(),
           loadingListMetaData: nextLoadingListMetaData(),
           applyPending: nextApplyPending(),
@@ -67,6 +69,13 @@ module.exports = (merged) => {
     }
   }
 
+  var nextThumbnailMetaData = () => {
+    if(event.action == 'apply-success') {
+      return event.thumbnailMetaData
+    } else {
+      return data.thumbnailMetaData
+    }
+  }
 
   var nextApplyError = () => {
     if(event.action == 'apply-error') {
@@ -91,7 +100,7 @@ module.exports = (merged) => {
   var nextApplyDone = () => {
     if(nextProps.waitApply || nextProps.resetStatus) {
       return false
-    } else if(event.action == 'reload-meta-data-success') {
+    } else if(event.action == 'apply-success') {
       return true
     } else {
       return data.applyDone
@@ -112,7 +121,7 @@ module.exports = (merged) => {
     if(nextProps.startApply) {
       return true
     }
-    else if(event.action == 'reload-meta-data-success') {
+    else if(event.action == 'apply-success') {
       return false
     } else {
       return data.applyingMetaData
@@ -144,16 +153,16 @@ module.exports = (merged) => {
   }
 
   var nextResource = () => {
-    if(event.action == 'reload-success') {
-      // NOTE: Better give json back directly. But the reload answer does for
-      // example not contain list_meta_data_url. Thats why we merge here.
-      return l.merge(
-        data.resource,
-        event.json
-      )
-    } else {
-      return data.resource
-    }
+    // if(event.action == 'reload-success') {
+    //   // NOTE: Better give json back directly. But the reload answer does for
+    //   // example not contain list_meta_data_url. Thats why we merge here.
+    //   return l.merge(
+    //     data.resource,
+    //     event.json
+    //   )
+    // } else {
+    return data.resource
+    // }
   }
 
 

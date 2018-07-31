@@ -21,12 +21,12 @@ module.exports = (merged) => {
 
   var anyResourceJustFinished = l.filter(
     components.resources,
-    (r) => r.event.action == 'reload-meta-data-success'
+    (r) => r.event.action == 'apply-success'
   ).length > 0
 
   var thereAreUnfinishedOrFailures = l.filter(
     components.resources,
-    (r) => r.data.applyError || (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'reload-meta-data-success')
+    (r) => r.data.applyError || (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'apply-success')
   ).length > 0
 
   var processingJustDone = !thereAreUnfinishedOrFailures && anyResourceJustFinished
@@ -531,10 +531,41 @@ var applyResourceMetaData = ({resourceState, formData}) => {
       }
     },
     (err, res, json) => {
-      if(err || res.statusCode != 200) {
+      if(err || res.statusCode > 400) {//!= 200) {
         resourceState.trigger(resourceState, {action: 'apply-error'})
       } else {
-        resourceState.trigger(resourceState, {action: 'apply-success'})
+
+        var thumbnailMetaData = () => {
+          var md = metaData()
+          var getTitle = () => {
+            var fd = l.find(formData, (fd) => fd.props.metaKeyId == 'madek_core:title')
+            if(!fd) {
+              return null
+            } else {
+              return fd.data.text
+            }
+          }
+          var getAuthors = () => {
+            var fd = l.find(formData, (fd) => fd.props.metaKeyId == 'madek_core:authors')
+            if(!fd) {
+              return null
+            } else {
+              return l.join(l.map(fd.data.keywords, (k) => k.label), '; ')
+            }
+          }
+          return {
+            title: getTitle(),
+            authors: getAuthors()
+          }
+        }
+
+        resourceState.trigger(
+          resourceState,
+          {
+            action: 'apply-success',
+            thumbnailMetaData: thumbnailMetaData()
+          }
+        )
       }
     }
   )

@@ -180,12 +180,31 @@ module.exports = React.createClass
       isSelected: @props.isSelected
     }
 
-    textProps = if get.uploadStatus
-      title: get.uploadStatus[0]
-      subtitle: get.uploadStatus[1]
-    else
-      title: get.title
-      subtitle: get.authors_pretty
+
+    getTextProps = () =>
+
+      getTitle = () =>
+        if @props.overrideTexts && @props.overrideTexts.title
+          @props.overrideTexts.title
+        else
+          get.title
+
+      getSubtitle = () =>
+        if @props.overrideTexts && @props.overrideTexts.subtitle
+          @props.overrideTexts.subtitle
+        else
+          get.authors_pretty
+
+
+      if get.uploadStatus
+        title: get.uploadStatus[0]
+        subtitle: get.uploadStatus[1]
+      else
+        title: getTitle()
+        subtitle: getSubtitle()
+
+    textProps = getTextProps()
+    
 
     resourceMediaType = if @props.uploadMediaType
       @props.uploadMediaType
