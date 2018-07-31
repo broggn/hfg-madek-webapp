@@ -94,8 +94,6 @@ module.exports = (merged) => {
         authors: getAuthors()
       }
 
-
-      return event.thumbnailMetaData
     } else {
       return data.thumbnailMetaData
     }
