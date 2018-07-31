@@ -263,9 +263,8 @@ module.exports = (merged) => {
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: formsValid() && startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
-        ignoreFailure: event.action == 'ignore-all',
         waitApply: resource.editable && formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        resetStatus: processingJustDone
+        resetStatus: processingJustDone || event.action == 'ignore-all'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
         //   (mkf) => {
