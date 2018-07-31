@@ -284,7 +284,7 @@ module.exports = (merged) => {
       return l.filter(
         components.resources,
         (r) => {
-          return r.data.listMetaData == null && !(r.event.action == 'load-meta-data-success')
+          return r.data.listMetaData == null && !(r.event.action == 'load-meta-data-success') && !(r.event.action == 'load-meta-data-failure')
         }
       )
     }
@@ -337,7 +337,7 @@ module.exports = (merged) => {
 
       var hasChildMetaDataFetchEvent = !l.isEmpty(l.filter(
         components.resources,
-        (r) => r.event.action == 'load-meta-data-success'
+        (r) => r.event.action == 'load-meta-data-success' || r.event.action == 'load-meta-data-failure'
       ))
 
       var needsFetchListData = hasChildMetaDataFetchEvent || event.action == 'fetch-list-data'

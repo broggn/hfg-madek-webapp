@@ -71,6 +71,30 @@ module.exports = (merged) => {
 
   var nextThumbnailMetaData = () => {
     if(event.action == 'apply-success') {
+      var getTitle = () => {
+        if(event.thumbnailMetaData.title) {
+          return event.thumbnailMetaData.title
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.title
+        } else {
+          return null
+        }
+      }
+      var getAuthors = () => {
+        if(event.thumbnailMetaData.authors) {
+          return event.thumbnailMetaData.authors
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.authors
+        } else {
+          return null
+        }
+      }
+      return {
+        title: getTitle(),
+        authors: getAuthors()
+      }
+
+
       return event.thumbnailMetaData
     } else {
       return data.thumbnailMetaData
@@ -133,7 +157,7 @@ module.exports = (merged) => {
   var nextLoadingListMetaData = () => {
     if(nextProps.loadMetaData || nextProps.waitApply) {
       return true
-    } else if(event.action == 'load-meta-data-success') {// || event.action == 'reload-meta-data-success') {
+    } else if(event.action == 'load-meta-data-success' || event.action == 'load-meta-data-failure') {// || event.action == 'reload-meta-data-success') {
       return false
     } else {
       return data.loadingListMetaData
