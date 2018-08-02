@@ -91,10 +91,18 @@ class BoxBatchEditMetaKeyForm extends React.Component {
       return null
     }
 
+    var hasSetsSelected = () => {
+      return l.find(this.props.resourceStates, (r) => r.data.resource.type == 'Collection')
+    }
+
+    var hasEntriesSelected = () => {
+      return l.find(this.props.resourceStates, (r) => r.data.resource.type == 'MediaEntry')
+    }
+
     var scopeText = () => {
-      if(l.includes(metaKey.scope, 'Entries')) {
-        return 'Dieser Wert wird nur auf Medien Einträge angewendet, nicht auf Sets'
-      } else if(l.includes(metaKey.scope, 'Sets')) {
+      if(l.includes(metaKey.scope, 'Entries') && hasSetsSelected()) {
+        return 'Dieser Wert wird nur auf Medien Einträge angewendet'
+      } else if(l.includes(metaKey.scope, 'Sets') && hasEntriesSelected()) {
         return 'Dieser Wert wird nur auf Sets angewendet'
       } else {
         return null

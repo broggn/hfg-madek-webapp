@@ -18,10 +18,10 @@ class BoxBatchEditForm extends React.Component {
     return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }
 
-  renderMetaKeyForm(metaKeyForm) {
+  renderMetaKeyForm(metaKeyForm, resourceStates) {
     return (
       <div key={metaKeyForm.props.metaKeyId} style={{backgroundColor: '#fff', borderRadius: '5px', border: '1px solid #ddd', padding: '10px', marginBottom: '5px'}}>
-        <BoxBatchEditMetaKeyForm metaKeyForm={metaKeyForm} editable={!this.showProgressBar()}/>
+        <BoxBatchEditMetaKeyForm metaKeyForm={metaKeyForm} resourceStates={resourceStates} editable={!this.showProgressBar()}/>
       </div>
     )
   }
@@ -50,7 +50,7 @@ class BoxBatchEditForm extends React.Component {
 
     return l.map(
       components.metaKeyForms,
-      (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm)
+      (metaKeyForm) => this.renderMetaKeyForm(metaKeyForm, this.stateBox().components.resources)
     )
   }
 
