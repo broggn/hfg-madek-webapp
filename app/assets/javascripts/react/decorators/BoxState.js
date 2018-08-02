@@ -57,7 +57,18 @@ module.exports = (merged) => {
     }
 
 
-    if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
+    if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page'
+
+      || (
+        event.action == 'page-loaded' && components.batch.data.open
+        && !(components.resources.length + event.resources.length == nextProps.get.pagination.total_count)
+      )
+      || (
+        components.batch && components.batch.event.action == 'toggle'
+        && !(components.resources.length == nextProps.get.pagination.total_count)
+      )
+
+    ) {
       fetchNextPage()
     }
 
@@ -355,6 +366,10 @@ module.exports = (merged) => {
   }
 
   var fetchNextPage = () => {
+
+    if(data.loadingNextPage && !(event.action == 'page-loaded')) {
+      return
+    }
 
 
     var pagination = nextProps.get.pagination
