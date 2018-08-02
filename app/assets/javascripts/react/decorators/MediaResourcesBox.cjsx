@@ -810,6 +810,7 @@ module.exports = React.createClass
       {boxToolBar()}
 
       <BoxBatchEditForm
+        onClose={(e) => @onBatchButton(e)}
         stateBox={BoxRedux.prettyState(@state.reduc, @reducTrigger)}
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}

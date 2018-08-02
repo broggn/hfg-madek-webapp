@@ -89,6 +89,11 @@ module BatchSelectionHelper
       expected_media_entries_label_and_count(count: count, all: all)
     elsif key == :collections_metadata
       expected_collections_label_and_count(count: count, all: all)
+    elsif key == :meta_data_batch
+      {
+        count: nil,
+        text: I18n.t('resources_box_batch_actions_meta_data_batch')
+      }
     else
       {
         count: count.to_s,

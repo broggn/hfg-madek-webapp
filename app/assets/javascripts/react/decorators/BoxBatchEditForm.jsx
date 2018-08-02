@@ -409,6 +409,12 @@ class BoxBatchEditForm extends React.Component {
       return (
         <div className='ui-resources-holder pam'>
 
+          <div style={{textAlign: 'right', marginBottom: '10px'}}>
+            <a onClick={this.props.onClose}>close</a>
+            {' '}
+            <i className='icon-arrow-up' style={{position: 'relative', top: '2px'}} />
+          </div>
+
           <div style={{width: '50%', float: 'left'}}>
             <BoxMetaKeySelector loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
           </div>
