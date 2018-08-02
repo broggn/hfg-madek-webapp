@@ -30,9 +30,9 @@ class BoxBatchEditButton extends React.Component {
     } else {
       return (
         <a className={cx('link button dropdown-toggle btn btn-default ui-link', {active: data.open})} onClick={(e) => this.props.onBatchButton(e)}>
-          <i className='small icon-pen'></i>
+          <i className='fa fa-magic'></i>
           {' '}
-          Quick Edit
+          Metadaten Batchverarbeitung
         </a>
       )
     }

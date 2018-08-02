@@ -146,6 +146,7 @@ class BoxBatchEditForm extends React.Component {
         </div>
         <div
           onClick={this.props.onClickApplySelected}
+          className='primary-button'
           style={{
             display: 'inline-block',
             borderRadius: '5px',
@@ -226,15 +227,12 @@ class BoxBatchEditForm extends React.Component {
         </div>
         <div
           onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
+          className='primary-button'
           style={{
             display: 'inline-block',
-            borderRadius: '5px',
-            backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
-            color: '#fff',
             padding: '0px 10px',
             marginRight: '5px',
             marginBottom: '5px',
-            fontSize: '14px',
             cursor: 'pointer',
             marginTop: '5px'
           }}
@@ -330,16 +328,17 @@ class BoxBatchEditForm extends React.Component {
 
       return (
         <div
+          className='button'
           style={{
-            display: 'inline-block',
-            borderRadius: '5px',
-            backgroundColor: '#3c3c3c',
-            color: '#fff',
-            padding: '0px 10px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            float: 'right',
-            marginTop: '1px'
+            // display: 'inline-block',
+            // borderRadius: '5px',
+            // backgroundColor: '#3c3c3c',
+            // color: '#fff',
+            // padding: '0px 10px',
+            // fontSize: '14px',
+            // cursor: 'pointer',
+            // float: 'right',
+            // marginTop: '1px'
           }}
           onClick={this.props.onClickCancel}
         >
@@ -365,10 +364,14 @@ class BoxBatchEditForm extends React.Component {
 
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
-        {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
-        {renderErrors()}
-        {renderCancel()}
-        {renderIgnoreFailures()}
+        <div>
+          {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+          {renderErrors()}
+        </div>
+        <div>
+          {renderCancel()}
+          {renderIgnoreFailures()}
+        </div>
       </div>
     )
   }
