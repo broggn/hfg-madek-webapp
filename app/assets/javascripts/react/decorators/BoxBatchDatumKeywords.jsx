@@ -182,6 +182,7 @@ class BoxBatchDatumKeywords extends React.Component {
       >
         {this.renderKeywords()}
         <input
+          placeholder={(this.props.metaKeyForm.props.metaKey.is_extensible ? '' : 'Search...')}
           style={{
             borderRadius: '5px',
             border: '1px solid #ddd',

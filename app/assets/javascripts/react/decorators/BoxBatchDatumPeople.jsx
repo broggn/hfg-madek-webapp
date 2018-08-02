@@ -157,6 +157,7 @@ class BoxBatchDatumPeople extends React.Component {
       >
         {this.renderKeywords()}
         <input
+          placeholder={'Search...'}
           style={{
             borderRadius: '5px',
             border: '1px solid #ddd',
