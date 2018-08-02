@@ -195,16 +195,17 @@ class BoxBatchEditForm extends React.Component {
     }
 
 
-    var renderText = () => {
+    var totalCount = () => {
+      return this.props.totalCount
+    }
 
-      var totalCount = () => {
-        return this.props.totalCount
-      }
+
+    var renderText = () => {
 
       if(this.loadedCount() == totalCount()) {
         return 'Auf alle ' + this.editableCount() + ' anwenden'
       } else {
-        return 'Auf alle ' + this.editableCount() + ' geladenen anwenden'
+        return 'Alle Seiten laden...'
       }
 
       // Auf alle anwenden
@@ -226,8 +227,9 @@ class BoxBatchEditForm extends React.Component {
           <div>davon editierbar: {this.editableCount()}</div>
         </div>
         <div
-          onClick={(this.toApplyCount() > 0 ? null : this.props.onClickApplyAll)}
+          onClick={(this.toApplyCount() > 0 || this.loadedCount() != totalCount() ? null : this.props.onClickApplyAll)}
           className='primary-button'
+          disabled={(this.toApplyCount() > 0 || this.loadedCount() != totalCount() ? 'disabled' : null)}
           style={{
             display: 'inline-block',
             padding: '0px 10px',
