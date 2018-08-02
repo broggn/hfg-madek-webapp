@@ -143,17 +143,11 @@ module.exports = (merged) => {
         if(err) {
           return
         } else {
-          setTimeout(
-            () => {
-              trigger(merged, {
-                action: 'data-loaded',
-                type: type,
-                data: json
-              })
-            },
-            10000
-
-          )
+          trigger(merged, {
+            action: 'data-loaded',
+            type: type,
+            data: json
+          })
         }
       }
     )
