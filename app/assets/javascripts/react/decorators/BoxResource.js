@@ -143,7 +143,7 @@ module.exports = (merged) => {
     if(nextProps.startApply) {
       return true
     }
-    else if(event.action == 'apply-success') {
+    else if(event.action == 'apply-success' || event.action == 'apply-error') {
       return false
     } else {
       return data.applyingMetaData

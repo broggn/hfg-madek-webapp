@@ -289,7 +289,7 @@ module.exports = (merged) => {
       return l.filter(
         components.resources,
         (r) => {
-          return r.data.listMetaData == null && !(r.event.action == 'load-meta-data-success') && !(r.event.action == 'load-meta-data-failure')
+          return r.data.listMetaData == null && !(r.event.action == 'apply-success') && !(r.event.action == 'apply-error')
         }
       )
     }
@@ -301,7 +301,7 @@ module.exports = (merged) => {
     var loadQueueToTrigger = () => {
       return l.filter(
         loadQueue(),
-        (r) => !r.data.loadingListMetaData || r.event.action == 'load-meta-data-failure'
+        (r) => !r.data.loadingListMetaData || r.event.action == 'apply-error'
       )
     }
 
@@ -342,7 +342,7 @@ module.exports = (merged) => {
 
       var hasChildMetaDataFetchEvent = !l.isEmpty(l.filter(
         components.resources,
-        (r) => r.event.action == 'load-meta-data-success' || r.event.action == 'load-meta-data-failure'
+        (r) => r.event.action == 'apply-success' || r.event.action == 'apply-error'
       ))
 
       var needsFetchListData = (processingJustDone || hasChildMetaDataFetchEvent || event.action == 'fetch-list-data') && nextProps.get.config.layout == 'list' && !thereAreUnfinished
@@ -536,7 +536,8 @@ var applyResourceMetaData = ({resourceState, formData}) => {
       }
     },
     (err, res, json) => {
-      if(err || res.statusCode > 400) {//!= 200) {
+      if(err || res.statusCode != 200) {
+        debugger
         resourceState.trigger(resourceState, {action: 'apply-error'})
       } else {
 
