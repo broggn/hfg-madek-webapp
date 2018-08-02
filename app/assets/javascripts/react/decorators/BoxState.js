@@ -36,6 +36,24 @@ module.exports = (merged) => {
 
   var processingJustDone = !(thereAreUnfinished || thereAreFailures) && anyResourceJustFinished
 
+  var willFetch = () => {
+
+    return event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page'
+
+      || (
+        event.action == 'page-loaded' && components.batch.data.open
+        && (components.resources.length + event.resources.length < nextProps.get.pagination.total_count)
+      )
+      || (
+        components.batch && components.batch.event.action == 'toggle'
+        && (components.resources.length < nextProps.get.pagination.total_count)
+      )
+
+
+
+  }
+
+
 
   var next = () => {
 
@@ -57,18 +75,9 @@ module.exports = (merged) => {
     }
 
 
-    if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page'
 
-      || (
-        event.action == 'page-loaded' && components.batch.data.open
-        && (components.resources.length + event.resources.length < nextProps.get.pagination.total_count)
-      )
-      || (
-        components.batch && components.batch.event.action == 'toggle'
-        && (components.resources.length < nextProps.get.pagination.total_count)
-      )
 
-    ) {
+    if(willFetch()) {
       fetchNextPage()
     }
 
@@ -176,15 +185,22 @@ module.exports = (merged) => {
   }
 
   var nextLoadingNextPage = () => {
-    if(event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
+    if(willFetch()) {
       return true
-    }
-    else if(event.action == 'page-loaded') {
+    } else if(event.action == 'page-loaded') {
       return false
-    }
-    else {
+    } else {
       return data.loadingNextPage
     }
+    // if(willFetch()) {//event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page') {
+    //   return true
+    // }
+    // else if(event.action == 'page-loaded') {
+    //   return false
+    // }
+    // else {
+    //   return data.loadingNextPage
+    // }
   }
 
   var nextBatch = () => {
