@@ -62,14 +62,16 @@ class BoxBatchApplyButton extends React.Component {
     if(data.applyError && !data.applyingMetaData) {
       return (
         <span
+          className='primary-button'
           style={{
             display: 'inline-block',
-            borderRadius: '5px',
-            backgroundColor: '#f00',
-            color: '#fff',
-            padding: '0px 10px',
-            fontSize: (this.props.big ? '18px' : '10px'),
-            cursor: 'pointer'
+            padding: (this.props.big ? null : '0px 10px'),
+            fontSize: (this.props.big ? null : '10px'),
+            cursor: 'pointer',
+            minHeight: (this.props.big ? null : 'inherit'),
+            lineHeight: (this.props.big ? null : 'inherit'),
+            backgroundImage: 'linear-gradient(#F44336, #c53434)',
+            border: '1px solid #6f0d0d'
           }}
           onClick={(e) => this.onRetry(e)}
         >

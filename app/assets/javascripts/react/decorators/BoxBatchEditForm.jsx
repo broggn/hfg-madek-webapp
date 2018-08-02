@@ -302,16 +302,11 @@ class BoxBatchEditForm extends React.Component {
 
       return (
         <div
+          className='primary-button'
           style={{
             display: 'inline-block',
-            borderRadius: '5px',
-            backgroundColor: '#f00',
-            color: '#fff',
-            padding: '0px 10px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            float: 'right',
-            marginTop: '1px'
+            backgroundImage: 'linear-gradient(#F44336, #c53434)',
+            border: '1px solid #6f0d0d'
           }}
           onClick={this.props.onClickIgnore}
         >

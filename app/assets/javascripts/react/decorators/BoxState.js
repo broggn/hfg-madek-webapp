@@ -537,7 +537,6 @@ var applyResourceMetaData = ({resourceState, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        debugger
         resourceState.trigger(resourceState, {action: 'apply-error'})
       } else {
 
