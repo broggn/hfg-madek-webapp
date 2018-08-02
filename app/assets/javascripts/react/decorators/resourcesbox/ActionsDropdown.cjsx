@@ -205,8 +205,11 @@ module.exports = React.createClass
 
           <MenuItem onClick={@props.callbacks.onQuickBatch}>
             <i className='fa fa-magic' style={{position: 'static', display: 'inline-block', minWidth: '20px', marginLeft: '5px'}}></i>
+            <span className='ui-count' style={{position: 'static', display: 'inline-block', minWidth: '10px', marginLeft: '5px', paddingLeft: '0px', textAlign: 'left'}}>
+              {''}
+            </span>
             <span style={{display: 'inline', marginLeft: '5px'}}>
-              {'Metadaten Batchverarbeitung'}
+              {t('resources_box_batch_actions_meta_data_batch')}
             </span>
           </MenuItem>
 

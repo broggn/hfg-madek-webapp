@@ -231,7 +231,8 @@ module BatchSelectionHelper
       :media_entries_permissions,
       :collections_permissions,
       :media_entries_transfer_responsibility,
-      :collections_transfer_responsibility
+      :collections_transfer_responsibility,
+      :meta_data_batch
     ]
   end
 
@@ -253,7 +254,8 @@ module BatchSelectionHelper
       media_entries_edit_all:
         :resources_box_batch_actions_edit_all_media_entries,
       collections_edit_all:
-        :resources_box_batch_actions_edit_all_collections
+        :resources_box_batch_actions_edit_all_collections,
+      meta_data_batch: :resources_box_batch_actions_meta_data_batch
     }
   end
 end
