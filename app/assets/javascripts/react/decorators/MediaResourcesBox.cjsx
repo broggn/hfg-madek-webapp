@@ -714,13 +714,15 @@ module.exports = React.createClass
           onBatchTransferResponsibilityEdit: @_onBatchTransferResponsibilityEdit
           onBatchTransferResponsibilitySetsEdit: @_onBatchTransferResponsibilitySetsEdit
           onHoverMenu: @_onHoverMenu
+          onQuickBatch: @onBatchButton
         }}
       />
 
-      batchButton = <BoxBatchEditButton
-        stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
-        onBatchButton={@onBatchButton}
-      />
+      batchButton = null
+      # <BoxBatchEditButton
+      #   stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
+      #   onBatchButton={@onBatchButton}
+      # />
 
 
       filterToggleLink = BoxSetUrlParams(

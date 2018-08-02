@@ -6,6 +6,7 @@ import cx from 'classnames/dedupe'
 import BoxBatchEditMetaKeyForm from './BoxBatchEditMetaKeyForm.jsx'
 import BoxBatchEditFormKeyBubbles from './BoxBatchEditFormKeyBubbles.jsx'
 import BoxMetaKeySelector from './BoxMetaKeySelector.jsx'
+import Preloader from '../ui-components/Preloader.cjsx'
 
 class BoxBatchEditForm extends React.Component {
 
@@ -396,6 +397,15 @@ class BoxBatchEditForm extends React.Component {
     if(!data.open) {
       return null
     } else {
+
+      if(this.props.stateBox.components.batch.components.loadMetaMetaData.data.metaMetaData.length != 2) {
+        return (
+          <div className='ui-resources-holder pam'>
+            <Preloader />
+          </div>
+        )
+      }
+
       return (
         <div className='ui-resources-holder pam'>
 

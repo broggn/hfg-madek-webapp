@@ -61,11 +61,11 @@ module.exports = (merged) => {
 
       || (
         event.action == 'page-loaded' && components.batch.data.open
-        && !(components.resources.length + event.resources.length == nextProps.get.pagination.total_count)
+        && (components.resources.length + event.resources.length < nextProps.get.pagination.total_count)
       )
       || (
         components.batch && components.batch.event.action == 'toggle'
-        && !(components.resources.length == nextProps.get.pagination.total_count)
+        && (components.resources.length < nextProps.get.pagination.total_count)
       )
 
     ) {

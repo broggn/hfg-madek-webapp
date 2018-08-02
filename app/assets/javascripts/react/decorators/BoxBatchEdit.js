@@ -158,7 +158,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
   var nextOpen = () => {
 
     var ready = () => {
-      return components.loadMetaMetaData.data.metaKeysWithTypes
+      return true
+      // return components.loadMetaMetaData.data.metaKeysWithTypes
     }
 
     if(event.action == 'toggle') {

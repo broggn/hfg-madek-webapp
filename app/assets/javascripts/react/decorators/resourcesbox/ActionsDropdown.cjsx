@@ -203,6 +203,13 @@ module.exports = React.createClass
             null
           }
 
+          <MenuItem onClick={@props.callbacks.onQuickBatch}>
+            <i className='fa fa-magic' style={{position: 'static', display: 'inline-block', minWidth: '20px', marginLeft: '5px'}}></i>
+            <span style={{display: 'inline', marginLeft: '5px'}}>
+              {'Metadaten Batchverarbeitung'}
+            </span>
+          </MenuItem>
+
         </Dropdown.Menu>
       </Dropdown>
 
