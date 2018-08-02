@@ -39,7 +39,7 @@ module.exports = (merged) => {
   }
 
   var nextText = () => {
-    if(event.action == 'select-keyword') {
+    if(event.action == 'select-keyword' || event.action == 'close-proposals') {
       return ''
     }
     else if(event.action == 'change-text') {
