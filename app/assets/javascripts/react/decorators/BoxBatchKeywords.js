@@ -51,6 +51,11 @@ module.exports = (merged) => {
   }
 
   var nextKeywords = () => {
+
+    var existsAlready = () => {
+      return !l.isEmpty(l.filter(data.keywords, (kw) => kw.id == event.keywordId))
+    }
+
     if(event.action == 'remove-keyword-by-label') {
       return l.filter(
         data.keywords,
@@ -68,7 +73,7 @@ module.exports = (merged) => {
         label: data.text
       })
     }
-    else if(event.action == 'select-keyword') {
+    else if(event.action == 'select-keyword' && !existsAlready()) {
       return data.keywords.concat({
         id: event.keywordId,
         label: event.keywordLabel
