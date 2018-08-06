@@ -718,13 +718,6 @@ module.exports = React.createClass
         }}
       />
 
-      batchButton = null
-      # <BoxBatchEditButton
-      #   stateBatch={BoxRedux.prettyState(@state.reduc, @reducTrigger).components.batch}
-      #   onBatchButton={@onBatchButton}
-      # />
-
-
       filterToggleLink = BoxSetUrlParams(
         currentUrl, {list: {show_filter: (not config.show_filter)}})
 
@@ -738,7 +731,7 @@ module.exports = React.createClass
         />
 
         right: if actionsDropdown
-          <div>{batchButton}{actionsDropdown}</div>
+          <div>{actionsDropdown}</div>
 
 
         middle: if @props.renderSwitcher
@@ -811,7 +804,7 @@ module.exports = React.createClass
 
       <BoxBatchEditForm
         onClose={(e) => @onBatchButton(e)}
-        stateBox={BoxRedux.prettyState(@state.reduc, @reducTrigger)}
+        stateBox={@state.reduc}
         onClickKey={(e, k) => @onClickKey(e, k)}
         onClickApplyAll={(e) => @onClickApplyAll(e)}
         onClickApplySelected={(e) => @onClickApplySelected(e)}
@@ -846,7 +839,7 @@ module.exports = React.createClass
                 resources={
                   f.map(
                     @state.reduc.components.resources,
-                    (r) => BoxRedux.prettyState(r, @reducTrigger)
+                    (r) => r
                   )
                 }
                 actionsDropdownParameters={actionsDropdownParameters}

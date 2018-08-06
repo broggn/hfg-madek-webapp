@@ -355,24 +355,5 @@ module.exports = {
     return build(stateReduction, lastState, trigger, eventTree, merged);
   },
 
-  fireTreeEvent: fireTreeEvent2,
-
-  prettyState: function(state, rootTrigger) {
-
-    var prettyState = (n) => {
-      if(!n) return null
-      if(Array.isArray(n)) {
-        return __.map(n, (ni) => prettyState(ni))
-      } else {
-        return {
-          props: n.props,
-          data: n.data,
-          components: __.mapValues(n.components, (c) => prettyState(c)),
-          path: n.path
-        }
-      }
-    }
-
-    return prettyState(state)
-  }
+  fireTreeEvent: fireTreeEvent2
 }
