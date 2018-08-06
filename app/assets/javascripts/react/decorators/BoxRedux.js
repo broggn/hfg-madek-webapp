@@ -75,67 +75,10 @@ var compactObject = function(o) {
 
 var build = function(definition, last, rootTrigger, rootEventTree, merged) {
 
-  // if(last && !verifyEventId2(last, rootEventTree)) {
-  //   console.log('not valid tree anymore ' + JSON.stringify(rootEventTree))
-  //   return last
-  // }
-
-  // console.log(JSON.stringify(rootEventTree, null, '  '))
   return reduceComponent(definition, last, rootTrigger, rootEventTree, [], merged)
 };
 
 
-
-
-var verifyEventId2 = function(llast, leventTree) {
-
-  var verifyRec = function(last, eventTree) {
-
-    if(eventTree.componentId != undefined) {
-      if(eventTree.componentId != last.id) {
-        return false
-      }
-    }
-
-    for(var c in eventTree.children) {
-      var childTree = eventTree.children[c]
-      var childLast = last.components[c]
-
-      if(!childLast) {
-        return false
-      }
-
-      if(childTree.isArray) {
-
-        for(var i in childTree.arrYyy) {
-
-          if(!childLast[i]) {
-            return false
-          }
-
-          if(!verifyRec(childLast[i], childTree.arrYyy[i])) {
-            return false
-          }
-        }
-
-
-
-      } else {
-
-        if(!verifyRec(childLast, childTree)) {
-          return false
-        }
-
-      }
-
-
-    }
-
-    return true
-
-  }
-  return verifyRec(llast, leventTree)
-}
 
 
 var reduceComponent = function(definition, last, rootTrigger, eventTree, path, merged) {
