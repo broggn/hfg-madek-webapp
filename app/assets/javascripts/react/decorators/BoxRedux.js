@@ -69,15 +69,15 @@ var compactObject = function(o) {
   )
 }
 
-var build = function(definition, last, rootTrigger, rootEventTree, merged) {
+var build = function(definition, last, rootTrigger, merged) {
 
-  return reduceComponent(definition, last, rootTrigger, rootEventTree, [], merged)
+  return reduceComponent(definition, last, rootTrigger, [], merged)
 };
 
 
 
 
-var reduceComponent = function(definition, last, rootTrigger, eventTree, path, merged) {
+var reduceComponent = function(definition, last, rootTrigger, path, merged) {
 
   var cid = null
 
@@ -104,7 +104,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
 
   return {
     data: next.data,
-    components: buildChildren2(next, useLast, rootTrigger, eventTree, path, merged),
+    components: buildChildren2(next, useLast, rootTrigger, path, merged),
     props: definition.props,
     id: cid,
     path: path
@@ -112,7 +112,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
 }
 
 
-var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) {
+var buildChildren2 = function(next, last, rootTrigger, path, merged) {
 
   if(!next.components) {
     return null
@@ -151,20 +151,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
       }
 
-      var eventTreeArrayChild2 = function(vi, last, eventTree, k, i) {
-        if(typeof vi.reuseId == 'number') {
-          return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
-        } else {
-          return (eventTree && eventTree.children[k] ? eventTree.children[k][i] : {})
-        }
-        // if(typeof vi.reuseId == 'number') {
-        //   return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
-        // } else {
-        //   return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
-        // }
-      }
-
-      var path2 = function(vi, last, eventTree, k, i, path) {
+      var path2 = function(vi, last, k, i, path) {
         if(typeof vi.reuseId == 'number') {
           var ind = __.findIndex(last.components[k], (ck) => ck.id == vi.reuseId)
           return __.concat(path, [[k, ind]])
@@ -182,8 +169,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
             vi,
             componentsArrayChild2(vi, merged, k, i),
             rootTrigger,
-            eventTreeArrayChild2(vi, merged, eventTree, k, i),
-            path2(vi, merged, eventTree, k, i, path),
+            path2(vi, merged, k, i, path),
             mergedChild(vi, merged, k, i)
           )
         }
@@ -194,7 +180,6 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
         v,
         componentsChild(last, k),
         rootTrigger,
-        eventTreeChild(eventTree, k),
         __.concat(path, k),
         merged.components[k] ? merged.components[k] : {
           data: {},
@@ -291,7 +276,7 @@ module.exports = {
 
     var merged = mergeStateAndEvents(lastState, eventTree)
 
-    return build(stateReduction, lastState, trigger, eventTree, merged);
+    return build(stateReduction, lastState, trigger, merged);
   },
 
   fireTreeEvent: fireTreeEvent2
