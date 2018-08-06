@@ -165,6 +165,7 @@ class BoxRenderResource extends React.Component {
         listThumb={config.layout == 'list'}
         list_meta_data={itemState.data.listMetaData}
         showBatchButtons={this.props.showBatchButtons}
+        trigger={this.props.trigger}
       />
     )
   }

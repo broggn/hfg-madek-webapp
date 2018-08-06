@@ -84,6 +84,7 @@ class BoxRenderResources extends React.Component {
             showBatchButtons={this.props.showBatchButtons}
             fetchRelations={fetchRelations}
             key={itemState.data.resource.uuid}
+            trigger={this.props.trigger}
           />
         )
       }

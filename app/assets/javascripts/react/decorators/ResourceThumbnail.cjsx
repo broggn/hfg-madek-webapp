@@ -204,7 +204,7 @@ module.exports = React.createClass
         subtitle: getSubtitle()
 
     textProps = getTextProps()
-    
+
 
     resourceMediaType = if @props.uploadMediaType
       @props.uploadMediaType
@@ -213,6 +213,7 @@ module.exports = React.createClass
 
     batchApplyButton = if @props.showBatchButtons && @props.get.editable
       <BoxBatchApplyButton
+        trigger={@props.trigger}
         resourceState={@props.resourceState}
         big={@props.pinThumb}
         showBatchButtons={@props.showBatchButtons}
