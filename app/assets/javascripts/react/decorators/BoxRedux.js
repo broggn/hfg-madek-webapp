@@ -16,19 +16,16 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
     if(Array.isArray(pi)) {
 
       if(!current.children[pi[0]]) {
-        current.children[pi[0]] = {
-          isArray: true,
-          arrYyy: []
-        }
+        current.children[pi[0]] = []
       }
 
-      if(!current.children[pi[0]].arrYyy[pi[1]]) {
-        current.children[pi[0]].arrYyy[pi[1]] = {
+      if(!current.children[pi[0]][pi[1]]) {
+        current.children[pi[0]][pi[1]] = {
           children: {},
           event: null,
         }
       }
-      current = current.children[pi[0]].arrYyy[pi[1]]
+      current = current.children[pi[0]][pi[1]]
 
 
     } else {
@@ -36,7 +33,6 @@ var fireTreeEvent2 = function(eventTree, componentPath, componentId, event) {
         current.children[pi] = {
           children: {},
           event: null,
-          isArray: false
         }
       }
       current = current.children[pi]
@@ -159,7 +155,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
         if(typeof vi.reuseId == 'number') {
           return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
         } else {
-          return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
+          return (eventTree && eventTree.children[k] ? eventTree.children[k][i] : {})
         }
         // if(typeof vi.reuseId == 'number') {
         //   return __.find(last.components[k], (ck) => ck.id == vi.reuseId)
@@ -213,7 +209,7 @@ var buildChildren2 = function(next, last, rootTrigger, eventTree, path, merged) 
 
 
 var eventTreeArrayChild = function(eventTree, k, i) {
-  return (eventTree && eventTree.children[k] ? eventTree.children[k].arrYyy[i] : {})
+  return (eventTree && eventTree.children[k] ? eventTree.children[k][i] : {})
 }
 
 var eventTreeChild = function(eventTree, k) {
