@@ -99,31 +99,32 @@ class BoxBatchEditMetaKeyForm extends React.Component {
       return l.find(this.props.resourceStates, (r) => r.data.resource.type == 'MediaEntry')
     }
 
-    var scopeText = () => {
-      if(l.includes(metaKey.scope, 'Entries') && hasSetsSelected()) {
-        return 'Dieser Wert wird nur auf Medien Einträge angewendet'
-      } else if(l.includes(metaKey.scope, 'Sets') && hasEntriesSelected()) {
-        return 'Dieser Wert wird nur auf Sets angewendet'
-      } else {
-        return null
-      }
+    var renderDiv = (text) => {
+      return (
+        <div style={{marginBottom: '10px', color: '#b59d6e', textAlign: 'right'}}>
+          <i
+            className='icon-bang'
+            style={{
+              display: 'inline-block',
+              width: '20px',
+              position: 'relative',
+              top: '2px'
+            }}
+          />
+          {' '}
+          {text}
+        </div>
+      )
     }
 
-    return (
-      <div style={{marginBottom: '10px', color: '#b59d6e', textAlign: 'right'}}>
-        <i
-          className='icon-bang'
-          style={{
-            display: 'inline-block',
-            width: '20px',
-            position: 'relative',
-            top: '2px'
-          }}
-        />
-        {' '}
-        {scopeText()}
-      </div>
-    )
+    if(l.includes(metaKey.scope, 'Entries') && hasSetsSelected()) {
+      return renderDiv('Dieser Wert wird nur auf Medien Einträge angewendet')
+    } else if(l.includes(metaKey.scope, 'Sets') && hasEntriesSelected()) {
+      return renderDiv('Dieser Wert wird nur auf Sets angewendet')
+    } else {
+      return null
+    }
+
   }
 
 
