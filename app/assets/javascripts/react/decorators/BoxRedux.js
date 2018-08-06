@@ -156,18 +156,6 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
   merged.nextProps = definition.props
 
   merged.trigger = rootTrigger
-  // function(event) {
-  //
-    // var newEventTree = {
-    //   componentId: 0,
-    //   event: {},
-    //   children: {}
-    // }
-    //
-    // var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
-    //
-    // rootTrigger(newEventTree)
-  // }
 
   merged.event = merged.event ? merged.event : {}
 
@@ -180,20 +168,7 @@ var reduceComponent = function(definition, last, rootTrigger, eventTree, path, m
     components: buildChildren2(next, useLast, rootTrigger, eventTree, path, merged),
     props: definition.props,
     id: cid,
-    path: path,
-    trigger: rootTrigger
-    // (last ? last.trigger : function(event) {
-    //
-    //   var newEventTree = {
-    //     componentId: 0,
-    //     event: {},
-    //     children: {}
-    //   }
-    //
-    //   var newEventTree = fireTreeEvent2(newEventTree, path, cid, event)
-    //
-    //   rootTrigger(newEventTree)
-    // })
+    path: path
   }
 }
 
@@ -393,17 +368,7 @@ module.exports = {
           props: n.props,
           data: n.data,
           components: __.mapValues(n.components, (c) => prettyState(c)),
-          trigger: n.trigger,
           path: n.path
-          // (event) => {
-          //   var newEventTree = {
-          //     componentId: 0,
-          //     event: {},
-          //     children: {}
-          //   }
-          //   var newEventTree = fireTreeEvent2(newEventTree, n.path, n.id, event)
-          //   rootTrigger(newEventTree)
-          // }
         }
       }
     }

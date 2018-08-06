@@ -18,7 +18,7 @@ class BoxRenderLabel extends React.Component {
   }
 
   onClose(event) {
-    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'close'})
+    this.props.trigger(this.props.metaKeyForm, {action: 'close'})
   }
 
   renderCross() {

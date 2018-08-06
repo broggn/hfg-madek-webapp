@@ -70,7 +70,8 @@ module.exports = (merged) => {
               props: mkf.props
             }
           }
-        )
+        ),
+        trigger
       )
     }
 
@@ -439,11 +440,12 @@ module.exports = (merged) => {
 
 
 
-var applyMetaData = (data, components, cachedToApplyMetaData, formData) => {
+var applyMetaData = (data, components, cachedToApplyMetaData, formData, trigger) => {
   l.each(
     cachedToApplyMetaData,
     (r) => applyResourceMetaData(
       {
+        trigger: trigger,
         resourceState: r,
         formData: formData
       }
@@ -453,7 +455,7 @@ var applyMetaData = (data, components, cachedToApplyMetaData, formData) => {
 }
 
 
-var applyResourceMetaData = ({resourceState, formData}) => {
+var applyResourceMetaData = ({trigger, resourceState, formData}) => {
 
   var resourceId = resourceState.data.resource.uuid
   var resourceType = resourceState.data.resource.type
@@ -536,7 +538,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
 
   if(l.isEmpty(metaData())) {
     setTimeout(
-      () => resourceState.trigger(resourceState, {action: 'apply-success'}),
+      () => trigger(resourceState, {action: 'apply-success'}),
       0
     )
     return
@@ -568,7 +570,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        resourceState.trigger(resourceState, {action: 'apply-error'})
+        trigger(resourceState, {action: 'apply-error'})
       } else {
 
         var thumbnailMetaData = () => {
@@ -595,7 +597,7 @@ var applyResourceMetaData = ({resourceState, formData}) => {
           }
         }
 
-        resourceState.trigger(
+        trigger(
           resourceState,
           {
             action: 'apply-success',

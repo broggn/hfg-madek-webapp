@@ -22,7 +22,7 @@ class BoxBatchEditForm extends React.Component {
   renderMetaKeyForm(metaKeyForm, resourceStates) {
     return (
       <div key={metaKeyForm.props.metaKeyId} style={{backgroundColor: '#fff', borderRadius: '5px', border: '1px solid #ddd', padding: '10px', marginBottom: '5px'}}>
-        <BoxBatchEditMetaKeyForm metaKeyForm={metaKeyForm} resourceStates={resourceStates} editable={!this.showProgressBar()}/>
+        <BoxBatchEditMetaKeyForm trigger={this.props.trigger} metaKeyForm={metaKeyForm} resourceStates={resourceStates} editable={!this.showProgressBar()}/>
       </div>
     )
   }
@@ -416,7 +416,7 @@ class BoxBatchEditForm extends React.Component {
           </div>
 
           <div style={{width: '50%', float: 'left'}}>
-            <BoxMetaKeySelector loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
+            <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
           </div>
           <div style={{width: '50%', float: 'right'}}>
             {this.renderInvalidMessage()}

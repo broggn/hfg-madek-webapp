@@ -19,7 +19,7 @@ class BoxBatchDatumText extends React.Component {
   }
 
   onChange(text) {
-    this.props.metaKeyForm.trigger(this.props.metaKeyForm, {action: 'change-text', text: text})
+    this.props.trigger(this.props.metaKeyForm, {action: 'change-text', text: text})
   }
 
   renderValueText() {
@@ -66,6 +66,7 @@ class BoxBatchDatumText extends React.Component {
     return (
       <div>
         <BoxRenderLabel
+          trigger={this.props.trigger}
           metaKeyForm={this.props.metaKeyForm}
           editable={this.props.editable}
         />

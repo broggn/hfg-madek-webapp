@@ -819,6 +819,7 @@ module.exports = React.createClass
         onClickIgnore={(e) => @onClickIgnore(e)}
         totalCount={@props.get.pagination.total_count}
         allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
+        trigger={@reducTrigger}
       />
 
       <div className='ui-resources-holder pam'>
@@ -872,6 +873,7 @@ module.exports = React.createClass
                 }
                 unselectResources={@unselectResources}
                 selectResources={@selectResources}
+                trigger={@reducTrigger}
               />
 
             }

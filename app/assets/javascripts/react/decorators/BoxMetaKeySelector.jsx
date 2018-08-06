@@ -110,7 +110,7 @@ class BoxMetaKeySelector extends React.Component {
             <div>
               <div style={{marginBottom: (isSelected() ? '10px' : '0px')}}>
                 <div>
-                  <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.props.loadMetaMetaData.trigger(this.props.loadMetaMetaData, {action: 'select-vocabulary', vocabulary: k})}>
+                  <span className={(isSelected() ? 'open' : null)} style={{cursor: 'pointer'}} onClick={(e) => this.props.trigger(this.props.loadMetaMetaData, {action: 'select-vocabulary', vocabulary: k})}>
                     <i
                       className={'ui-side-filter-lvl1-marker'}
                       style={{
