@@ -57,22 +57,8 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    if(!l.isEmpty(cachedToApplyMetaData) && formsValid()) {
-      applyMetaData(
-        data,
-        components,
-        cachedToApplyMetaData,
-        l.map(
-          components.batch.components.metaKeyForms,
-          (mkf) => {
-            return {
-              data: mkf.data,
-              props: mkf.props
-            }
-          }
-        ),
-        trigger
-      )
+    if(!l.isEmpty(cachedToApplyMetaData)) {//} && formsValid()) {
+      applyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData(), trigger)
     }
 
 
@@ -86,7 +72,8 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: false,
-          selectedResources: null
+          selectedResources: null,
+          applyFormData: null
         },
         components: {
           resources: nextResources(),
@@ -97,7 +84,8 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: nextLoadingNextPage(),
-          selectedResources: nextSelectedResources()
+          selectedResources: nextSelectedResources(),
+          applyFormData: nextApplyFormData()
         },
         components: {
           resources: nextResources(),
@@ -149,6 +137,30 @@ module.exports = (merged) => {
       return false
     }
     return l.isEmpty(determineInvalids())
+  }
+
+  var nextApplyFormData = () => {
+
+    var anyApply = () => {
+      return l.filter(
+        components.resources,
+        (r) => r.event.action == 'apply'
+      ).length > 0
+    }
+
+    if(formsValid() && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
+      return l.map(
+        components.batch.components.metaKeyForms,
+        (mkf) => {
+          return {
+            data: mkf.data,
+            props: mkf.props
+          }
+        }
+      )
+    } else {
+      return data.applyFormData
+    }
   }
 
   var nextSelectedResources = () => {
@@ -294,9 +306,10 @@ module.exports = (merged) => {
       props: {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: formsValid() && startApply && resource.editable,
+        startApply: /*formsValid() &&*/ startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
-        waitApply: resource.editable && formsValid() && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        waitApply: resource.editable /*&& formsValid()*/ && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        sleep: event.action == 'apply-selected' && !hasSelectedApply(),
         resetStatus: processingJustDone || event.action == 'ignore-all'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,

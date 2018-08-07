@@ -45,7 +45,8 @@ module.exports = (merged) => {
           applyingMetaData: false,
           applyDone: false,
           applyCancelled: false,
-          applyError: false
+          applyError: false,
+          sleep: false
         },
         components: {
         }
@@ -61,7 +62,8 @@ module.exports = (merged) => {
           applyingMetaData: nextApplyingMetaData(),
           applyDone: nextApplyDone(),
           applyCancelled: nextApplyCancelled(),
-          applyError: nextApplyError()
+          applyError: nextApplyError(),
+          sleep: nextSleep()
         },
         components: {
         }
@@ -136,6 +138,16 @@ module.exports = (merged) => {
       return false
     } else {
       return data.applyPending
+    }
+  }
+
+  var nextSleep = () => {
+    if(nextProps.sleep) {
+      return true
+    } else if(nextProps.resetStatus) {
+      return false
+    } else {
+      return data.sleep
     }
   }
 
