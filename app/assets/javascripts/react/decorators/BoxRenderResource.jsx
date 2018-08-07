@@ -162,37 +162,33 @@ class BoxRenderResource extends React.Component {
       }
 
       return (
-        <div style={{position: 'relative'}}>
-          <BoxBatchApplyButton
-            trigger={this.props.trigger}
-            resourceState={itemState}
-            big={config.layout == 'tiles'}
-            showBatchButtons={this.props.showBatchButtons}
-          />
-        </div>
+        <BoxBatchApplyButton
+          trigger={this.props.trigger}
+          resourceState={itemState}
+          big={config.layout == 'tiles'}
+          showBatchButtons={this.props.showBatchButtons}
+        />
       )
     }
 
 
     // TODO: get={model}
     return (
-      <div className='ui-resource'>
-        {renderBatchApplyButton()}
-        <ResourceThumbnail elm='div'
-          style={style}
-          get={item}
-          overrideTexts={overrideTexts()}
-          isClient={isClient} fetchRelations={fetchRelations}
-          isSelected={isSelected} onSelect={onSelect}
-          onPictureClick={onPictureClick}
-          pictureLinkStyle={pictureLinkStyle}
-          authToken={authToken} key={key}
-          pinThumb={config.layout == 'tiles'}
-          listThumb={config.layout == 'list'}
-          list_meta_data={itemState.data.listMetaData}
-          trigger={this.props.trigger}
-        />
-      </div>
+      <ResourceThumbnail elm='div'
+        style={style}
+        get={item}
+        overrideTexts={overrideTexts()}
+        isClient={isClient} fetchRelations={fetchRelations}
+        isSelected={isSelected} onSelect={onSelect}
+        onPictureClick={onPictureClick}
+        pictureLinkStyle={pictureLinkStyle}
+        authToken={authToken} key={key}
+        pinThumb={config.layout == 'tiles'}
+        listThumb={config.layout == 'list'}
+        list_meta_data={itemState.data.listMetaData}
+        trigger={this.props.trigger}
+        batchApplyButton={renderBatchApplyButton()}
+      />
     )
   }
 }

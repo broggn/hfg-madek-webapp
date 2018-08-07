@@ -95,20 +95,22 @@ class BoxBatchApplyButton extends React.Component {
 
   render() {
     return (
-      <div style={{
-        display: 'block',
-        position: 'absolute',
-        top: '16px',
-        left: '0px',
-        right: '0px',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        zIndex: '10',
-        textAlign: 'center',
-        width: (this.props.big ? '100px' : '60px')
-      }}>
-        <div>
-          {this.renderApply()}
+      <div style={{position: 'relative', zIndex: 1000000}}>
+        <div style={{
+          display: 'block',
+          position: 'absolute',
+          top: '2px',
+          left: '0px',
+          right: '0px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          zIndex: '10',
+          textAlign: 'center',
+          width: (this.props.big ? '100px' : '60px')
+        }}>
+          <div>
+            {this.renderApply()}
+          </div>
         </div>
       </div>
     )

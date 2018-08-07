@@ -122,7 +122,7 @@ module.exports = React.createClass
       onMouseOver={relationsProps.onHover if relationsProps}>
 
       <div className='ui-resource-body'>
-        <Thumbnail {...thumbProps}/>
+        <Thumbnail {...thumbProps} batchApplyButton={@props.batchApplyButton} />
         {
           if deleteProps && deleteProps.stateDeleteModal == true
             <DeleteModal resourceType={get.type} onModalOk={deleteProps.onModalOk}

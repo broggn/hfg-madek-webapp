@@ -147,6 +147,7 @@ module.exports = React.createClass
     <div className={classes}>
       {flyoutTop}
       {badgeLeft}
+      {@props.batchApplyButton}
       {badgeRight}
       {bubbleElements if useBubbles}
       {

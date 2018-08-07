@@ -182,6 +182,7 @@ module.exports = React.createClass
     classes = {'ui-resource': true, 'ui-selected': true if (selectProps and selectProps.isSelected)}
 
     <li className={c(classes)} style={@props.style}>
+
       <div className="ui-resource-head" style={{marginLeft: '168px'}}>
         {actions}
         <h3 className="ui-resource-title">{title}</h3>

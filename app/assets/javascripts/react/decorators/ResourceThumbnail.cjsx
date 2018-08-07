@@ -227,6 +227,7 @@ module.exports = React.createClass
         style={@props.style}
         onPictureClick={this.props.onPictureClick}
         pictureLinkStyle={this.props.pictureLinkStyle}
+        batchApplyButton={this.props.batchApplyButton}
         />
     else if @props.listThumb
       <ListThumbnail
@@ -244,6 +245,7 @@ module.exports = React.createClass
         get={get}
         onPictureClick={this.props.onPictureClick}
         pictureLinkStyle={this.props.pictureLinkStyle}
+        batchApplyButton={this.props.batchApplyButton}
         />
     else
       <ResourceThumbnailRenderer
@@ -260,6 +262,7 @@ module.exports = React.createClass
         style={@props.style}
         onPictureClick={this.props.onPictureClick}
         pictureLinkStyle={this.props.pictureLinkStyle}
+        batchApplyButton={this.props.batchApplyButton}
         />
 
 
