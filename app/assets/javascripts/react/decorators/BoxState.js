@@ -255,6 +255,12 @@ module.exports = (merged) => {
         )
     }
 
+    var anyApply = () => {
+      return l.filter(
+        components.resources,
+        (r) => r.event.action == 'apply'
+      ).length > 0
+    }
 
     return {
       reset: false,
@@ -265,7 +271,7 @@ module.exports = (merged) => {
         startApply: /*formsValid() &&*/ startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
         waitApply: resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: event.action == 'apply-selected' && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
+        sleep: (event.action == 'apply-selected' || anyApply()) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
         resetStatus: processingJustDone || event.action == 'ignore-all'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
