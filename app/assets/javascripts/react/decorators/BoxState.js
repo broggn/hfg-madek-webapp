@@ -17,7 +17,7 @@ module.exports = (merged) => {
   let {event, trigger, initial, components, data, nextProps} = merged
 
 
-  var cachedToApplyMetaData = toApplyMetaData(event, components, data)
+  var cachedToApplyMetaData = toApplyMetaData(event, merged, components, data)
 
   var anyResourceJustFinished = l.filter(
     components.resources,
@@ -95,50 +95,6 @@ module.exports = (merged) => {
     }
   }
 
-  var determineInvalids = () => {
-
-    if(initial) {
-      return []
-    }
-
-    var validateForm = (f) => {
-
-      var validateText = () => {
-        return !l.isEmpty(f.data.text)
-      }
-
-      var validateKeywords = () => {
-        return !l.isEmpty(f.data.keywords)
-      }
-
-      var decideValidation = (type) => {
-        var mapping = {
-          'MetaDatum::Text': validateText,
-          'MetaDatum::TextDate': validateText,
-          'MetaDatum::Keywords': validateKeywords,
-          'MetaDatum::People': validateKeywords
-        }
-        return mapping[type]
-      }
-
-
-      var validator = decideValidation(f.props.metaKey.value_type)
-      return validator(f)
-    }
-
-    return l.filter(
-      components.batch.components.metaKeyForms,
-      (mkf) => mkf.event.action != 'close' && !validateForm(mkf)
-    )
-  }
-
-  var formsValid = () => {
-    if(initial) {
-      return false
-    }
-    return l.isEmpty(determineInvalids())
-  }
-
   var nextApplyFormData = () => {
 
     var anyApply = () => {
@@ -148,7 +104,7 @@ module.exports = (merged) => {
       ).length > 0
     }
 
-    if(formsValid() && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
+    if(formsValid(merged) && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
       return l.map(
         components.batch.components.metaKeyForms,
         (mkf) => {
@@ -225,7 +181,7 @@ module.exports = (merged) => {
     }
 
     var invalidUuids = () => {
-      return l.map(determineInvalids(), (i) => i.props.metaKey.uuid)
+      return l.map(determineInvalids(merged), (i) => i.props.metaKey.uuid)
     }
 
     var formsWithClose = () => {
@@ -308,8 +264,8 @@ module.exports = (merged) => {
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: /*formsValid() &&*/ startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
-        waitApply: resource.editable /*&& formsValid()*/ && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: event.action == 'apply-selected' && !hasSelectedApply(),
+        waitApply: resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        sleep: event.action == 'apply-selected' && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
         resetStatus: processingJustDone || event.action == 'ignore-all'
         // formData: l.map(
         //   components.batch.components.metaKeyForms,
@@ -624,7 +580,11 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
 }
 
 
-var toApplyMetaData = (event, components, data) => {
+var toApplyMetaData = (event, merged, components, data) => {
+
+  if(!formsValid(merged)) {
+    return []
+  }
 
   var resourceNeedsApply = (r) => {
 
@@ -686,4 +646,49 @@ var toApplyMetaData = (event, components, data) => {
   //   }
   // )
 
+}
+
+var determineInvalids = (merged) => {
+
+  if(merged.initial) {
+    return []
+  }
+
+  var validateForm = (f) => {
+
+    var validateText = () => {
+      return !l.isEmpty(f.data.text)
+    }
+
+    var validateKeywords = () => {
+      return !l.isEmpty(f.data.keywords)
+    }
+
+    var decideValidation = (type) => {
+      var mapping = {
+        'MetaDatum::Text': validateText,
+        'MetaDatum::TextDate': validateText,
+        'MetaDatum::Keywords': validateKeywords,
+        'MetaDatum::People': validateKeywords
+      }
+      return mapping[type]
+    }
+
+
+    var validator = decideValidation(f.props.metaKey.value_type)
+    return validator(f)
+  }
+
+  return l.filter(
+    merged.components.batch.components.metaKeyForms,
+    (mkf) => mkf.event.action != 'close' && !validateForm(mkf)
+  )
+}
+
+
+var formsValid = (merged) => {
+  if(merged.initial) {
+    return false
+  }
+  return l.isEmpty(determineInvalids(merged))
 }
