@@ -194,7 +194,9 @@ module.exports = React.createClass
               <i className="icon-privacy-group"></i>
             </div>
             {@props.batchApplyButton}
-            <Image onPictureClick={@props.onPictureClick} pictureLinkStyle={@props.pictureLinkStyle} innerImage={innerImage} mediaUrl={mediaUrl} />
+            <Image onPictureClick={@props.onPictureClick}
+              pictureLinkStyle={@props.pictureLinkStyle}
+              innerImage={innerImage} mediaUrl={mediaUrl} />
             <Titles />
           </div>
         </div>
@@ -230,7 +232,8 @@ module.exports = React.createClass
 Image = React.createClass
   displayName: 'Image'
   render: ({old, innerImage, mediaUrl} = @props) ->
-    <a className="ui-thumbnail-image-wrapper" onClick={@props.onPictureClick} style={@props.pictureLinkStyle} href={mediaUrl}>
+    <a className="ui-thumbnail-image-wrapper" onClick={@props.onPictureClick}
+      style={@props.pictureLinkStyle} href={mediaUrl}>
       <div className="ui-thumbnail-image-holder">
         <div className="ui-thumbnail-table-image-holder">
           <div className="ui-thumbnail-cell-image-holder">
