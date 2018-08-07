@@ -73,9 +73,6 @@ module.exports = React.createClass
         {badgeLeft}
       </div>
 
-    inbetweenBadges = @props.inbetweenBadges
-
-
     bubbles = []
 
     if @props.draft
@@ -150,7 +147,6 @@ module.exports = React.createClass
     <div className={classes}>
       {flyoutTop}
       {badgeLeft}
-      {inbetweenBadges}
       {badgeRight}
       {bubbleElements if useBubbles}
       {

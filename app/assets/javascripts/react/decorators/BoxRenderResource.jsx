@@ -9,11 +9,13 @@ import setsFallbackUrl from '../../lib/sets-fallback-url.coffee'
 import Preloader from '../ui-components/Preloader.cjsx'
 import ActionsDropdownHelper from './resourcesbox/ActionsDropdownHelper.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
+import BoxBatchApplyButton from './BoxBatchApplyButton.jsx'
 
 class BoxRenderResource extends React.Component {
 
   constructor(props) {
     super(props)
+    this.boundOnSelect = this.onSelect.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -60,8 +62,6 @@ class BoxRenderResource extends React.Component {
   render() {
 
     var itemState = this.props.resourceState
-    var selectedResources = this.props.selectedResources
-    var actionsDropdownParameters = this.props.actionsDropdownParameters
     var isClient = this.props.isClient
     var onSelectResource = this.props.onSelectResource
     var config = this.props.config
@@ -79,12 +79,11 @@ class BoxRenderResource extends React.Component {
     var key = item.uuid // or item.cid
 
     var style = null
-    var selection = selectedResources
     // selection defined means selection is enabled
-    var showActions = ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)
-    if(isClient && selection && f.any(f.values(showActions))) {
-      var isSelected = f.find(selectedResources, (sr) => sr.uuid == item.uuid)
-      var onSelect = (e) => this.onSelect(e)
+    var showActions = this.props.showActions
+    if(isClient && f.any(f.values(showActions))) {
+      var isSelected = this.props.isSelected
+      var onSelect = this.boundOnSelect
       // if in selection mode, intercept clicks as 'select toggle'
       var onClick = null
       if(config.layout == 'miniature') {// && selection.length > 0) {
@@ -151,22 +150,44 @@ class BoxRenderResource extends React.Component {
     }
 
 
+    var renderBatchApplyButton = () => {
+      if(!this.props.showBatchButtons) {
+        return null
+      }
+      if(!item.editable) {
+        return null
+      }
+
+      return (
+        <div style={{position: 'relative'}}>
+          <BoxBatchApplyButton
+            trigger={this.props.trigger}
+            resourceState={itemState}
+            big={config.layout == 'tiles'}
+            showBatchButtons={this.props.showBatchButtons}
+          />
+        </div>
+      )
+    }
+
+
     // TODO: get={model}
     return (
-      <ResourceThumbnail elm='div'
-        style={style}
-        get={item}
-        overrideTexts={overrideTexts()}
-        resourceState={itemState}
-        isClient={isClient} fetchRelations={(this.props.onBatchEditApply ? null : fetchRelations)}
-        isSelected={isSelected} onSelect={(e) => onSelect(e)} onClick={onClick}
-        authToken={authToken} key={key}
-        pinThumb={config.layout == 'tiles'}
-        listThumb={config.layout == 'list'}
-        list_meta_data={itemState.data.listMetaData}
-        showBatchButtons={this.props.showBatchButtons}
-        trigger={this.props.trigger}
-      />
+      <div className='ui-resource'>
+        {renderBatchApplyButton()}
+        <ResourceThumbnail elm='div'
+          style={style}
+          get={item}
+          overrideTexts={overrideTexts()}
+          isClient={isClient} fetchRelations={fetchRelations}
+          isSelected={isSelected} onSelect={onSelect} onClick={onClick}
+          authToken={authToken} key={key}
+          pinThumb={config.layout == 'tiles'}
+          listThumb={config.layout == 'list'}
+          list_meta_data={itemState.data.listMetaData}
+          trigger={this.props.trigger}
+        />
+      </div>
     )
   }
 }

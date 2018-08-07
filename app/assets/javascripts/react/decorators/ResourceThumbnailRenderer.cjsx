@@ -114,9 +114,6 @@ module.exports = React.createClass
       disableLink: get.disableLink
       editMetaDataByContextUrl: get.edit_meta_data_by_context_url
 
-      inbetweenBadges: @props.batchApplyButton
-
-
     classes = {'ui-resource': true, 'ui-selected': true if (selectProps and selectProps.isSelected)}
 
     <Element

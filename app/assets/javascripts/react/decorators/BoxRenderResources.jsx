@@ -74,9 +74,7 @@ class BoxRenderResources extends React.Component {
 
         return (
           <BoxRenderResource
-            selectedResources={selectedResources}
             resourceState={itemState}
-            actionsDropdownParameters={actionsDropdownParameters}
             isClient={isClient}
             onSelectResource={onSelectResource}
             config={config}
@@ -85,6 +83,8 @@ class BoxRenderResources extends React.Component {
             fetchRelations={fetchRelations}
             key={itemState.data.resource.uuid}
             trigger={this.props.trigger}
+            isSelected={f.find(selectedResources, (sr) => sr.uuid == itemState.data.resource.uuid)}
+            showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
           />
         )
       }

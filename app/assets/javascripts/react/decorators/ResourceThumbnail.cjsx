@@ -38,7 +38,6 @@ module.exports = React.createClass
     l = require('lodash')
     return !l.isEqual(@state, nextState) || !l.isEqual(@props, nextProps)
 
-
   relationsTrigger: (props) ->
     this.relationsTransition(props)
 
@@ -211,14 +210,6 @@ module.exports = React.createClass
     else
       getMediaType(f.get(@props.get, 'media_file.content_type'))
 
-    batchApplyButton = if @props.showBatchButtons && @props.get.editable
-      <BoxBatchApplyButton
-        trigger={@props.trigger}
-        resourceState={@props.resourceState}
-        big={@props.pinThumb}
-        showBatchButtons={@props.showBatchButtons}
-      />
-
     if @props.pinThumb
       <PinThumbnail
         resourceType={@props.get.type}
@@ -235,7 +226,6 @@ module.exports = React.createClass
         deleteProps={deleteProps}
         statusProps={statusProps}
         style={@props.style}
-        batchApplyButton={batchApplyButton}
         />
     else if @props.listThumb
       <ListThumbnail
@@ -251,7 +241,6 @@ module.exports = React.createClass
         favoriteProps={favoriteProps}
         deleteProps={deleteProps}
         get={get}
-        batchApplyButton={batchApplyButton}
         />
     else
       <ResourceThumbnailRenderer
@@ -267,7 +256,6 @@ module.exports = React.createClass
         selectProps={selectProps}
         textProps={textProps}
         style={@props.style}
-        batchApplyButton={batchApplyButton}
         />
 
 
