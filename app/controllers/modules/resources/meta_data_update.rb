@@ -31,8 +31,6 @@ module Modules
         resource = get_authorized_resource
         errors = update_all_meta_data_transaction!(resource, meta_data_params)
 
-        errors['test'] = 'test' if rand() > 0.5
-
         if errors.empty?
           published_before = published_state(resource)
           if resource.class == MediaEntry
