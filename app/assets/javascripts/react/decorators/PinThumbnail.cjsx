@@ -113,7 +113,7 @@ module.exports = React.createClass
           </ul>
         </div>
         <div className='ui-tile__body'>
-          <a className='ui-tile__thumbnail' href={mediaUrl}>
+          <a className='ui-tile__thumbnail' style={@props.pictureLinkStyle} onClick={@props.onPictureClick} href={mediaUrl}>
             {innerImage}
           </a>
         </div>

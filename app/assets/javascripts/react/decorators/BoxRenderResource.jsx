@@ -78,6 +78,8 @@ class BoxRenderResource extends React.Component {
 
     var key = item.uuid // or item.cid
 
+    var pictureLinkStyle = null
+
     var style = null
     // selection defined means selection is enabled
     var showActions = this.props.showActions
@@ -85,9 +87,10 @@ class BoxRenderResource extends React.Component {
       var isSelected = this.props.isSelected
       var onSelect = this.boundOnSelect
       // if in selection mode, intercept clicks as 'select toggle'
-      var onClick = null
-      if(config.layout == 'miniature') {// && selection.length > 0) {
-        onClick = onSelect
+      var onPictureClick = null
+      if(config.layout == 'miniature' || this.props.selectionMode) {// && selection.length > 0) {
+        onPictureClick = onSelect
+        pictureLinkStyle = {cursor: 'cell'}
       }
 
       //  when hightlighting editables, we just dim everything else:
@@ -180,7 +183,9 @@ class BoxRenderResource extends React.Component {
           get={item}
           overrideTexts={overrideTexts()}
           isClient={isClient} fetchRelations={fetchRelations}
-          isSelected={isSelected} onSelect={onSelect} onClick={onClick}
+          isSelected={isSelected} onSelect={onSelect}
+          onPictureClick={onPictureClick}
+          pictureLinkStyle={pictureLinkStyle}
           authToken={authToken} key={key}
           pinThumb={config.layout == 'tiles'}
           listThumb={config.layout == 'list'}

@@ -25,7 +25,6 @@ module.exports = React.createClass
   propTypes:
     authToken: React.PropTypes.string
     onSelect: React.PropTypes.func
-    onClick: React.PropTypes.func
     fetchRelations: React.PropTypes.bool
     elm: React.PropTypes.string # type of html node of outer wrapper
     get: React.PropTypes.shape
@@ -96,7 +95,7 @@ module.exports = React.createClass
   _onModalCancel: () ->
     @setState(deleteModal: false)
 
-  render: ({get, elm, onClick, isSelected, fetchRelations, authToken} = @props, state = @state)->
+  render: ({get, elm, isSelected, fetchRelations, authToken} = @props, state = @state)->
 
     if fetchRelations
       parentRelations = @state.relationsState.relations.parents
@@ -226,6 +225,8 @@ module.exports = React.createClass
         deleteProps={deleteProps}
         statusProps={statusProps}
         style={@props.style}
+        onPictureClick={this.props.onPictureClick}
+        pictureLinkStyle={this.props.pictureLinkStyle}
         />
     else if @props.listThumb
       <ListThumbnail
@@ -241,6 +242,8 @@ module.exports = React.createClass
         favoriteProps={favoriteProps}
         deleteProps={deleteProps}
         get={get}
+        onPictureClick={this.props.onPictureClick}
+        pictureLinkStyle={this.props.pictureLinkStyle}
         />
     else
       <ResourceThumbnailRenderer
@@ -248,7 +251,6 @@ module.exports = React.createClass
         mediaType={resourceMediaType}
         elm={elm}
         get={get}
-        pictureOnClick={onClick}
         relationsProps={relationsProps}
         favoriteProps={favoriteProps}
         deleteProps={deleteProps}
@@ -256,6 +258,8 @@ module.exports = React.createClass
         selectProps={selectProps}
         textProps={textProps}
         style={@props.style}
+        onPictureClick={this.props.onPictureClick}
+        pictureLinkStyle={this.props.pictureLinkStyle}
         />
 
 

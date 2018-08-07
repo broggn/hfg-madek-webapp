@@ -880,6 +880,7 @@ module.exports = React.createClass
                 unselectResources={@unselectResources}
                 selectResources={@selectResources}
                 trigger={@reducTrigger}
+                selectionMode={@state.reduc.components.batch.data.open}
               />
 
             }

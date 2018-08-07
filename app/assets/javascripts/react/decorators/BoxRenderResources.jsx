@@ -85,6 +85,7 @@ class BoxRenderResources extends React.Component {
             trigger={this.props.trigger}
             isSelected={f.find(selectedResources, (sr) => sr.uuid == itemState.data.resource.uuid)}
             showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
+            selectionMode={this.props.selectionMode}
           />
         )
       }

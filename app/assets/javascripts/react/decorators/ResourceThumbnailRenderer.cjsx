@@ -17,7 +17,7 @@ module.exports = React.createClass
   render: ({resourceType,
       mediaType,
       elm, get,
-      pictureOnClick,
+      onPictureClick,
       relationsProps,
       favoriteProps,
       deleteProps,
@@ -91,8 +91,8 @@ module.exports = React.createClass
       alt: get.title
       mediaType: mediaType
       # click handlers:
-      onClick: pictureOnClick
-      linkStyle: ({cursor: 'cell'} if pictureOnClick && selectProps && (pictureOnClick == selectProps.onSelect))
+      onPictureClick: onPictureClick
+      pictureLinkStyle: @props.pictureLinkStyle
       # extra elements (nested for layout):
       meta: textProps
       badgeLeft: statusIcon
