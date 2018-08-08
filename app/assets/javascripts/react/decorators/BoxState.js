@@ -73,7 +73,8 @@ module.exports = (merged) => {
         data: {
           loadingNextPage: false,
           selectedResources: null,
-          applyFormData: null
+          applyFormData: null,
+          resultMessage: null
         },
         components: {
           resources: nextResources(),
@@ -85,7 +86,8 @@ module.exports = (merged) => {
         data: {
           loadingNextPage: nextLoadingNextPage(),
           selectedResources: nextSelectedResources(),
-          applyFormData: nextApplyFormData()
+          applyFormData: nextApplyFormData(),
+          resultMessage: nextResultMessage()
         },
         components: {
           resources: nextResources(),
@@ -95,7 +97,8 @@ module.exports = (merged) => {
     }
   }
 
-  var nextApplyFormData = () => {
+
+  var willStartApply = () => {
 
     var anyApply = () => {
       return l.filter(
@@ -104,7 +107,33 @@ module.exports = (merged) => {
       ).length > 0
     }
 
-    if(formsValid(merged) && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())) {
+    return formsValid(merged) && (event.action == 'apply' || event.action == 'apply-selected' || anyApply())
+  }
+
+
+  var nextResultMessage = () => {
+
+    if(willStartApply()) {
+      return null
+    } else if(!thereAreUnfinished && anyResourceJustFinished) {
+      var message = () => {
+        if(thereAreFailures) {
+          return 'failure'
+        } else {
+          return 'success'
+        }
+      }
+      return message()
+    } else {
+      return data.resultMessage
+    }
+
+  }
+
+  var nextApplyFormData = () => {
+
+
+    if(willStartApply()) {
       return l.map(
         components.batch.components.metaKeyForms,
         (mkf) => {

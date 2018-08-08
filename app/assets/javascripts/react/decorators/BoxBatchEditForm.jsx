@@ -390,6 +390,25 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
+  renderSuccessMessage() {
+
+    if(this.props.stateBox.data.resultMessage != 'success') {
+      return null
+    }
+
+    return (
+      <div style={{clear: 'both', paddingTop: '10px'}}>
+
+        <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
+          <div>
+            Processing successful
+          </div>
+        </div>
+      </div>
+    )
+
+  }
+
   render() {
 
     let {data, components} = this.stateBatch()
@@ -429,6 +448,7 @@ class BoxBatchEditForm extends React.Component {
             <div>
               {this.renderHint()}
               {this.renderProgress()}
+              {this.renderSuccessMessage()}
             </div>
           </div>
         </div>
