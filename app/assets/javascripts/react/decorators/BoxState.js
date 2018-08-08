@@ -250,13 +250,25 @@ module.exports = (merged) => {
 
     }
 
+    var toCopy = () => {
+      var r = l.find(
+        components.resources,
+        (rs) => rs.event.action == 'copy'
+      )
+      if(!r) {
+        return null
+      } else {
+        return r.data.resource
+      }
+    }
 
     return {
       reset: false,
       reduce: BoxBatchEdit,
       props: {
         mount: event.action == 'mount',
-        invalidMetaKeyUuids: updateInvalids()
+        invalidMetaKeyUuids: updateInvalids(),
+        copy: toCopy()
       }
     }
   }

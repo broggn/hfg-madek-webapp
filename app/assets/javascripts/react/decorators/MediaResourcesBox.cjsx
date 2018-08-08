@@ -870,6 +870,7 @@ module.exports = React.createClass
                 perPage={@props.get.config.per_page}
                 showBatchButtons={
                   {
+                    open: @state.reduc.components.batch.data.open
                     editMode: @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0,
                     processing: f.filter(
                       this.state.reduc.components.resources,

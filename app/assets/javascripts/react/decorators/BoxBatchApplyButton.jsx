@@ -20,6 +20,35 @@ class BoxBatchApplyButton extends React.Component {
     this.props.trigger(this.props.resourceState, {action: 'retry', uuid: resource.uuid, type: resource.type})
   }
 
+  onCopy(event) {
+    var resource = this.props.resourceState.data.resource
+    this.props.trigger(this.props.resourceState, {action: 'copy', uuid: resource.uuid, type: resource.type})
+  }
+
+  renderCopy() {
+
+    if(!this.props.showBatchButtons.open) {
+      return null
+    }
+
+    return (
+      <span
+        className='primary-button'
+        style={{
+          display: 'inline-block',
+          padding: (this.props.big ? null : '0px 7px'),
+          fontSize: (this.props.big ? null : '10px'),
+          cursor: 'pointer',
+          minHeight: (this.props.big ? null : 'inherit'),
+          lineHeight: (this.props.big ? null : 'inherit')
+        }}
+        onClick={(e) => this.onCopy(e)}
+      >
+        {'copy'}
+      </span>
+    )
+  }
+
   renderApply() {
 
     var renderLabel = (text) => {
@@ -30,7 +59,7 @@ class BoxBatchApplyButton extends React.Component {
             borderRadius: '5px',
             backgroundColor: 'rgba(255, 255, 255, 0.5)',
             color: 'rgb(90, 90, 90)',
-            padding: (this.props.big ? '0px 10px': '0px 4px'),
+            padding: (this.props.big ? '0px 7px': '0px 4px'),
             fontSize: (this.props.big ? '18px' : '10px'),
           }}
         >
@@ -45,7 +74,7 @@ class BoxBatchApplyButton extends React.Component {
           className='primary-button'
           style={{
             display: 'inline-block',
-            padding: (this.props.big ? null : '0px 10px'),
+            padding: (this.props.big ? null : '0px 7px'),
             fontSize: (this.props.big ? null : '10px'),
             cursor: 'pointer',
             minHeight: (this.props.big ? null : 'inherit'),
@@ -65,7 +94,7 @@ class BoxBatchApplyButton extends React.Component {
           className='primary-button'
           style={{
             display: 'inline-block',
-            padding: (this.props.big ? null : '0px 10px'),
+            padding: (this.props.big ? null : '0px 7px'),
             fontSize: (this.props.big ? null : '10px'),
             cursor: 'pointer',
             minHeight: (this.props.big ? null : 'inherit'),
@@ -106,10 +135,11 @@ class BoxBatchApplyButton extends React.Component {
           marginRight: 'auto',
           zIndex: '10',
           textAlign: 'center',
-          width: (this.props.big ? '100px' : '60px')
+          width: (this.props.big ? '100px' : '140px')
         }}>
           <div>
             {this.renderApply()}
+            {this.renderCopy()}
           </div>
         </div>
       </div>

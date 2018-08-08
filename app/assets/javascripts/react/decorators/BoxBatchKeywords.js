@@ -17,11 +17,27 @@ module.exports = (merged) => {
       loadKeywords()
     }
 
+    var initialKeywords = () => {
+      if(nextProps.values) {
+        return l.map(
+          nextProps.values,
+          (v) => {
+            return {
+              id: v.uuid,
+              label: v.label
+            }
+          }
+        )
+      } else {
+        return []
+      }
+    }
+
     if(initial) {
       return {
         data: {
           text: '',
-          keywords: [],
+          keywords: initialKeywords(),
           showProposals: false,
           keywordProposals: null
         }

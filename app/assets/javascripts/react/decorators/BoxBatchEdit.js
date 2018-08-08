@@ -12,16 +12,41 @@ import BoxBatchPeople from './BoxBatchPeople.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 
 
-module.exports = ({event, trigger, initial, components, data, nextProps}) => {
+module.exports = (merged) => {
+
+  let {event, trigger, initial, components, data, nextProps} = merged
 
   var cachedAllMetaKeysById = null
 
   var next = () => {
 
+    if(nextProps.copy) {
+      xhr.get(
+        {
+          url: nextProps.copy.url,
+          json: true
+        },
+        (err, res, body) => {
+          var md = l.flatten(
+            l.map(
+              body.meta_data.by_vocabulary,
+              (v) => v.meta_data
+            )
+          )
+
+          trigger(merged, {
+            action: 'copy-loaded',
+            metaData: md
+          })
+        }
+      )
+    }
+
     if(initial) {
       return {
         data: {
           open: false,
+          copying: false,
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
         },
         components: {
@@ -33,6 +58,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return {
         data: {
           open: nextOpen(),
+          copying: nextCopying(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
         },
         components: {
@@ -42,6 +68,16 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       }
     }
 
+  }
+
+  var nextCopying = () => {
+    if(nextProps.copy) {
+      return true
+    } else if(event.action == 'copy-loaded') {
+      return false
+    } else {
+      return data.copying
+    }
   }
 
   var nextInvalidMetaKeyUuids = () => {
@@ -145,7 +181,31 @@ module.exports = ({event, trigger, initial, components, data, nextProps}) => {
       return mapping[type]
     }
 
-    if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
+    if(nextProps.copy) {
+      return []
+    }
+    else if(event.action == 'copy-loaded') {
+      return l.map(
+        event.metaData,
+        (md) => {
+          var metaKeyId = md.meta_key_id
+          return {
+            reuseId: null,
+            reset: false,
+            reduce: decideReduce(metaKeyId),
+            props: {
+              metaKeyId: metaKeyId,
+              metaKey: findMetaKey(metaKeyId),
+              mandatoryForTypes: mandatoryForTypes(metaKeyId),
+              invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId),
+              values: md.values
+            }
+          }
+        }
+      )
+
+    }
+    else if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
       return l.concat(
         mapExisting(),
         createBoxBatchEdit(null, event.metaKeyId)

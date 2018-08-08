@@ -7,14 +7,23 @@ import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 
 
-module.exports = ({event, data, initial}) => {
+module.exports = ({event, data, initial, nextProps}) => {
 
   var next = () => {
 
     if(initial) {
+
+      var initialText = () => {
+        if(nextProps.values) {
+          return nextProps.values[0]
+        } else {
+          return ''
+        }
+      }
+
       return {
         data: {
-          text: ''
+          text: initialText()
         }
       }
     } else {

@@ -425,6 +425,32 @@ class BoxBatchEditForm extends React.Component {
         )
       }
 
+      var renderRight = () => {
+
+        if(this.props.stateBox.components.batch.data.copying) {
+          return (
+            <div>copying...</div>
+          )
+        } else {
+          return (
+            <div style={{width: '50%', float: 'right'}}>
+              {this.renderInvalidMessage()}
+              {this.renderKeyForms()}
+
+              <div style={{marginTop: '20px'}}>
+                {this.renderApplyAll()}
+                {this.renderApplySelected()}
+              </div>
+              <div>
+                {this.renderHint()}
+                {this.renderProgress()}
+                {this.renderSuccessMessage()}
+              </div>
+            </div>
+          )
+        }
+      }
+
       return (
         <div className='ui-resources-holder pam'>
 
@@ -437,20 +463,7 @@ class BoxBatchEditForm extends React.Component {
           <div style={{width: '50%', float: 'left'}}>
             <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
           </div>
-          <div style={{width: '50%', float: 'right'}}>
-            {this.renderInvalidMessage()}
-            {this.renderKeyForms()}
-
-            <div style={{marginTop: '20px'}}>
-              {this.renderApplyAll()}
-              {this.renderApplySelected()}
-            </div>
-            <div>
-              {this.renderHint()}
-              {this.renderProgress()}
-              {this.renderSuccessMessage()}
-            </div>
-          </div>
+          {renderRight()}
         </div>
       )
     }
