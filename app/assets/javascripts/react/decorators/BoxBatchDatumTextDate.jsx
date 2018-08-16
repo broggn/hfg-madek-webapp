@@ -176,14 +176,16 @@ class BoxBatchDatumTextDate extends React.Component {
     return {
       clear: 'both',
       position: 'absolute',
-      zIndex: '1000',
+      zIndex: '2000',
       backgroundColor: '#fff',
       padding: '0px',
       borderRadius: '5px',
       top: '7px',
       WebkitBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
       MozBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
-      boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)'
+      boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
+      width: (this.props.metaKeyForm.data.showFromTo ? '500px' : null),
+      left: (this.props.metaKeyForm.data.showFromTo ? '-427px' : null)
     }
     // return {
     //   clear: 'both',
@@ -197,9 +199,13 @@ class BoxBatchDatumTextDate extends React.Component {
     // }
   }
 
-  renderDatePickers() {
-    if(this.props.metaKeyForm.data.showAt) {
-      return (
+  renderAtDatePicker() {
+    if(!this.props.metaKeyForm.data.showAt) {
+      return null
+    }
+
+    return (
+      <div style={{position: 'relative'}}>
         <DatePickerPopup onClose={() => this.closeAt()} style={this.popupStyle()}>
           <CustomDatePicker
             passedState={this.props.metaKeyForm.data.stateAt}
@@ -207,16 +213,25 @@ class BoxBatchDatumTextDate extends React.Component {
             callback={(d) => this.selectAt(d)}
           />
         </DatePickerPopup>
-      )
-    } else if(this.props.metaKeyForm.data.showFromTo) {
-      return (
+      </div>
+    )
+
+  }
+
+  renderFromToDatePickers() {
+    if(!this.props.metaKeyForm.data.showFromTo) {
+      return null
+    }
+
+    return (
+      <div style={{position: 'relative'}}>
         <DatePickerPopup onClose={() => this.closeFromTo()} style={this.popupStyle()}>
           {this.renderFrom()}
           <div style={{float: 'left', padding: '100px 30px 0px 30px', fontSize: '30px', color: '#bbb'}}>-</div>
           {this.renderTo()}
         </DatePickerPopup>
-      )
-    }
+      </div>
+    )
   }
 
   focus(event) {
@@ -252,6 +267,7 @@ class BoxBatchDatumTextDate extends React.Component {
               onFocus={(e) => this.focus(e)}
             />
           </div>
+          {this.renderAtDatePicker()}
         </div>
         <div style={{display: 'inline-block'}}>
           <div onClick={(e) => this.showFromTo()} className='button' style={{marginLeft: '10px'}}>
@@ -259,9 +275,7 @@ class BoxBatchDatumTextDate extends React.Component {
             {' - '}
             <i className='fa fa-calendar'></i>
           </div>
-        </div>
-        <div style={{position: 'relative'}}>
-          {this.renderDatePickers()}
+          {this.renderFromToDatePickers()}
         </div>
       </div>
     )
