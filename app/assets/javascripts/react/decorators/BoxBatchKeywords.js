@@ -23,7 +23,8 @@ module.exports = (merged) => {
           text: '',
           keywords: [],
           showProposals: false,
-          keywordProposals: null
+          keywordProposals: null,
+          keyCursor: -1
         }
       }
     } else {
@@ -32,10 +33,48 @@ module.exports = (merged) => {
           text: nextText(),
           keywords: nextKeywords(),
           showProposals: nextShowProposals(),
-          keywordProposals: nextKeywordProposals()
+          keywordProposals: nextKeywordProposals(),
+          keyCursor: nextKeyCursor()
         }
       }
     }
+  }
+
+  var nextKeyCursor = () => {
+
+    var proposals = nextKeywordProposals()
+
+    if(!nextShowProposals()) {
+      return - 1
+    }
+    else if(!proposals || proposals.length == 0) {
+      return - 1
+    }
+
+
+    var limitCursor = (nextValue) => {
+      if(nextValue >= proposals.length) {
+        return proposals.length - 1
+      }
+      else if(nextValue < 0) {
+        return 0
+      }
+      else {
+        return nextValue
+      }
+    }
+
+    if(event.action == 'cursor-down') {
+      return limitCursor(data.keyCursor + 1)
+    }
+    else if(event.action == 'cursor-up') {
+      return limitCursor(data.keyCursor - 1)
+    }
+    else {
+      return limitCursor(data.keyCursor)
+    }
+
+
   }
 
   var nextText = () => {
@@ -68,7 +107,7 @@ module.exports = (merged) => {
         (k) => k.id != event.id
       )
     }
-    else if(event.action == 'new-keyword'){
+    else if(event.action == 'new-keyword' && !l.isEmpty(data.text)) {
       return data.keywords.concat({
         label: data.text
       })

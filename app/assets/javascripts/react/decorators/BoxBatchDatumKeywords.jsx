@@ -28,8 +28,15 @@ class BoxBatchDatumKeywords extends React.Component {
       return null
     }
 
+    console.log('key code = ' + event.keyCode)
     if(event.keyCode == 13) {
       this.props.trigger(this.props.metaKeyForm, {action: 'new-keyword'})
+    }
+    else if(event.keyCode == 40) {
+      this.props.trigger(this.props.metaKeyForm, {action: 'cursor-down'})
+    }
+    else if(event.keyCode == 38) {
+      this.props.trigger(this.props.metaKeyForm, {action: 'cursor-up'})
     }
   }
 
@@ -57,7 +64,14 @@ class BoxBatchDatumKeywords extends React.Component {
 
   renderKeyword(k, i) {
     return (
-      <span key={i} style={{fontStyle: (!k.id ? 'italic' : 'normal'), marginRight: '10px', color: (!k.id ? '#aaa' : '#000')}}>
+      <span
+        key={i}
+        style={{
+          fontStyle: (!k.id ? 'italic' : 'normal'),
+          marginRight: '10px',
+          color: (!k.id ? '#aaa' : '#000')
+        }}
+      >
 
         <span onClick={(e) => this.removeKeyword(k)} style={{cursor: 'pointer'}}>
           <i className='icon-close' style={{position: 'relative', top: '1px', marginRight: '0px', fontSize: '12px'}}></i>
@@ -87,9 +101,16 @@ class BoxBatchDatumKeywords extends React.Component {
     this.props.trigger(this.props.metaKeyForm, {action: 'close-proposals'})
   }
 
-  renderKeywordProposal(k) {
+  renderKeywordProposal(k, i) {
     return (
-      <div key={k.uuid} style={{cursor: 'pointer'}} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
+      <div
+        key={k.uuid}
+        style={{
+          cursor: 'pointer',
+          backgroundColor: (this.props.metaKeyForm.data.keyCursor == i ? '#ffa' : null)
+        }}
+        onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}
+      >
         {k.label}
       </div>
     )
@@ -107,7 +128,7 @@ class BoxBatchDatumKeywords extends React.Component {
     else {
       return l.map(
         this.props.metaKeyForm.data.keywordProposals,
-        (k) => this.renderKeywordProposal(k)
+        (k, i) => this.renderKeywordProposal(k, i)
       )
     }
   }
