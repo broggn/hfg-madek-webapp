@@ -30,7 +30,7 @@ class BoxBatchDatumKeywords extends React.Component {
 
     console.log('key code = ' + event.keyCode)
     if(event.keyCode == 13) {
-      this.props.trigger(this.props.metaKeyForm, {action: 'new-keyword'})
+      this.props.trigger(this.props.metaKeyForm, {action: 'cursor-enter'})
     }
     else if(event.keyCode == 40) {
       this.props.trigger(this.props.metaKeyForm, {action: 'cursor-down'})
@@ -107,7 +107,8 @@ class BoxBatchDatumKeywords extends React.Component {
         key={k.uuid}
         style={{
           cursor: 'pointer',
-          backgroundColor: (this.props.metaKeyForm.data.keyCursor == i ? '#ffa' : null)
+          backgroundColor: (this.props.metaKeyForm.data.keyCursor == i ? '#d6d6d6' : null),
+          padding: '0px 10px'
         }}
         onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}
       >
@@ -118,12 +119,16 @@ class BoxBatchDatumKeywords extends React.Component {
   }
 
   renderKeywordProposals() {
-    // if(!this.props.metaKeyForm.data.showProposals) {
-    //   return null
-    // }
-    // else
     if(!this.props.metaKeyForm.data.keywordProposals) {
-      return 'Loading...'
+      return (
+        <div
+          style={{
+            padding: '0px 10px'
+          }}
+        >
+          {'Loading...'}
+        </div>
+      )
     }
     else {
       return l.map(
@@ -148,7 +153,6 @@ class BoxBatchDatumKeywords extends React.Component {
             zIndex: '1000',
             backgroundColor: '#fff',
             borderRadius: '5px',
-            padding: '0px 10px',
             marginRight: '5px',
             marginBottom: '5px',
             WebkitBoxShadow: '0px 0px 3px 0px rgba(0,0,0,0.5)',

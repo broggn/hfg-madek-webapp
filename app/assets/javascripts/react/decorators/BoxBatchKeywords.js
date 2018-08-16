@@ -56,8 +56,8 @@ module.exports = (merged) => {
       if(nextValue >= proposals.length) {
         return proposals.length - 1
       }
-      else if(nextValue < 0) {
-        return 0
+      else if(nextValue < -1) {
+        return -1
       }
       else {
         return nextValue
@@ -78,7 +78,7 @@ module.exports = (merged) => {
   }
 
   var nextText = () => {
-    if(event.action == 'new-keyword' || event.action == 'select-keyword' || event.action == 'close-proposals') {
+    if((event.action == 'cursor-enter' && data.keyCursor == - 1) || event.action == 'select-keyword' || event.action == 'close-proposals') {
       return ''
     }
     else if(event.action == 'change-text') {
@@ -107,10 +107,28 @@ module.exports = (merged) => {
         (k) => k.id != event.id
       )
     }
-    else if(event.action == 'new-keyword' && !l.isEmpty(data.text)) {
-      return data.keywords.concat({
-        label: data.text
-      })
+    else if((event.action == 'cursor-enter' && data.keyCursor == - 1) && !l.isEmpty(data.text)) {
+
+      if(l.find(data.keywords, (k) => k.label == data.text)) {
+        return data.keywords
+      } else {
+        return data.keywords.concat({
+          label: data.text
+        })
+      }
+
+    }
+    else if(event.action == 'cursor-enter' && data.keyCursor != -1) {
+      var keyword = nextKeywordProposals()[data.keyCursor]
+
+      if(l.find(data.keywords, (k) => k.label == keyword.label)) {
+        return data.keywords
+      } else {
+        return data.keywords.concat({
+          id: keyword.uuid,
+          label: keyword.label
+        })
+      }
     }
     else if(event.action == 'select-keyword' && !existsAlready()) {
       return data.keywords.concat({
