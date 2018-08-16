@@ -24,11 +24,6 @@ class BoxBatchDatumKeywords extends React.Component {
   }
 
   onKeyDown(event) {
-    if(!this.props.metaKeyForm.props.metaKey.is_extensible) {
-      return null
-    }
-
-    console.log('key code = ' + event.keyCode)
     if(event.keyCode == 13) {
       this.props.trigger(this.props.metaKeyForm, {action: 'cursor-enter'})
     }
@@ -189,14 +184,6 @@ class BoxBatchDatumKeywords extends React.Component {
       )
     }
 
-    var keyDownHandler = () => {
-      if (!this.props.metaKeyForm.props.metaKey.is_extensible) {
-        return null
-      } else {
-        return (e) => this.onKeyDown(e)
-      }
-    }
-
     return (
       <div
         style={{
@@ -219,7 +206,7 @@ class BoxBatchDatumKeywords extends React.Component {
           }}
           value={this.props.metaKeyForm.data.text}
           onFocus={(e) => this.onFocus(e)}
-          onKeyDown={keyDownHandler()}
+          onKeyDown={(e) => this.onKeyDown(e)}
           onChange={(e) => this.onChange(e.target.value)}
         />
         {' '}

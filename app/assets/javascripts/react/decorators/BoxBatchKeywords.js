@@ -78,7 +78,7 @@ module.exports = (merged) => {
   }
 
   var nextText = () => {
-    if((event.action == 'cursor-enter' && data.keyCursor == - 1) || event.action == 'select-keyword' || event.action == 'close-proposals') {
+    if((event.action == 'cursor-enter' && data.keyCursor == - 1 && nextProps.metaKey.is_extensible) || event.action == 'select-keyword' || event.action == 'close-proposals') {
       return ''
     }
     else if(event.action == 'change-text') {
@@ -107,7 +107,7 @@ module.exports = (merged) => {
         (k) => k.id != event.id
       )
     }
-    else if((event.action == 'cursor-enter' && data.keyCursor == - 1) && !l.isEmpty(data.text)) {
+    else if((event.action == 'cursor-enter' && data.keyCursor == - 1 && nextProps.metaKey.is_extensible) && !l.isEmpty(data.text)) {
 
       if(l.find(data.keywords, (k) => k.label == data.text)) {
         return data.keywords
