@@ -124,7 +124,7 @@ class BoxBatchDatumKeywords extends React.Component {
           onClose={() => this.onCloseProposals()}
           style={{
             position: 'absolute',
-            zIndex: '10000',
+            zIndex: '1000',
             backgroundColor: '#fff',
             borderRadius: '5px',
             padding: '0px 10px',

@@ -166,7 +166,7 @@ class BoxBatchApplyButton extends React.Component {
     }
 
     return (
-      <div style={{position: 'relative', zIndex: 1000000}}>
+      <div style={{position: 'relative', zIndex: '1000'}}>
         <div style={{
           display: 'block',
           position: 'absolute',

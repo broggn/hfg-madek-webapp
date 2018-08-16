@@ -180,7 +180,7 @@ class BoxBatchDatumTextDate extends React.Component {
       backgroundColor: '#fff',
       padding: '0px',
       borderRadius: '5px',
-      top: '40px',
+      top: '7px',
       WebkitBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
       MozBoxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)',
       boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.5)'
@@ -225,22 +225,39 @@ class BoxBatchDatumTextDate extends React.Component {
   }
 
   renderValueDate() {
+
+    if(!this.props.editable) {
+      return (
+        this.props.metaKeyForm.data.text
+      )
+    }
+
+
     return (
       <div>
-        <div>
-          <div className='col1of3'>
-            <div style={{marginRight: '30px'}}>
-              <span onClick={(e) => this.focus(e)}>
-                <input autoComplete='off' onFocus={(e) => this.focus(e)} onChange={(e) => this.setText(e)} type='text' value={this.props.metaKeyForm.data.text} style={{width: '100%'}} />
-              </span>
-            </div>
+        <div style={{display: 'inline-block', width: 'calc(100% - 200px)'}}>
+          <div style={{display: 'block'}}>
+            <input
+              style={{
+                borderRadius: '5px',
+                border: '1px solid #ddd',
+                padding: '5px',
+                boxSizing: 'border-box',
+                width: '100%',
+                height: '30px',
+                fontSize: '12px'
+              }}
+              value={this.props.metaKeyForm.data.text}
+              onChange={(e) => this.setText(e)}
+              onFocus={(e) => this.focus(e)}
+            />
           </div>
-          <div className='col2of3'>
-            <div onClick={(e) => this.showFromTo()} className='button' style={{marginLeft: '10px', marginTop: '2px', display: 'inline-block'}}>
-              <i className='fa fa-calendar'></i>
-              {' - '}
-              <i className='fa fa-calendar'></i>
-            </div>
+        </div>
+        <div style={{display: 'inline-block'}}>
+          <div onClick={(e) => this.showFromTo()} className='button' style={{marginLeft: '10px'}}>
+            <i className='fa fa-calendar'></i>
+            {' - '}
+            <i className='fa fa-calendar'></i>
           </div>
         </div>
         <div style={{position: 'relative'}}>
