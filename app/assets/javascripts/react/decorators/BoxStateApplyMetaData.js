@@ -64,6 +64,10 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
     return [data.text]
   }
 
+  var formToDataTextDate = (data) => {
+    return [data.text]
+  }
+
   var formToDataKeywords = (data) => {
     return l.map(
       data.keywords,
@@ -92,7 +96,7 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
   var formToData = (fd) => {
     return {
       'MetaDatum::Text': formToDataText,
-      'MetaDatum::TextDate': formToDataText,
+      'MetaDatum::TextDate': formToDataTextDate,
       'MetaDatum::Keywords': formToDataKeywords,
       'MetaDatum::People': formToDataPeople
     }[fd.props.metaKey.value_type](fd.data)
