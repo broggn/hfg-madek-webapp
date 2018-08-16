@@ -4,6 +4,7 @@ import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
 import BoxBatchDatumText from './BoxBatchDatumText.jsx'
+import BoxBatchDatumTextDate from './BoxBatchDatumTextDate.jsx'
 import BoxBatchDatumKeywords from './BoxBatchDatumKeywords.jsx'
 import BoxBatchDatumPeople from './BoxBatchDatumPeople.jsx'
 
@@ -24,6 +25,12 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     )
   }
 
+  renderTextDate() {
+    return (
+      <BoxBatchDatumTextDate trigger={this.props.trigger} metaKeyForm={this.props.metaKeyForm} editable={true} />
+    )
+  }
+
   renderKeywords() {
     return (
       <BoxBatchDatumKeywords trigger={this.props.trigger} metaKeyForm={this.props.metaKeyForm} editable={true} />
@@ -39,7 +46,7 @@ class BoxBatchEditMetaKeyForm extends React.Component {
   renderers() {
     return {
       'MetaDatum::Text': () => this.renderText(),
-      'MetaDatum::TextDate': () => this.renderText(),
+      'MetaDatum::TextDate': () => this.renderTextDate(),
       'MetaDatum::Keywords': () => this.renderKeywords(),
       'MetaDatum::People': () => this.renderPeople()
     }

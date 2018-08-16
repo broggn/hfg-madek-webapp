@@ -6,7 +6,7 @@ import url from 'url'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchTextInput from './BoxBatchTextInput.js'
-import BoxBatchDateInput from './BoxBatchDateInput.js'
+import BoxBatchTextDateInput from './BoxBatchTextDateInput.js'
 import BoxBatchKeywords from './BoxBatchKeywords.js'
 import BoxBatchPeople from './BoxBatchPeople.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
@@ -190,7 +190,7 @@ module.exports = ({event, trigger, initial, components, data, nextProps, path}) 
     var decideReduce = (metaKeyId) => {
       var mapping = {
         'MetaDatum::Text': BoxBatchTextInput,
-        'MetaDatum::TextDate': BoxBatchTextInput,
+        'MetaDatum::TextDate': BoxBatchTextDateInput,
         'MetaDatum::Keywords': BoxBatchKeywords,
         'MetaDatum::People': BoxBatchPeople
       }

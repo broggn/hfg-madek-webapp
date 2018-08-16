@@ -5,8 +5,6 @@ import async from 'async'
 import url from 'url'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
-import BoxBatchTextInput from './BoxBatchTextInput.js'
-import BoxBatchDateInput from './BoxBatchDateInput.js'
 
 
 module.exports = (merged) => {
