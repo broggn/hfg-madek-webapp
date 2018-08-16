@@ -7,8 +7,9 @@ import cx from 'classnames/dedupe'
 import boxSetUrlParams from './BoxSetUrlParams.jsx'
 import setsFallbackUrl from '../../lib/sets-fallback-url.coffee'
 import Preloader from '../ui-components/Preloader.cjsx'
-import ActionsDropdown from './resourcesbox/ActionsDropdown.cjsx'
+import ActionsDropdownHelper from './resourcesbox/ActionsDropdownHelper.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
+import BoxRenderResource from './BoxRenderResource.jsx'
 
 class BoxRenderResources extends React.Component {
 
@@ -16,7 +17,40 @@ class BoxRenderResources extends React.Component {
     super(props)
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    var l = require('lodash')
+
+
+    // var rs1 = this.props.resources
+    // var rs2 = nextProps.resources
+    // l.each(
+    //   rs1,
+    //   (r, i) => {
+    //     var r1 = rs1[i]
+    //     var r2 = rs2[i]
+    //     if(!l.isEqual(r1, r2)) {
+    //
+    //       l.each(
+    //         r1,
+    //         (v, k) => {
+    //           if(!l.isEqual(v, r2[k])) {
+    //             console.log('not equal = ' + k)
+    //           }
+    //         }
+    //       )
+    //
+    //
+    //     }
+    //   }
+    //
+    // )
+
+    // console.log('state = ' + l.isEqual(this.state, nextState) + ' props = ' + l.isEqual(this.props, nextProps))
+    return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
+  }
+
   render() {
+
     var resources = this.props.resources
     var listClasses = this.props.listClasses
     var actionsDropdownParameters = this.props.actionsDropdownParameters
@@ -36,46 +70,22 @@ class BoxRenderResources extends React.Component {
 
     var renderPage = (page, i) => {
 
-      var renderItem = (item) => {
-        if(!item.uuid) {
-          // should not be the case anymore after uploader is not using this box anymore
-          throw new Error('no uuid')
-        }
+      var renderItem = (itemState) => {
 
-        var key = item.uuid // or item.cid
-
-        var style = null
-        var selection = selectedResources
-        // selection defined means selection is enabled
-        var showActions = ActionsDropdown.showActionsConfig(actionsDropdownParameters)
-        if(isClient && selection && f.any(f.values(showActions))) {
-          var isSelected = selectedResources.contains(item)
-          var onSelect = f.curry(onSelectResource)(item)
-          // if in selection mode, intercept clicks as 'select toggle'
-          var onClick = null
-          if(config.layout == 'miniature' && !selection.empty()) {
-            onClick = onSelect
-          }
-
-          //  when hightlighting editables, we just dim everything else:
-          if(ActionsDropdown.isResourceNotInScope(item, isSelected, hoverMenuId)) {
-            style = {opacity: 0.35}
-          }
-
-        }
-
-
-        // TODO: get={model}
         return (
-          <ResourceThumbnail elm='div'
-            style={style}
-            get={item}
-            isClient={isClient} fetchRelations={fetchRelations}
-            isSelected={isSelected} onSelect={onSelect} onClick={onClick}
-            authToken={authToken} key={key}
-            pinThumb={config.layout == 'tiles'}
-            listThumb={config.layout == 'list'}
-            list_meta_data={item.list_meta_data}
+          <BoxRenderResource
+            resourceState={itemState}
+            isClient={isClient}
+            onSelectResource={onSelectResource}
+            config={config}
+            hoverMenuId={hoverMenuId}
+            showBatchButtons={this.props.showBatchButtons}
+            fetchRelations={fetchRelations}
+            key={itemState.data.resource.uuid}
+            trigger={this.props.trigger}
+            isSelected={f.find(selectedResources, (sr) => sr.uuid == itemState.data.resource.uuid)}
+            showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
+            selectionMode={this.props.selectionMode}
           />
         )
       }
@@ -95,16 +105,18 @@ class BoxRenderResources extends React.Component {
         var BoxPageCounter = require('./BoxPageCounter.jsx')
         return (
           <BoxPageCounter
-            showActions={ActionsDropdown.showActionsConfig(actionsDropdownParameters)}
+            showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
             selectedResources={selectedResources}
             isClient={isClient}
             showSelectionLimit={showSelectionLimit}
             resources={resources}
-            pageResources={page}
+            pageResources={f.map(page, (i) => i.data.resource)}
             selectionLimit={selectionLimit}
             pagination={pagination}
             perPage={this.props.perPage}
             pageIndex={i}
+            unselectResources={this.props.unselectResources}
+            selectResources={this.props.selectResources}
           />
         )
       }
