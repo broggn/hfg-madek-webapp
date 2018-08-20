@@ -24,17 +24,9 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    if(nextProps.loadMetaData) {// || event.action == 'load-meta-data-failure') {
+    if(nextProps.loadMetaData) {
       loadMetaData()
     }
-
-    // if(event.action == 'apply-success' || event.action == 'apply-error') {
-    //   // reloadResource()
-    // }
-
-    // if(event.action == 'reload-success') {
-    //   reloadMetaData()
-    // }
 
     if(initial) {
       return {
@@ -42,12 +34,6 @@ module.exports = (merged) => {
           resource: nextProps.resource,
           listMetaData: (nextProps.resource.list_meta_data ? nextProps.resource.list_meta_data : null),
           loadingListMetaData: nextProps.loadMetaData
-          // applyPending: false,
-          // applyingMetaData: false,
-          // applyDone: false,
-          // applyCancelled: false,
-          // applyError: false,
-          // sleep: false
         },
         components: {
           resourceBatch: nextResourceBatch()
@@ -59,12 +45,6 @@ module.exports = (merged) => {
           resource: nextResource(),
           listMetaData: nextListMetaData(),
           loadingListMetaData: nextLoadingListMetaData()
-          // applyPending: nextApplyPending(),
-          // applyingMetaData: nextApplyingMetaData(),
-          // applyDone: nextApplyDone(),
-          // applyCancelled: nextApplyCancelled(),
-          // applyError: nextApplyError(),
-          // sleep: nextSleep()
         },
         components: {
           resourceBatch: nextResourceBatch()
@@ -100,9 +80,9 @@ module.exports = (merged) => {
 
 
   var nextLoadingListMetaData = () => {
-    if(nextProps.loadMetaData/* || nextProps.waitApply*/) {
+    if(nextProps.loadMetaData) {
       return true
-    } else if(event.action == 'load-meta-data-success' || event.action == 'load-meta-data-failure') {// || event.action == 'reload-meta-data-success') {
+    } else if(event.action == 'load-meta-data-success' || event.action == 'load-meta-data-failure') {
       return false
     } else {
       return data.loadingListMetaData
@@ -114,24 +94,13 @@ module.exports = (merged) => {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json
-    // } else if(event.action == 'reload-meta-data-success') {
-    //   return event.json
     } else {
       return data.listMetaData
     }
   }
 
   var nextResource = () => {
-    // if(event.action == 'reload-success') {
-    //   // NOTE: Better give json back directly. But the reload answer does for
-    //   // example not contain list_meta_data_url. Thats why we merge here.
-    //   return l.merge(
-    //     data.resource,
-    //     event.json
-    //   )
-    // } else {
     return data.resource
-    // }
   }
 
 
@@ -176,44 +145,14 @@ module.exports = (merged) => {
 
   }
 
-  // var reloadMetaData = () => {
-  //   sharedLoadMetaData({
-  //     success: (json) => trigger(merged, {action: 'reload-meta-data-success', json: json}),
-  //     error: () => trigger(merged, {action: 'reload-meta-data-failure'})
-  //   })
-  // }
-
   var loadMetaData = () => {
-    // if(!merged.path) {
-    //   debugger
-    // }
     sharedLoadMetaData({
       success: (json) => {
-        // debugger
         trigger(merged, {action: 'load-meta-data-success', json: json})
       },
       error: () => trigger(merged, {action: 'load-meta-data-failure'})
     })
   }
-
-
-  // var reloadResource = () => {
-  //
-  //   xhr.get(
-  //     {
-  //       url: nextProps.resource.url,
-  //       json: true
-  //     },
-  //     (err, res, json) => {
-  //       if(err || res.statusCode > 400) {
-  //         // trigger({action: 'load-meta-data-failure'})
-  //       } else {
-  //         trigger(merged, {action: 'reload-success', json: json})
-  //       }
-  //     }
-  //   )
-  // }
-
 
 
   return next()

@@ -343,13 +343,8 @@ module.exports = (merged) => {
 
   var nextOpen = () => {
 
-    var ready = () => {
-      return true
-      // return components.loadMetaMetaData.data.metaKeysWithTypes
-    }
-
     if(event.action == 'toggle') {
-      if(ready() && !data.open) {
+      if(!data.open) {
         return true
       } else {
         return false
