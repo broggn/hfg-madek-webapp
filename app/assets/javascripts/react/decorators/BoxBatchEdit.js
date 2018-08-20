@@ -11,19 +11,30 @@ import BoxBatchKeywords from './BoxBatchKeywords.js'
 import BoxBatchPeople from './BoxBatchPeople.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 import BoxRedux from './BoxRedux.js'
+import BoxStateApplyMetaData from './BoxStateApplyMetaData.js'
 
 
-module.exports = ({event, trigger, initial, components, data, nextProps, path}) => {
+module.exports = (merged) => {
+
+  let {event, trigger, initial, components, data, nextProps, path} = merged
 
   var cachedAllMetaKeysById = null
 
   var next = () => {
 
+
+    if(!l.isEmpty(nextProps.cachedToApplyMetaData)) {
+      BoxStateApplyMetaData(data, components, nextProps.cachedToApplyMetaData, nextApplyFormData(), trigger)
+    }
+
+
+
     if(initial) {
       return {
         data: {
           open: false,
-          invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
+          invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
+          applyFormData: null
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -34,7 +45,8 @@ module.exports = ({event, trigger, initial, components, data, nextProps, path}) 
       return {
         data: {
           open: nextOpen(),
-          invalidMetaKeyUuids: nextInvalidMetaKeyUuids()
+          invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
+          applyFormData: nextApplyFormData()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -43,6 +55,24 @@ module.exports = ({event, trigger, initial, components, data, nextProps, path}) 
       }
     }
 
+  }
+
+  var nextApplyFormData = () => {
+
+
+    if(nextProps.willStartApply) {
+      return l.map(
+        components.metaKeyForms,
+        (mkf) => {
+          return {
+            data: mkf.data,
+            props: mkf.props
+          }
+        }
+      )
+    } else {
+      return data.applyFormData
+    }
   }
 
   var nextInvalidMetaKeyUuids = () => {

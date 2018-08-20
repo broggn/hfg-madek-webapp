@@ -11,7 +11,6 @@ import BoxResource from './BoxResource.js'
 import BoxRedux from './BoxRedux.js'
 import qs from 'qs'
 import BoxStatePrecalculate from './BoxStatePrecalculate.js'
-import BoxStateApplyMetaData from './BoxStateApplyMetaData.js'
 import BoxStateFetchNextPage from './BoxStateFetchNextPage.js'
 
 module.exports = (merged) => {
@@ -37,10 +36,6 @@ module.exports = (merged) => {
 
   var next = () => {
 
-    if(!l.isEmpty(cachedToApplyMetaData)) {
-      BoxStateApplyMetaData(data, components, cachedToApplyMetaData, nextApplyFormData(), trigger)
-    }
-
 
 
 
@@ -53,7 +48,6 @@ module.exports = (merged) => {
         data: {
           loadingNextPage: false,
           selectedResources: null,
-          applyFormData: null,
           resultMessage: nextResultMessage()
         },
         components: {
@@ -66,7 +60,6 @@ module.exports = (merged) => {
         data: {
           loadingNextPage: nextLoadingNextPage(),
           selectedResources: nextSelectedResources(),
-          applyFormData: nextApplyFormData(),
           resultMessage: nextResultMessage()
         },
         components: {
@@ -140,23 +133,7 @@ module.exports = (merged) => {
 
   }
 
-  var nextApplyFormData = () => {
 
-
-    if(willStartApply) {
-      return l.map(
-        components.batch.components.metaKeyForms,
-        (mkf) => {
-          return {
-            data: mkf.data,
-            props: mkf.props
-          }
-        }
-      )
-    } else {
-      return data.applyFormData
-    }
-  }
 
   var nextSelectedResources = () => {
     if(event.action == 'mount' && l.includes(['MediaResources', 'MediaEntries', 'Collections'], nextProps.get.type)) {
@@ -248,7 +225,9 @@ module.exports = (merged) => {
 
     var props = {
       mount: event.action == 'mount',
-      invalidMetaKeyUuids: updateInvalids()
+      invalidMetaKeyUuids: updateInvalids(),
+      cachedToApplyMetaData: cachedToApplyMetaData,
+      willStartApply: willStartApply
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)
