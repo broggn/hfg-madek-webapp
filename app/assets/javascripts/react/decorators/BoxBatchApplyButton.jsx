@@ -108,19 +108,19 @@ class BoxBatchApplyButton extends React.Component {
           }}
           onClick={(e) => this.onRetry(e)}
         >
-          {'retry'}
+          {t('resources_box_batch_status_retry')}
         </span>
       )
     } else if(components.resourceBatch.data.applyingMetaData) {
-      return renderLabel('applying')
+      return renderLabel(t('resources_box_batch_status_applying'))
     } else if(components.resourceBatch.data.applyDone) {
-      return renderLabel('done')
+      return renderLabel(t('resources_box_batch_status_done'))
     } else if(components.resourceBatch.data.applyPending) {
-      return renderLabel('waiting')
+      return renderLabel(t('resources_box_batch_status_waiting'))
     } else if(components.resourceBatch.data.applyCancelled) {
-      return renderLabel('cancelled')
+      return renderLabel(t('resources_box_batch_status_cancelled'))
     } else if(this.props.showBatchButtons.editMode && !components.resourceBatch.data.sleep){
-      return renderButton('apply', (e) => this.onApply(e))
+      return renderButton(t('resources_box_batch_status_apply'), (e) => this.onApply(e))
     } else {
       return null
     }

@@ -69,9 +69,9 @@ class BoxBatchEditMetaKeyForm extends React.Component {
 
     var mandatoryText = () => {
       if(mandatoryForTypes.length == 1 && mandatoryForTypes[0] == 'MediaEntry') {
-        return 'Pflichtfeld für Medien Einträge'
+        return t('resources_box_batch_mandatory_field_for_media_entry')
       }
-      return 'Pflichtfeld'
+      return t('resources_box_batch_mandatory_field')
     }
 
     return (
@@ -125,9 +125,9 @@ class BoxBatchEditMetaKeyForm extends React.Component {
     }
 
     if(l.includes(metaKey.scope, 'Entries') && hasSetsSelected()) {
-      return renderDiv('Dieser Wert wird nur auf Medien Einträge angewendet')
+      return renderDiv(t('resources_box_batch_field_only_for_entries'))
     } else if(l.includes(metaKey.scope, 'Sets') && hasEntriesSelected()) {
-      return renderDiv('Dieser Wert wird nur auf Sets angewendet')
+      return renderDiv(t('resources_box_batch_field_only_for_sets'))
     } else {
       return null
     }

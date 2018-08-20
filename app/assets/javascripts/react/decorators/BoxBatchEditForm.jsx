@@ -81,7 +81,7 @@ class BoxBatchEditForm extends React.Component {
             fontSize: '24px'
           }}
         />
-        Bitte warten und die Ansicht nicht verlassen.
+        {t('resources_box_batch_please_wait_and_done_leave')}
       </div>
     )
   }
@@ -126,7 +126,7 @@ class BoxBatchEditForm extends React.Component {
 
 
     var renderText = () => {
-      return 'Auf ' + this.editableSelectedCount() + ' selektierte anwenden'
+      return t('resources_box_batch_apply_on_selected_1') + this.editableSelectedCount() + t('resources_box_batch_apply_on_selected_2')
     }
 
     return (
@@ -142,8 +142,8 @@ class BoxBatchEditForm extends React.Component {
       >
         <div>
           <div>&nbsp;</div>
-          <div>selektiert: {this.selectedCount()}</div>
-          <div>davon editierbar: {this.editableSelectedCount()}</div>
+          <div>{t('resources_box_batch_stats_where_selected') + ' ' + this.selectedCount()}</div>
+          <div>{t('resources_box_batch_stats_where_editable') + ' ' + this.editableSelectedCount()}</div>
         </div>
         <div
           onClick={this.props.onClickApplySelected}
@@ -204,9 +204,9 @@ class BoxBatchEditForm extends React.Component {
     var renderText = () => {
 
       if(this.loadedCount() == totalCount()) {
-        return 'Auf alle ' + this.editableCount() + ' anwenden'
+        return t('resources_box_batch_apply_on_all_1') + this.editableCount() + t('resources_box_batch_apply_on_all_2')
       } else {
-        return 'Alle Seiten laden...'
+        return t('resources_box_batch_load_all_pages')
       }
 
       // Auf alle anwenden
@@ -223,9 +223,9 @@ class BoxBatchEditForm extends React.Component {
         }}
       >
         <div>
-          <div>Total: {this.props.totalCount}</div>
-          <div>davon geladen: {this.loadedCount()}</div>
-          <div>davon editierbar: {this.editableCount()}</div>
+          <div>{t('resources_box_batch_stats_total') + ' ' + this.props.totalCount}</div>
+          <div>{t('resources_box_batch_stats_where_loaded') + ' ' + this.loadedCount()}</div>
+          <div>{t('resources_box_batch_stats_where_editable') + ' ' + this.editableCount()}</div>
         </div>
         <div
           onClick={(this.toApplyCount() > 0 || this.loadedCount() != totalCount() ? null : this.props.onClickApplyAll)}
@@ -313,7 +313,7 @@ class BoxBatchEditForm extends React.Component {
           }}
           onClick={this.props.onClickIgnore}
         >
-          Fehler ignorieren
+          {t('resources_box_batch_ignore_failures')}
         </div>
       )
     }
@@ -340,7 +340,7 @@ class BoxBatchEditForm extends React.Component {
           }}
           onClick={this.props.onClickCancel}
         >
-          wartende abbrechen
+          {t('resources_box_batch_cancel_waiting')}
         </div>
       )
     }
@@ -354,7 +354,7 @@ class BoxBatchEditForm extends React.Component {
         <span>
           {', '}
           <span style={{color: '#f00'}}>
-            {errorCount() + ' failed'}
+            {errorCount() + t('resources_box_batch_loading_stats_failed')}
           </span>
         </span>
       )
@@ -363,7 +363,12 @@ class BoxBatchEditForm extends React.Component {
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
         <div>
-          {processingTotalCount() + ' total, ' + applyingCount() + ' are saving, ' + pendingCount() + ' are waiting, ' + doneCount() + ' are done'}
+          {
+            processingTotalCount() + t('resources_box_batch_loading_stats_total') +
+            applyingCount() + t('resources_box_batch_loading_stats_applying') +
+            pendingCount() + t('resources_box_batch_loading_stats_pending') +
+            doneCount() + t('resources_box_batch_loading_stats_done')
+          }
           {renderErrors()}
         </div>
         <div>
@@ -385,7 +390,7 @@ class BoxBatchEditForm extends React.Component {
 
     return (
       <div style={{color: '#f00'}}>
-        Bitte alle Felder ausfüllen oder leere entfernen.
+        {t('resources_box_batch_fill_in_all_fields_hint')}
       </div>
     )
   }
@@ -408,7 +413,7 @@ class BoxBatchEditForm extends React.Component {
           }}
         >
           <div>
-            Processing successful
+            {t('resources_box_batch_processing_successful')}
           </div>
         </div>
       </div>
@@ -436,7 +441,7 @@ class BoxBatchEditForm extends React.Component {
         <div className='ui-resources-holder pam'>
 
           <div style={{textAlign: 'right', marginBottom: '10px'}}>
-            <a onClick={this.props.onClose}>close</a>
+            <a onClick={this.props.onClose}>{t('resources_box_batch_close')}</a>
             {' '}
             <i className='icon-arrow-up' style={{position: 'relative', top: '2px'}} />
           </div>

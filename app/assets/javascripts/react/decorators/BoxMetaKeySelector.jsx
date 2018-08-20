@@ -37,7 +37,7 @@ class BoxMetaKeySelector extends React.Component {
 
     return (
       <div>
-        {'Pflichtfelder:'}
+        {t('resources_box_batch_mandatory_fields')}
         {' '}
         <div
           style={{
