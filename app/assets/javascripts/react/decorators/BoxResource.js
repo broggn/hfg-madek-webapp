@@ -5,6 +5,8 @@ import async from 'async'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
+import BoxResourceBatch from './BoxResourceBatch.js'
+import BoxRedux from './BoxRedux.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
 
 import url from 'url'
@@ -18,7 +20,7 @@ var parseQuery = qs.parse
 
 module.exports = (merged) => {
 
-  let {event, trigger, initial, components, data, nextProps} = merged
+  let {event, trigger, initial, components, data, nextProps, path} = merged
 
   var next = () => {
 
@@ -40,15 +42,16 @@ module.exports = (merged) => {
           resource: nextProps.resource,
           thumbnailMetaData: null,
           listMetaData: (nextProps.resource.list_meta_data ? nextProps.resource.list_meta_data : null),
-          loadingListMetaData: nextProps.loadMetaData,
-          applyPending: false,
-          applyingMetaData: false,
-          applyDone: false,
-          applyCancelled: false,
-          applyError: false,
-          sleep: false
+          loadingListMetaData: nextProps.loadMetaData
+          // applyPending: false,
+          // applyingMetaData: false,
+          // applyDone: false,
+          // applyCancelled: false,
+          // applyError: false,
+          // sleep: false
         },
         components: {
+          resourceBatch: nextResourceBatch()
         }
       }
     } else {
@@ -57,18 +60,38 @@ module.exports = (merged) => {
           resource: nextResource(),
           thumbnailMetaData: nextThumbnailMetaData(),
           listMetaData: nextListMetaData(),
-          loadingListMetaData: nextLoadingListMetaData(),
-          applyPending: nextApplyPending(),
-          applyingMetaData: nextApplyingMetaData(),
-          applyDone: nextApplyDone(),
-          applyCancelled: nextApplyCancelled(),
-          applyError: nextApplyError(),
-          sleep: nextSleep()
+          loadingListMetaData: nextLoadingListMetaData()
+          // applyPending: nextApplyPending(),
+          // applyingMetaData: nextApplyingMetaData(),
+          // applyDone: nextApplyDone(),
+          // applyCancelled: nextApplyCancelled(),
+          // applyError: nextApplyError(),
+          // sleep: nextSleep()
         },
         components: {
+          resourceBatch: nextResourceBatch()
         }
       }
     }
+  }
+
+  var nextResourceBatch = () => {
+
+    var r = BoxResourceBatch(
+      {
+        event: (initial ? {} : components.resourceBatch.event),
+        trigger: trigger,
+        initial: initial,
+        components: (initial ? {} : components.resourceBatch.components),
+        data: (initial ? {} : components.resourceBatch.data),
+        nextProps: l.extend(nextProps, {parentEvent: event}),
+        path: l.concat(path, ['resourceBatch'])
+      }
+    )
+    r.props = l.extend(nextProps, {parentEvent: event})
+    r.id = (initial ? BoxRedux.nextId() : components.resourceBatch.id)
+    r.path = l.concat(path, ['resourceBatch'])
+    return r
   }
 
   var nextThumbnailMetaData = () => {
@@ -101,68 +124,10 @@ module.exports = (merged) => {
     }
   }
 
-  var nextApplyError = () => {
-    if(event.action == 'apply-error') {
-      return true
-    } else if(nextProps.waitApply || nextProps.startApply || nextProps.resetStatus) {
-      return false
-    } else {
-      return data.applyError
-    }
-  }
-
-  var nextApplyCancelled = () => {
-    if(nextProps.cancelApply && data.applyPending) {
-      return true
-    } else if(nextProps.resetStatus) {
-      return false
-    } else {
-      return data.applyCancelled
-    }
-  }
-
-  var nextApplyDone = () => {
-    if(nextProps.waitApply || nextProps.resetStatus) {
-      return false
-    } else if(event.action == 'apply-success') {
-      return true
-    } else {
-      return data.applyDone
-    }
-  }
-
-  var nextApplyPending = () => {
-    if(nextProps.waitApply) {
-      return true
-    } else if(nextProps.startApply/*event.action == 'apply-success'*/ || nextProps.cancelApply) {
-      return false
-    } else {
-      return data.applyPending
-    }
-  }
-
-  var nextSleep = () => {
-    if(nextProps.sleep) {
-      return true
-    } else if(nextProps.resetStatus) {
-      return false
-    } else {
-      return data.sleep
-    }
-  }
-
-  var nextApplyingMetaData = () => {
-    if(nextProps.startApply) {
-      return true
-    }
-    else if(event.action == 'apply-success' || event.action == 'apply-error') {
-      return false
-    } else {
-      return data.applyingMetaData
-    }
 
 
-  }
+
+
 
   var nextLoadingListMetaData = () => {
     if(nextProps.loadMetaData/* || nextProps.waitApply*/) {

@@ -910,7 +910,7 @@ module.exports = React.createClass
                     editMode: @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0,
                     processing: f.filter(
                       this.state.reduc.components.resources,
-                      (r) => r.data.applyPending || r.data.applyingMetaData
+                      (r) => r.components.resourceBatch && (r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData)
                     ).length > 0
                   }
                 }

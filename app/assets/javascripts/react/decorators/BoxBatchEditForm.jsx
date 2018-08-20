@@ -38,7 +38,7 @@ class BoxBatchEditForm extends React.Component {
   toApplyCount() {
     return l.filter(
       this.stateBox().components.resources,
-      (r) => r.data.applyPending || r.data.applyingMetaData
+      (r) => r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData
     ).length
   }
 
@@ -178,7 +178,7 @@ class BoxBatchEditForm extends React.Component {
     var errorCount = () => {
       return l.filter(
         this.stateBox().components.resources,
-        (r) => r.data.applyError && !r.data.applyingMetaData
+        (r) => r.components.resourceBatch.data.applyError && !r.components.resourceBatch.data.applyingMetaData
       ).length
     }
 
@@ -260,28 +260,28 @@ class BoxBatchEditForm extends React.Component {
     var pendingCount = () => {
       return l.filter(
         this.stateBox().components.resources,
-        (r) => r.data.applyPending
+        (r) => r.components.resourceBatch.data.applyPending
       ).length
     }
 
     var applyingCount = () => {
       return l.filter(
         this.stateBox().components.resources,
-        (r) => r.data.applyingMetaData
+        (r) => r.components.resourceBatch.data.applyingMetaData
       ).length
     }
 
     var doneCount = () => {
       return l.filter(
         this.stateBox().components.resources,
-        (r) => r.data.applyDone
+        (r) => r.components.resourceBatch.data.applyDone
       ).length
     }
 
     var errorCount = () => {
       return l.filter(
         this.stateBox().components.resources,
-        (r) => r.data.applyError && !r.data.applyingMetaData
+        (r) => r.components.resourceBatch.data.applyError && !r.components.resourceBatch.data.applyingMetaData
       ).length
     }
 

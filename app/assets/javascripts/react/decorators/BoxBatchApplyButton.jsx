@@ -90,7 +90,8 @@ class BoxBatchApplyButton extends React.Component {
     }
 
     var data = this.props.resourceState.data
-    if(data.applyError && !data.applyingMetaData) {
+    var components = this.props.resourceState.components
+    if(components.resourceBatch.data.applyError && !components.resourceBatch.data.applyingMetaData) {
       return (
         <span
           className='primary-button'
@@ -110,13 +111,13 @@ class BoxBatchApplyButton extends React.Component {
           {'retry'}
         </span>
       )
-    } else if(data.applyingMetaData) {
+    } else if(components.resourceBatch.data.applyingMetaData) {
       return renderLabel('applying')
-    } else if(data.applyDone) {
+    } else if(components.resourceBatch.data.applyDone) {
       return renderLabel('done')
-    } else if(data.applyPending) {
+    } else if(components.resourceBatch.data.applyPending) {
       return renderLabel('waiting')
-    } else if(data.applyCancelled) {
+    } else if(components.resourceBatch.data.applyCancelled) {
       return renderLabel('cancelled')
     } else if(this.props.showBatchButtons.editMode && !data.sleep){
       return renderButton('apply', (e) => this.onApply(e))

@@ -82,7 +82,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
                 }
 
                 var eventTreeArrayChild = function(eventTree, k, i) {
-                  return (eventTree && eventTree.components[k] ? eventTree.components[k][i] : {})
+                  return (eventTree && eventTree.components && eventTree.components[k] ? eventTree.components[k][i] : {})
                 }
 
                 return mergeStateAndEvents(
@@ -95,7 +95,7 @@ var mergeStateAndEvents = function(lastState, eventTree) {
           else {
             return mergeStateAndEvents(
               lastState.components[k],
-              (eventTree ? eventTree.components[k] : null)
+              (eventTree && eventTree.components ? eventTree.components[k] : null)
             )
           }
         }

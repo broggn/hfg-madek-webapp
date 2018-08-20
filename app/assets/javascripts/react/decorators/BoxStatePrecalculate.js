@@ -24,12 +24,12 @@ module.exports = (merged) => {
 
   var thereAreUnfinished = l.filter(
     components.resources,
-    (r) => (r.data.applyPending || r.data.applyingMetaData) && !(r.event.action == 'apply-success')
+    (r) => (r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData) && !(r.event.action == 'apply-success')
   ).length > 0
 
   var thereAreFailures = l.filter(
     components.resources,
-    (r) => r.data.applyError
+    (r) => r.components.resourceBatch.data.applyError
   ).length > 0
 
   var processingJustDone = !(thereAreUnfinished || thereAreFailures) && anyResourceJustFinished
@@ -181,13 +181,13 @@ var toApplyMetaData = (event, merged, components, data) => {
         )
     }
 
-    return r.data.resource.editable && !r.data.applyingMetaData && (
-      r.data.applyPending || r.event.action == 'apply' || r.event.action == 'retry' || event.action == 'apply' || hasSelectedApply()
+    return r.data.resource.editable && !r.components.resourceBatch.data.applyingMetaData && (
+      r.components.resourceBatch.data.applyPending || r.event.action == 'apply' || r.event.action == 'retry' || event.action == 'apply' || hasSelectedApply()
     ) && !(r.event.action == 'apply-success')
   }
 
   var resourceIsApplying = (r) => {
-    return r.data.applyingMetaData && !(r.event.action == 'apply-success')
+    return r.components.resourceBatch.data.applyingMetaData && !(r.event.action == 'apply-success')
   }
 
   var candidates = () => {
@@ -211,7 +211,7 @@ var toApplyMetaData = (event, merged, components, data) => {
     // The first update is sent isolated (not in parallel), because we need the first
     // to create the not existing keywords. Otherwise several will try to create them
     // in parallel resulting in not unique exceptions.
-    var hasDone = l.filter(components.resources, (rs) => rs.event.action == 'apply-success' || rs.data.applyDone).length >= 1
+    var hasDone = l.filter(components.resources, (rs) => rs.event.action == 'apply-success' || rs.components.resourceBatch.data.applyDone).length >= 1
     if(!hasDone) {
       return 1
     } else {
