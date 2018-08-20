@@ -108,7 +108,7 @@ class BoxRenderResource extends React.Component {
     var overrideTexts = () => {
       var l = require('lodash')
 
-      var metaData = itemState.data.thumbnailMetaData
+      var metaData = itemState.components.resourceBatch.data.thumbnailMetaData
       if(!metaData) {
         return null
       }

@@ -40,7 +40,6 @@ module.exports = (merged) => {
       return {
         data: {
           resource: nextProps.resource,
-          thumbnailMetaData: null,
           listMetaData: (nextProps.resource.list_meta_data ? nextProps.resource.list_meta_data : null),
           loadingListMetaData: nextProps.loadMetaData
           // applyPending: false,
@@ -58,7 +57,6 @@ module.exports = (merged) => {
       return {
         data: {
           resource: nextResource(),
-          thumbnailMetaData: nextThumbnailMetaData(),
           listMetaData: nextListMetaData(),
           loadingListMetaData: nextLoadingListMetaData()
           // applyPending: nextApplyPending(),
@@ -94,35 +92,7 @@ module.exports = (merged) => {
     return r
   }
 
-  var nextThumbnailMetaData = () => {
-    if(components.resourceBatch.event.action == 'apply-success') {
-      var getTitle = () => {
-        if(components.resourceBatch.event.thumbnailMetaData.title) {
-          return components.resourceBatch.event.thumbnailMetaData.title
-        } else if(data.thumbnailMetaData) {
-          return data.thumbnailMetaData.title
-        } else {
-          return null
-        }
-      }
-      var getAuthors = () => {
-        if(components.resourceBatch.event.thumbnailMetaData.authors) {
-          return components.resourceBatch.event.thumbnailMetaData.authors
-        } else if(data.thumbnailMetaData) {
-          return data.thumbnailMetaData.authors
-        } else {
-          return null
-        }
-      }
-      return {
-        title: getTitle(),
-        authors: getAuthors()
-      }
 
-    } else {
-      return data.thumbnailMetaData
-    }
-  }
 
 
 

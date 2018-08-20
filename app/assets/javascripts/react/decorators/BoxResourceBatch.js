@@ -25,6 +25,7 @@ module.exports = (merged) => {
     if(initial) {
       return {
         data: {
+          thumbnailMetaData: null,
           applyPending: false,
           applyingMetaData: false,
           applyDone: false,
@@ -37,6 +38,7 @@ module.exports = (merged) => {
     } else {
       return {
         data: {
+          thumbnailMetaData: nextThumbnailMetaData(),
           applyPending: nextApplyPending(),
           applyingMetaData: nextApplyingMetaData(),
           applyDone: nextApplyDone(),
@@ -48,6 +50,36 @@ module.exports = (merged) => {
       }
     }
 
+  }
+
+  var nextThumbnailMetaData = () => {
+    if(event.action == 'apply-success') {
+      var getTitle = () => {
+        if(event.thumbnailMetaData.title) {
+          return event.thumbnailMetaData.title
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.title
+        } else {
+          return null
+        }
+      }
+      var getAuthors = () => {
+        if(event.thumbnailMetaData.authors) {
+          return event.thumbnailMetaData.authors
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.authors
+        } else {
+          return null
+        }
+      }
+      return {
+        title: getTitle(),
+        authors: getAuthors()
+      }
+
+    } else {
+      return data.thumbnailMetaData
+    }
   }
 
   var nextApplyPending = () => {
