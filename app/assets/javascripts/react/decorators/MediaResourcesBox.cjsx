@@ -57,7 +57,6 @@ BoxUtil = require('./BoxUtil.js')
 BoxSetUrlParams = require('./BoxSetUrlParams.jsx')
 
 BoxBatchEdit = require('./BoxBatchEdit.js')
-BoxBatchEditButton = require('./BoxBatchEditButton.jsx')
 BoxBatchEditForm = require('./BoxBatchEditForm.jsx')
 
 BoxRedux = require('./BoxRedux.js')
