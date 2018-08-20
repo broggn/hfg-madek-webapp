@@ -119,7 +119,7 @@ class BoxBatchApplyButton extends React.Component {
       return renderLabel('waiting')
     } else if(components.resourceBatch.data.applyCancelled) {
       return renderLabel('cancelled')
-    } else if(this.props.showBatchButtons.editMode && !data.sleep){
+    } else if(this.props.showBatchButtons.editMode && !components.resourceBatch.data.sleep){
       return renderButton('apply', (e) => this.onApply(e))
     } else {
       return null
