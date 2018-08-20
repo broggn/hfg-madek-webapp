@@ -84,21 +84,21 @@ module.exports = (merged) => {
         initial: initial,
         components: (initial ? {} : components.resourceBatch.components),
         data: (initial ? {} : components.resourceBatch.data),
-        nextProps: l.extend(nextProps, {parentEvent: event}),
+        nextProps: nextProps,
         path: l.concat(path, ['resourceBatch'])
       }
     )
-    r.props = l.extend(nextProps, {parentEvent: event})
+    r.props = nextProps
     r.id = (initial ? BoxRedux.nextId() : components.resourceBatch.id)
     r.path = l.concat(path, ['resourceBatch'])
     return r
   }
 
   var nextThumbnailMetaData = () => {
-    if(event.action == 'apply-success') {
+    if(components.resourceBatch.event.action == 'apply-success') {
       var getTitle = () => {
-        if(event.thumbnailMetaData.title) {
-          return event.thumbnailMetaData.title
+        if(components.resourceBatch.event.thumbnailMetaData.title) {
+          return components.resourceBatch.event.thumbnailMetaData.title
         } else if(data.thumbnailMetaData) {
           return data.thumbnailMetaData.title
         } else {
@@ -106,8 +106,8 @@ module.exports = (merged) => {
         }
       }
       var getAuthors = () => {
-        if(event.thumbnailMetaData.authors) {
-          return event.thumbnailMetaData.authors
+        if(components.resourceBatch.event.thumbnailMetaData.authors) {
+          return components.resourceBatch.event.thumbnailMetaData.authors
         } else if(data.thumbnailMetaData) {
           return data.thumbnailMetaData.authors
         } else {

@@ -119,7 +119,7 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
 
   if(l.isEmpty(metaData())) {
     setTimeout(
-      () => trigger(resourceState, {action: 'apply-success'}),
+      () => trigger(resourceState.components.resourceBatch, {action: 'apply-success'}),
       0
     )
     return
@@ -151,7 +151,7 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        trigger(resourceState, {action: 'apply-error'})
+        trigger(resourceState.components.resourceBatch, {action: 'apply-error'})
       } else {
 
         var thumbnailMetaData = () => {
@@ -179,7 +179,7 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
         }
 
         trigger(
-          resourceState,
+          resourceState.components.resourceBatch,
           {
             action: 'apply-success',
             thumbnailMetaData: thumbnailMetaData()

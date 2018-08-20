@@ -20,8 +20,6 @@ module.exports = (merged) => {
 
   let {event, trigger, initial, components, data, nextProps} = merged
 
-  let {parentEvent} = nextProps
-
   var next = () => {
 
     if(initial) {
@@ -55,7 +53,7 @@ module.exports = (merged) => {
   var nextApplyPending = () => {
     if(nextProps.waitApply) {
       return true
-    } else if(nextProps.startApply/*event.action == 'apply-success'*/ || nextProps.cancelApply) {
+    } else if(nextProps.startApply || nextProps.cancelApply) {
       return false
     } else {
       return data.applyPending
@@ -66,7 +64,7 @@ module.exports = (merged) => {
     if(nextProps.startApply) {
       return true
     }
-    else if(parentEvent.action == 'apply-success' || parentEvent.action == 'apply-error') {
+    else if(event.action == 'apply-success' || event.action == 'apply-error') {
       return false
     } else {
       return data.applyingMetaData
@@ -78,7 +76,7 @@ module.exports = (merged) => {
   var nextApplyDone = () => {
     if(nextProps.waitApply || nextProps.resetStatus) {
       return false
-    } else if(parentEvent.action == 'apply-success') {
+    } else if(event.action == 'apply-success') {
       return true
     } else {
       return data.applyDone
@@ -97,7 +95,7 @@ module.exports = (merged) => {
   }
 
   var nextApplyError = () => {
-    if(parentEvent.action == 'apply-error') {
+    if(event.action == 'apply-error') {
       return true
     } else if(nextProps.waitApply || nextProps.startApply || nextProps.resetStatus) {
       return false
