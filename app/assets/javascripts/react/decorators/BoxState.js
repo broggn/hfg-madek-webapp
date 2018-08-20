@@ -148,12 +148,8 @@ module.exports = (merged) => {
 
   var nextResources = () => {
 
-    var mapResourceState = (resourceState) => {
 
-      var resource = resourceState.data.resource
-
-      var hasApplyEvent = resourceState.event.action == 'apply' || resourceState.event.action == 'retry'
-
+    var nextResourceProps = (resource, hasApplyEvent) => {
 
       var startApply = l.includes(
         l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
@@ -168,7 +164,7 @@ module.exports = (merged) => {
           )
       }
 
-      var resourceProps = {
+      return {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
         startApply: startApply && resource.editable,
@@ -177,6 +173,14 @@ module.exports = (merged) => {
         sleep: (event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
         resetStatus: processingJustDone || event.action == 'ignore-all'
       }
+    }
+
+
+    var mapResourceState = (resourceState) => {
+
+      var resource = resourceState.data.resource
+      var hasApplyEvent = resourceState.event.action == 'apply' || resourceState.event.action == 'retry'
+      var resourceProps = nextResourceProps(resource, hasApplyEvent)
 
       var r = BoxResource(
         {
@@ -197,30 +201,7 @@ module.exports = (merged) => {
 
     var mapResource = (resource, index) => {
 
-      var hasApplyEvent = false
-
-      var startApply = l.includes(
-        l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
-        resource.uuid
-      )
-
-      var hasSelectedApply = () => {
-        return event.action == 'apply-selected'
-          && l.find(
-            data.selectedResources,
-            (sr) => sr.uuid == resource.uuid
-          )
-      }
-
-      var resourceProps = {
-        resource: resource,
-        loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: startApply && resource.editable,
-        cancelApply: event.action == 'cancel-all',
-        waitApply: resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: (event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
-        resetStatus: processingJustDone || event.action == 'ignore-all'
-      }
+      var resourceProps = nextResourceProps(resource, false)
 
       var id = BoxRedux.nextId()
       var r = BoxResource(
