@@ -47,8 +47,7 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: false,
-          selectedResources: null,
-          resultMessage: nextResultMessage()
+          selectedResources: null
         },
         components: {
           resources: nextResources(),
@@ -59,8 +58,7 @@ module.exports = (merged) => {
       return {
         data: {
           loadingNextPage: nextLoadingNextPage(),
-          selectedResources: nextSelectedResources(),
-          resultMessage: nextResultMessage()
+          selectedResources: nextSelectedResources()
         },
         components: {
           resources: nextResources(),
@@ -69,70 +67,6 @@ module.exports = (merged) => {
       }
     }
   }
-
-
-
-
-
-  var nextResultMessage = () => {
-
-    var timeToShow = 3000
-
-    if(initial) {
-      return {
-        status: 'hidden'
-      }
-    }
-
-    else if(willStartApply) {
-      return {
-        status: 'hidden'
-      }
-    }
-
-    else if(!thereAreUnfinished && anyResourceJustFinished) {
-
-      var message = () => {
-        if(thereAreFailures) {
-          return {
-            status: 'failure'
-          }
-        } else {
-
-          setTimeout(
-            () => {
-              trigger(merged, {
-                action: 'make-sure-a-trigger-is-executed-at-this-time'
-              })
-            },
-            timeToShow
-          )
-
-          return {
-            status: 'success',
-            lastShow: new Date().getTime()
-          }
-        }
-      }
-
-      return message()
-    }
-
-    else if(data.resultMessage.status == 'success' && new Date().getTime() - data.resultMessage.lastShow >= timeToShow) {
-
-      return {
-        status: 'hidden'
-      }
-
-    }
-
-
-    else {
-      return data.resultMessage
-    }
-
-  }
-
 
 
   var nextSelectedResources = () => {
@@ -227,7 +161,10 @@ module.exports = (merged) => {
       mount: event.action == 'mount',
       invalidMetaKeyUuids: updateInvalids(),
       cachedToApplyMetaData: cachedToApplyMetaData,
-      willStartApply: willStartApply
+      willStartApply: willStartApply,
+      thereAreUnfinished: thereAreUnfinished,
+      anyResourceJustFinished: anyResourceJustFinished,
+      thereAreFailures: thereAreFailures
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)

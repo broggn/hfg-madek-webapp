@@ -34,7 +34,8 @@ module.exports = (merged) => {
         data: {
           open: false,
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
-          applyFormData: null
+          applyFormData: null,
+          resultMessage: nextResultMessage()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -46,7 +47,8 @@ module.exports = (merged) => {
         data: {
           open: nextOpen(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
-          applyFormData: nextApplyFormData()
+          applyFormData: nextApplyFormData(),
+          resultMessage: nextResultMessage()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -56,6 +58,67 @@ module.exports = (merged) => {
     }
 
   }
+
+
+  var nextResultMessage = () => {
+
+    var timeToShow = 3000
+
+    if(initial) {
+      return {
+        status: 'hidden'
+      }
+    }
+
+    else if(nextProps.willStartApply) {
+      return {
+        status: 'hidden'
+      }
+    }
+
+    else if(!nextProps.thereAreUnfinished && nextProps.anyResourceJustFinished) {
+
+      var message = () => {
+        if(nextProps.thereAreFailures) {
+          return {
+            status: 'failure'
+          }
+        } else {
+
+          setTimeout(
+            () => {
+              trigger(merged, {
+                action: 'make-sure-a-trigger-is-executed-at-this-time'
+              })
+            },
+            timeToShow
+          )
+
+          return {
+            status: 'success',
+            lastShow: new Date().getTime()
+          }
+        }
+      }
+
+      return message()
+    }
+
+    else if(data.resultMessage.status == 'success' && new Date().getTime() - data.resultMessage.lastShow >= timeToShow) {
+
+      return {
+        status: 'hidden'
+      }
+
+    }
+
+
+    else {
+      return data.resultMessage
+    }
+
+  }
+
 
   var nextApplyFormData = () => {
 

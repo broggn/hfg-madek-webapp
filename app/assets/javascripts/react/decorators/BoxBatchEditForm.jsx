@@ -403,7 +403,7 @@ class BoxBatchEditForm extends React.Component {
             textAlign: 'center',
             fontSize: '16px',
             padding: '3px',
-            opacity: (this.props.stateBox.data.resultMessage.status == 'success' ? '1' : '0'),
+            opacity: (this.props.stateBox.components.batch.data.resultMessage.status == 'success' ? '1' : '0'),
             transition: 'opacity 0.5s linear'
           }}
         >
