@@ -12,6 +12,7 @@ import BoxBatchPeople from './BoxBatchPeople.js'
 import BoxBatchLoadMetaMetaData from './BoxBatchLoadMetaMetaData.js'
 import BoxRedux from './BoxRedux.js'
 import BoxStateApplyMetaData from './BoxStateApplyMetaData.js'
+import BoxBatchEditInvalids from './BoxBatchEditInvalids.js'
 
 
 module.exports = (merged) => {
@@ -142,11 +143,48 @@ module.exports = (merged) => {
     if(initial) {
       return []
     }
-    else if(nextProps.invalidMetaKeyUuids) {
-      return nextProps.invalidMetaKeyUuids
-    } else {
-      return data.invalidMetaKeyUuids
+    else {
+
+      var invalidUuids = () => {
+        return l.map(BoxBatchEditInvalids(merged), (i) => i.props.metaKey.uuid)
+      }
+
+      var formsWithClose = () => {
+        return l.filter(
+          components.metaKeyForms,
+          (mkf) => mkf.event.action == 'close'
+        )
+
+      }
+
+      var anyCloseAction = () => {
+        return !l.isEmpty(formsWithClose())
+      }
+
+      var rejectClosed = () => {
+        return l.reject(
+          data.invalidMetaKeyUuids,
+          (id) => l.find(formsWithClose(), (f) => {
+            return f.props.metaKeyId == id
+          })
+        )
+      }
+
+
+      if(initial) {
+        return []
+      }
+      else if(nextProps.anyApplyAction) {
+        return invalidUuids()
+      }
+      else if(anyCloseAction()) {
+        return rejectClosed()
+      }
+      else {
+        return null
+      }
     }
+
   }
 
 

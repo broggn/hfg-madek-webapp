@@ -5,7 +5,7 @@ import async from 'async'
 import url from 'url'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
-import BoxBatchEdit from './BoxBatchEdit.js'
+import BoxBatchEditInvalids from './BoxBatchEditInvalids.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
 import BoxResource from './BoxResource.js'
 import BoxRedux from './BoxRedux.js'
@@ -159,7 +159,6 @@ module.exports = (merged) => {
     willStartApply: willStartApply(),
     anyApplyAction: anyApplyAction(),
     anyResourceApply: anyResourceApply,
-    determineInvalids: determineInvalids(merged),
     todoLoadMetaData: todoLoadMetaData()
   }
 }
@@ -227,43 +226,7 @@ var formsValid = (merged) => {
   if(merged.initial) {
     return false
   }
-  return l.isEmpty(determineInvalids(merged))
-}
-
-
-var determineInvalids = (merged) => {
-
-  if(merged.initial) {
-    return []
-  }
-
-  var validateForm = (f) => {
-
-    var validateText = () => {
-      return !l.isEmpty(f.data.text)
-    }
-
-    var validateKeywords = () => {
-      return !l.isEmpty(f.data.keywords)
-    }
-
-    var decideValidation = (type) => {
-      var mapping = {
-        'MetaDatum::Text': validateText,
-        'MetaDatum::TextDate': validateText,
-        'MetaDatum::Keywords': validateKeywords,
-        'MetaDatum::People': validateKeywords
-      }
-      return mapping[type]
-    }
-
-
-    var validator = decideValidation(f.props.metaKey.value_type)
-    return validator(f)
-  }
-
-  return l.filter(
-    merged.components.batch.components.metaKeyForms,
-    (mkf) => mkf.event.action != 'close' && !validateForm(mkf)
+  return l.isEmpty(
+    BoxBatchEditInvalids(merged.components.batch)
   )
 }

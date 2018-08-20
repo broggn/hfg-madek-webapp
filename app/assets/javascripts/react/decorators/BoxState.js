@@ -26,7 +26,6 @@ module.exports = (merged) => {
     willStartApply,
     anyApplyAction,
     anyResourceApply,
-    determineInvalids,
     todoLoadMetaData
   } = BoxStatePrecalculate(merged)
 
@@ -115,56 +114,17 @@ module.exports = (merged) => {
 
   var nextBatch = () => {
 
-    var invalidUuids = () => {
-      return l.map(determineInvalids, (i) => i.props.metaKey.uuid)
-    }
 
-    var formsWithClose = () => {
-      return l.filter(
-        components.batch.components.metaKeyForms,
-        (mkf) => mkf.event.action == 'close'
-      )
-
-    }
-
-    var anyCloseAction = () => {
-      return !l.isEmpty(formsWithClose())
-    }
-
-    var rejectClosed = () => {
-      return l.reject(
-        components.batch.data.invalidMetaKeyUuids,
-        (id) => l.find(formsWithClose(), (f) => {
-          return f.props.metaKeyId == id
-        })
-      )
-    }
-
-    var updateInvalids = () => {
-      if(initial) {
-        return []
-      }
-      else if(anyApplyAction) {
-        return invalidUuids()
-      }
-      else if(anyCloseAction()) {
-        return rejectClosed()
-      }
-      else {
-        return null
-      }
-
-    }
 
 
     var props = {
       mount: event.action == 'mount',
-      invalidMetaKeyUuids: updateInvalids(),
       cachedToApplyMetaData: cachedToApplyMetaData,
       willStartApply: willStartApply,
       thereAreUnfinished: thereAreUnfinished,
       anyResourceJustFinished: anyResourceJustFinished,
-      thereAreFailures: thereAreFailures
+      thereAreFailures: thereAreFailures,
+      anyApplyAction: anyApplyAction
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)
