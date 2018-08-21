@@ -121,6 +121,7 @@ class BoxRenderResource extends React.Component {
           trigger={this.props.trigger}
           resourceState={itemState}
           layout={config.layout}
+          batchStatus={this.props.batchStatus}
           showBatchButtons={this.props.showBatchButtons}
         />
       )

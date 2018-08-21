@@ -17,7 +17,7 @@ module.exports = (merged) => {
 
   let {event, trigger, initial, components, data, nextProps} = merged
   let {
-    cachedToApplyMetaData,
+    // cachedToApplyMetaData,
     anyResourceJustFinished,
     thereAreUnfinished,
     thereAreFailures,
@@ -115,18 +115,56 @@ module.exports = (merged) => {
 
   var nextBatch = () => {
 
+    var applyResources = () => {
+      if(!willStartApply) {
+        return null
+      }
 
+      if(event.action == 'apply') {
+        return l.map(
+          components.resources,
+          (rs) => rs.data.resource
+        )
+      } else if(event.action == 'apply-selected') {
+        return l.map(
+          data.selectedResources,
+          (r) => r
+        )
+      } else {
+        return l.map(
+          l.filter(
+            components.resources,
+            (rs) => rs.event.action == 'apply'
+          ),
+          (rs) => rs.data.resource
+        )
+      }
+    }
+
+
+    var retryResources = () => {
+      return l.map(
+        l.filter(
+          components.resources,
+          (rs) => rs.event.action == 'retry'
+        ),
+        (rs) => rs.data.resource
+      )
+    }
 
 
     var props = {
       mount: event.action == 'mount',
-      cachedToApplyMetaData: cachedToApplyMetaData,
+      // cachedToApplyMetaData: cachedToApplyMetaData,
       willStartApply: willStartApply,
       thereAreUnfinished: thereAreUnfinished,
       anyResourceJustFinished: anyResourceJustFinished,
       thereAreFailures: thereAreFailures,
       anyApplyAction: anyApplyAction,
-      successfulCount: successfulCount
+      successfulCount: successfulCount,
+      applyResources: applyResources(),
+      retryResources: retryResources(),
+      cancelAll: event.action == 'cancel-all'
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)
@@ -153,27 +191,27 @@ module.exports = (merged) => {
 
     var nextResourceProps = (resource, hasApplyEvent) => {
 
-      var startApply = l.includes(
-        l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
-        resource.uuid
-      )
-
-      var hasSelectedApply = () => {
-        return event.action == 'apply-selected'
-          && l.find(
-            data.selectedResources,
-            (sr) => sr.uuid == resource.uuid
-          )
-      }
+      // var startApply = l.includes(
+      //   l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
+      //   resource.uuid
+      // )
+      //
+      // var hasSelectedApply = () => {
+      //   return event.action == 'apply-selected'
+      //     && l.find(
+      //       data.selectedResources,
+      //       (sr) => sr.uuid == resource.uuid
+      //     )
+      // }
 
       return {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: startApply && resource.editable,
-        cancelApply: event.action == 'cancel-all',
-        waitApply: resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: (event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
-        resetStatus: processingJustDone || event.action == 'ignore-all'
+        startApply: false,//startApply && resource.editable,
+        cancelApply: false,//event.action == 'cancel-all',
+        waitApply: false,//resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        sleep: false,//(event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
+        resetStatus: false//processingJustDone || event.action == 'ignore-all'
       }
     }
 

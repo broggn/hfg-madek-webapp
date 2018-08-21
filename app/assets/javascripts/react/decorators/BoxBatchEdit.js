@@ -24,9 +24,9 @@ module.exports = (merged) => {
   var next = () => {
 
 
-    if(!l.isEmpty(nextProps.cachedToApplyMetaData)) {
-      BoxStateApplyMetaData(data, components, nextProps.cachedToApplyMetaData, nextApplyFormData(), trigger)
-    }
+    // if(!l.isEmpty(nextProps.cachedToApplyMetaData)) {
+    //   BoxStateApplyMetaData(data, components, nextProps.cachedToApplyMetaData, nextApplyFormData(), trigger)
+    // }
 
 
 
@@ -36,7 +36,8 @@ module.exports = (merged) => {
           open: false,
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: null,
-          resultMessage: nextResultMessage()
+          resultMessage: nextResultMessage(),
+          applyJob: null
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -49,7 +50,8 @@ module.exports = (merged) => {
           open: nextOpen(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: nextApplyFormData(),
-          resultMessage: nextResultMessage()
+          resultMessage: nextResultMessage(),
+          applyJob: nextApplyJob()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -60,6 +62,145 @@ module.exports = (merged) => {
 
   }
 
+  var nextApplyJob = () => {
+
+    if(!nextProps.willStartApply && !data.applyJob) {
+      return null
+    }
+
+
+
+    var job = data.applyJob
+
+    var formData = (() => {
+      if(nextProps.willStartApply) {
+        return l.map(
+          components.metaKeyForms,
+          (mkf) => {
+            return {
+              data: mkf.data,
+              props: mkf.props
+            }
+          }
+        )
+      } else {
+        return job.formData
+      }
+    })()
+
+    var ongoing = (() => {
+      if(nextProps.willStartApply) {
+        return []
+      } else {
+        return l.reject(
+          job.processing,
+          (p) => (event.action == 'apply-success' || event.action == 'apply-failure') && event.resourceId == p.uuid
+        )
+      }
+    })()
+
+    var success = (() => {
+      if(nextProps.willStartApply) {
+        return []
+      } else {
+        return l.concat(
+          job.success,
+          l.filter(
+            job.processing,
+            (p) => event.action == 'apply-success' && event.resourceId == p.uuid
+          )
+        )
+      }
+    })()
+
+    var failure = (() => {
+      if(nextProps.willStartApply) {
+        return []
+      } else {
+        return l.concat(
+          l.reject(
+            job.failure,
+            (f) => l.find(nextProps.retryResources, (r) => f.uuid == r.uuid)
+          ),
+          l.filter(
+            job.processing,
+            (p) => event.action == 'apply-failure' && event.resourceId == p.uuid
+          )
+        )
+      }
+    })()
+
+    var cancelled = (() => {
+      if(nextProps.willStartApply) {
+        return []
+      } else if(nextProps.cancelAll) {
+        return job.pending
+      } else {
+        return job.cancelled
+      }
+    })()
+
+    var toLoad = (() => {
+      if(nextProps.willStartApply) {
+        return l.slice(nextProps.applyResources, 0, 12)
+      } else if(nextProps.cancelAll) {
+        return []
+      } else {
+        return l.slice(
+          l.concat(
+            job.pending,
+            nextProps.retryResources
+          ),
+          0,
+          12 - ongoing.length
+        )
+      }
+    })()
+
+
+    var pending = (() => {
+      if(nextProps.willStartApply) {
+        return l.slice(nextProps.applyResources, 12)
+      } else if(nextProps.cancelAll) {
+        return []
+      } else {
+        return l.reject(
+          l.concat(
+            job.pending,
+            nextProps.retryResources
+          ),
+          (p) => l.find(toLoad, (r) => r.uuid == p.uuid)
+        )
+      }
+    })()
+
+    var processing = (() => {
+      return l.concat(toLoad, ongoing)
+    })()
+
+
+    BoxStateApplyMetaData(
+      merged,
+      toLoad,
+      formData,
+      trigger
+    )
+
+    if(processing.length == 0 && failure.length == 0) {
+      return null
+    }
+
+    return {
+      formData: formData,
+      pending: pending,
+      processing: processing,
+      success: success,
+      failure: failure,
+      cancelled: cancelled
+    }
+
+
+  }
 
   var nextResultMessage = () => {
 

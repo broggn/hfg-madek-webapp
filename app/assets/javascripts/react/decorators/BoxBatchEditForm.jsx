@@ -36,10 +36,15 @@ class BoxBatchEditForm extends React.Component {
   }
 
   toApplyCount() {
-    return l.filter(
-      this.stateBox().components.resources,
-      (r) => r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData
-    ).length
+    if(!this.applyJob()) {
+      return 0
+    } else {
+      return this.applyJob().processing.length
+    }
+    // return l.filter(
+    //   this.stateBox().components.resources,
+    //   (r) => r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData
+    // ).length
   }
 
   totalCount() {
@@ -168,18 +173,24 @@ class BoxBatchEditForm extends React.Component {
 
   }
 
+  applyJob() {
+    return this.stateBatch().data.applyJob
+  }
+
   loadedCount() {
     return this.stateBox().components.resources.length
   }
 
   showProgressBar() {
+
+    if(!this.applyJob()) {
+      return false
+    }
+
     var toApply = this.toApplyCount()
 
     var errorCount = () => {
-      return l.filter(
-        this.stateBox().components.resources,
-        (r) => r.components.resourceBatch.data.applyError && !r.components.resourceBatch.data.applyingMetaData
-      ).length
+      return this.applyJob().failure.length
     }
 
     return toApply > 0 || errorCount() > 0
@@ -258,31 +269,19 @@ class BoxBatchEditForm extends React.Component {
     var toApply = this.toApplyCount()
 
     var pendingCount = () => {
-      return l.filter(
-        this.stateBox().components.resources,
-        (r) => r.components.resourceBatch.data.applyPending
-      ).length
+      return this.applyJob().pending.length
     }
 
     var applyingCount = () => {
-      return l.filter(
-        this.stateBox().components.resources,
-        (r) => r.components.resourceBatch.data.applyingMetaData
-      ).length
+      return this.applyJob().processing.length
     }
 
     var doneCount = () => {
-      return l.filter(
-        this.stateBox().components.resources,
-        (r) => r.components.resourceBatch.data.applyDone
-      ).length
+      return this.applyJob().success.length
     }
 
     var errorCount = () => {
-      return l.filter(
-        this.stateBox().components.resources,
-        (r) => r.components.resourceBatch.data.applyError && !r.components.resourceBatch.data.applyingMetaData
-      ).length
+      return this.applyJob().failure.length
     }
 
     if(toApply == 0 && errorCount() == 0) {

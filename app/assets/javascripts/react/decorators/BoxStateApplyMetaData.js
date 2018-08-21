@@ -12,18 +12,19 @@ import BoxRedux from './BoxRedux.js'
 import qs from 'qs'
 import BoxStatePrecalculate from './BoxStatePrecalculate.js'
 
-module.exports = (data, components, cachedToApplyMetaData, formData, trigger) => {
-  applyMetaData(data, components, cachedToApplyMetaData, formData, trigger)
+module.exports = (batchComponent, resources, formData, trigger) => {
+  applyMetaData(batchComponent, resources, formData, trigger)
 }
 
 
-var applyMetaData = (data, components, cachedToApplyMetaData, formData, trigger) => {
+var applyMetaData = (batchComponent, resources, formData, trigger) => {
   l.each(
-    cachedToApplyMetaData,
+    resources,
     (r) => applyResourceMetaData(
       {
+        batchComponent: batchComponent,
         trigger: trigger,
-        resourceState: r,
+        resource: r,
         formData: formData
       }
     )
@@ -32,10 +33,10 @@ var applyMetaData = (data, components, cachedToApplyMetaData, formData, trigger)
 }
 
 
-var applyResourceMetaData = ({trigger, resourceState, formData}) => {
+var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
 
-  var resourceId = resourceState.data.resource.uuid
-  var resourceType = resourceState.data.resource.type
+  var resourceId = resource.uuid
+  var resourceType = resource.type
 
   var mapScope = () => {
     return {
@@ -117,13 +118,13 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
     )
   }
 
-  if(l.isEmpty(metaData())) {
-    setTimeout(
-      () => trigger(resourceState.components.resourceBatch, {action: 'apply-success'}),
-      0
-    )
-    return
-  }
+  // if(l.isEmpty(metaData())) {
+  //   setTimeout(
+  //     () => trigger(batchComponent, {action: 'apply-success'}),
+  //     0
+  //   )
+  //   return
+  // }
 
   var data = {
     [property()]: {
@@ -138,6 +139,8 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
     }
   )
 
+  var resourceId = resource.uuid
+
   xhr(
     {
       url: url,
@@ -151,7 +154,8 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        trigger(resourceState.components.resourceBatch, {action: 'apply-error'})
+        alert('eror')
+        trigger(batchComponent, {action: 'apply-failure', resourceId})
       } else {
 
         var thumbnailMetaData = () => {
@@ -179,9 +183,10 @@ var applyResourceMetaData = ({trigger, resourceState, formData}) => {
         }
 
         trigger(
-          resourceState.components.resourceBatch,
+          batchComponent,
           {
             action: 'apply-success',
+            resourceId: resourceId,
             thumbnailMetaData: thumbnailMetaData()
           }
         )

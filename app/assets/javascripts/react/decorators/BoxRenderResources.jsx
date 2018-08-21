@@ -10,6 +10,7 @@ import Preloader from '../ui-components/Preloader.cjsx'
 import ActionsDropdownHelper from './resourcesbox/ActionsDropdownHelper.cjsx'
 import ResourceThumbnail from './ResourceThumbnail.cjsx'
 import BoxRenderResource from './BoxRenderResource.jsx'
+import l from 'lodash'
 
 class BoxRenderResources extends React.Component {
 
@@ -19,33 +20,6 @@ class BoxRenderResources extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     var l = require('lodash')
-
-
-    // var rs1 = this.props.resources
-    // var rs2 = nextProps.resources
-    // l.each(
-    //   rs1,
-    //   (r, i) => {
-    //     var r1 = rs1[i]
-    //     var r2 = rs2[i]
-    //     if(!l.isEqual(r1, r2)) {
-    //
-    //       l.each(
-    //         r1,
-    //         (v, k) => {
-    //           if(!l.isEqual(v, r2[k])) {
-    //             console.log('not equal = ' + k)
-    //           }
-    //         }
-    //       )
-    //
-    //
-    //     }
-    //   }
-    //
-    // )
-
-    // console.log('state = ' + l.isEqual(this.state, nextState) + ' props = ' + l.isEqual(this.props, nextProps))
     return !l.isEqual(this.state, nextState) || !l.isEqual(this.props, nextProps)
   }
 
@@ -72,6 +46,27 @@ class BoxRenderResources extends React.Component {
 
       var renderItem = (itemState) => {
 
+        var resourceId = itemState.data.resource.uuid
+        var job = this.props.applyJob
+        var batchStatus = () => {
+
+          if(!job) {
+            return null
+          } else if(l.find(job.pending, (p) => p.uuid == resourceId)) {
+            return 'pending'
+          } else if(l.find(job.processing, (p) => p.uuid == resourceId)) {
+            return 'processing'
+          } else if(l.find(job.success, (p) => p.uuid == resourceId)) {
+            return 'success'
+          } else if(l.find(job.failure, (p) => p.uuid == resourceId)) {
+            return 'failure'
+          } else if(l.find(job.cancelled, (p) => p.uuid == resourceId)) {
+            return 'cancelled'
+          } else {
+            return 'sleep'
+          }
+        }
+
         return (
           <BoxRenderResource
             resourceState={itemState}
@@ -86,6 +81,7 @@ class BoxRenderResources extends React.Component {
             isSelected={f.find(selectedResources, (sr) => sr.uuid == itemState.data.resource.uuid)}
             showActions={ActionsDropdownHelper.showActionsConfig(actionsDropdownParameters)}
             selectionMode={this.props.selectionMode}
+            batchStatus={batchStatus()}
           />
         )
       }

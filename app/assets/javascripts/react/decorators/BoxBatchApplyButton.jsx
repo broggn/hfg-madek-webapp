@@ -89,9 +89,8 @@ class BoxBatchApplyButton extends React.Component {
       )
     }
 
-    var data = this.props.resourceState.data
-    var components = this.props.resourceState.components
-    if(components.resourceBatch.data.applyError && !components.resourceBatch.data.applyingMetaData) {
+    var batchStatus = this.props.batchStatus
+    if(batchStatus == 'failure') {
       return (
         <span
           className='primary-button'
@@ -111,15 +110,15 @@ class BoxBatchApplyButton extends React.Component {
           {t('resources_box_batch_status_retry')}
         </span>
       )
-    } else if(components.resourceBatch.data.applyingMetaData) {
+    } else if(batchStatus == 'processing') {
       return renderLabel(t('resources_box_batch_status_applying'))
-    } else if(components.resourceBatch.data.applyDone) {
+    } else if(batchStatus == 'success') {
       return renderLabel(t('resources_box_batch_status_done'))
-    } else if(components.resourceBatch.data.applyPending) {
+    } else if(batchStatus == 'pending') {
       return renderLabel(t('resources_box_batch_status_waiting'))
-    } else if(components.resourceBatch.data.applyCancelled) {
+    } else if(batchStatus == 'cancelled') {
       return renderLabel(t('resources_box_batch_status_cancelled'))
-    } else if(this.props.showBatchButtons.editMode && !components.resourceBatch.data.sleep){
+    } else if(this.props.showBatchButtons.editMode && batchStatus == 'sleep'){
       return renderButton(t('resources_box_batch_status_apply'), (e) => this.onApply(e))
     } else {
       return null

@@ -893,6 +893,7 @@ module.exports = React.createClass
                     (r) => r
                   )
                 }
+                applyJob={@state.reduc.components.batch.data.applyJob}
                 actionsDropdownParameters={actionsDropdownParameters}
                 selectedResources={@state.reduc.data.selectedResources}
                 isClient={@state.isClient}
