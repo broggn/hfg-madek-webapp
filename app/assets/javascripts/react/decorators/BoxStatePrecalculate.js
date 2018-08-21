@@ -173,9 +173,9 @@ module.exports = (merged) => {
 
 var toApplyMetaData = (event, merged, components, data) => {
 
-  // if(!formsValid(merged)) {
-  //   return []
-  // }
+  if(!formsValid(merged)) {
+    return []
+  }
 
   var resourceNeedsApply = (r) => {
 
