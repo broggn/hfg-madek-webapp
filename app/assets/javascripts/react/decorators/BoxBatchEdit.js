@@ -65,6 +65,22 @@ module.exports = (merged) => {
 
     var job = data.applyJob
 
+
+    var maxParallel = (() => {
+      if(!job) {
+        return 1
+      }
+      // The first update is sent isolated (not in parallel), because we need the first
+      // to create the not existing keywords. Otherwise several will try to create them
+      // in parallel resulting in not unique exceptions.
+      var hasDone = job.success.length > 0 || event.action == 'apply-success'
+      if(!hasDone) {
+        return 1
+      } else {
+        return 12
+      }
+    })()
+
     var formData = (() => {
       if(nextProps.willStartApply) {
         return l.map(
@@ -135,7 +151,7 @@ module.exports = (merged) => {
 
     var toLoad = (() => {
       if(nextProps.willStartApply) {
-        return l.slice(nextProps.applyResources, 0, 12)
+        return l.slice(nextProps.applyResources, 0, maxParallel)
       } else if(nextProps.cancelAll) {
         return []
       } else {
@@ -145,7 +161,7 @@ module.exports = (merged) => {
             nextProps.retryResources
           ),
           0,
-          12 - ongoing.length
+          maxParallel - ongoing.length
         )
       }
     })()
@@ -153,7 +169,7 @@ module.exports = (merged) => {
 
     var pending = (() => {
       if(nextProps.willStartApply) {
-        return l.slice(nextProps.applyResources, 12)
+        return l.slice(nextProps.applyResources, maxParallel)
       } else if(nextProps.cancelAll) {
         return []
       } else {
