@@ -44,6 +44,23 @@ module Modules
         end
       end
 
+      def advanced_shared_meta_data_update
+        resource = get_authorized_resource
+        errors = advanced_update_all_meta_data_transaction!(resource, meta_data_params)
+
+        if errors.empty?
+          published_before = published_state(resource)
+          if resource.class == MediaEntry
+            execute_publish([resource])
+          end
+          log_into_edit_sessions! resource
+          published_after = published_state(resource)
+          determine_respond_success(resource, published_before, published_after)
+        else
+          respond_with_errors(errors)
+        end
+      end
+
       private
 
       def published_state(resource)

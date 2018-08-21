@@ -52,7 +52,7 @@ var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
     }[resourceType]
   }
 
-  var url = '/' + pathType() + '/' + resourceId + '/meta_data'
+  var url = '/' + pathType() + '/' + resourceId + '/advanced_meta_data'
 
   var property = () => {
     return {
@@ -112,7 +112,17 @@ var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
         ),
         (fd) => [
           fd.props.metaKeyId,
-          formToData(fd)
+          {
+            values: formToData(fd),
+            config: {
+              action: (
+                fd.props.metaKey.value_type == 'MetaDatum::Keywords'
+                ? 'add'
+                : 'replace'
+              )
+            }
+          }
+
         ]
       )
     )
