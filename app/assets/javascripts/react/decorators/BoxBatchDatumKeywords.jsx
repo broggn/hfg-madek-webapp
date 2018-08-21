@@ -212,6 +212,38 @@ class BoxBatchDatumKeywords extends React.Component {
         />
         {' '}
         {this.renderPopup()}
+        {this.renderOptions()}
+      </div>
+    )
+  }
+
+  onOptionAdd(event) {
+    this.props.trigger(this.props.metaKeyForm, {action: 'option-add'})
+  }
+
+  onOptionReplace(event) {
+    this.props.trigger(this.props.metaKeyForm, {action: 'option-replace'})
+  }
+
+  onOptionRemove(event) {
+    this.props.trigger(this.props.metaKeyForm, {action: 'option-remove'})
+  }
+
+  renderOptions() {
+
+    var className = (option) => {
+      if(this.props.metaKeyForm.data.option == option) {
+        return 'button active'
+      } else {
+        return 'button'
+      }
+    }
+
+    // <button className={className('remove')} onClick={(e) => this.onOptionRemove(e)}>Entfernen</button>
+    return (
+      <div className='button-group small' style={{marginTop: '10px', textAlign: 'right'}}>
+        <button className={className('add')} onClick={(e) => this.onOptionAdd(e)}>Hinzufügen</button>
+        <button className={className('replace')} onClick={(e) => this.onOptionReplace(e)}>Ersetzen</button>
       </div>
     )
   }

@@ -21,18 +21,6 @@ class BoxRenderLabel extends React.Component {
     this.props.trigger(this.props.metaKeyForm, {action: 'close'})
   }
 
-  onOptionAdd(event) {
-    this.props.trigger(this.props.metaKeyForm, {action: 'option-add'})
-  }
-
-  onOptionReplace(event) {
-    this.props.trigger(this.props.metaKeyForm, {action: 'option-replace'})
-  }
-
-  onOptionRemove(event) {
-    this.props.trigger(this.props.metaKeyForm, {action: 'option-remove'})
-  }
-
   renderCross() {
 
     if(!this.props.editable) {
@@ -56,29 +44,6 @@ class BoxRenderLabel extends React.Component {
   }
 
   render() {
-
-    var renderOptions = () => {
-      if(!this.props.showOptions) {
-        return null
-      }
-
-      var className = (option) => {
-        if(this.props.metaKeyForm.data.option == option) {
-          return 'button active'
-        } else {
-          return 'button'
-        }
-      }
-
-      // <button className={className('remove')} onClick={(e) => this.onOptionRemove(e)}>Entfernen</button>
-      return (
-        <div className='button-group small' style={{marginTop: '10px'}}>
-          <button className={className('add')} onClick={(e) => this.onOptionAdd(e)}>Hinzufügen</button>
-          <button className={className('replace')} onClick={(e) => this.onOptionReplace(e)}>Ersetzen</button>
-        </div>
-      )
-    }
-
     return (
       <div
         style={{
@@ -88,11 +53,8 @@ class BoxRenderLabel extends React.Component {
           color: (this.props.metaKeyForm.props.invalid ? '#f00' : null)
         }}
       >
-        <div>
-          {this.renderCross()}
-          {this.props.metaKeyForm.props.metaKey.label}
-        </div>
-        {renderOptions()}
+        {this.renderCross()}
+        {this.props.metaKeyForm.props.metaKey.label}
       </div>
 
     )
