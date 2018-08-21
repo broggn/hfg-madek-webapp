@@ -114,7 +114,7 @@ var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
           fd.props.metaKeyId,
           {
             values: formToData(fd),
-            config: (
+            options: (
               fd.data.option
               ? {action: fd.data.option}
               : null

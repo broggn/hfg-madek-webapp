@@ -46,7 +46,8 @@ module Modules
 
       def advanced_shared_meta_data_update
         resource = get_authorized_resource
-        errors = advanced_update_all_meta_data_transaction!(resource, meta_data_params)
+        errors = advanced_update_all_meta_data_transaction!(
+          resource, meta_data_params)
 
         if errors.empty?
           published_before = published_state(resource)
