@@ -154,7 +154,6 @@ var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
     },
     (err, res, json) => {
       if(err || res.statusCode != 200) {
-        alert('eror')
         trigger(batchComponent, {action: 'apply-failure', resourceId})
       } else {
 

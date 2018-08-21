@@ -112,7 +112,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderApplySelected() {
 
-    if(this.showProgressBar()) {
+    if(!this.showButtons()) {
       return null
     }
 
@@ -177,24 +177,33 @@ class BoxBatchEditForm extends React.Component {
     return this.stateBox().components.resources.length
   }
 
+  showButtons() {
+    if(!this.applyJob()) {
+      return true
+    }
+
+    return this.applyJob().processing.length == 0 && this.applyJob().failure.length == 0
+  }
+
   showProgressBar() {
 
     if(!this.applyJob()) {
       return false
     }
 
-    var toApply = this.toApplyCount()
-
-    var errorCount = () => {
-      return this.applyJob().failure.length
-    }
-
-    return toApply > 0 || errorCount() > 0
+    return true
+    // var toApply = this.toApplyCount()
+    //
+    // var errorCount = () => {
+    //   return this.applyJob().failure.length
+    // }
+    //
+    // return toApply > 0 || errorCount() > 0
   }
 
   renderApplyAll() {
 
-    if(this.showProgressBar()) {
+    if(!this.showButtons()) {
       return null
     }
 
@@ -280,9 +289,9 @@ class BoxBatchEditForm extends React.Component {
       return this.applyJob().failure.length
     }
 
-    if(toApply == 0 && errorCount() == 0) {
-      return null
-    }
+    // if(toApply == 0 && errorCount() == 0) {
+    //   return null
+    // }
 
     var processingTotalCount = () => {
       return pendingCount() + applyingCount() + doneCount()
@@ -390,35 +399,35 @@ class BoxBatchEditForm extends React.Component {
     )
   }
 
-  renderSuccessMessage() {
-
-    if(this.props.stateBox.components.batch.data.resultMessage.status == 'hidden') {
-      return null
-    }
-
-    return (
-      <div style={{clear: 'both', paddingTop: '10px'}}>
-
-        <div
-          style={{
-            backgroundColor: '#bfda80',
-            borderRadius: '5px',
-            color: '#fff',
-            textAlign: 'center',
-            fontSize: '16px',
-            padding: '3px',
-            // opacity: (this.props.stateBox.components.batch.data.resultMessage.status == 'success' ? '1' : '0'),
-            // transition: 'opacity 0.5s linear'
-          }}
-        >
-          <div>
-            {this.props.stateBox.components.batch.data.resultMessage.count + t('resources_box_batch_processing_successful')}
-          </div>
-        </div>
-      </div>
-    )
-
-  }
+  // renderSuccessMessage() {
+  //
+  //   if(this.props.stateBox.components.batch.data.resultMessage.status == 'hidden') {
+  //     return null
+  //   }
+  //
+  //   return (
+  //     <div style={{clear: 'both', paddingTop: '10px'}}>
+  //
+  //       <div
+  //         style={{
+  //           backgroundColor: '#bfda80',
+  //           borderRadius: '5px',
+  //           color: '#fff',
+  //           textAlign: 'center',
+  //           fontSize: '16px',
+  //           padding: '3px',
+  //           // opacity: (this.props.stateBox.components.batch.data.resultMessage.status == 'success' ? '1' : '0'),
+  //           // transition: 'opacity 0.5s linear'
+  //         }}
+  //       >
+  //         <div>
+  //           {this.props.stateBox.components.batch.data.resultMessage.count + t('resources_box_batch_processing_successful')}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  //
+  // }
 
   render() {
 
@@ -460,10 +469,9 @@ class BoxBatchEditForm extends React.Component {
               {this.renderApplyAll()}
               {this.renderApplySelected()}
             </div>
-            <div>
+            <div style={{paddingTop: '20px', clear: 'both'}}>
               {this.renderHint()}
               {this.renderProgress()}
-              {this.renderSuccessMessage()}
             </div>
           </div>
         </div>

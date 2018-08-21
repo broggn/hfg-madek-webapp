@@ -29,7 +29,6 @@ module.exports = (merged) => {
           open: false,
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: null,
-          resultMessage: nextResultMessage(),
           applyJob: null
         },
         components: {
@@ -43,7 +42,6 @@ module.exports = (merged) => {
           open: nextOpen(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: nextApplyFormData(),
-          resultMessage: nextResultMessage(),
           applyJob: nextApplyJob()
         },
         components: {
@@ -62,9 +60,24 @@ module.exports = (merged) => {
     }
 
 
-
     var job = data.applyJob
 
+
+    var anyFormEvent = () => {
+      return l.find(
+        components.metaKeyForms,
+        (mkf) => mkf.event.action
+      ) || event.action == 'select-key'
+    }
+
+    if(anyFormEvent() && job.processing.length == 0 && job.failure.length == 0 && !nextProps.willStartApply) {
+      return null
+    }
+
+
+    if(nextProps.ignoreAll && job.processing.length == 0 && job.pending.length == 0 && !nextProps.willStartApply) {
+      return null
+    }
 
     var maxParallel = (() => {
       if(!job) {
@@ -195,9 +208,9 @@ module.exports = (merged) => {
       trigger
     )
 
-    if(processing.length == 0 && failure.length == 0) {
-      return null
-    }
+    // if(processing.length == 0 && failure.length == 0) {
+    //   return null
+    // }
 
     return {
       formData: formData,
@@ -208,80 +221,6 @@ module.exports = (merged) => {
       cancelled: cancelled
     }
 
-
-  }
-
-  var nextResultMessage = () => {
-
-    // var timeToShow = 3000
-
-    var anyFormEvent = () => {
-      return l.find(
-        components.metaKeyForms,
-        (mkf) => mkf.event.action
-      )
-    }
-
-    if(initial) {
-      return {
-        status: 'hidden'
-      }
-    }
-
-    else if(nextProps.willStartApply) {
-      return {
-        status: 'hidden'
-      }
-    }
-
-    else if(anyFormEvent() || event.action) {
-      return {
-        status: 'hidden'
-      }
-    }
-
-
-    else if(!nextProps.thereAreUnfinished && nextProps.anyResourceJustFinished) {
-
-      var message = () => {
-        if(nextProps.thereAreFailures) {
-          return {
-            status: 'failure'
-          }
-        } else {
-
-          // setTimeout(
-          //   () => {
-          //     trigger(merged, {
-          //       action: 'make-sure-a-trigger-is-executed-at-this-time'
-          //     })
-          //   },
-          //   timeToShow
-          // )
-
-          return {
-            status: 'success',
-            count: nextProps.successfulCount,
-            lastShow: new Date().getTime()
-          }
-        }
-      }
-
-      return message()
-    }
-
-    // else if(data.resultMessage.status == 'success' && new Date().getTime() - data.resultMessage.lastShow >= timeToShow) {
-    //
-    //   return {
-    //     status: 'hidden'
-    //   }
-    //
-    // }
-
-
-    else {
-      return data.resultMessage
-    }
 
   }
 

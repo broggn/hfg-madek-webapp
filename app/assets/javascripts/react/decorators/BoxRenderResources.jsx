@@ -50,7 +50,7 @@ class BoxRenderResources extends React.Component {
         var job = this.props.applyJob
         var batchStatus = () => {
 
-          if(!job) {
+          if(!job || job.processing.length == 0 && job.failure.length == 0) {
             return null
           } else if(l.find(job.pending, (p) => p.uuid == resourceId)) {
             return 'pending'

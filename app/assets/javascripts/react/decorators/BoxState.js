@@ -155,7 +155,8 @@ module.exports = (merged) => {
       anyApplyAction: anyApplyAction,
       applyResources: applyResources(),
       retryResources: retryResources(),
-      cancelAll: event.action == 'cancel-all'
+      cancelAll: event.action == 'cancel-all',
+      ignoreAll: event.action == 'ignore-all'
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)
