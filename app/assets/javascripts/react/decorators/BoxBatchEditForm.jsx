@@ -120,10 +120,13 @@ class BoxBatchEditForm extends React.Component {
     }
 
 
-    if(this.selectedCount() == 0) {
-      return null
-    }
+    // if(this.selectedCount() == 0) {
+    //   return null
+    // }
 
+    var hasSelection = () => {
+      return this.selectedCount() > 0
+    }
 
     var renderText = () => {
       return t('resources_box_batch_apply_on_selected_1') + this.editableSelectedCount() + t('resources_box_batch_apply_on_selected_2')
@@ -146,17 +149,14 @@ class BoxBatchEditForm extends React.Component {
           <div>{t('resources_box_batch_stats_where_editable') + ' ' + this.editableSelectedCount()}</div>
         </div>
         <div
-          onClick={this.props.onClickApplySelected}
+          onClick={(hasSelection() ? this.props.onClickApplySelected : null)}
           className='primary-button'
+          disabled={(hasSelection() ? null: 'disabled')}
           style={{
             display: 'inline-block',
-            borderRadius: '5px',
-            backgroundColor: (this.toApplyCount() > 0 ? '#d2d2d2' : '#000'),
-            color: '#fff',
             padding: '0px 10px',
             marginRight: '5px',
             marginBottom: '5px',
-            fontSize: '14px',
             cursor: 'pointer',
             marginTop: '5px'
           }}
