@@ -114,13 +114,22 @@ var applyResourceMetaData = ({batchComponent, trigger, resource, formData}) => {
           fd.props.metaKeyId,
           {
             values: formToData(fd),
-            config: {
-              action: (
-                fd.props.metaKey.value_type == 'MetaDatum::Keywords'
-                ? 'add'
-                : 'replace'
-              )
-            }
+            config: (
+              fd.data.option
+              ? {action: fd.data.option}
+              : null
+
+
+            )
+
+            //
+            // {
+            //   action: (
+            //     fd.props.metaKey.value_type == 'MetaDatum::Keywords'
+            //     ? 'add'
+            //     : 'replace'
+            //   )
+            // }
           }
 
         ]

@@ -222,6 +222,7 @@ class BoxBatchDatumKeywords extends React.Component {
     return (
       <div>
         <BoxRenderLabel
+          showOptions={true}
           trigger={this.props.trigger}
           metaKeyForm={this.props.metaKeyForm}
           editable={this.props.editable}

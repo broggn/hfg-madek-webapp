@@ -24,7 +24,8 @@ module.exports = (merged) => {
           keywords: [],
           showProposals: false,
           keywordProposals: null,
-          keyCursor: -1
+          keyCursor: -1,
+          option: nextOption()
         }
       }
     } else {
@@ -34,10 +35,27 @@ module.exports = (merged) => {
           keywords: nextKeywords(),
           showProposals: nextShowProposals(),
           keywordProposals: nextKeywordProposals(),
-          keyCursor: nextKeyCursor()
+          keyCursor: nextKeyCursor(),
+          option: nextOption()
         }
       }
     }
+  }
+
+  var nextOption = () => {
+
+    if(initial) {
+      return 'add'
+    } else if(event.action == 'option-add') {
+      return 'add'
+    } else if(event.action == 'option-replace') {
+      return 'replace'
+    } else if(event.action == 'option-remove') {
+      return 'remove'
+    } else {
+      return data.option
+    }
+
   }
 
   var nextKeyCursor = () => {
