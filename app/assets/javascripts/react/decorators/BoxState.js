@@ -27,8 +27,7 @@ module.exports = (merged) => {
     anyApplyAction,
     anyResourceApply,
     todoLoadMetaData,
-    successfulCount,
-    formsValid
+    successfulCount
   } = BoxStatePrecalculate(merged)
 
 
@@ -170,10 +169,10 @@ module.exports = (merged) => {
       return {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: formsValid && startApply && resource.editable,
+        startApply: startApply && resource.editable,
         cancelApply: event.action == 'cancel-all',
-        waitApply: formsValid && resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: formsValid && (event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
+        waitApply: resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
+        sleep: (event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
         resetStatus: processingJustDone || event.action == 'ignore-all'
       }
     }
