@@ -63,7 +63,14 @@ module.exports = (merged) => {
 
   var nextResultMessage = () => {
 
-    var timeToShow = 3000
+    // var timeToShow = 3000
+
+    var anyFormEvent = () => {
+      return l.find(
+        components.metaKeyForms,
+        (mkf) => mkf.event.action
+      )
+    }
 
     if(initial) {
       return {
@@ -77,6 +84,13 @@ module.exports = (merged) => {
       }
     }
 
+    else if(anyFormEvent() || event.action) {
+      return {
+        status: 'hidden'
+      }
+    }
+
+
     else if(!nextProps.thereAreUnfinished && nextProps.anyResourceJustFinished) {
 
       var message = () => {
@@ -86,17 +100,18 @@ module.exports = (merged) => {
           }
         } else {
 
-          setTimeout(
-            () => {
-              trigger(merged, {
-                action: 'make-sure-a-trigger-is-executed-at-this-time'
-              })
-            },
-            timeToShow
-          )
+          // setTimeout(
+          //   () => {
+          //     trigger(merged, {
+          //       action: 'make-sure-a-trigger-is-executed-at-this-time'
+          //     })
+          //   },
+          //   timeToShow
+          // )
 
           return {
             status: 'success',
+            count: nextProps.successfulCount,
             lastShow: new Date().getTime()
           }
         }
@@ -105,13 +120,13 @@ module.exports = (merged) => {
       return message()
     }
 
-    else if(data.resultMessage.status == 'success' && new Date().getTime() - data.resultMessage.lastShow >= timeToShow) {
-
-      return {
-        status: 'hidden'
-      }
-
-    }
+    // else if(data.resultMessage.status == 'success' && new Date().getTime() - data.resultMessage.lastShow >= timeToShow) {
+    //
+    //   return {
+    //     status: 'hidden'
+    //   }
+    //
+    // }
 
 
     else {

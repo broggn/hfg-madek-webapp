@@ -32,6 +32,11 @@ module.exports = (merged) => {
     (r) => r.components.resourceBatch.data.applyError
   ).length > 0
 
+  var successfulCount = l.filter(
+    components.resources,
+    (r) => (r.components.resourceBatch.data.applyDone || r.components.resourceBatch.event.action == 'apply-success')
+  ).length
+
   var processingJustDone = !(thereAreUnfinished || thereAreFailures) && anyResourceJustFinished
 
   var willFetch = () => {
@@ -159,7 +164,8 @@ module.exports = (merged) => {
     willStartApply: willStartApply(),
     anyApplyAction: anyApplyAction(),
     anyResourceApply: anyResourceApply,
-    todoLoadMetaData: todoLoadMetaData()
+    todoLoadMetaData: todoLoadMetaData(),
+    successfulCount: successfulCount
   }
 }
 

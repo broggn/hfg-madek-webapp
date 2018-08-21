@@ -26,7 +26,8 @@ module.exports = (merged) => {
     willStartApply,
     anyApplyAction,
     anyResourceApply,
-    todoLoadMetaData
+    todoLoadMetaData,
+    successfulCount
   } = BoxStatePrecalculate(merged)
 
 
@@ -124,7 +125,8 @@ module.exports = (merged) => {
       thereAreUnfinished: thereAreUnfinished,
       anyResourceJustFinished: anyResourceJustFinished,
       thereAreFailures: thereAreFailures,
-      anyApplyAction: anyApplyAction
+      anyApplyAction: anyApplyAction,
+      successfulCount: successfulCount
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)

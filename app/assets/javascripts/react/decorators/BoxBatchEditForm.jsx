@@ -397,6 +397,10 @@ class BoxBatchEditForm extends React.Component {
 
   renderSuccessMessage() {
 
+    if(this.props.stateBox.components.batch.data.resultMessage.status == 'hidden') {
+      return null
+    }
+
     return (
       <div style={{clear: 'both', paddingTop: '10px'}}>
 
@@ -408,12 +412,12 @@ class BoxBatchEditForm extends React.Component {
             textAlign: 'center',
             fontSize: '16px',
             padding: '3px',
-            opacity: (this.props.stateBox.components.batch.data.resultMessage.status == 'success' ? '1' : '0'),
-            transition: 'opacity 0.5s linear'
+            // opacity: (this.props.stateBox.components.batch.data.resultMessage.status == 'success' ? '1' : '0'),
+            // transition: 'opacity 0.5s linear'
           }}
         >
           <div>
-            {t('resources_box_batch_processing_successful')}
+            {this.props.stateBox.components.batch.data.resultMessage.count + t('resources_box_batch_processing_successful')}
           </div>
         </div>
       </div>
