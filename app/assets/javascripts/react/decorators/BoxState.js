@@ -18,16 +18,11 @@ module.exports = (merged) => {
   let {event, trigger, initial, components, data, nextProps} = merged
   let {
     // cachedToApplyMetaData,
-    anyResourceJustFinished,
-    thereAreUnfinished,
-    thereAreFailures,
-    processingJustDone,
     willFetch,
     willStartApply,
     anyApplyAction,
     anyResourceApply,
-    todoLoadMetaData,
-    successfulCount
+    todoLoadMetaData
   } = BoxStatePrecalculate(merged)
 
 
@@ -157,11 +152,7 @@ module.exports = (merged) => {
       mount: event.action == 'mount',
       // cachedToApplyMetaData: cachedToApplyMetaData,
       willStartApply: willStartApply,
-      thereAreUnfinished: thereAreUnfinished,
-      anyResourceJustFinished: anyResourceJustFinished,
-      thereAreFailures: thereAreFailures,
       anyApplyAction: anyApplyAction,
-      successfulCount: successfulCount,
       applyResources: applyResources(),
       retryResources: retryResources(),
       cancelAll: event.action == 'cancel-all'
@@ -191,27 +182,27 @@ module.exports = (merged) => {
 
     var nextResourceProps = (resource, hasApplyEvent) => {
 
-      // var startApply = l.includes(
-      //   l.map(cachedToApplyMetaData, (r) => r.data.resource.uuid),
-      //   resource.uuid
-      // )
-      //
-      // var hasSelectedApply = () => {
-      //   return event.action == 'apply-selected'
-      //     && l.find(
-      //       data.selectedResources,
-      //       (sr) => sr.uuid == resource.uuid
-      //     )
-      // }
+      var thumbnailMetaData = () => {
+        if(components.batch && components.batch.event.action == 'apply-success') {
+          var event = components.batch.event
+          if(event.resourceId == resource.uuid) {
+            return event.thumbnailMetaData
+          }
+        }
+        return null
+      }
 
       return {
         resource: resource,
         loadMetaData: (todoLoadMetaData[resource.uuid] ? true : false),
-        startApply: false,//startApply && resource.editable,
-        cancelApply: false,//event.action == 'cancel-all',
-        waitApply: false,//resource.editable && !l.isEmpty(cachedToApplyMetaData) && !startApply && (event.action == 'apply' || event.action == 'apply-selected' && hasSelectedApply() || hasApplyEvent),
-        sleep: false,//(event.action == 'apply-selected' || anyResourceApply) && !hasSelectedApply() && !l.isEmpty(cachedToApplyMetaData),
-        resetStatus: false//processingJustDone || event.action == 'ignore-all'
+        thumbnailMetaData: thumbnailMetaData(),
+        resetListMetaData: willStartApply && (
+          event.action == 'apply'
+          || event.action == 'apply-selected' && l.find(data.selectedResources, (r) => r.uuid == resource.uuid)
+          || l.find(components.resources, (rs) => rs.data.resource.uuid == resource.uuid && rs.event.action == 'apply')
+
+        )
+
       }
     }
 

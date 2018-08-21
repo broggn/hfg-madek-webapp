@@ -118,7 +118,7 @@ class BoxBatchApplyButton extends React.Component {
       return renderLabel(t('resources_box_batch_status_waiting'))
     } else if(batchStatus == 'cancelled') {
       return renderLabel(t('resources_box_batch_status_cancelled'))
-    } else if(this.props.showBatchButtons.editMode && batchStatus == 'sleep'){
+    } else if(this.props.showBatchButtons.editMode && batchStatus != 'sleep'){
       return renderButton(t('resources_box_batch_status_apply'), (e) => this.onApply(e))
     } else {
       return null

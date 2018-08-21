@@ -5,7 +5,6 @@ import async from 'async'
 import xhr from 'xhr'
 import getRailsCSRFToken from '../../lib/rails-csrf-token.coffee'
 import BoxBatchEdit from './BoxBatchEdit.js'
-import BoxResourceBatch from './BoxResourceBatch.js'
 import BoxRedux from './BoxRedux.js'
 import setUrlParams from '../../lib/set-params-for-url.coffee'
 
@@ -33,10 +32,10 @@ module.exports = (merged) => {
         data: {
           resource: nextProps.resource,
           listMetaData: (nextProps.resource.list_meta_data ? nextProps.resource.list_meta_data : null),
-          loadingListMetaData: nextProps.loadMetaData
+          loadingListMetaData: nextProps.loadMetaData,
+          thumbnailMetaData: null
         },
         components: {
-          resourceBatch: nextResourceBatch()
         }
       }
     } else {
@@ -44,35 +43,45 @@ module.exports = (merged) => {
         data: {
           resource: nextResource(),
           listMetaData: nextListMetaData(),
-          loadingListMetaData: nextLoadingListMetaData()
+          loadingListMetaData: nextLoadingListMetaData(),
+          thumbnailMetaData: nextThumbnailMetaData()
         },
         components: {
-          resourceBatch: nextResourceBatch()
         }
       }
     }
   }
 
-  var nextResourceBatch = () => {
-
-    var r = BoxResourceBatch(
-      {
-        event: (initial ? {} : components.resourceBatch.event),
-        trigger: trigger,
-        initial: initial,
-        components: (initial ? {} : components.resourceBatch.components),
-        data: (initial ? {} : components.resourceBatch.data),
-        nextProps: nextProps,
-        path: l.concat(path, ['resourceBatch'])
+  var nextThumbnailMetaData = () => {
+    var thumbnailMetaData = nextProps.thumbnailMetaData
+    if(thumbnailMetaData) {
+      var getTitle = () => {
+        if(thumbnailMetaData.title) {
+          return thumbnailMetaData.title
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.title
+        } else {
+          return null
+        }
       }
-    )
-    r.props = nextProps
-    r.id = (initial ? BoxRedux.nextId() : components.resourceBatch.id)
-    r.path = l.concat(path, ['resourceBatch'])
-    return r
+      var getAuthors = () => {
+        if(thumbnailMetaData.authors) {
+          return thumbnailMetaData.authors
+        } else if(data.thumbnailMetaData) {
+          return data.thumbnailMetaData.authors
+        } else {
+          return null
+        }
+      }
+      return {
+        title: getTitle(),
+        authors: getAuthors()
+      }
+
+    } else {
+      return data.thumbnailMetaData
+    }
   }
-
-
 
 
 
@@ -90,7 +99,7 @@ module.exports = (merged) => {
   }
 
   var nextListMetaData = () => {
-    if(nextProps.waitApply || nextProps.startApply) {
+    if(nextProps.resetListMetaData) {
       return null
     } else if(event.action == 'load-meta-data-success') {
       return event.json

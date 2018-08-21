@@ -23,13 +23,6 @@ module.exports = (merged) => {
 
   var next = () => {
 
-
-    // if(!l.isEmpty(nextProps.cachedToApplyMetaData)) {
-    //   BoxStateApplyMetaData(data, components, nextProps.cachedToApplyMetaData, nextApplyFormData(), trigger)
-    // }
-
-
-
     if(initial) {
       return {
         data: {

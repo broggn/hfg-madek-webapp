@@ -15,30 +15,6 @@ module.exports = (merged) => {
 
   let {event, trigger, initial, components, data, nextProps} = merged
 
-  // var cachedToApplyMetaData = toApplyMetaData(event, merged, components, data)
-
-  var anyResourceJustFinished = l.filter(
-    components.resources,
-    (r) => r.components.resourceBatch.event.action == 'apply-success'
-  ).length > 0
-
-  var thereAreUnfinished = l.filter(
-    components.resources,
-    (r) => (r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData) && !(r.components.resourceBatch.event.action == 'apply-success')
-  ).length > 0
-
-  var thereAreFailures = l.filter(
-    components.resources,
-    (r) => r.components.resourceBatch.data.applyError
-  ).length > 0
-
-  var successfulCount = l.filter(
-    components.resources,
-    (r) => (r.components.resourceBatch.data.applyDone || r.components.resourceBatch.event.action == 'apply-success')
-  ).length
-
-  var processingJustDone = !(thereAreUnfinished || thereAreFailures) && anyResourceJustFinished
-
   var willFetch = () => {
 
     return event.action == 'fetch-next-page' || event.action == 'force-fetch-next-page'
@@ -68,10 +44,9 @@ module.exports = (merged) => {
     )
   }
 
-
   var todoLoadMetaData = () => {
 
-    if(thereAreUnfinished || nextProps.get.config.layout != 'list') {
+    if(components.batch && components.batch.data.applyJob || nextProps.get.config.layout != 'list') {
       return {}
     }
 
@@ -94,7 +69,7 @@ module.exports = (merged) => {
       return l.filter(
         components.resources,
         (r) => {
-          return !r.data.listMetaData && !r.data.loadingListMetaData && !(r.event.action == 'load-meta-data-success')
+          return (!r.data.listMetaData || components.batch && components.batch.event.action == 'apply-success' && components.batch.event.resourceId == r.data.resource.uuid) && !r.data.loadingListMetaData && !(r.event.action == 'load-meta-data-success')
         }
       )
     }
@@ -153,78 +128,15 @@ module.exports = (merged) => {
 
 
   return {
-    // cachedToApplyMetaData: cachedToApplyMetaData,
-    anyResourceJustFinished: anyResourceJustFinished,
-    thereAreUnfinished: thereAreUnfinished,
-    thereAreFailures: thereAreFailures,
-    processingJustDone: processingJustDone,
     willFetch: willFetch(),
     willStartApply: willStartApply(),
     anyApplyAction: anyApplyAction(),
     anyResourceApply: anyResourceApply,
-    todoLoadMetaData: todoLoadMetaData(),
-    successfulCount: successfulCount
+    todoLoadMetaData: todoLoadMetaData()
   }
 }
 
 
-// var toApplyMetaData = (event, merged, components, data) => {
-//
-//   if(!formsValid(merged)) {
-//     return []
-//   }
-//
-//   var resourceNeedsApply = (r) => {
-//
-//     var hasSelectedApply = () => {
-//       return event.action == 'apply-selected'
-//         && l.find(
-//           data.selectedResources,
-//           (sr) => sr.uuid == r.data.resource.uuid
-//         )
-//     }
-//
-//     return r.data.resource.editable && !r.components.resourceBatch.data.applyingMetaData && (
-//       r.components.resourceBatch.data.applyPending || r.event.action == 'apply' || r.event.action == 'retry' || event.action == 'apply' || hasSelectedApply()
-//     ) && !(r.components.resourceBatch.event.action == 'apply-success')
-//   }
-//
-//   var resourceIsApplying = (r) => {
-//     return r.components.resourceBatch.data.applyingMetaData && !(r.components.resourceBatch.event.action == 'apply-success')
-//   }
-//
-//   var candidates = () => {
-//     return l.filter(
-//       components.resources,
-//       (r) => {
-//         return resourceNeedsApply(r)
-//       }
-//     )
-//   }
-//
-//   var loading = () => {
-//     return l.filter(
-//       components.resources,
-//       (r) => resourceIsApplying(r)
-//     )
-//   }
-//
-//   var maxParallel = () => {
-//
-//     // The first update is sent isolated (not in parallel), because we need the first
-//     // to create the not existing keywords. Otherwise several will try to create them
-//     // in parallel resulting in not unique exceptions.
-//     var hasDone = l.filter(components.resources, (rs) => rs.components.resourceBatch.event.action == 'apply-success' || rs.components.resourceBatch.data.applyDone).length >= 1
-//     if(!hasDone) {
-//       return 1
-//     } else {
-//       return 12
-//     }
-//   }
-//
-//
-//   return l.slice(candidates(), 0, maxParallel() - loading().length)
-// }
 
 var formsValid = (merged) => {
   if(merged.initial) {

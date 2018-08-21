@@ -41,10 +41,6 @@ class BoxBatchEditForm extends React.Component {
     } else {
       return this.applyJob().processing.length
     }
-    // return l.filter(
-    //   this.stateBox().components.resources,
-    //   (r) => r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData
-    // ).length
   }
 
   totalCount() {

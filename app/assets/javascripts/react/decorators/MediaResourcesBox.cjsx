@@ -909,11 +909,7 @@ module.exports = React.createClass
                 perPage={@props.get.config.per_page}
                 showBatchButtons={
                   {
-                    editMode: @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0,
-                    processing: f.filter(
-                      this.state.reduc.components.resources,
-                      (r) => r.components.resourceBatch && (r.components.resourceBatch.data.applyPending || r.components.resourceBatch.data.applyingMetaData)
-                    ).length > 0
+                    editMode: @state.reduc.components.batch.data.open && @state.reduc.components.batch.components.metaKeyForms.length > 0
                   }
                 }
                 unselectResources={@unselectResources}
