@@ -440,16 +440,20 @@ class BoxBatchEditForm extends React.Component {
       return (
         <div className='ui-resources-holder pam'>
 
-          <div style={{textAlign: 'right', marginBottom: '10px'}}>
+          <div style={{textAlign: 'right', marginBottom: '10px', float: 'right'}}>
             <a onClick={this.props.onClose}>{t('resources_box_batch_close')}</a>
             {' '}
             <i className='icon-arrow-up' style={{position: 'relative', top: '2px'}} />
           </div>
 
-          <div style={{width: '50%', float: 'left'}}>
-            <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
+          <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_title')}</h2>
+
+          <div style={{width: '40%', float: 'left'}}>
+            <div style={{marginRight: '30px'}}>
+              <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
+            </div>
           </div>
-          <div style={{width: '50%', float: 'right'}}>
+          <div style={{width: '60%', float: 'right'}}>
             {this.renderInvalidMessage()}
             {this.renderKeyForms()}
 

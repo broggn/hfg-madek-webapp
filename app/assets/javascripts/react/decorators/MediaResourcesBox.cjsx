@@ -851,19 +851,6 @@ module.exports = React.createClass
       {boxTitleBar()}
       {boxToolBar()}
 
-      <BoxBatchEditForm
-        onClose={(e) => @onBatchButton(e)}
-        stateBox={@state.reduc}
-        onClickKey={(e, k) => @onClickKey(e, k)}
-        onClickApplyAll={(e) => @onClickApplyAll(e)}
-        onClickApplySelected={(e) => @onClickApplySelected(e)}
-        onClickCancel={(e) => @onClickCancel(e)}
-        onClickIgnore={(e) => @onClickIgnore(e)}
-        totalCount={@props.get.pagination.total_count}
-        allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
-        trigger={@reducTrigger}
-      />
-
       <div className='ui-resources-holder pam'>
         <div className='ui-container table auto'>
           {sidebar}
@@ -871,6 +858,21 @@ module.exports = React.createClass
           {# main list:}
           <div className='ui-container table-cell table-substance'>
             {children}
+
+            <BoxBatchEditForm
+              onClose={(e) => @onBatchButton(e)}
+              stateBox={@state.reduc}
+              onClickKey={(e, k) => @onClickKey(e, k)}
+              onClickApplyAll={(e) => @onClickApplyAll(e)}
+              onClickApplySelected={(e) => @onClickApplySelected(e)}
+              onClickCancel={(e) => @onClickCancel(e)}
+              onClickIgnore={(e) => @onClickIgnore(e)}
+              totalCount={@props.get.pagination.total_count}
+              allLoaded={@props.get.pagination && @state.reduc.components.resources.length == @props.get.pagination.total_count}
+              trigger={@reducTrigger}
+            />
+
+
             {if resources.length == 0 && @state.reduc.data.loadingNextPage
               <Preloader />
             else if not f.present(resources) or resources.length == 0 then do () =>

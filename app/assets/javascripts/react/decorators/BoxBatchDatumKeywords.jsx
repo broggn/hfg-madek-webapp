@@ -103,7 +103,8 @@ class BoxBatchDatumKeywords extends React.Component {
         style={{
           cursor: 'pointer',
           backgroundColor: (this.props.metaKeyForm.data.keyCursor == i ? '#d6d6d6' : null),
-          padding: '0px 10px'
+          padding: '0px 10px',
+          borderBottom: '1px solid #eee'
         }}
         onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}
       >

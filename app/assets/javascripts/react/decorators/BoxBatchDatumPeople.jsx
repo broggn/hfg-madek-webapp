@@ -72,7 +72,7 @@ class BoxBatchDatumPeople extends React.Component {
 
   renderKeywordProposal(k) {
     return (
-      <div key={k.uuid} style={{cursor: 'pointer'}} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
+      <div key={k.uuid} style={{cursor: 'pointer', borderBottom: '1px solid #eee'}} onClick={(e) => this.onKeywordSelect(e, k.uuid, k.label)}>
         {k.label}
       </div>
     )

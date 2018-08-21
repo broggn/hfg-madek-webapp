@@ -108,6 +108,15 @@ module.exports = React.createClass
                 'pen',
                 t('resources_box_batch_actions_edit_sets'))}
 
+
+          <MenuItem onClick={@props.callbacks.onQuickBatch}>
+            <i className='fa fa-magic' style={{position: 'static', display: 'inline-block', minWidth: '20px', marginLeft: '5px'}}></i>
+            <span style={{display: 'inline', marginLeft: '5px'}}>
+              <span style={{color: '#9a9a9a'}}>NEU: </span>{t('resources_box_batch_actions_meta_data_batch')}
+            </span>
+          </MenuItem>
+
+
           {if showActions.deleteResources
             # TODO if selection most likely not needed, should be already included in the if condition.
             batchDestroyables = SelectionScope.batchDestroyResources(selection, ['MediaEntry', 'Collection']) if selection
@@ -202,13 +211,6 @@ module.exports = React.createClass
             #   </MenuItem>}
             null
           }
-
-          <MenuItem onClick={@props.callbacks.onQuickBatch}>
-            <i className='fa fa-magic' style={{position: 'static', display: 'inline-block', minWidth: '20px', marginLeft: '5px'}}></i>
-            <span style={{display: 'inline', marginLeft: '5px'}}>
-              <span style={{color: '#9a9a9a'}}>BETA: </span>{t('resources_box_batch_actions_meta_data_batch')}
-            </span>
-          </MenuItem>
 
         </Dropdown.Menu>
       </Dropdown>
