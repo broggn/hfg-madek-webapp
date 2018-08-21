@@ -165,7 +165,8 @@ module.exports = (merged) => {
     anyApplyAction: anyApplyAction(),
     anyResourceApply: anyResourceApply,
     todoLoadMetaData: todoLoadMetaData(),
-    successfulCount: successfulCount
+    successfulCount: successfulCount,
+    formsValid: formsValid(merged)
   }
 }
 
