@@ -45,7 +45,6 @@ module Modules
       private
 
       def handle_meta_data_update_result(resource, errors)
-
         if errors.empty?
           published_before = published_state(resource)
           if resource.class == MediaEntry
@@ -57,10 +56,7 @@ module Modules
         else
           respond_with_errors(errors)
         end
-
       end
-
-
 
       def published_state(resource)
         resource.class != MediaEntry or resource.is_published
