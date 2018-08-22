@@ -18,10 +18,27 @@ module.exports = (merged) => {
     }
 
     if(initial) {
+
+      var initialValues = () => {
+        if(!nextProps.values) {
+          return []
+        } else {
+          return l.map(
+            nextProps.values,
+            (v) => {
+              return {
+                id: v.uuid,
+                label: v.label
+              }
+            }
+          )
+        }
+      }
+
       return {
         data: {
           text: '',
-          keywords: [],
+          keywords: initialValues(),
           showProposals: false,
           keywordProposals: null,
           keyCursor: -1,

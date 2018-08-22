@@ -30,7 +30,9 @@ module.exports = (merged) => {
           mode: 'single',
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: null,
-          applyJob: null
+          applyJob: null,
+          singleResource: null,
+          singleResourceMetaData: null
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
@@ -44,15 +46,42 @@ module.exports = (merged) => {
           mode: nextMode(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: nextApplyFormData(),
-          applyJob: nextApplyJob()
+          applyJob: nextApplyJob(),
+          singleResource: nextSingleResource(),
+          singleResourceMetaData: nextSingleResourceMetaData()
         },
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
           metaKeyForms: nextMetaKeyForms()
+          singleMetaKeyForms: nextMetaKeyForms()
         }
       }
     }
 
+  }
+
+  var nextSingleResource = () => {
+
+    if(nextProps.singleResource) {
+      loadSingleMetaData(nextProps.singleResource)
+    }
+
+    if(nextProps.singleResource) {
+      return nextProps.singleResource
+    } else {
+      return data.singleResource
+    }
+  }
+
+  var nextSingleResourceMetaData = () => {
+
+    if(nextProps.singleResource) {
+      return null
+    } else if(event.action == 'single-resource-loaded') {
+      return event.metaData
+    } else {
+      return data.singleResourceMetaData
+    }
   }
 
   var nextMode = () => {
@@ -328,6 +357,14 @@ module.exports = (merged) => {
 
   var nextMetaKeyForms = () => {
 
+    if(event.action == 'select-mode' && event.mode == 'single') {
+      return []
+    }
+
+    if(nextProps.singleResource) {
+      return []
+    }
+
     var findMetaKeyForm = (metaKeyId) => {
       return l.find(components.metaKeyForms, (f) => f.props.metaKeyId == event.metaKeyId)
     }
@@ -399,14 +436,15 @@ module.exports = (merged) => {
       return r
     }
 
-    var newMetaKeyForm = (componentId, metaKeyId, contextKey, index) => {
+    var newMetaKeyForm = (componentId, metaKeyId, contextKey, values, index) => {
 
       var props = {
         metaKeyId: metaKeyId,
         metaKey: findMetaKey(metaKeyId),
         contextKey: contextKey,
         mandatoryForTypes: mandatoryForTypes(metaKeyId),
-        invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId)
+        invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId),
+        values: (values ? values: null)
       }
 
       var id = BoxRedux.nextId()
@@ -446,11 +484,16 @@ module.exports = (merged) => {
       return mapping[type]
     }
 
-    if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
+    if(event.action == 'single-resource-loaded') {
+      return l.map(
+        event.metaData,
+        (md, i) => newMetaKeyForm(null, md.meta_key_id, null, md.values, i)
+      )
+    } else if(event.action == 'select-key' && !findMetaKeyForm(event.metaKeyId)) {
       var existing = mapExisting()
       return l.concat(
         existing,
-        newMetaKeyForm(null, event.metaKeyId, event.contextKey, existing.length)
+        newMetaKeyForm(null, event.metaKeyId, event.contextKey, null, existing.length)
       )
     } else {
       return mapExisting()
@@ -471,6 +514,36 @@ module.exports = (merged) => {
   }
 
 
+
+  var loadSingleMetaData = (resource) => {
+
+    var url = resource.url + '/meta_data/edit/by_vocabularies'
+    xhr(
+      {
+        url: url,
+        method: 'GET',
+        json: true,
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-Token': getRailsCSRFToken()
+        }
+      },
+      (err, res, json) => {
+        var metaData = l.filter(
+          l.map(
+            json.meta_data.meta_datum_by_meta_key_id,
+            (md) => md
+          ),
+          (md) => !l.isEmpty(md.values)
+        )
+
+        trigger(
+          merged,
+          {action: 'single-resource-loaded', metaData: metaData}
+        )
+      }
+    )
+  }
 
 
   return next()

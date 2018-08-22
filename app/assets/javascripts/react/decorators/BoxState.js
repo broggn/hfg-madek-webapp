@@ -109,7 +109,7 @@ module.exports = (merged) => {
       }
     } else if(event.action == 'select-resources') {
       if(isSingleMode()) {
-        return getSingleSelected()
+        return []
       } else {
         return l.concat(
           data.selectedResources,
@@ -182,7 +182,15 @@ module.exports = (merged) => {
       applyResources: applyResources(),
       retryResources: retryResources(),
       cancelAll: event.action == 'cancel-all',
-      ignoreAll: event.action == 'ignore-all'
+      ignoreAll: event.action == 'ignore-all',
+      singleResource: (
+        components.batch
+        && components.batch.data.mode == 'single'
+        && event.action == 'toggle-resource-selection'
+        ? l.find(components.resources, (rs) => rs.data.resource.uuid == event.resourceUuid).data.resource
+        : null
+      )
+
     }
 
     var id = (initial ? BoxRedux.nextId() : components.batch.id)
