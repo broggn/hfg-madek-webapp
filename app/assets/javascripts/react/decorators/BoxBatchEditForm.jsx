@@ -454,16 +454,49 @@ class BoxBatchEditForm extends React.Component {
         )
       }
 
+      var renderModeButton = (mode, label) => {
+
+        var onClick = (e) => {
+          this.props.trigger(this.props.stateBox.components.batch, {action: 'select-mode', mode: mode})
+        }
+
+        var className = () => {
+          if(mode == this.props.stateBox.components.batch.data.mode) {
+            return 'active button'
+          } else {
+            return 'button'
+          }
+        }
+
+        return (
+          <a className={className()} onClick={(e) => onClick(e)}>
+            {label}
+          </a>
+        )
+      }
+
       return (
         <div className='ui-resources-holder pbm'>
 
-          <div style={{textAlign: 'right', marginBottom: '10px', float: 'right'}}>
-            <a onClick={this.props.onClose}>{t('resources_box_batch_close')}</a>
-            {' '}
-            <i className='icon-arrow-up' style={{position: 'relative', top: '2px'}} />
+          <div className='ui-container'>
+            <div className='left col2of6'>
+              <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_title')}</h2>
+            </div>
+            <div className='col2of6 by-center'>
+              <div className='button-group'>
+                {renderModeButton('single', 'Einzelauswahl')}
+                {renderModeButton('batch', 'Batchauswahl')}
+              </div>
+            </div>
+            <div className='col2of6 by-right'>
+              <div style={{textAlign: 'right', marginBottom: '10px'}}>
+                <a onClick={this.props.onClose}>{t('resources_box_batch_close')}</a>
+                {' '}
+                <i className='icon-arrow-up' style={{position: 'relative', top: '2px'}} />
+              </div>
+            </div>
           </div>
 
-          <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_title')}</h2>
 
           <div style={{width: '40%', float: 'left'}}>
             <div style={{marginRight: '30px'}}>

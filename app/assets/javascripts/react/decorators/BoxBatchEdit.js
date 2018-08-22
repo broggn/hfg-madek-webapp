@@ -27,6 +27,7 @@ module.exports = (merged) => {
       return {
         data: {
           open: false,
+          mode: 'single',
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: null,
           applyJob: null
@@ -40,6 +41,7 @@ module.exports = (merged) => {
       return {
         data: {
           open: nextOpen(),
+          mode: nextMode(),
           invalidMetaKeyUuids: nextInvalidMetaKeyUuids(),
           applyFormData: nextApplyFormData(),
           applyJob: nextApplyJob()
@@ -51,6 +53,14 @@ module.exports = (merged) => {
       }
     }
 
+  }
+
+  var nextMode = () => {
+    if(event.action == 'select-mode') {
+      return event.mode
+    } else {
+      return data.mode
+    }
   }
 
   var nextApplyJob = () => {
