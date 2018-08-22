@@ -65,10 +65,29 @@ module.exports = (merged) => {
 
 
   var nextSelectedResources = () => {
+
+    var isSingleMode = () => {
+      return components.batch.data.mode == 'single'
+    }
+
+    var getEventResource = () => {
+      return l.find(components.resources, (cr) => cr.data.resource.uuid == event.resourceUuid).data.resource
+    }
+
     if(event.action == 'mount' && l.includes(['MediaResources', 'MediaEntries', 'Collections'], nextProps.get.type)) {
       return []
+    } else if(components.batch.event.action == 'select-mode' && components.batch.event.mode == 'single') {
+      return []
     } else if(event.action == 'toggle-resource-selection') {
-      if(l.find(data.selectedResources, (sr) => sr.uuid == event.resourceUuid)) {
+      if(isSingleMode()) {
+        if(data.selectedResources.length == 0 || data.selectedResources[0].uuid != event.resourceUuid) {
+          return [
+            getEventResource()
+          ]
+        } else {
+          return []
+        }
+      } else if(l.find(data.selectedResources, (sr) => sr.uuid == event.resourceUuid)) {
         return l.reject(
           data.selectedResources,
           (sr) => sr.uuid == event.resourceUuid
@@ -80,19 +99,26 @@ module.exports = (merged) => {
         )
       }
     } else if(event.action == 'unselect-resources') {
-      return l.reject(
-        data.selectedResources,
-        (sr) => l.includes(event.resourceUuids, sr.uuid)
-      )
-    } else if(event.action == 'select-resources') {
-      return l.concat(
-        data.selectedResources,
-        l.map(
-          event.resourceUuids,
-          (rid) => l.find(components.resources, (cr) => cr.data.resource.uuid == rid).data.resource
+      if(isSingleMode()) {
+        return []
+      } else {
+        return l.reject(
+          data.selectedResources,
+          (sr) => l.includes(event.resourceUuids, sr.uuid)
         )
-
-      )
+      }
+    } else if(event.action == 'select-resources') {
+      if(isSingleMode()) {
+        return getSingleSelected()
+      } else {
+        return l.concat(
+          data.selectedResources,
+          l.map(
+            event.resourceUuids,
+            (rid) => l.find(components.resources, (cr) => cr.data.resource.uuid == rid).data.resource
+          )
+        )
+      }
     } else {
       return data.selectedResources
     }
