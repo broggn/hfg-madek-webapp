@@ -31,7 +31,7 @@ module Modules
         resource = get_authorized_resource
         errors = update_all_meta_data_transaction!(resource, meta_data_params)
 
-        handle_meta_data_update_result(errors)
+        handle_meta_data_update_result(resource, errors)
       end
 
       def advanced_shared_meta_data_update
