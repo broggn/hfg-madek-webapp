@@ -21,7 +21,7 @@ class BoxBatchEditForm extends React.Component {
 
   renderMetaKeyForm(metaKeyForm, resourceStates) {
     return (
-      <div key={metaKeyForm.props.metaKeyId} style={{backgroundColor: '#fff', borderRadius: '5px', border: '1px solid #ddd', padding: '10px', marginBottom: '5px'}}>
+      <div key={metaKeyForm.props.metaKeyId} style={{backgroundColor: '#fff', borderRadius: '5px', border: '1px solid #cccccc', padding: '10px', marginBottom: '5px'}}>
         <BoxBatchEditMetaKeyForm trigger={this.props.trigger} metaKeyForm={metaKeyForm} resourceStates={resourceStates} editable={!this.showProgressBar()}/>
       </div>
     )
@@ -139,7 +139,7 @@ class BoxBatchEditForm extends React.Component {
           float: 'left',
           backgroundColor: '#fff',
           borderRadius: '5px',
-          border: '1px solid rgb(221, 221, 221)',
+          border: '1px solid #cccccc',
           padding: '10px',
           marginLeft: '5px'
         }}
@@ -234,7 +234,7 @@ class BoxBatchEditForm extends React.Component {
           float: 'left',
           backgroundColor: '#fff',
           borderRadius: '5px',
-          border: '1px solid rgb(221, 221, 221)',
+          border: '1px solid #cccccc',
           padding: '10px'
         }}
       >

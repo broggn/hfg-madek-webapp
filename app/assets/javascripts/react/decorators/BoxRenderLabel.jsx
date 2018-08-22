@@ -30,17 +30,18 @@ class BoxRenderLabel extends React.Component {
     }
 
     return (
-      <span style={{cursor: 'pointer'}} onClick={(e) => this.onClose(e)}>
-        <i
-          className='icon-close'
-          style={{
-            display: 'inline-block',
-            width: '20px',
-            position: 'relative',
-            top: '2px'
-          }}
-        />
-        {' '}
+
+
+      <span
+        className='ui-form-ui-ttip-toggle ui-ttip-toggle'
+        style={{
+          marginRight: '20px',
+          marginTop: '5px',
+          float: 'right'
+        }}
+        onClick={(e) => this.onClose(e)}
+      >
+        <Icon i='close'/>
       </span>
     )
   }
@@ -95,9 +96,39 @@ class BoxRenderLabel extends React.Component {
           color: (this.props.metaKeyForm.props.invalid ? '#f00' : null)
         }}
       >
-        {this.renderCross()}
-        {renderLabel()}
-        {renderHint()}
+        <div style={{
+            display: 'table',
+            width: '100%'
+          }}
+        >
+          <div
+            style={{
+              width: '30px',
+              display: 'table-cell',
+              verticalAlign: 'top'
+            }}
+          >
+            {this.renderCross()}
+          </div>
+          <div
+            style={{
+              paddingTop: '4px',
+              display: 'table-cell',
+              verticalAlign: 'top'
+            }}
+          >
+            {renderLabel()}
+          </div>
+          <div
+            style={{
+              width: '50px',
+              display: 'table-cell',
+              verticalAlign: 'top'
+            }}
+          >
+            {renderHint()}
+          </div>
+        </div>
       </div>
 
     )
