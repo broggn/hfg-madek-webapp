@@ -364,15 +364,24 @@ class BoxBatchEditForm extends React.Component {
       )
     }
 
+    var renderText = () => {
+
+      if(pendingCount() == 0 && applyingCount() == 0 && errorCount() == 0) {
+        return doneCount() + t('resources_box_batch_processing_successful')
+      } else {
+        return (
+          processingTotalCount() + t('resources_box_batch_loading_stats_total') +
+          applyingCount() + t('resources_box_batch_loading_stats_applying') +
+          pendingCount() + t('resources_box_batch_loading_stats_pending') +
+          doneCount() + t('resources_box_batch_loading_stats_done')
+        )
+      }
+    }
+
     return (
       <div style={{backgroundColor: '#bfda80', borderRadius: '5px', color: '#fff', textAlign: 'center', fontSize: '16px', padding: '3px'}}>
         <div>
-          {
-            processingTotalCount() + t('resources_box_batch_loading_stats_total') +
-            applyingCount() + t('resources_box_batch_loading_stats_applying') +
-            pendingCount() + t('resources_box_batch_loading_stats_pending') +
-            doneCount() + t('resources_box_batch_loading_stats_done')
-          }
+          {renderText()}
           {renderErrors()}
         </div>
         <div>
