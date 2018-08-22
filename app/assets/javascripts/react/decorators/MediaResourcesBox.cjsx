@@ -820,8 +820,20 @@ module.exports = React.createClass
       />
 
 
+    boxStyle = {}
+    if @state.reduc.components.batch.data.open
+      boxStyle = {
+        position: 'fixed',
+        left: '0px',
+        right: '30%',
+        top: '0px',
+        bottom: '0px',
+        overflowY: 'scroll',
+        zIndex: '100000000'
+      }
+
     # component:
-    <div data-test-id='resources-box' className={BoxUtil.boxClasses(mods)}>
+    <div data-test-id='resources-box' className={BoxUtil.boxClasses(mods)} style={boxStyle}>
       {
         if @state.showBatchTransferResponsibility
           actionUrls = {

@@ -476,7 +476,20 @@ class BoxBatchEditForm extends React.Component {
       }
 
       return (
-        <div className='ui-resources-holder pbm'>
+        <div
+          className='ui-resources-holder pbm'
+          style={{
+            position: 'fixed',
+            top: '0px',
+            left: '70%',
+            right: '0px',
+            bottom: '0px',
+            overflowY: 'scroll',
+            zIndex: '1000000000',
+            boxShadow: '0px 0px 10px',
+            backgroundColor: '#fff'
+          }}
+        >
 
           <div className='ui-container'>
             <div className='left col2of6'>
@@ -498,12 +511,12 @@ class BoxBatchEditForm extends React.Component {
           </div>
 
 
-          <div style={{width: '40%', float: 'left'}}>
+          <div>
             <div style={{marginRight: '30px'}}>
               <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
             </div>
           </div>
-          <div style={{width: '60%', float: 'right', paddingTop: '26px'}}>
+          <div style={{paddingTop: '26px'}}>
             {this.renderInvalidMessage()}
             {this.renderKeyForms()}
 
