@@ -140,10 +140,15 @@ module.exports = (merged) => {
 
   var nextData = () => {
     if(event.action == 'data-loaded') {
-      return data.metaMetaData.concat({
+      var entry = {
         data: event.data,
         type: event.type
-      })
+      }
+      if(event.type == 'Collection') {
+        return data.metaMetaData.concat([entry])
+      } else {
+        return [entry].concat(data.metaMetaData)
+      }
     } else {
       return data.metaMetaData
     }
