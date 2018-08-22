@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import l from 'lodash'
 import t from '../../lib/i18n-translate.js'
 import cx from 'classnames/dedupe'
+import Tooltipped from '../ui-components/Tooltipped.cjsx'
+import Icon from '../ui-components/Icon.cjsx'
 
 
 
@@ -44,6 +46,46 @@ class BoxRenderLabel extends React.Component {
   }
 
   render() {
+
+    var contextOrMetaKey = () => {
+      if(this.props.metaKeyForm.props.contextKey) {
+        return this.props.metaKeyForm.props.contextKey
+      } else {
+        return this.props.metaKeyForm.props.metaKey
+      }
+
+    }
+
+
+    var renderLabel = () => {
+      return contextOrMetaKey().label
+    }
+
+    var renderHint = () => {
+
+      var id = this.props.metaKeyForm.props.metaKey.uuid
+      var hint = contextOrMetaKey().description
+
+      if(!hint) {
+        return null
+      }
+
+      return (
+        <Tooltipped text={hint} id={id}>
+          <span
+            className='ui-form-ui-ttip-toggle ui-ttip-toggle'
+            style={{
+              marginRight: '20px',
+              marginTop: '5px',
+              float: 'right'
+            }}
+          >
+            <Icon i='question'/>
+          </span>
+        </Tooltipped>
+      )
+    }
+
     return (
       <div
         style={{
@@ -54,7 +96,8 @@ class BoxRenderLabel extends React.Component {
         }}
       >
         {this.renderCross()}
-        {this.props.metaKeyForm.props.metaKey.label}
+        {renderLabel()}
+        {renderHint()}
       </div>
 
     )

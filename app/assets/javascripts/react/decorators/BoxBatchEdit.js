@@ -362,11 +362,12 @@ module.exports = (merged) => {
       )
     }
 
-    var reuseMetaKeyForm = (metaKeyForm, componentId, metaKeyId, index) => {
+    var reuseMetaKeyForm = (metaKeyForm, componentId, metaKeyId, contextKey, index) => {
 
       var props = {
         metaKeyId: metaKeyId,
         metaKey: findMetaKey(metaKeyId),
+        contextKey: contextKey,
         mandatoryForTypes: mandatoryForTypes(metaKeyId),
         invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId)
       }
@@ -388,11 +389,12 @@ module.exports = (merged) => {
       return r
     }
 
-    var newMetaKeyForm = (componentId, metaKeyId, index) => {
+    var newMetaKeyForm = (componentId, metaKeyId, contextKey, index) => {
 
       var props = {
         metaKeyId: metaKeyId,
         metaKey: findMetaKey(metaKeyId),
+        contextKey: contextKey,
         mandatoryForTypes: mandatoryForTypes(metaKeyId),
         invalid: l.includes(nextInvalidMetaKeyUuids(), metaKeyId)
       }
@@ -418,7 +420,7 @@ module.exports = (merged) => {
     var mapExisting = () => {
       return l.map(
         withoutClosed(),
-        (c, i) => reuseMetaKeyForm(c, c.id, c.props.metaKeyId, i)
+        (c, i) => reuseMetaKeyForm(c, c.id, c.props.metaKeyId, c.props.contextKey, i)
       )
     }
 
@@ -438,7 +440,7 @@ module.exports = (merged) => {
       var existing = mapExisting()
       return l.concat(
         existing,
-        newMetaKeyForm(null, event.metaKeyId, existing.length)
+        newMetaKeyForm(null, event.metaKeyId, event.contextKey, existing.length)
       )
     } else {
       return mapExisting()

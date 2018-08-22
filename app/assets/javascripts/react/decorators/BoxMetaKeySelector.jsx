@@ -41,9 +41,18 @@ class BoxMetaKeySelector extends React.Component {
           if(!isSelected()) {
             return null
           }
+          var keys = l.map(
+            contextKeys,
+            (ck) => {
+              return {
+                metaKey: ck.meta_key,
+                contextKey: ck
+              }
+            }
+          )
           return (
             <BoxBatchEditFormKeyBubbles
-              metaKeys={l.map(contextKeys, (ck) => ck.meta_key)}
+              keys={keys}
               onClickKey={this.props.onClickKey}
             />
           )
@@ -120,9 +129,18 @@ class BoxMetaKeySelector extends React.Component {
           if(!isSelected()) {
             return null
           }
+          var keys = l.map(
+            this.findMetaKeysWithTypes(vocabMetaKeys[k]),
+            (mkt) => {
+              return {
+                metaKey: mkt.metaKey,
+                contextKey: null
+              }
+            }
+          )
           return (
             <BoxBatchEditFormKeyBubbles
-              metaKeys={l.map(this.findMetaKeysWithTypes(vocabMetaKeys[k]), (mkt) => mkt.metaKey)}
+              keys={keys}
               onClickKey={this.props.onClickKey}
             />
           )

@@ -16,20 +16,29 @@ class BoxBatchEditFormKeyBubbles extends React.Component {
   }
 
   renderKey(k) {
+
+    var renderLabel = () => {
+      if(k.contextKey) {
+        return k.contextKey.label
+      } else {
+        return k.metaKey.label
+      }
+    }
+
     return (
       <div
-        key={k.uuid}
+        key={k.metaKey.uuid}
         style={{cursor: 'pointer', display: 'inline-block', backgroundColor: '#eaeaea', borderRadius: '5px', padding: '0px 10px', marginRight: '5px', marginBottom: '5px'}}
-        onClick={(e) => this.props.onClickKey(e, k.uuid)}
+        onClick={(e) => this.props.onClickKey(e, k.metaKey.uuid, k.contextKey)}
       >
-        {k.label}
+        {renderLabel()}
       </div>
     )
   }
 
   renderKeys() {
     return l.map(
-      this.props.metaKeys,
+      this.props.keys,
       (k) => this.renderKey(k)
     )
   }

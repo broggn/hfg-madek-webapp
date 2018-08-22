@@ -193,8 +193,8 @@ module.exports = React.createClass
   onBatchButton: (event) ->
     @reducComponentEvent(this.state.reduc.components.batch, { action: 'toggle' })
 
-  onClickKey: (event, metaKeyId) ->
-    @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId})
+  onClickKey: (event, metaKeyId, contextKey) ->
+    @reducComponentEvent(this.state.reduc.components.batch, { action: 'select-key', metaKeyId: metaKeyId, contextKey: contextKey})
 
   onClickApplyAll: (event) ->
     eventTree = {
@@ -862,7 +862,7 @@ module.exports = React.createClass
             <BoxBatchEditForm
               onClose={(e) => @onBatchButton(e)}
               stateBox={@state.reduc}
-              onClickKey={(e, k) => @onClickKey(e, k)}
+              onClickKey={(e, k, ck) => @onClickKey(e, k, ck)}
               onClickApplyAll={(e) => @onClickApplyAll(e)}
               onClickApplySelected={(e) => @onClickApplySelected(e)}
               onClickCancel={(e) => @onClickCancel(e)}
