@@ -53,7 +53,6 @@ module.exports = (merged) => {
         components: {
           loadMetaMetaData: nextLoadMetaMetaData(),
           metaKeyForms: nextMetaKeyForms()
-          singleMetaKeyForms: nextMetaKeyForms()
         }
       }
     }
