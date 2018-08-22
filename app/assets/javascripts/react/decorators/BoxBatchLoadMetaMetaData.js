@@ -21,7 +21,9 @@ module.exports = (merged) => {
     if(initial) {
       return {
         data: {
+          selectedTab: 'templates',
           selectedVocabulary: null,
+          selectedTemplate: null,
           metaMetaData: [],
           metaKeysWithTypes: null
         },
@@ -30,7 +32,9 @@ module.exports = (merged) => {
     } else {
       return {
         data: {
+          selectedTab: nextSelectedTab(),
           selectedVocabulary: nextSelectedVocabulary(),
+          selectedTemplate: nextSelectedTemplate(),
           metaMetaData: nextData(),
           metaKeysWithTypes: nextMetaKeysWithTypes()
         },
@@ -48,6 +52,26 @@ module.exports = (merged) => {
       }
     } else {
       return data.selectedVocabulary
+    }
+  }
+
+  var nextSelectedTab = () => {
+    if(event.action == 'select-tab') {
+      return event.selectedTab
+    } else {
+      return data.selectedTab
+    }
+  }
+
+  var nextSelectedTemplate = () => {
+    if(event.action == 'select-template') {
+      if(event.template == data.selectedTemplate) {
+        return null
+      } else {
+        return event.template
+      }
+    } else {
+      return data.selectedTemplate
     }
   }
 

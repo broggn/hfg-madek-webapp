@@ -439,14 +439,14 @@ class BoxBatchEditForm extends React.Component {
 
       if(this.props.stateBox.components.batch.components.loadMetaMetaData.data.metaMetaData.length != 2) {
         return (
-          <div className='ui-resources-holder pam'>
+          <div className='ui-resources-holder pbm'>
             <Preloader />
           </div>
         )
       }
 
       return (
-        <div className='ui-resources-holder pam'>
+        <div className='ui-resources-holder pbm'>
 
           <div style={{textAlign: 'right', marginBottom: '10px', float: 'right'}}>
             <a onClick={this.props.onClose}>{t('resources_box_batch_close')}</a>
@@ -461,7 +461,7 @@ class BoxBatchEditForm extends React.Component {
               <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
             </div>
           </div>
-          <div style={{width: '60%', float: 'right'}}>
+          <div style={{width: '60%', float: 'right', paddingTop: '26px'}}>
             {this.renderInvalidMessage()}
             {this.renderKeyForms()}
 
