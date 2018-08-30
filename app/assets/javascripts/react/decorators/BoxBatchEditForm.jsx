@@ -471,11 +471,11 @@ class BoxBatchEditForm extends React.Component {
     }
 
     return (
-      <div>
+      <div style={{marginTop: '50px'}}>
         <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_enter_metadata')}</h2>
 
 
-        <div style={{paddingTop: '26px'}}>
+        <div>
           {this.renderInvalidMessage()}
           {this.renderKeyForms()}
 
@@ -520,31 +520,16 @@ class BoxBatchEditForm extends React.Component {
             </a>
           </div>
 
-          <div>
-            {this.renderRightSide()}
-          </div>
-
-          <div
-            style={{
-              position: 'fixed',
-              right: '40%',
-              width: '20%',
-              backgroundColor: 'white',
-              top: '0px',
-              padding: '10px',
-
-              // borderRadius: '0px 0px 0px 20px',
-              bottom: '0px',
-
-              boxShadow: '0px 0px 10px 0px',
-              zIndex: '0'
-            }}
-          >
+          <div style={{marginTop: '30px'}}>
             <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_select_fields')}</h2>
             <div style={{marginRight: '30px'}}>
               <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
             </div>
           </div>
+          <div>
+            {this.renderRightSide()}
+          </div>
+
         </div>
       )
     }
