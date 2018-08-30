@@ -851,7 +851,7 @@ module.exports = React.createClass
             {children}
 
             <div
-              className='ui-container midtone'
+              className='ui-container'
               style={{
                 display: if @state.boxState.components.batch && @state.boxState.components.batch.data.open then 'block' else 'none',
                 position: 'fixed',
@@ -861,7 +861,8 @@ module.exports = React.createClass
                 bottom: '0px',
                 overflowY: 'scroll',
                 zIndex: '1000000000',
-                boxShadow: '0px 0px 10px'
+                boxShadow: '0px 0px 10px',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)'
               }}
             >
               <div className='ui-container inverted ui-toolbar pvx rounded-top-right'>&nbsp;</div>
