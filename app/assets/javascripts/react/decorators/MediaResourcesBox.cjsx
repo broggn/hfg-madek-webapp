@@ -861,23 +861,24 @@ module.exports = React.createClass
                 bottom: '0px',
                 overflowY: 'scroll',
                 zIndex: '1000000000',
-                boxShadow: '0px 0px 10px',
-                padding: '10px'
+                boxShadow: '0px 0px 10px'
               }}
             >
-              <BoxBatchEditForm
-
-                onClose={(e) => @onBatchButton(e)}
-                stateBox={@state.boxState}
-                onClickKey={(e, k, ck) => @onClickKey(e, k, ck)}
-                onClickApplyAll={(e) => @onClickApplyAll(e)}
-                onClickApplySelected={(e) => @onClickApplySelected(e)}
-                onClickCancel={(e) => @onClickCancel(e)}
-                onClickIgnore={(e) => @onClickIgnore(e)}
-                totalCount={@props.get.pagination.total_count}
-                allLoaded={@props.get.pagination && @state.boxState.components.resources.length == @props.get.pagination.total_count}
-                trigger={@triggerComponentEvent}
-              />
+              <div className='ui-container inverted ui-toolbar pvx rounded-top-right'>&nbsp;</div>
+              <div style={{padding: '10px'}}>
+                <BoxBatchEditForm
+                  onClose={(e) => @onBatchButton(e)}
+                  stateBox={@state.boxState}
+                  onClickKey={(e, k, ck) => @onClickKey(e, k, ck)}
+                  onClickApplyAll={(e) => @onClickApplyAll(e)}
+                  onClickApplySelected={(e) => @onClickApplySelected(e)}
+                  onClickCancel={(e) => @onClickCancel(e)}
+                  onClickIgnore={(e) => @onClickIgnore(e)}
+                  totalCount={@props.get.pagination.total_count}
+                  allLoaded={@props.get.pagination && @state.boxState.components.resources.length == @props.get.pagination.total_count}
+                  trigger={@triggerComponentEvent}
+                />
+              </div>
             </div>
 
 
