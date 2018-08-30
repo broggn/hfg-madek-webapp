@@ -522,7 +522,7 @@ class BoxBatchEditForm extends React.Component {
 
           <div style={{marginTop: '30px'}}>
             <h2 className='title-l ui-info-box-title mbm'>{t('resources_box_batch_select_fields')}</h2>
-            <div style={{marginRight: '30px'}}>
+            <div>
               <BoxMetaKeySelector trigger={this.props.trigger} loadMetaMetaData={this.props.stateBox.components.batch.components.loadMetaMetaData} onClickKey={this.props.onClickKey} />
             </div>
           </div>
