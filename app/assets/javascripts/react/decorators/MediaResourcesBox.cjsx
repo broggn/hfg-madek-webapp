@@ -161,7 +161,22 @@ module.exports = React.createClass
       }
     )
 
-    @setState({boxState: boxState})
+    @setState(
+      {boxState: boxState},
+      () =>
+        if @state.boxState.components.batch && @state.boxState.components.batch.data.open
+          $('body > .app-footer').hide()
+          style = $('body > div.app')[0].style
+          style.position = 'absolute'
+          style.left = '0px'
+          style.top = '0px'
+          style.width = '0px'
+          style.heigh = '0px'
+          style.overflow = 'hidden'
+        else
+          $('body > .app-footer').show()
+          $('body > div.app')[0].style = {}
+    )
 
   triggetRootEvent: (event)  ->
     events = [
@@ -781,8 +796,23 @@ module.exports = React.createClass
       />
 
 
+    boxStyle = () =>
+      if @state.boxState.components.batch && @state.boxState.components.batch.data.open
+        {
+          position: 'fixed',
+          top: '0px',
+          left: '0px',
+          right: '40%',
+          bottom: '0px',
+          overflowY: 'scroll',
+          zIndex: '10000000000',
+          borderRadius: '0px'
+        }
+      else
+        null
+
     # component:
-    <div data-test-id='resources-box' className={BoxUtil.boxClasses(mods)}>
+    <div data-test-id='resources-box' className={BoxUtil.boxClasses(mods)} style={boxStyle()}>
       {
         if @state.showBatchTransferResponsibility
           actionUrls = {
@@ -820,18 +850,35 @@ module.exports = React.createClass
           <div className='ui-container table-cell table-substance'>
             {children}
 
-            <BoxBatchEditForm
-              onClose={(e) => @onBatchButton(e)}
-              stateBox={@state.boxState}
-              onClickKey={(e, k, ck) => @onClickKey(e, k, ck)}
-              onClickApplyAll={(e) => @onClickApplyAll(e)}
-              onClickApplySelected={(e) => @onClickApplySelected(e)}
-              onClickCancel={(e) => @onClickCancel(e)}
-              onClickIgnore={(e) => @onClickIgnore(e)}
-              totalCount={@props.get.pagination.total_count}
-              allLoaded={@props.get.pagination && @state.boxState.components.resources.length == @props.get.pagination.total_count}
-              trigger={@triggerComponentEvent}
-            />
+            <div
+              className='ui-container midtone'
+              style={{
+                display: if @state.boxState.components.batch && @state.boxState.components.batch.data.open then 'block' else 'none',
+                position: 'fixed',
+                left: '60%',
+                top: '0px',
+                right: '0px',
+                bottom: '0px',
+                overflowY: 'scroll',
+                zIndex: '1000000000',
+                boxShadow: '0px 0px 10px',
+                padding: '10px'
+              }}
+            >
+              <BoxBatchEditForm
+
+                onClose={(e) => @onBatchButton(e)}
+                stateBox={@state.boxState}
+                onClickKey={(e, k, ck) => @onClickKey(e, k, ck)}
+                onClickApplyAll={(e) => @onClickApplyAll(e)}
+                onClickApplySelected={(e) => @onClickApplySelected(e)}
+                onClickCancel={(e) => @onClickCancel(e)}
+                onClickIgnore={(e) => @onClickIgnore(e)}
+                totalCount={@props.get.pagination.total_count}
+                allLoaded={@props.get.pagination && @state.boxState.components.resources.length == @props.get.pagination.total_count}
+                trigger={@triggerComponentEvent}
+              />
+            </div>
 
 
             {if resources.length == 0 && @state.boxState.data.loadingNextPage
