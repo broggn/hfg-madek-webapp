@@ -165,17 +165,19 @@ module.exports = React.createClass
       {boxState: boxState},
       () =>
         if @state.boxState.components.batch && @state.boxState.components.batch.data.open
-          $('body > .app-footer').hide()
-          style = $('body > div.app')[0].style
-          style.position = 'absolute'
-          style.left = '0px'
-          style.top = '0px'
-          style.width = '0px'
-          style.heigh = '0px'
-          style.overflow = 'hidden'
+          if $('body > .app-footer')[0].style.display != 'none'
+            $('body > .app-footer').hide()
+            style = $('body > div.app')[0].style
+            style.position = 'absolute'
+            style.left = '0px'
+            style.top = '0px'
+            style.width = '0px'
+            style.heigh = '0px'
+            style.overflow = 'hidden'
         else
-          $('body > .app-footer').show()
-          $('body > div.app')[0].style = {}
+          if $('body > .app-footer')[0].style.display == 'none'
+            $('body > .app-footer').show()
+            $('body > div.app')[0].style = {}
     )
 
   triggetRootEvent: (event)  ->
