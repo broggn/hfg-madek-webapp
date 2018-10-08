@@ -7,9 +7,9 @@ module Modules
           t2 = p2[:label]
           string = params[:search_term]
 
-          term_beginning_with_string(string, t1, t2) or \
-            case_sensitive_full_match(string, t1, t2) or \
+          case_sensitive_full_match(string, t1, t2) or \
             case_insensitive_full_match(string, t1, t2) or \
+            term_beginning_with_string(string, t1, t2) or \
             position_of_string_inside_of_term(string, t1, t2)
         end
       end
@@ -45,6 +45,7 @@ module Modules
       end
 
       def position_of_string_inside_of_term(string, t1, t2)
+        return
         result = (t1 =~ /#{string}/i) - (t2 =~ /#{string}/i)
         if result == 0
           t1 <=> t2
