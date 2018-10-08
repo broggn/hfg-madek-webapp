@@ -45,7 +45,7 @@ module Modules
       end
 
       def position_of_string_inside_of_term(string, t1, t2)
-        return
+        return t1 <=> t2
         result = (t1 =~ /#{string}/i) - (t2 =~ /#{string}/i)
         if result == 0
           t1 <=> t2
