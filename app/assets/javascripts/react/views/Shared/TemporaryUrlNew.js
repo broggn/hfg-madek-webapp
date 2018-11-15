@@ -12,9 +12,20 @@ class TemporaryUrlNew extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      expiresAt: Moment().add(1, 'year'),
+      expiresAt: this.defaultExpiresAt(),
       locale: currentLocale()
     }
+  }
+
+  defaultExpiresAt() {
+    return Moment().add(30, 'day')
+  }
+
+  disabledDays(day) {
+    return (
+      Moment(day).isBefore(new Date()) ||
+        Moment(day).isAfter(Moment().add(1, 'year'))
+    )
   }
 
   _handleDayClick(e, day, modifiers) {
@@ -29,13 +40,6 @@ class TemporaryUrlNew extends React.Component {
     const textAreaStyle = {
       minHeight: 'initial',
       resize: 'vertical'
-    }
-
-    function disabledDays(day) {
-      return (
-        Moment(day).isBefore(new Date()) ||
-          Moment(day).isAfter(Moment().add(1, 'year'))
-      )
     }
 
     return (
@@ -78,8 +82,8 @@ class TemporaryUrlNew extends React.Component {
               />
               <DayPicker
                 onDayClick={this._handleDayClick.bind(this)}
-                disabledDays={disabledDays}
-                initialMonth={Moment().add(1, 'year').toDate()}
+                disabledDays={this.disabledDays}
+                initialMonth={this.defaultExpiresAt().toDate()}
                 fromMonth={Moment().toDate()}
                 toMonth={Moment().add(1, 'year').toDate()}
                 selectedDays={day => Moment(day).isSame(this.state.expiresAt, 'day')}
