@@ -122,6 +122,9 @@ const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
     expirationDate = Moment(new Date(temporaryUrl.expires_at)).fromNow()
     expirationDateTitle =
       t('temporary_urls_list_expires_hint_pre') + temporaryUrl.expires_at
+  } else {
+    expirationDate = t('temporary_urls_list_no_expiry')
+    expirationDateTitle = `${t('temporary_urls_list_expires_hint_pre')}${expirationDate}`
   }
   const showAction = f.get(temporaryUrl, 'actions.show')
   const revokeAction = f.get(temporaryUrl, 'actions.revoke')

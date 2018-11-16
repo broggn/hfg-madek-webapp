@@ -27,7 +27,7 @@ feature 'Collection - Managing Temporary URLs' do
       [
         tu.token,
         tu.description,
-        'in einem Jahr',
+        I18n.t(:temporary_urls_list_no_expiry),
         'Show URL',
         'icon: fa fa-ban'
       ]
@@ -36,7 +36,7 @@ feature 'Collection - Managing Temporary URLs' do
     expect(displayed_ui).to eq(data_table)
   end
 
-  scenario 'Adding a new Temporary URL' do
+  scenario 'Adding a new Temporary URL valid forever' do
     description = Faker::Hipster.sentence
 
     sign_in_as @user.login
@@ -53,17 +53,30 @@ feature 'Collection - Managing Temporary URLs' do
     fill_in 'temporary_url[description]', with: description
     expect { submit_form }.to change { TemporaryUrl.count }.by 1
 
-    within('[data-react-class="UI.Views.Shared.TemporaryUrlShow"]') do
-      temporary_url = TemporaryUrl.last
-      expect(page).to have_content temporary_url.description
+    check_secret_url
+    expect(displayed_details).to include(description)
+    expect(displayed_details).to include(I18n.t(:temporary_urls_list_no_expiry))
+  end
 
-      secret_url = find('samp.code').text
-      token = secret_url.split('/').last
+  scenario 'Adding a new Temporary URL valid for 30 days without description' do
+    sign_in_as @user.login
+    visit collection_path(@collection)
 
-      expect(secret_url.split('/').last.length).to be_between(31, 32)
-      expect(secret_url).to end_with show_by_temporary_url_collections_path(token)
-      expect(secret_url).to start_with 'http://'
+    within find '.ui-body-title-actions .ui-dropdown' do
+      find('a', text: I18n.t(:resource_action_more_actions)).click
+      find('a', text: I18n.t(:resource_action_collection_manage_temporary_urls))
+        .click
     end
+
+    click_link I18n.t(:temporary_urls_list_new_button)
+
+    check I18n.t(:temporary_urls_create_set_expiration_date)
+    expect { submit_form }.to change { TemporaryUrl.count }.by 1
+
+    check_secret_url
+    expect(displayed_details).to include(
+      I18n.t(:temporary_urls_list_no_description))
+    expect(displayed_details).to include('in einem Monat')
   end
 
   scenario 'Canceling adding process' do
@@ -96,7 +109,7 @@ feature 'Collection - Managing Temporary URLs' do
       [
         temporary_url.token,
         temporary_url.description,
-        'in einem Jahr',
+        I18n.t(:temporary_urls_list_no_expiry),
         'Show URL',
         ''
       ]
@@ -118,5 +131,23 @@ def displayed_ui(revoked: false)
       fields[0].text, fields[1].text, fields[3].text,
       fields[4].text, btn_icon
     ]
+  end
+end
+
+def displayed_details
+  within('[data-react-class="UI.Views.Shared.TemporaryUrlShow"]') do
+    all('table tbody tr').last.all('td').map(&:text).reject(&:blank?)
+  end
+end
+
+def check_secret_url
+  within('[data-react-class="UI.Views.Shared.TemporaryUrlShow"]') do
+    secret_url = find('samp.code').text
+    token = secret_url.split('/').last
+
+    expect(secret_url.split('/').last.length).to be_between(31, 32)
+    expect(secret_url).to end_with(
+      show_by_temporary_url_collections_path(token))
+    expect(secret_url).to start_with 'http://'
   end
 end

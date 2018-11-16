@@ -11,7 +11,7 @@ class TemporaryUrlsController < ApplicationController
   end
 
   def create
-    attrs = temporary_url_params([:description, :expires_at])
+    attrs = temporary_url_params(:description, :expires_at)
     temporary_url = @resource.temporary_urls.create(user: current_user)
     temporary_url.update_attributes!(attrs) && temporary_url.reload
 
@@ -19,8 +19,7 @@ class TemporaryUrlsController < ApplicationController
   end
 
   def update
-    props = [:revoked]
-    attrs = params.permit(temporary_url: props).fetch(:temporary_url, {})
+    attrs = temporary_url_params(:revoked)
     temporary_url = TemporaryUrl.find(params.require(:temporary_url_id))
     auth_authorize temporary_url
     temporary_url.update_attributes!(attrs) && temporary_url.reload
@@ -38,7 +37,7 @@ class TemporaryUrlsController < ApplicationController
 
   private
 
-  def temporary_url_params(props)
+  def temporary_url_params(*props)
     params.permit(temporary_url: props).fetch(:temporary_url, {})
       .map { |k, v| [k, v.presence] }.to_h
   end
