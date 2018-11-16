@@ -27,7 +27,10 @@ shared_examples 'temporary urls' do
 
     context 'when token has expired' do
       it 'raises not found error' do
-        temporary_url = create :temporary_url, user: @user, resource: resource
+        temporary_url = create(:temporary_url,
+                               user: @user,
+                               resource: resource,
+                               expires_at: 1.year.from_now)
         temporary_url.reload
 
         travel(1.year + 1.second) do

@@ -13,6 +13,7 @@ class TemporaryUrlNew extends React.Component {
     super(props)
     this.state = {
       expiresAt: this.defaultExpiresAt(),
+      showCalendar: false,
       locale: currentLocale()
     }
   }
@@ -26,6 +27,10 @@ class TemporaryUrlNew extends React.Component {
       Moment(day).isBefore(new Date()) ||
         Moment(day).isAfter(Moment().add(1, 'year'))
     )
+  }
+
+  _toggleCalendar(e) {
+    this.setState({showCalendar: !this.state.showCalendar})
   }
 
   _handleDayClick(e, day, modifiers) {
@@ -71,26 +76,37 @@ class TemporaryUrlNew extends React.Component {
                 />
               </label>
             </div>
-            <div className="ui-form-group rowed pan">
+            <div className="mbm">
               <label className="form-label">
-                {t('temporary_urls_list_expires_hint_pre')}
+                <input
+                  type="checkbox"
+                  className="mrx"
+                  onChange={this._toggleCalendar.bind(this)} />
+                {t('temporary_urls_create_set_expiration_date')}
               </label>
-              <input
-                type='hidden'
-                name='temporary_url[expires_at]'
-                value={this.state.expiresAt.format()}
-              />
-              <DayPicker
-                onDayClick={this._handleDayClick.bind(this)}
-                disabledDays={this.disabledDays}
-                initialMonth={this.defaultExpiresAt().toDate()}
-                fromMonth={Moment().toDate()}
-                toMonth={Moment().add(1, 'year').toDate()}
-                selectedDays={day => Moment(day).isSame(this.state.expiresAt, 'day')}
-                localeUtils={MomentLocaleUtils}
-                locale={this.state.locale}
-              />
             </div>
+            {this.state.showCalendar &&
+              <div className="ui-form-group rowed pan">
+                <label className="form-label">
+                  {t('temporary_urls_list_expires_hint_pre')}
+                </label>
+                <input
+                  type="hidden"
+                  name="temporary_url[expires_at]"
+                  value={this.state.expiresAt.format()}
+                />
+                <DayPicker
+                  onDayClick={this._handleDayClick.bind(this)}
+                  disabledDays={this.disabledDays}
+                  initialMonth={this.defaultExpiresAt().toDate()}
+                  fromMonth={Moment().toDate()}
+                  toMonth={Moment().add(1, 'year').toDate()}
+                  selectedDays={day => Moment(day).isSame(this.state.expiresAt, 'day')}
+                  localeUtils={MomentLocaleUtils}
+                  locale={this.state.locale}
+                />
+              </div>
+            }
             <div className="ui-actions mtm">
               <UI.Button type="submit" className="primary-button">
                 {t('temporary_urls_create_submit')}
