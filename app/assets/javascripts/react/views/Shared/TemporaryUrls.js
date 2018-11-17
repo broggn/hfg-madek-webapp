@@ -156,7 +156,7 @@ const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
       </td>
       <td>
         {!!showAction && (
-          <Link href={showAction.url}>Show URL</Link>
+          <Link href={showAction.url}>{t('temporary_urls_list_show_url')}</Link>
         )}
       </td>
       <td className="ui-workgroup-actions">
