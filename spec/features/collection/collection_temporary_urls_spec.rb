@@ -28,7 +28,7 @@ feature 'Collection - Managing Temporary URLs' do
         tu.token,
         tu.description,
         I18n.t(:temporary_urls_list_no_expiry),
-        'Show URL',
+        I18n.t(:temporary_urls_list_show_url),
         'icon: fa fa-ban'
       ]
     end.reverse
@@ -110,7 +110,7 @@ feature 'Collection - Managing Temporary URLs' do
         temporary_url.token,
         temporary_url.description,
         I18n.t(:temporary_urls_list_no_expiry),
-        'Show URL',
+        I18n.t(:temporary_urls_list_show_url),
         ''
       ]
     ]
