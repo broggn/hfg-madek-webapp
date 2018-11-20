@@ -147,7 +147,7 @@ def check_secret_url
 
     expect(secret_url.split('/').last.length).to be_between(31, 32)
     expect(secret_url).to end_with(
-      show_by_temporary_url_media_entries_path(token))
+      show_by_temporary_url_media_entry_path(@entry, token))
     expect(secret_url).to start_with 'http://'
   end
 end

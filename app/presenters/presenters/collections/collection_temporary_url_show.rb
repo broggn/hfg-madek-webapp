@@ -11,7 +11,8 @@ module Presenters
       # NOTE: only available on new instances, e.g. in response to creation action
       def secret_url
         @base_url + prepend_url_context(
-          show_by_temporary_url_collections_path(@app_resource.token)
+          show_by_temporary_url_collection_path(@app_resource.resource,
+                                                @app_resource.token)
         )
       end
 

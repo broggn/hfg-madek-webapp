@@ -44,10 +44,12 @@ module Concerns
         def id_param
           # translate a custom primary id to an UUID
           id = require_media_resource_id!
-          if valid_uuid?(id)
+          if action_name == 'show_by_temporary_url' && params[:token]
+            TemporaryUrl
+              .find_by_token(params[:token])
+              .resource_id
+          elsif valid_uuid?(id)
             id
-          elsif temporary_url = TemporaryUrl.find_by_token(id)
-            temporary_url.resource_id
           else
             CustomUrl
               .find_by!(id: id, is_primary: true)

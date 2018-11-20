@@ -63,7 +63,7 @@ module Concerns
       controller_name == 'previews' &&
         action_name == 'show' &&
         referrer_params[:action] == 'show_by_temporary_url' &&
-        TemporaryUrl.find_by_token(referrer_params[:id]).try(:resource_id) == \
+        TemporaryUrl.find_by_token(referrer_params[:token]).try(:resource_id) == \
           resource.media_file.media_entry_id
     rescue ActionController::RoutingError
       false

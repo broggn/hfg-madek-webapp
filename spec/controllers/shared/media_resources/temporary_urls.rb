@@ -9,7 +9,7 @@ shared_examples 'temporary urls' do
     it 'renders template' do
       temporary_url = create :temporary_url, user: @user, resource: resource
 
-      get :show_by_temporary_url, id: temporary_url.token
+      get :show_by_temporary_url, id: resource.id, token: temporary_url.token
 
       expect(response).to be_success
       expect(response).to render_template('show_by_temporary_url')
@@ -20,7 +20,9 @@ shared_examples 'temporary urls' do
         temporary_url = create :temporary_url, user: @user, resource: resource,
                                                revoked: true
 
-        expect { get(:show_by_temporary_url, id: temporary_url.token) }
+        expect do
+          get(:show_by_temporary_url, id: resource.id, token: temporary_url.token)
+        end
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -34,7 +36,9 @@ shared_examples 'temporary urls' do
         temporary_url.reload
 
         travel(1.year + 1.second) do
-          expect { get :show_by_temporary_url, id: temporary_url.token }
+          expect do
+            get :show_by_temporary_url, id: resource.id, token: temporary_url.token
+          end
             .to raise_error(ActiveRecord::RecordNotFound)
         end
       end

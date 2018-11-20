@@ -26,10 +26,6 @@ Madek::Application.routes.draw do
       get 'temporary_urls/:temporary_url_id', controller: 'temporary_urls', action: 'show', as: 'temporary_url'
       patch 'temporary_urls/:temporary_url_id', controller: 'temporary_urls', action: 'update', as: 'update_temporary_url'
     end
-
-    collection do
-      get 'tmp/:id', action: :show_by_temporary_url, as: 'show_by_temporary_url'
-    end
   end
 
   resources :media_entries, path: 'entries', except: [:new], concerns: :temporary_urls do
@@ -74,6 +70,8 @@ Madek::Application.routes.draw do
       get 'export'
 
       get 'embedded'
+
+      get 'access/:token', action: :show_by_temporary_url, as: 'show_by_temporary_url'
     end
 
     collection do
@@ -145,6 +143,8 @@ Madek::Application.routes.draw do
 
       get 'select_collection', action: :select_collection, as: 'select_collection'
       patch 'add_remove_collection', to: 'collections#add_remove_collection'
+
+      get 'access/:token', action: :show_by_temporary_url, as: 'show_by_temporary_url'
     end
 
     collection do
