@@ -10,6 +10,7 @@ module Presenters
         @user = user
         @resources_type = resources_type
         @list_conf = list_conf
+
       end
 
       def resources
@@ -81,11 +82,18 @@ module Presenters
         )
         .joins(
           <<-SQL
-            INNER JOIN meta_data_people
+            LEFT OUTER JOIN meta_data_people
             ON meta_data.id = meta_data_people.meta_datum_id
           SQL
         )
-        .where(meta_data_people: { person_id: person.id })
+        .joins(
+          <<-SQL
+            LEFT OUTER JOIN meta_data_roles
+            ON meta_data.id = meta_data_roles.meta_datum_id
+          SQL
+        )
+        .where('meta_data_people.person_id = :person_id OR '\
+               'meta_data_roles.person_id = :person_id', person_id: person.id)
         .distinct
 
         "#{klass.name}Policy::Scope".constantize.new(@user, scope).resolve
