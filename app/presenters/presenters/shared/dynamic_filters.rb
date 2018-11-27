@@ -252,6 +252,7 @@ module Presenters
         ui_context_list_ids = ui_context_list.map(&:id)
         values = FilterBarQuery.get_metadata_unsafe(
           @resource_type, scope, ui_context_list, @user)
+        # binding.pry
         values
           .group_by { |v| v['context_id'] }
           .sort_by { |bundle| ui_context_list_ids.index(bundle[0]) }

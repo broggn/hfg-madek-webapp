@@ -428,9 +428,10 @@ module.exports = React.createClass
       accordion: @state.accordion
     }) if onChange
 
-FilterItem = ({parentUuid, label, uuid, selected, href, count, onClick} = @props) ->
+FilterItem = ({parentUuid, label, uuid, selected, type, href, count, onClick} = @props) ->
   label = f.presence(label or uuid) or (
     console.error('empty FilterItem label!') and '(empty)')
+  label += ' (role)' if type is 'role'
   <li className={css('ui-side-filter-lvl3-item', active: selected)}>
     <Link mods='weak' onClick={onClick}>
       {label} <span className='ui-lvl3-item-count'>{count}</span>
@@ -501,6 +502,7 @@ initializeItems = (filters) ->
       uuid: filter.uuid
       count: filter.count
       selected: false
+      type: filter.type
     }
     items.push(item)
   return items

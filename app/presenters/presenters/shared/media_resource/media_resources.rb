@@ -137,6 +137,7 @@ module Presenters
         end
 
         def select_resources(resources, config)
+          # binding.pry
           unless active_record_collection?(resources)
             fail 'TypeError! not an AR Collection/Relation!'
           end
