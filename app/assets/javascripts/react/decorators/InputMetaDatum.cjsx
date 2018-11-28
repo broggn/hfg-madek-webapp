@@ -24,11 +24,11 @@ module.exports = React.createClass
 
     resourceType = f.last(@props.metaKey.value_type.split('::'))
 
-    if resourceType == 'Roles'
-      console.log('id', id)
-      console.log('name', name)
-      console.log('model', model)
-      console.log('')
+    # if resourceType == 'Roles'
+    #   console.log('id', id)
+    #   console.log('name', name)
+    #   console.log('model', model)
+    #   console.log('')
 
     multiple = not (f.includes(['Text', 'TextDate'], resourceType))
 

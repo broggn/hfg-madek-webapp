@@ -93,9 +93,10 @@ module.exports = React.createClass
   _onNewPerson: (obj)->
     @_onItemAdd(f.extend(obj, { type: 'Person', isNew: true }))
 
-  _onItemRemove: (item, _event)->
+  _onItemRemove: (itemIndex, _event)->
     _event.stopPropagation()
-    newValues = f.reject(@state.values, item)
+    newValues = @state.values.slice(0)
+    newValues.splice(itemIndex, 1)
     @setState(values: newValues)
 
     if @props.onChange
@@ -190,8 +191,8 @@ module.exports = React.createClass
     <div className='form-item'>
       <div className='multi-select'>
         <ul className='multi-select-holder'>
-          {!withRoles and values.map (item) =>
-            remover = f.curry(_onItemRemove)(item)
+          {!withRoles and values.map (item, i) =>
+            remover = f.curry(_onItemRemove)(i)
             style = if item.isNew then {fontStyle: 'italic'} else {}
             <li className='multi-select-tag' style={style} key={item.uuid or item.getId?() or JSON.stringify(item)}>
               {decorateResource(item)}
@@ -285,7 +286,7 @@ module.exports = React.createClass
                           </a>)}
                       </td>
                       <td style={{width: '30px'}} className='pas by-center'>
-                        <a onClick={(e) => @_onItemRemove(item, e)}>
+                        <a onClick={(e) => @_onItemRemove(i, e)}>
                           <i className='icon-close'/>
                         </a>
                       </td>
