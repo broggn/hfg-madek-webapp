@@ -34,7 +34,7 @@ module.exports = React.createClass
       selectedRole: @defaultRole()
 
   defaultRole: ->
-    if firstRole = f.get(@props, 'metaKey.roles[0]')
+    if firstRole = f.get(@props.metaKey, 'roles[0]')
       { id: firstRole.uuid, term: firstRole.name }
 
   _onItemAdd: (item)->
@@ -61,21 +61,22 @@ module.exports = React.createClass
     return unless f.present(@state.selectedRole)
 
     newValues = @state.values.slice(0)
+    selectedRole = f.clone(@state.selectedRole)
 
     if @state.addingRole is true
       if f.has(@state.editedItem, 'role') and not f.isEmpty(@state.editedItem.role)
         item = f.cloneDeep(@state.editedItem)
-        item.role = f.clone(@state.selectedRole)
+        item.role = selectedRole
         newValues.push(item)
       else
         itemIndex = @state.editedItemIndex
         item = f.cloneDeep(@state.values[itemIndex])
-        item.role = f.clone(@state.selectedRole)
+        item.role = selectedRole
         newValues[itemIndex] = item
     else if @state.editedRole
       itemIndex = @state.editedRole.itemIndex
       item = f.cloneDeep(@state.values[itemIndex])
-      item.role = {id: @state.selectedRole.id, term: @state.selectedRole.term}
+      item.role = selectedRole
       newValues[itemIndex] = item
 
     @setState(
@@ -109,7 +110,7 @@ module.exports = React.createClass
     @setState(editedItem: editedItem, editedItemIndex: index, addingRole: true)
 
   _renderRoleSelect: ->
-    selectedRoleId = f.get(@state, 'editedRole.id') || f.get(@state, 'selectedRole.id')
+    selectedRoleId = f.get(@state, 'selectedRole.id')
 
     <select
       name='role_id'
@@ -124,17 +125,18 @@ module.exports = React.createClass
 
   _onRoleSelect: (e) ->
     roleId = e.target.value
-    index = e.target.selectedIndex
-    roleName = e.target[index].text
+    role = f.find(@props.metaKey.roles, (r) -> r.id is roleId)
 
-    @setState(selectedRole: { id: roleId, term: roleName })
+    @setState(selectedRole: role)
 
   _onRoleEdit: (roleId, itemIndex, e) ->
     e.preventDefault()
+    role = f.find(@props.metaKey.roles, (r) -> r.id is roleId)
 
     @setState(
       editedItem: @state.values[itemIndex]
       editedRole: { id: roleId, itemIndex: itemIndex }
+      selectedRole: role
     )
 
   _onRoleRemove: (itemIndex, e) ->
