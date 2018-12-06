@@ -8,7 +8,7 @@ import MomentLocaleUtils from 'react-day-picker/moment'
 import currentLocale from '../../../lib/current-locale'
 import Moment from 'moment'
 
-class TemporaryUrlNew extends React.Component {
+class ConfidentialLinkNew extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -57,21 +57,21 @@ class TemporaryUrlNew extends React.Component {
           style={{ display: 'inline-block', minWidth: '420px' }}
         >
           <RailsForm
-            name="temporary_url"
+            name="confidential_link"
             method={action.method}
             action={action.url}
             authToken={props.authToken}
           >
             <div className="ui-form-group rowed prn pbs">
-              <h3 className="title-l">{t('temporary_urls_create_title')}</h3>
+              <h3 className="title-l">{t('confidential_links_create_title')}</h3>
             </div>
             <div className="ui-form-group rowed pan">
               <label className="form-label">
-                {t('temporary_urls_create_description')}
+                {t('confidential_links_create_description')}
                 <textarea
                   className="form-item block"
                   style={textAreaStyle}
-                  name={'temporary_url[description]'}
+                  name={'confidential_link[description]'}
                   rows="3"
                 />
               </label>
@@ -82,17 +82,17 @@ class TemporaryUrlNew extends React.Component {
                   type="checkbox"
                   className="mrx"
                   onChange={this._toggleCalendar.bind(this)} />
-                {t('temporary_urls_create_set_expiration_date')}
+                {t('confidential_links_create_set_expiration_date')}
               </label>
             </div>
             {this.state.showCalendar &&
               <div className="ui-form-group rowed pan">
                 <label className="form-label">
-                  {t('temporary_urls_list_expires_hint_pre')}
+                  {t('confidential_links_list_expires_hint_pre')}
                 </label>
                 <input
                   type="hidden"
-                  name="temporary_url[expires_at]"
+                  name="confidential_link[expires_at]"
                   value={this.state.expiresAt.format()}
                 />
                 <DayPicker
@@ -109,10 +109,10 @@ class TemporaryUrlNew extends React.Component {
             }
             <div className="ui-actions mtm">
               <UI.Button type="submit" className="primary-button">
-                {t('temporary_urls_create_submit')}
+                {t('confidential_links_create_submit')}
               </UI.Button>
               <UI.Button href={action.url} className="button">
-                {t('temporary_urls_create_cancel')}
+                {t('confidential_links_create_cancel')}
               </UI.Button>
             </div>
           </RailsForm>
@@ -122,4 +122,4 @@ class TemporaryUrlNew extends React.Component {
   }
 }
 
-module.exports = TemporaryUrlNew
+module.exports = ConfidentialLinkNew

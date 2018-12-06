@@ -1,16 +1,16 @@
 import React from 'react'
 import f from 'lodash'
-import { TemporaryUrlRow } from './TemporaryUrls'
+import { ConfidentialLinkRow } from './ConfidentialLinks'
 import ui from '../../lib/ui.coffee'
 import UI from '../../ui-components/index.coffee'
 const t = ui.t
 
-class TemporaryUrlCreated extends React.Component {
+class ConfidentialLinkCreated extends React.Component {
   render (props = this.props) {
     const { get } = props
     const justCreated = f.get(get, 'just_created', false)
     const indexAction = f.get(get, 'actions.index.url')
-    const title = justCreated ? t('temporary_urls_created_title') : t('temporary_urls_show_title')
+    const title = justCreated ? t('confidential_links_created_title') : t('confidential_links_show_title')
 
     return (
       <div
@@ -38,13 +38,13 @@ class TemporaryUrlCreated extends React.Component {
           <table className='block aligned'>
             <tbody>
               <tr><td /><td /><td /><td /><td /><td /></tr>
-              <TemporaryUrlRow {...get} />
+              <ConfidentialLinkRow {...get} />
             </tbody>
           </table>
           {!!indexAction && (
             <div className='ui-actions mtm'>
               <UI.Button href={indexAction} className='button'>
-                {t('temporary_urls_created_back_btn')}
+                {t('confidential_links_created_back_btn')}
               </UI.Button>
             </div>
           )}
@@ -54,4 +54,4 @@ class TemporaryUrlCreated extends React.Component {
   }
 }
 
-module.exports = TemporaryUrlCreated
+module.exports = ConfidentialLinkCreated

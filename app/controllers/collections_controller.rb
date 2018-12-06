@@ -10,7 +10,7 @@ class CollectionsController < ApplicationController
   include Modules::Collections::PermissionsUpdate
   include Modules::Collections::Create
   include Modules::Resources::ResourceCustomUrls
-  include Modules::Resources::ResourceTemporaryUrls
+  include Modules::Resources::ResourceConfidentialLinks
   include Modules::Resources::ResourceTransferResponsibility
   include Modules::Resources::BatchResourceTransferResponsibility
   include Modules::Resources::Share
@@ -61,7 +61,7 @@ class CollectionsController < ApplicationController
   [
     :relations, :relation_children, :relation_siblings, :relation_parents,
     :usage_data, :more_data, :permissions, :permissions_edit,
-    :show_by_temporary_url]
+    :show_by_confidential_link]
     .each { |action| alias_method action, :show }
 
   def update

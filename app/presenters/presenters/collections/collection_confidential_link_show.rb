@@ -1,7 +1,7 @@
 module Presenters
   module Collections
-    class CollectionTemporaryUrlShow < \
-      Presenters::Shared::MediaResource::MediaResourceTemporaryUrlCommon
+    class CollectionConfidentialLinkShow < \
+      Presenters::Shared::MediaResource::MediaResourceConfidentialLinkCommon
 
       def initialize(resource, user, base_url)
         super(resource, user)
@@ -11,8 +11,8 @@ module Presenters
       # NOTE: only available on new instances, e.g. in response to creation action
       def secret_url
         @base_url + prepend_url_context(
-          show_by_temporary_url_collection_path(@app_resource.resource,
-                                                @app_resource.token)
+          show_by_confidential_link_collection_path(@app_resource.resource,
+                                                    @app_resource.token)
         )
       end
 
@@ -20,7 +20,7 @@ module Presenters
         {
           index: {
             url: prepend_url_context(
-              temporary_urls_collection_path(@app_resource.resource))
+              confidential_links_collection_path(@app_resource.resource))
           }
         }
       end

@@ -44,8 +44,8 @@ module Concerns
         def id_param
           # translate a custom primary id to an UUID
           id = require_media_resource_id!
-          if action_name == 'show_by_temporary_url' && params[:token]
-            TemporaryUrl
+          if action_name == 'show_by_confidential_link' && params[:token]
+            ConfidentialLink
               .find_by_token(params[:token])
               .resource_id
           elsif valid_uuid?(id)

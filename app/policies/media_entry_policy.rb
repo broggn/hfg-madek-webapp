@@ -46,12 +46,12 @@ class MediaEntryPolicy < Shared::MediaResources::MediaResourcePolicy
     logged_in? and user.admin?
   end
 
-  def temporary_urls?
+  def confidential_links?
     logged_in? and owner? and record.is_published
   end
 
-  def show_by_temporary_url?
-    visible_by_token?
+  def show_by_confidential_link?
+    visible_by_confidential_link?
   end
 
   alias_method :edit?, :update?

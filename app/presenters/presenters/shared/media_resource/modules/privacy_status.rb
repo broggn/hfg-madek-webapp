@@ -5,7 +5,7 @@ module Presenters
         module PrivacyStatus
 
           def privacy_status
-            public_status or temporary_status or shared_status or private_status
+            public_status or confidential_status or shared_status or private_status
           end
 
           private
@@ -14,8 +14,8 @@ module Presenters
             :public if @app_resource.public_view?
           end
 
-          def temporary_status
-            if @app_resource.try(:temporary_urls).try(:empty?) == false
+          def confidential_status
+            if @app_resource.try(:confidential_links).try(:empty?) == false
               :public
             end
           end

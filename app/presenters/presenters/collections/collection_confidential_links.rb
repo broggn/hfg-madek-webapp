@@ -1,10 +1,10 @@
 module Presenters
   module Collections
-    class CollectionTemporaryUrls < Presenters::Shared::AppResourceWithUser
+    class CollectionConfidentialLinks < Presenters::Shared::AppResourceWithUser
 
       def list
-        @app_resource.temporary_urls.map do |tu|
-          Presenters::Collections::CollectionTemporaryUrlIndex.new(tu, @user)
+        @app_resource.confidential_links.map do |tu|
+          Presenters::Collections::CollectionConfidentialLinkIndex.new(tu, @user)
         end
       end
 
@@ -16,7 +16,7 @@ module Presenters
         {
           new: {
             url: prepend_url_context(
-              new_temporary_url_collection_path(@app_resource))
+              new_confidential_link_collection_path(@app_resource))
           },
           go_back: {
             url: prepend_url_context(

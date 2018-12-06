@@ -13,7 +13,7 @@ require Rails.root.join 'spec',
                         'controllers',
                         'shared',
                         'media_resources',
-                        'temporary_urls.rb'
+                        'confidential_links.rb'
 
 describe MediaEntriesController do
 
@@ -67,7 +67,7 @@ describe MediaEntriesController do
   end
 
   it_handles_properly 'redirection'
-  it_handles_properly 'temporary urls' do
+  it_handles_properly 'confidential urls' do
     let(:resource) do
       create :media_entry_with_image_media_file,
              creator: @user, responsible_user: @user,

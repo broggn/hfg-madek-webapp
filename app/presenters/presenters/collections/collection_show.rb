@@ -79,7 +79,7 @@ module Presenters
       end
 
       def child_media_resources
-        return unless %w(show usage_data show_by_temporary_url)
+        return unless %w(show usage_data show_by_confidential_link)
           .include?(@active_tab)
 
         # return unless @action == 'show'
@@ -115,7 +115,7 @@ module Presenters
       end
 
       def highlighted_media_resources
-        return unless ['show', 'show_by_temporary_url'].include?(@action)
+        return unless ['show', 'show_by_confidential_link'].include?(@action)
         resources = @user_scopes[:highlighted_media_entries] +
           @user_scopes[:highlighted_collections]
         Presenters::Shared::MediaResource::IndexResources.new(

@@ -118,9 +118,9 @@ module Shared
         end
       end
 
-      def visible_by_token?
-        record.respond_to?(:accessed_by_token) &&
-          record.accessed_by_token
+      def visible_by_confidential_link?
+        record.respond_to?(:accessed_by_confidential_link) &&
+          record.accessed_by_confidential_link
       end
 
       def owner?

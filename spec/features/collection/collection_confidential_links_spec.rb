@@ -2,33 +2,35 @@ require 'spec_helper'
 require 'spec_helper_feature'
 require 'spec_helper_feature_shared'
 
-feature 'Media Entry - Managing Temporary URLs' do
+feature 'Collection - Managing Temporary URLs' do
   background do
     @user = User.find_by(login: 'normin')
-    @entry = create :media_entry_with_image_media_file,
-                    creator: @user, responsible_user: @user
+    @collection = create :collection,
+                         creator: @user, responsible_user: @user
   end
 
   scenario 'Listing Temporary URLs' do
-    temporary_urls = 3.times.map do
-      create(:temporary_url, user: @user, resource: @entry)
+    confidential_links = 3.times.map do
+      create(:confidential_link, user: @user, resource: @collection)
     end
 
     sign_in_as @user.login
-    visit media_entry_path(@entry)
+    visit collection_path(@collection)
 
     within find '.ui-body-title-actions .ui-dropdown' do
       find('a', text: I18n.t(:resource_action_more_actions)).click
-      find('a', text: I18n.t(:resource_action_collection_manage_temporary_urls))
+      find(
+        'a',
+        text: I18n.t(:resource_action_collection_manage_confidential_links))
         .click
     end
 
-    data_table = temporary_urls.map do |tu|
+    data_table = confidential_links.map do |tu|
       [
         tu.token,
         tu.description,
-        I18n.t(:temporary_urls_list_no_expiry),
-        I18n.t(:temporary_urls_list_show_url),
+        I18n.t(:confidential_links_list_no_expiry),
+        I18n.t(:confidential_links_list_show_url),
         'icon: fa fa-ban'
       ]
     end.reverse
@@ -40,77 +42,83 @@ feature 'Media Entry - Managing Temporary URLs' do
     description = Faker::Hipster.sentence
 
     sign_in_as @user.login
-    visit media_entry_path(@entry)
+    visit collection_path(@collection)
 
     within find '.ui-body-title-actions .ui-dropdown' do
       find('a', text: I18n.t(:resource_action_more_actions)).click
-      find('a', text: I18n.t(:resource_action_collection_manage_temporary_urls))
+      find(
+        'a',
+        text: I18n.t(:resource_action_collection_manage_confidential_links))
         .click
     end
 
-    click_link I18n.t(:temporary_urls_list_new_button)
+    click_link I18n.t(:confidential_links_list_new_button)
 
-    fill_in 'temporary_url[description]', with: description
-    expect { submit_form }.to change { TemporaryUrl.count }.by 1
+    fill_in 'confidential_link[description]', with: description
+    expect { submit_form }.to change { ConfidentialLink.count }.by 1
 
     check_secret_url
     expect(displayed_details).to include(description)
-    expect(displayed_details).to include(I18n.t(:temporary_urls_list_no_expiry))
+    expect(displayed_details)
+      .to include(I18n.t(:confidential_links_list_no_expiry))
   end
 
   scenario 'Adding a new Temporary URL valid for 30 days without description' do
     sign_in_as @user.login
-    visit media_entry_path(@entry)
+    visit collection_path(@collection)
 
     within find '.ui-body-title-actions .ui-dropdown' do
       find('a', text: I18n.t(:resource_action_more_actions)).click
-      find('a', text: I18n.t(:resource_action_collection_manage_temporary_urls))
+      find(
+        'a',
+        text: I18n.t(:resource_action_collection_manage_confidential_links))
         .click
     end
 
-    click_link I18n.t(:temporary_urls_list_new_button)
+    click_link I18n.t(:confidential_links_list_new_button)
 
-    check I18n.t(:temporary_urls_create_set_expiration_date)
-    expect { submit_form }.to change { TemporaryUrl.count }.by 1
+    check I18n.t(:confidential_links_create_set_expiration_date)
+    expect { submit_form }.to change { ConfidentialLink.count }.by 1
 
     check_secret_url
     expect(displayed_details).to include(
-      I18n.t(:temporary_urls_list_no_description))
+      I18n.t(:confidential_links_list_no_description))
     expect(displayed_details).to include('in einem Monat')
   end
 
   scenario 'Canceling adding process' do
     sign_in_as @user.login
-    visit temporary_urls_media_entry_path(@entry)
+    visit confidential_links_collection_path(@collection)
 
-    click_link I18n.t(:temporary_urls_list_new_button)
-    click_link I18n.t(:temporary_urls_create_cancel)
+    click_link I18n.t(:confidential_links_list_new_button)
+    click_link I18n.t(:confidential_links_create_cancel)
 
-    expect(current_path).to eq temporary_urls_media_entry_path(@entry)
+    expect(current_path)
+      .to eq confidential_links_collection_path(@collection)
   end
 
   scenario 'Revoking' do
-    temporary_url = create :temporary_url, user: @user, resource: @entry
+    cf_link = create :confidential_link, user: @user, resource: @collection
 
     sign_in_as @user.login
-    visit temporary_urls_media_entry_path(@entry)
+    visit confidential_links_collection_path(@collection)
 
-    row = find('.ui-resources-holder table tr', text: temporary_url.token)
+    row = find('.ui-resources-holder table tr', text: cf_link.token)
 
     accept_confirm do
       within(row) { submit_form }
     end
 
-    expect(current_path).to eq temporary_urls_media_entry_path(@entry)
-    temporary_url.reload
-    expect(temporary_url.revoked).to be true
+    expect(current_path).to eq confidential_links_collection_path(@collection)
+    cf_link.reload
+    expect(cf_link.revoked).to be true
 
     expect(displayed_ui(revoked: true)).to eq [
       [
-        temporary_url.token,
-        temporary_url.description,
-        I18n.t(:temporary_urls_list_no_expiry),
-        I18n.t(:temporary_urls_list_show_url),
+        cf_link.token,
+        cf_link.description,
+        I18n.t(:confidential_links_list_no_expiry),
+        I18n.t(:confidential_links_list_show_url),
         ''
       ]
     ]
@@ -135,19 +143,19 @@ def displayed_ui(revoked: false)
 end
 
 def displayed_details
-  within('[data-react-class="UI.Views.Shared.TemporaryUrlShow"]') do
+  within('[data-react-class="UI.Views.Shared.ConfidentialLinkShow"]') do
     all('table tbody tr').last.all('td').map(&:text).reject(&:blank?)
   end
 end
 
 def check_secret_url
-  within('[data-react-class="UI.Views.Shared.TemporaryUrlShow"]') do
+  within('[data-react-class="UI.Views.Shared.ConfidentialLinkShow"]') do
     secret_url = find('samp.code').text
     token = secret_url.split('/').last
 
     expect(secret_url.split('/').last.length).to be_between(31, 32)
     expect(secret_url).to end_with(
-      show_by_temporary_url_media_entry_path(@entry, token))
+      show_by_confidential_link_collection_path(@collection, token))
     expect(secret_url).to start_with 'http://'
   end
 end

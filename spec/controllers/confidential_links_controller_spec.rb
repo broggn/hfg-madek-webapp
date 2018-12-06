@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TemporaryUrlsController do
+describe ConfidentialLinksController do
   let(:user) { create :user }
 
   describe 'action: new' do
@@ -15,14 +15,15 @@ describe TemporaryUrlsController do
           get :new, { id: resource.id }, user_id: user.id
 
           expect(response).to be_success
-          expect(response).to render_template 'media_entries/new_temporary_url'
+          expect(response)
+            .to render_template 'media_entries/new_confidential_link'
         end
 
         it 'assigns presenter' do
           get :new, { id: resource.id }, user_id: user.id
 
           expect(assigns[:get]).to be_instance_of(
-            Presenters::MediaEntries::MediaEntryTemporaryUrlNew)
+            Presenters::MediaEntries::MediaEntryConfidentialLinkNew)
         end
 
         context 'when resource is not publised' do
@@ -74,14 +75,15 @@ describe TemporaryUrlsController do
           get :new, { id: resource.id }, user_id: user.id
 
           expect(response).to be_success
-          expect(response).to render_template 'collections/new_temporary_url'
+          expect(response)
+            .to render_template 'collections/new_confidential_link'
         end
 
         it 'assigns presenter' do
           get :new, { id: resource.id }, user_id: user.id
 
           expect(assigns[:get]).to be_instance_of(
-            Presenters::Collections::CollectionTemporaryUrlNew)
+            Presenters::Collections::CollectionConfidentialLinkNew)
         end
       end
 
@@ -120,13 +122,13 @@ describe TemporaryUrlsController do
                  creator: user, responsible_user: user
         end
 
-        it 'redirects to temporary urls show action' do
+        it 'redirects to confidential urls show action' do
           post :create, { id: resource.id }, user_id: user.id
 
           expect(response).to have_http_status(302)
-          expect(response).to redirect_to temporary_url_media_entry_path(
+          expect(response).to redirect_to confidential_link_media_entry_path(
             resource,
-            resource.temporary_urls.first,
+            resource.confidential_links.first,
             just_created: true
           )
         end
@@ -175,13 +177,13 @@ describe TemporaryUrlsController do
           create :collection, creator: user, responsible_user: user
         end
 
-        it 'redirects to temporary urls show action' do
+        it 'redirects to confidential urls show action' do
           post :create, { id: resource.id }, user_id: user.id
 
           expect(response).to have_http_status(302)
-          expect(response).to redirect_to temporary_url_collection_path(
+          expect(response).to redirect_to confidential_link_collection_path(
             resource,
-            resource.temporary_urls.first,
+            resource.confidential_links.first,
             just_created: true
           )
         end
@@ -214,8 +216,8 @@ describe TemporaryUrlsController do
 
   describe 'action: update' do
     context 'when resource is a media entry' do
-      let(:temporary_url) do
-        create :temporary_url, user: user, resource: resource
+      let(:confidential_link) do
+        create :confidential_link, user: user, resource: resource
       end
 
       context 'when logged in user is an owner' do
@@ -226,10 +228,11 @@ describe TemporaryUrlsController do
 
         it 'redirects to template urls list' do
           patch :update,
-                { id: resource.id, temporary_url_id: temporary_url.id },
+                { id: resource.id, confidential_link_id: confidential_link.id },
                 user_id: user.id
 
-          expect(response).to redirect_to temporary_urls_media_entry_path(resource)
+          expect(response).to redirect_to \
+            confidential_links_media_entry_path(resource)
         end
 
         context 'when resource is not publised' do
@@ -238,7 +241,8 @@ describe TemporaryUrlsController do
 
             expect do
               patch :update,
-                    { id: resource.id, temporary_url_id: temporary_url.id },
+                    { id: resource.id,
+                      confidential_link_id: confidential_link.id },
                     user_id: user.id
             end.to raise_error ActiveRecord::RecordNotFound
           end
@@ -255,7 +259,8 @@ describe TemporaryUrlsController do
         it 'raises forbidden error' do
           expect do
             patch :update,
-                  { id: resource.id, temporary_url_id: temporary_url.id },
+                  { id: resource.id,
+                    confidential_link_id: confidential_link.id },
                   user_id: not_owner.id
           end.to raise_error Errors::ForbiddenError
         end
@@ -269,15 +274,16 @@ describe TemporaryUrlsController do
 
         it 'raises unauthorized error' do
           expect do
-            patch :update, id: resource.id, temporary_url_id: temporary_url.id
+            patch :update, id: resource.id,
+                           confidential_link_id: confidential_link.id
           end.to raise_error Errors::UnauthorizedError
         end
       end
     end
 
     context 'when resource is a collection' do
-      let(:temporary_url) do
-        create :temporary_url, user: user, resource: resource
+      let(:confidential_link) do
+        create :confidential_link, user: user, resource: resource
       end
       before { @request.path = '/sets/' }
 
@@ -288,10 +294,12 @@ describe TemporaryUrlsController do
 
         it 'redirects to template urls list' do
           patch :update,
-                { id: resource.id, temporary_url_id: temporary_url.id },
+                { id: resource.id,
+                  confidential_link_id: confidential_link.id },
                 user_id: user.id
 
-          expect(response).to redirect_to temporary_urls_collection_path(resource)
+          expect(response)
+            .to redirect_to confidential_links_collection_path(resource)
         end
       end
 
@@ -304,7 +312,8 @@ describe TemporaryUrlsController do
         it 'raises forbidden error' do
           expect do
             patch :update,
-                  { id: resource.id, temporary_url_id: temporary_url.id },
+                  { id: resource.id,
+                    confidential_link_id: confidential_link.id },
                   user_id: not_owner.id
           end.to raise_error Errors::ForbiddenError
         end
@@ -317,7 +326,8 @@ describe TemporaryUrlsController do
 
         it 'raises unauthorized error' do
           expect do
-            patch :update, id: resource.id, temporary_url_id: temporary_url.id
+            patch :update, id: resource.id,
+                           confidential_link_id: confidential_link.id
           end.to raise_error Errors::UnauthorizedError
         end
       end

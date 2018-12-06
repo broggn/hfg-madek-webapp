@@ -8,7 +8,7 @@ require Rails.root.join 'spec',
                         'controllers',
                         'shared',
                         'media_resources',
-                        'temporary_urls.rb'
+                        'confidential_links.rb'
 
 describe CollectionsController do
   it_performs 'authorization'
@@ -125,7 +125,7 @@ describe CollectionsController do
     end
   end
 
-  it_handles_properly 'temporary urls' do
+  it_handles_properly 'confidential urls' do
     let(:resource) { create :collection, creator: @user, responsible_user: @user }
   end
 end

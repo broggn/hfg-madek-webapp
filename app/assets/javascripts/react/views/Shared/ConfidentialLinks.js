@@ -12,15 +12,15 @@ const t = ui.t
 const UI = require('../../ui-components/index.coffee')
 
 // config
-const SECTIONS = [{ key: 'temporary_urls', name: 'Temporary URLs' }]
+const SECTIONS = [{ key: 'confidential_links', name: 'Temporary URLs' }]
 
-class TemporaryUrls extends React.Component {
+class ConfidentialLinks extends React.Component {
   render() {
     const { get, authToken } = this.props
-    const temporaryUrlsList = get.list
+    const confidentialLinksList = get.list
     const newAction = f.get(get, 'actions.new')
     const title = `Temporary URLs für "${get.resource.title}"`
-    const backText = t('temporary_urls_back_to_' + f.kebabCase(get.type).replace('-', '_'))
+    const backText = t('confidential_links_back_to_' + f.kebabCase(get.type).replace('-', '_'))
 
     return (
       <div>
@@ -34,11 +34,11 @@ class TemporaryUrls extends React.Component {
               <div className="ui-resources-header">
                 <h2 className="title-l ui-resources-title">{name}</h2>
               </div>
-              <TemporaryUrlsList list={temporaryUrlsList} authToken={authToken} />
+              <ConfidentialLinksList list={confidentialLinksList} authToken={authToken} />
               {!!newAction && (
                 <div className="mtl">
                   <UI.Button href={newAction.url} className="primary-button">
-                    {t('temporary_urls_list_new_button')}
+                    {t('confidential_links_list_new_button')}
                   </UI.Button>
                 </div>
               )}
@@ -55,14 +55,14 @@ class TemporaryUrls extends React.Component {
   }
 }
 
-const TemporaryUrlsList = ({ list, authToken }) => {
+const ConfidentialLinksList = ({ list, authToken }) => {
   const revokedUrls = f.filter(list, 'revoked')
   const activeUrls = f.difference(list, revokedUrls)
   const allUrls = f.compact([
     [activeUrls],
     !f.isEmpty(revokedUrls) && [
       revokedUrls,
-      t('temporary_urls_list_revoked_title')
+      t('confidential_links_list_revoked_title')
     ]
   ])
 
@@ -76,22 +76,22 @@ const TemporaryUrlsList = ({ list, authToken }) => {
               <tr>
                 <td>
                   <span className="ui-resources-table-cell-content">
-                    {t('temporary_urls_head_token')}
+                    {t('confidential_links_head_token')}
                   </span>
                 </td>
                 <td>
                   <span className="ui-resources-table-cell-content">
-                    {t('temporary_urls_head_name')}
+                    {t('confidential_links_head_name')}
                   </span>
                 </td>
                 <td>
                   <span className="ui-resources-table-cell-content">
-                    {t('temporary_urls_head_valid_since')}
+                    {t('confidential_links_head_valid_since')}
                   </span>
                 </td>
                 <td>
                   <span className="ui-resources-table-cell-content">
-                    {t('temporary_urls_head_valid_until')}
+                    {t('confidential_links_head_valid_until')}
                   </span>
                 </td>
                 <td />
@@ -100,7 +100,7 @@ const TemporaryUrlsList = ({ list, authToken }) => {
             </thead>
             <tbody>
               {f.map(urls, url => (
-                <TemporaryUrlRow key={url.uuid} {...url} authToken={authToken} />
+                <ConfidentialLinkRow key={url.uuid} {...url} authToken={authToken} />
               ))}
             </tbody>
           </table>
@@ -110,24 +110,24 @@ const TemporaryUrlsList = ({ list, authToken }) => {
   )
 }
 
-const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
+const ConfidentialLinkRow = ({ authToken, ...confidentialLink }) => {
   Moment.locale(currentLocale())
-  const { uuid, label, description, revoked } = temporaryUrl
+  const { uuid, label, description, revoked } = confidentialLink
   let creationDate, creationDateTitle, expirationDate, expirationDateTitle
-  if (temporaryUrl.created_at) {
-    creationDate = Moment(new Date(temporaryUrl.created_at)).calendar()
-    creationDateTitle = t('temporary_urls_list_created_hint_pre') + temporaryUrl.created_at
+  if (confidentialLink.created_at) {
+    creationDate = Moment(new Date(confidentialLink.created_at)).calendar()
+    creationDateTitle = t('confidential_links_list_created_hint_pre') + confidentialLink.created_at
   }
-  if (temporaryUrl.expires_at) {
-    expirationDate = Moment(new Date(temporaryUrl.expires_at)).fromNow()
+  if (confidentialLink.expires_at) {
+    expirationDate = Moment(new Date(confidentialLink.expires_at)).fromNow()
     expirationDateTitle =
-      t('temporary_urls_list_expires_hint_pre') + temporaryUrl.expires_at
+      t('confidential_links_list_expires_hint_pre') + confidentialLink.expires_at
   } else {
-    expirationDate = t('temporary_urls_list_no_expiry')
-    expirationDateTitle = `${t('temporary_urls_list_expires_hint_pre')}${expirationDate}`
+    expirationDate = t('confidential_links_list_no_expiry')
+    expirationDateTitle = `${t('confidential_links_list_expires_hint_pre')}${expirationDate}`
   }
-  const showAction = f.get(temporaryUrl, 'actions.show')
-  const revokeAction = f.get(temporaryUrl, 'actions.revoke')
+  const showAction = f.get(confidentialLink, 'actions.show')
+  const revokeAction = f.get(confidentialLink, 'actions.revoke')
   const trStyle = !revoked ? {} : { opacity: 0.67 }
 
   return (
@@ -137,7 +137,7 @@ const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
         <div className="measure-narrow">
           {!f.isEmpty(description)
             ? description
-            : t('temporary_urls_list_no_description')}
+            : t('confidential_links_list_no_description')}
         </div>
       </td>
       <td>
@@ -156,26 +156,26 @@ const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
       </td>
       <td>
         {!!showAction && (
-          <Link href={showAction.url}>{t('temporary_urls_list_show_url')}</Link>
+          <Link href={showAction.url}>{t('confidential_links_list_show_url')}</Link>
         )}
       </td>
       <td className="ui-workgroup-actions">
         {!!revokeAction && (
           <RailsForm
-            name={'temporary_url'}
+            name={'confidential_link'}
             authToken={authToken}
             method={revokeAction.method}
             action={revokeAction.url}
           >
-            <input name="temporary_url[revoked]" value="true" type="hidden" />
+            <input name="confidential_link[revoked]" value="true" type="hidden" />
             <UI.Tooltipped
-              text={t('temporary_urls_list_revoke_btn_hint')}
+              text={t('confidential_links_list_revoke_btn_hint')}
               id={`btnrv.${uuid}`}
             >
               <button
                 className="button"
                 type="submit"
-                data-confirm={t('temporary_urls_list_revoke_confirm')}
+                data-confirm={t('confidential_links_list_revoke_confirm')}
               >
                 <i className="fa fa-ban" />
               </button>
@@ -187,5 +187,5 @@ const TemporaryUrlRow = ({ authToken, ...temporaryUrl }) => {
   )
 }
 
-module.exports = TemporaryUrls
-TemporaryUrls.TemporaryUrlRow = TemporaryUrlRow
+module.exports = ConfidentialLinks
+ConfidentialLinks.ConfidentialLinkRow = ConfidentialLinkRow

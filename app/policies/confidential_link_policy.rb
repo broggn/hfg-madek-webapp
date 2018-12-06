@@ -1,4 +1,4 @@
-class TemporaryUrlPolicy < DefaultPolicy
+class ConfidentialLinkPolicy < DefaultPolicy
 
   def show?
     record.user_id == user.id

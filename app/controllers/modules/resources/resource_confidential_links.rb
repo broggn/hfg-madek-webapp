@@ -1,18 +1,18 @@
 module Modules
   module Resources
-    module ResourceTemporaryUrls
+    module ResourceConfidentialLinks
       extend ActiveSupport::Concern
 
       included do
         skip_before_action :check_and_redirect_with_custom_url,
-                           only: :show_by_temporary_url
+                           only: :show_by_confidential_link
       end
 
-      def temporary_urls
+      def confidential_links
         resource = resource_class.find(id_param)
         auth_authorize(resource)
 
-        @get = temporary_url_presenter.new(
+        @get = confidential_link_presenter.new(
           resource,
           current_user
         )
@@ -29,11 +29,11 @@ module Modules
           .constantize
       end
 
-      def temporary_url_presenter
+      def confidential_link_presenter
         [
           'Presenters',
           controller_name.camelize,
-          "#{resource_class.name}TemporaryUrls"
+          "#{resource_class.name}ConfidentialLinks"
         ]
           .join('::')
           .constantize

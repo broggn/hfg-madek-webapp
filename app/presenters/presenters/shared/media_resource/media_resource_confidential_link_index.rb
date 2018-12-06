@@ -1,7 +1,7 @@
 module Presenters
   module Shared
     module MediaResource
-      class MediaResourceTemporaryUrlIndex < \
+      class MediaResourceConfidentialLinkIndex < \
         Presenters::Shared::AppResourceWithUser
 
         delegate_to_app_resource :revoked, :description, :expires_at

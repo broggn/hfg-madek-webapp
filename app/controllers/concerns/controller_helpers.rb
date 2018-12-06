@@ -18,7 +18,8 @@ module Concerns
 
     def get_authorized_resource(resource = nil)
       resource ||= model_klass.unscoped.find(id_param)
-      resource.accessed_by_token = true if request_by_temporary_url?(resource)
+      resource.accessed_by_confidential_link = true \
+        if request_by_confidential_link?(resource)
       auth_authorize resource, "#{action_name}?".to_sym
       resource
     end
@@ -51,20 +52,20 @@ module Concerns
 
     private
 
-    def request_by_temporary_url?(resource)
-      action_name == 'show_by_temporary_url' ||
-        preview_request_by_parent_temporary_url?(resource)
+    def request_by_confidential_link?(resource)
+      action_name == 'show_by_confidential_link' ||
+        preview_request_by_parent_confidential_link?(resource)
     end
 
-    def preview_request_by_parent_temporary_url?(resource)
+    def preview_request_by_parent_confidential_link?(resource)
       return false unless resource.is_a?(Preview)
 
       referrer_params = Rails.application.routes.recognize_path(request.referrer)
       controller_name == 'previews' &&
         action_name == 'show' &&
-        referrer_params[:action] == 'show_by_temporary_url' &&
-        TemporaryUrl.find_by_token(referrer_params[:token]).try(:resource_id) == \
-          resource.media_file.media_entry_id
+        referrer_params[:action] == 'show_by_confidential_link' &&
+        ConfidentialLink.find_by_token(referrer_params[:token])
+          .try(:resource_id) == resource.media_file.media_entry_id
     rescue ActionController::RoutingError
       false
     end
