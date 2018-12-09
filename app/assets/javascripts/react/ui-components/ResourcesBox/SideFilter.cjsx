@@ -272,9 +272,14 @@ module.exports = React.createClass
           <ul className={togglebodyClass}>
             {
               if isOpen
-                f.map(child.children, (item)=>
-                  @renderItem(parent.uuid, current, child, item, filterType)
-                )
+                if child.hasRoles
+                  f.map(f.groupBy(child.children, 'type'), (children, type) =>
+                    @renderGroupedItems(parent.uuid, current, child, type, children, filterType)
+                  )
+                else
+                  f.map(child.children, (item)=>
+                    @renderItem(parent.uuid, current, child, item, filterType)
+                  )
             }
           </ul>
       }
@@ -306,6 +311,13 @@ module.exports = React.createClass
       if item.selected then @removeItemFilter(onChange, current, parent, item, filterType) else @addItemFilter(onChange, current, parent, item, filterType)
 
     <FilterItem parentUuid={parentUuid} {...item} key={item.uuid} onClick={addRemoveClick}/>
+
+  renderGroupedItems: (parentUuid, current, child, type, children, filterType) ->
+    items = f.map(children, (item) =>
+      @renderItem(parentUuid, current, child, item, filterType)
+    )
+    items.unshift(<li className='ui-side-filter-lvl3-item'><strong>{type}</strong></li>)
+    items
 
   createToggleSubSection: (filterType, parent, child, isOpen) ->
 
@@ -431,7 +443,6 @@ module.exports = React.createClass
 FilterItem = ({parentUuid, label, uuid, selected, type, href, count, onClick} = @props) ->
   label = f.presence(label or uuid) or (
     console.error('empty FilterItem label!') and '(empty)')
-  label += ' (role)' if type is 'role'
   <li className={css('ui-side-filter-lvl3-item', active: selected)}>
     <Link mods='weak' onClick={onClick}>
       {label} <span className='ui-lvl3-item-count'>{count}</span>
@@ -490,6 +501,7 @@ initializeSubSections = (filters) ->
       # If the presenter does not set the value at all, it is undefined,
       # and therefore it is set to true here.
       multi: true unless filter.multi is false
+      hasRoles: filter.has_roles
     }
     subSections.push(subSection)
   return subSections

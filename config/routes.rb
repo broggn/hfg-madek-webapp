@@ -193,7 +193,6 @@ Madek::Application.routes.draw do
   resources :keywords, only: :index
   resources :licenses, only: [:index, :show]
   resources :people, only: [:index, :show]
-  resources :roles, only: :index
 
   # Clients/Logins:
   resource :user, only: [] do
