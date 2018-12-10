@@ -318,10 +318,6 @@ module.exports = React.createClass
             item
           else
             f.pick(item, ['uuid', 'role'])
-          # console.log('***')
-          # console.log('newItem', newItem)
-          # console.log(f(item).omit(['type', 'isNew']).value())
-          # console.log(f(item).omit(['type', 'isNew']).map((val, key) -> if f.present(val) then ["#{name}[#{key}]", (val + '')]).value())
           f(newItem).omit(['type', 'isNew'])
             .map((val, key)-> # pairs; build keys; clean & stringify values:
               val = val.map((v) => v.id).join(',') if f.isArray(val)

@@ -13,23 +13,9 @@ module.exports = React.createClass
     id: React.PropTypes.string.isRequired
     name: React.PropTypes.string.isRequired
 
-  # _inputByTypeMap: {
-  #   'Text': Text
-  #   'TextDate': InputTextDate
-  #   'People': InputPeople
-  #   'Keywords': InputKeywords
-  # }
-
   render: ({id, name, model} = @props)->
 
     resourceType = f.last(@props.metaKey.value_type.split('::'))
-
-    # if resourceType == 'Roles'
-    #   console.log('id', id)
-    #   console.log('name', name)
-    #   console.log('model', model)
-    #   console.log('')
-
     multiple = not (f.includes(['Text', 'TextDate'], resourceType))
 
     values = f.map model.values, (value) ->

@@ -3,6 +3,7 @@
 
 React = require('react')
 f = require('active-lodash')
+t = require('../../../lib/i18n-translate.js')
 css = require('classnames')
 ui = require('../../lib/ui.coffee')
 MadekPropTypes = require('../../lib/madek-prop-types.coffee')
@@ -316,7 +317,7 @@ module.exports = React.createClass
     items = f.map(children, (item) =>
       @renderItem(parentUuid, current, child, item, filterType)
     )
-    items.unshift(<li className='ui-side-filter-lvl3-item'><strong>{type}</strong></li>)
+    items.unshift(<li className='ui-side-filter-lvl3-item ptx plm' style={{'fontSize': '12px'}}><strong>{t("dynamic_filters_#{type}_header")}</strong></li>)
     items
 
   createToggleSubSection: (filterType, parent, child, isOpen) ->
