@@ -18,8 +18,7 @@ module Concerns
 
     def get_authorized_resource(resource = nil)
       resource ||= model_klass.unscoped.find(id_param)
-      resource.accessed_by_confidential_link = true \
-        if request_by_confidential_link?(resource)
+      handle_confidential_links(resource)
       auth_authorize resource, "#{action_name}?".to_sym
       resource
     end
@@ -52,15 +51,28 @@ module Concerns
 
     private
 
-    def request_by_confidential_link?(resource)
-      action_name == 'show_by_confidential_link' ||
-        preview_request_by_parent_confidential_link?(resource)
+    def handle_confidential_links(resource)
+      return unless resource.respond_to?(:accessed_by_confidential_link)
+      if token = get_valid_access_token(resource)
+        return resource.accessed_by_confidential_link = token
+      end
+      if preview_request_by_parent_confidential_link?(resource)
+        resource.accessed_by_confidential_link = true
+      end
+    end
+
+    def get_valid_access_token(resource)
+      return unless resource
+      return unless access_token = (
+        params.fetch('token', nil) || params.fetch('accessToken', nil))
+      return unless access = ConfidentialLink.find_by_token(access_token)
+      return access_token if access.resource_id == resource.id
     end
 
     def preview_request_by_parent_confidential_link?(resource)
       return false unless resource.is_a?(Preview)
-
-      referrer_params = Rails.application.routes.recognize_path(request.referrer)
+      referrer_params = Rails.application.routes
+        .recognize_path(request.referrer)
       controller_name == 'previews' &&
         action_name == 'show' &&
         referrer_params[:action] == 'show_by_confidential_link' &&

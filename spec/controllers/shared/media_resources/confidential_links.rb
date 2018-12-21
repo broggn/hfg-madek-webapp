@@ -3,7 +3,6 @@ RSpec.configure do |c|
 end
 
 shared_examples 'confidential urls' do
-  include ActiveSupport::Testing::TimeHelpers
 
   describe 'action: show_by_confidential_link' do
     it 'renders template' do
@@ -28,19 +27,19 @@ shared_examples 'confidential urls' do
     end
 
     context 'when token has expired' do
-      it 'raiunauthorized error' do
+      it 'raises unauthorized error' do
         cf_link = create(:confidential_link,
                          user: @user,
                          resource: resource,
-                         expires_at: 1.year.from_now)
+                         expires_at: 1.second.from_now)
         cf_link.reload
 
-        travel(1.year + 1.second) do
-          expect do
-            get(:show_by_confidential_link, id: resource.id, token: cf_link.token)
-          end
-            .to raise_error(Errors::UnauthorizedError)
+        sleep 1
+
+        expect do
+          get(:show_by_confidential_link, id: resource.id, token: cf_link.token)
         end
+          .to raise_error(Errors::UnauthorizedError)
       end
     end
   end

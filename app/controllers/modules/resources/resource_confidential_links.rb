@@ -11,13 +11,8 @@ module Modules
       def confidential_links
         resource = resource_class.find(id_param)
         auth_authorize(resource)
-
-        @get = confidential_link_presenter.new(
-          resource,
-          current_user
-        )
-
-        respond_with(@get)
+        respond_with(
+          @get = confidential_link_presenter.new(resource, current_user))
       end
 
       private

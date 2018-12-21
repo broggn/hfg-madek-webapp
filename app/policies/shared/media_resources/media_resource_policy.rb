@@ -44,7 +44,7 @@ module Shared
       end
 
       def show?
-        visible?
+        visible? || accessed_by_confidential_link?
       end
 
       def list_meta_data?
@@ -118,7 +118,7 @@ module Shared
         end
       end
 
-      def visible_by_confidential_link?
+      def accessed_by_confidential_link?
         record.respond_to?(:accessed_by_confidential_link) &&
           record.accessed_by_confidential_link
       end
