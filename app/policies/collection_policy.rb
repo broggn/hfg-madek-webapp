@@ -44,7 +44,7 @@ class CollectionPolicy < Shared::MediaResources::MediaResourcePolicy
   end
 
   def show_by_confidential_link?
-    visible_by_confidential_link?
+    accessed_by_confidential_link?
   end
 
   alias_method :relations?, :show?

@@ -39,7 +39,7 @@ class MediaEntryPolicy < Shared::MediaResources::MediaResourcePolicy
   end
 
   def share?
-    show? and record.is_published
+    show? and record.is_published and !accessed_by_confidential_link?
   end
 
   def show_in_admin?
@@ -51,14 +51,20 @@ class MediaEntryPolicy < Shared::MediaResources::MediaResourcePolicy
   end
 
   def show_by_confidential_link?
-    visible_by_confidential_link?
+    accessed_by_confidential_link?
   end
 
-  alias_method :edit?, :update?
+  # not an action, just a helper
+  def _via_personal_access?
+    show? and !accessed_by_confidential_link?
+  end
 
-  alias_method :more_data?, :show?
-  alias_method :relations?, :show?
-  alias_method :browse?, :show?
+  alias_method :more_data?, :_via_personal_access?
+  alias_method :relations?, :_via_personal_access?
+  alias_method :browse?, :_via_personal_access?
+  alias_method :export?, :_via_personal_access?
+
+  alias_method :edit?, :update?
 
   alias_method :export?, :show?
   alias_method :embedded?, :show?
