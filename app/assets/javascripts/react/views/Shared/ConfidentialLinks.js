@@ -19,8 +19,17 @@ class ConfidentialLinks extends React.Component {
     const { get, authToken } = this.props
     const confidentialLinksList = get.list
     const newAction = f.get(get, 'actions.new')
-    const title = `Temporary URLs für "${get.resource.title}"`
+    const title =
+      t('confidential_links_title_pre') + get.resource.title + t('confidential_links_title_post')
     const backText = t('confidential_links_back_to_' + f.kebabCase(get.type).replace('-', '_'))
+
+    const newButton = !!newAction && (
+      <div className="mtl">
+        <UI.Button href={newAction.url} className="primary-button">
+          {t('confidential_links_list_new_button')}
+        </UI.Button>
+      </div>
+    )
 
     return (
       <div>
@@ -34,14 +43,7 @@ class ConfidentialLinks extends React.Component {
               <div className="ui-resources-header">
                 <h2 className="title-l ui-resources-title">{name}</h2>
               </div>
-              <ConfidentialLinksList list={confidentialLinksList} authToken={authToken} />
-              {!!newAction && (
-                <div className="mtl">
-                  <UI.Button href={newAction.url} className="primary-button">
-                    {t('confidential_links_list_new_button')}
-                  </UI.Button>
-                </div>
-              )}
+              <ConfidentialLinksList list={confidentialLinksList} actions={[newButton]} authToken={authToken} />
             </div>
           ))}
         </div>
@@ -55,7 +57,7 @@ class ConfidentialLinks extends React.Component {
   }
 }
 
-const ConfidentialLinksList = ({ list, authToken }) => {
+const ConfidentialLinksList = ({ list, actions, authToken }) => {
   const revokedUrls = f.filter(list, 'revoked')
   const activeUrls = f.difference(list, revokedUrls)
   const allUrls = f.compact([
@@ -104,6 +106,7 @@ const ConfidentialLinksList = ({ list, authToken }) => {
               ))}
             </tbody>
           </table>
+          {i == 0 && f.map(actions)}
         </div>
       ))}
     </div>
@@ -132,7 +135,9 @@ const ConfidentialLinkRow = ({ authToken, ...confidentialLink }) => {
 
   return (
     <tr key={uuid} style={trStyle}>
-      <td>{label}</td>
+      <td>
+        {f.isString(label) && label.slice(0, 6)}{'…'}
+      </td>
       <td>
         <div className="measure-narrow">
           {!f.isEmpty(description)
