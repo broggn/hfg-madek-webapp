@@ -63,23 +63,39 @@ module Concerns
 
     def get_valid_access_token(resource)
       return unless resource
-      return unless access_token = (
-        params.fetch('token', nil) || params.fetch('accessToken', nil))
+      return unless access_token = get_access_token_from_params(params)
       return unless access = ConfidentialLink.find_by_token(access_token)
       return access_token if access.resource_id == resource.id
     end
 
     def preview_request_by_parent_confidential_link?(resource)
       return false unless resource.is_a?(Preview)
-      referrer_params = Rails.application.routes
-        .recognize_path(request.referrer)
-      controller_name == 'previews' &&
-        action_name == 'show' &&
-        referrer_params[:action] == 'show_by_confidential_link' &&
-        ConfidentialLink.find_by_token(referrer_params[:token])
-          .try(:resource_id) == resource.media_file.media_entry_id
+      return false unless controller_name == 'previews' && action_name == 'show'
+      return unless access_token = get_access_token_from_params(referrer_params)
+      ConfidentialLink.find_by_token(access_token)
+        .try(:resource_id) == resource.media_file.media_entry_id
     rescue ActionController::RoutingError
       false
+    end
+
+    def get_access_token_from_params(params)
+      params.fetch('token', nil) || params.fetch('accessToken', nil)
+    end
+
+    def referrer_params
+      ref_route = _with_failsafe do
+        Rails.application.routes.recognize_path(request.referrer)
+      end
+      ref_params = _with_failsafe do
+        Rack::Utils.parse_query(URI.parse(request.referrer).query)
+      end
+      {}.merge(ref_route.to_h).merge(ref_params.to_h)
+    end
+
+    def _with_failsafe
+       yield
+    rescue StandardError
+      nil
     end
   end
 end
