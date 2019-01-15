@@ -14,6 +14,16 @@ shared_examples 'confidential urls' do
       expect(response).to render_template('show_by_confidential_link')
     end
 
+    context 'when token is invalid' do
+      it 'raises unauthorized error' do
+        fake_token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF'
+        expect do
+          get(:show_by_confidential_link, id: resource.id, token: fake_token)
+        end
+          .to raise_error(Errors::UnauthorizedError)
+      end
+    end
+
     context 'when token is revoked' do
       it 'raises unauthorized error' do
         cf_link = create :confidential_link, user: @user, resource: resource,
