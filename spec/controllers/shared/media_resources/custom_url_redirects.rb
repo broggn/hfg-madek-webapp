@@ -28,8 +28,8 @@ RSpec.shared_examples 'redirection' do
         @custom_url = create(:custom_url,
                              Hash[:is_primary, true,
                                   model_name.singular, @resource])
-        get :show, id: @resource.id
-        redirect_path = "#{request.base_url}/#{plural}/#{@custom_url.id}"
+        get :show, id: @resource.id, lang: 'en'
+        redirect_path = "#{request.base_url}/#{plural}/#{@custom_url.id}?lang=en"
         expect(response).to redirect_to redirect_path
       end
 
@@ -52,9 +52,9 @@ RSpec.shared_examples 'redirection' do
         @custom_url = create(:custom_url,
                              Hash[:is_primary, false,
                                   model_name.singular, @resource])
-        get :show, id: @custom_url.id
+        get :show, id: @custom_url.id, lang: 'en'
         redirect_path = \
-          "#{request.base_url}/#{plural}/#{@resource.id}"
+          "#{request.base_url}/#{plural}/#{@resource.id}?lang=en"
         expect(response).to redirect_to redirect_path
       end
 
@@ -80,9 +80,9 @@ RSpec.shared_examples 'redirection' do
         @custom_url = create(:custom_url,
                              Hash[:is_primary, true,
                                   model_name.singular, @resource])
-        get :more_data, id: @resource.id
+        get :more_data, id: @resource.id, lang: 'en'
         redirect_path = \
-          "#{request.base_url}/#{plural}/#{@custom_url.id}/more_data"
+          "#{request.base_url}/#{plural}/#{@custom_url.id}/more_data?lang=en"
         expect(response).to redirect_to redirect_path
       end
 
@@ -105,9 +105,9 @@ RSpec.shared_examples 'redirection' do
         @custom_url = create(:custom_url,
                              Hash[:is_primary, false,
                                   model_name.singular, @resource])
-        get :more_data, id: @custom_url.id
+        get :more_data, id: @custom_url.id, lang: 'en'
         redirect_path = \
-          "#{request.base_url}/#{plural}/#{@resource.id}/more_data"
+          "#{request.base_url}/#{plural}/#{@resource.id}/more_data?lang=en"
         expect(response).to redirect_to redirect_path
       end
 
