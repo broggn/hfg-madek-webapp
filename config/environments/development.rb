@@ -13,7 +13,7 @@ Madek::Application.configure do
   config.cache_classes = false
 
   # Always show the developer-friendly error pages in DEV, even from non-localhost:
-  config.consider_all_requests_local = true
+  config.consider_all_requests_local = false
   #       ^ set to 'false' to force showing of custom error pages in DEV
 
 

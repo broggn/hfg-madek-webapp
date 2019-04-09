@@ -24,6 +24,12 @@ class ErrorsController < ApplicationController
     respond_with_error(err, type)
   end
 
+  def error_404
+    path = params['path']
+    err = Pojo.new(status_code: 404, details: ["NOT FOUND: '#{path}'"])
+    respond_with_error(err, 'client_error')
+  end
+
   def proxy_error
     # Only shown on localhost, rendered once per deploy as a static page for proxy.
     err = Pojo.new(
@@ -49,6 +55,8 @@ class ErrorsController < ApplicationController
       end
       f.json { render(json: wrap_error(err), status: err.status_code) }
       f.yaml { render(plain: wrap_error(err).to_yaml, status: err.status_code) }
+      # fallback for other formats that might be requested:
+      f.all { render nothing: true, status: err.status_code || 500 }
     end
   end
 

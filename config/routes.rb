@@ -325,4 +325,7 @@ Madek::Application.routes.draw do
     get '/error_500', to: 'only_for_test#error_500'
   end
   ####################################################################################
+
+  # fallback route to catch 'not found' so its not treated as fatal error by rails!
+  match '*path', via: :all, to: 'errors#error_404'
 end
