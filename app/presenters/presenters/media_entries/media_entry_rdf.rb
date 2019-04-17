@@ -7,7 +7,7 @@
 # * https://json-ld.org/playground/
 
 # TODO:
-# - add keywords to graph!
+# - add people to graph!
 
 module Presenters
   module MediaEntries
@@ -36,20 +36,26 @@ module Presenters
       private
 
       def json_ld_graph
-        md_graph = meta_data_graph
-        @_graph ||= \
-        {
-          '@context': {
-            '@base': full_url('/')
-          }.merge(hardcoded_prefixes)
-            .merge(vocabularies_map),
+        context = { '@base': full_url('/') }
+          .merge(hardcoded_prefixes)
+          .merge(vocabularies_map)
+
+        entry_md = {
           '@id': full_url("/entries/#{@app_resource.id}"),
           '@type': 'madek:MediaEntry'
-        }.merge(md_graph)
+        }.merge(meta_data_graph[:resource])
+
+        @_graph ||= \
+        {
+          '@context': context,
+          '@graph': [entry_md, meta_data_graph[:relateds]].flatten
+        }
       end
 
       def meta_data_graph
-        @_meta_data_graph ||= meta_data.map do |md|
+        return @_meta_data_graph if @_meta_data_graph
+        included_keywords = []
+        resource_md = meta_data.map do |md|
           value =
             case md.class.name
             when 'MetaDatum::Text'
@@ -58,28 +64,36 @@ module Presenters
               md.string
             when 'MetaDatum::Keywords'
               md.keywords.map do |k|
-                {
+                node = {
                   '@id': full_url("/vocabulary/keyword/#{k.id}"),
-                  '@type': 'madek:Keyword',
-                  _label: k.to_s,
-                  _rdf_class: k.rdf_class,
-                  _sameAs: k.external_uris.presence
+                  '@type': 'madek:Keyword'
                 }
+                included_keywords.push(node.merge(
+                  'rdfs:label': k.to_s,
+                # _rdf_class: k.rdf_class,
+                # _sameAs: k.external_uris.presence
+                ))
+                node
               end
             when 'MetaDatum::People'
               md.people.map do |p|
                 {
                   '@id': full_url("/people/#{p.id}"),
                   '@type': 'madek:Person',
-                  _label: p.to_s,
-                  _sameAs: p.external_uris.presence
-                }
+                  '_label': p.to_s,
+                  '_sameAs': p.external_uris.presence
+                }.compact
               end
             else
               fail 'not implemented! md type: ' + md.class
             end
           { md.meta_key_id => value }
         end.reduce({}, &:merge)
+
+        @_meta_data_graph = {
+          resource: resource_md,
+          relateds: [included_keywords]
+        }
       end
 
       def vocabularies_map
@@ -92,7 +106,12 @@ module Presenters
       end
 
       def hardcoded_prefixes
-        { madek: full_url('/ns#') }
+        {
+          madek: full_url('/ns#'),
+          Keyword: full_url('/vocabulary/keyword/'),
+          rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
+        }
+      end
       end
 
       # temp
