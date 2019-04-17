@@ -110,10 +110,10 @@ module Presenters
       end
 
       def dump_rdf(data, format)
+        prefixes = {}.merge(hardcoded_prefixes).merge(vocabularies_map).as_json
         rdf_graph = RDF::Graph.new << JSON::LD::API.toRdf(data.as_json)
-        rdf_graph.dump(
-          format,
-          prefixes: {}.merge(hardcoded_prefixes).merge(vocabularies_map).as_json)
+        rdf_graph.validate!
+        rdf_graph.dump(format, prefixes: prefixes)
       end
 
       # temp
