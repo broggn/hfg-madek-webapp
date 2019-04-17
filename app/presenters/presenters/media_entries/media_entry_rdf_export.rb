@@ -6,8 +6,10 @@
 # TOOLS:
 # * https://json-ld.org/playground/
 
-# TODO:
-# - add people to graph!
+# TODO: …
+# - support Roles!
+# - check if owl:sameAs is correct?
+# - test with data consumers!
 
 module Presenters
   module MediaEntries
@@ -50,36 +52,44 @@ module Presenters
 
       def meta_data_graph
         return @_meta_data_graph if @_meta_data_graph
-        included_keywords = []
+        related = { keywords: [], people: [] }
         resource_md = meta_data.map do |md|
           value =
             case md.class.name
             when 'MetaDatum::Text'
               { '@value': md.string, '@type': 'madek:MetaDatum::Text' }
+
             when 'MetaDatum::TextDate'
               { '@value': md.string, '@type': 'madek:MetaDatum::TextDate' }
+
             when 'MetaDatum::Keywords'
               md.keywords.map do |k|
                 node = {
                   '@id': full_url("/vocabulary/keyword/#{k.id}"),
                   '@type': 'madek:Keyword'
                 }
-                included_keywords.push(node.merge(
+                related[:keywords].push(node.merge(
                   'rdfs:label': k.to_s,
-                # _rdf_class: k.rdf_class,
-                # _sameAs: k.external_uris.presence
-                ))
+                  # TODO: include those props
+                  # _rdf_class: k.rdf_class,
+                  "owl:sameAs": k.external_uris.presence
+                ).compact)
                 node
               end
+
             when 'MetaDatum::People'
               md.people.map do |p|
-                {
+                node = {
                   '@id': full_url("/people/#{p.id}"),
-                  '@type': 'madek:Person',
-                  '_label': p.to_s,
-                  '_sameAs': p.external_uris.presence
-                }.compact
+                  '@type': 'madek:Person'
+                }
+                related[:people].push(node.merge(
+                  'rdfs:label': p.to_s,
+                  'owl:sameAs': p.external_uris.presence
+                ).compact)
+                node
               end
+
             else
               fail 'not implemented! md type: ' + md.class
             end
@@ -88,7 +98,7 @@ module Presenters
 
         @_meta_data_graph = {
           resource: resource_md,
-          relateds: [included_keywords]
+          relateds: related.values.map { |arr| arr.uniq { |h| h.fetch(:@id) } }
         }
       end
 
@@ -105,7 +115,8 @@ module Presenters
         {
           madek: full_url('/ns#'),
           Keyword: full_url('/vocabulary/keyword/'),
-          rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
+          rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+          owl: 'http://www.w3.org/2002/07/owl#'
         }
       end
 
