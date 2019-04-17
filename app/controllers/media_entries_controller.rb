@@ -26,7 +26,7 @@ class MediaEntriesController < ApplicationController
   # TMP
   def rdf_export
     entry = get_authorized_resource
-    @get = Presenters::MediaEntries::MediaEntryRdf.new(entry, current_user)
+    @get = Presenters::MediaEntries::MediaEntryRdfExport.new(entry, current_user)
 
     respond_to do |format|
       format.rdf do

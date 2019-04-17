@@ -11,31 +11,27 @@
 
 module Presenters
   module MediaEntries
-    class MediaEntryRdf < Presenters::Shared::AppResourceWithUser
+    class MediaEntryRdfExport < Presenters::Shared::AppResourceWithUser
       include Presenters::Shared::Modules::VocabularyConfig
 
       def json_ld
-        # JSON::LD::API.compact(graph, graph["@context"])
+        # JSON::LD::API.compact(json_ld_graph, json_ld_graph["@context"])
         json_ld_graph.as_json
       end
 
       def rdf_turtle
-        rdf_graph = RDF::Graph.new << JSON::LD::API.toRdf(json_ld_graph.as_json)
-        rdf_graph.dump(
-          :ttl,
-          prefixes: {}.merge(hardcoded_prefixes).merge(vocabularies_map).as_json)
+        dump_rdf(json_ld_graph, :ttl)
       end
 
       def rdf_xml
-        rdf_graph = RDF::Graph.new << JSON::LD::API.toRdf(json_ld_graph.as_json)
-        rdf_graph.dump(
-          :rdfxml,
-          prefixes: {}.merge(hardcoded_prefixes).merge(vocabularies_map).as_json)
+        dump_rdf(json_ld_graph, :rdfxml)
       end
 
       private
 
       def json_ld_graph
+        return @_json_ld_graph if @_json_ld_graph
+
         context = { '@base': full_url('/') }
           .merge(hardcoded_prefixes)
           .merge(vocabularies_map)
@@ -45,7 +41,7 @@ module Presenters
           '@type': 'madek:MediaEntry'
         }.merge(meta_data_graph[:resource])
 
-        @_graph ||= \
+        @_json_ld_graph ||= \
         {
           '@context': context,
           '@graph': [entry_md, meta_data_graph[:relateds]].flatten
@@ -112,6 +108,12 @@ module Presenters
           rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
         }
       end
+
+      def dump_rdf(data, format)
+        rdf_graph = RDF::Graph.new << JSON::LD::API.toRdf(data.as_json)
+        rdf_graph.dump(
+          format,
+          prefixes: {}.merge(hardcoded_prefixes).merge(vocabularies_map).as_json)
       end
 
       # temp

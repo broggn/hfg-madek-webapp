@@ -73,7 +73,7 @@ Madek::Application.routes.draw do
 
       get 'access/:token', action: :show_by_confidential_link, as: 'show_by_confidential_link'
 
-      get 'rdf'
+      get 'meta_data', action: :rdf_export
     end
 
     collection do
