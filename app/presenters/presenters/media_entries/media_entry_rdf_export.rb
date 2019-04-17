@@ -55,9 +55,9 @@ module Presenters
           value =
             case md.class.name
             when 'MetaDatum::Text'
-              md.string
+              { '@value': md.string, '@type': 'madek:MetaDatum::Text' }
             when 'MetaDatum::TextDate'
-              md.string
+              { '@value': md.string, '@type': 'madek:MetaDatum::TextDate' }
             when 'MetaDatum::Keywords'
               md.keywords.map do |k|
                 node = {
