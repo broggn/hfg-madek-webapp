@@ -113,8 +113,9 @@ module Presenters
 
       def hardcoded_prefixes
         {
-          madek: full_url('/ns#'),
+          madek: full_url('/ns#'), # TODO: global URI!
           Keyword: full_url('/vocabulary/keyword/'),
+          Person: full_url('/people/'),
           rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
           owl: 'http://www.w3.org/2002/07/owl#'
         }
