@@ -1,14 +1,41 @@
+:ruby
+  #  OLD:
+  # menu = YAML.safe_load <<-HEREDOC
+  #   - one: 'example.com/1'
+  #   - two: 'example.com/2'
+  # HEREDOC
+
+  # NEW:
+  # menu = YAML.safe_load <<-HEREDOC
+  #   - url: 'example.com/1'
+  #     labels:
+  #       de: eins
+  #       en: one
+  #   - url: 'example.com/2'
+  #     labels:
+  #       de: zwei
+  #       en: two
+  # HEREDOC
+
+  def localised_label(labels, fallback = '!?!')
+    return fallback unless labels.present? and labels.is_a? Hash
+    labels[I18n.locale].presence \
+      || labels[I18n.default_locale].presence \
+      || labels.values.first.presence \
+      || fallback
+  end
+
 %footer.app-footer.ui-footer.ui-container.inverted
 
   - if defined?(menu) && menu.is_a?(Array)
-    -# strange but JSON-safe format: `[{"Example Link" => "http://example.com"}]`
-    - menu = Hash[menu.map {|item| item.to_a.first}]
+    - menu = menu.map(&:deep_symbolize_keys)
 
     %ul.ui-footer-menu
-      - menu.map do |text, link|
+      - menu.map do |link|
         %li
-          = component('link', href: link) do
-            = text
+          = component('link', href: link[:url]) do
+            = localised_label(link[:labels])
+
       - if defined?(available_locales) && available_locales.is_a?(Array) && available_locales.size > 1
         %li
           = t(:footer_choose_language)
