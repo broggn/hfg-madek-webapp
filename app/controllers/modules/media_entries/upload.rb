@@ -92,7 +92,8 @@ module Modules
           create_meta_datum!(media_entry, license_meta_key.id, license.id)
         end
 
-        usage_text = settings.media_entry_default_license_usage_text.presence
+        usage_text = localize(settings.media_entry_default_license_usage_texts)
+                       .presence
         usage_meta_key = MetaKey.find_by(
           id: settings.media_entry_default_license_usage_meta_key,
           meta_datum_object_type: 'MetaDatum::Text')
