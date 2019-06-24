@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   rescue_from Errors::UnauthorizedError, with: :error_according_to_login_state
 
   # Give views access to these methods:
-  helper_method :current_user, :settings, :use_js
+  helper_method :current_user, :settings, :use_js, :localize
 
   # UI Elements
   append_view_path(Rails.root.join('app', 'ui_elements'))
