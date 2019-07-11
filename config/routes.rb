@@ -254,7 +254,7 @@ Madek::Application.routes.draw do
     post 'tokens', controller: '/api_tokens', action: 'create_api_token', as: 'create_api_token'
     patch 'tokens/:id', controller: '/api_tokens', action: 'update_api_token', as: 'update_api_token'
 
-    resources :workflows, only: [:new, :create, :edit, :update]
+    resources :workflows, only: [:index, :new, :create, :edit, :update]
     # get 'workflows/new', controller: '/workflows', action: 'new', as: 'new_workflow'
     # post 'workflows', controller: '/workflows', action: 'create', as: 'create_workflow'
     # get 'workflows/:id/edit', controller: '/workflows', action: 'edit', as: 'edit_workflow'

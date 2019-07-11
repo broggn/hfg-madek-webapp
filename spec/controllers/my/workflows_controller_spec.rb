@@ -98,8 +98,10 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect { patch(:update, params: { id: workflow.id, name: 'new name' }) }
-          .to raise_error Errors::UnauthorizedError
+        expect do
+          patch(:update,
+                params: { id: workflow.id, workflow: { name: 'new name' } })
+          end.to raise_error Errors::UnauthorizedError
       end
     end
 
@@ -107,8 +109,11 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect { patch(:update, params: { id: workflow.id, name: 'new name' }) }, user_id: user.id) }
-          .to raise_error Errors::ForbiddenError
+        expect do
+          patch(:update,
+                params: { id: workflow.id, workflow: { name: 'new name' } },
+                session: { user_id: user.id })
+        end.to raise_error Errors::ForbiddenError
       end
     end
 
@@ -116,8 +121,12 @@ describe My::WorkflowsController do
       it 'updates the workflow' do
         workflow = create :workflow, user: user
 
-        expect { patch(:update, params: { id: workflow.id, name: 'new name' }) }, user_id: user.id) }
-          .to change { workflow.name }.from(workflow.name).to('new name')
+        patch(:update,
+              params: { id: workflow.id, workflow: { name: 'new name' } },
+              session: { user_id: user.id })
+
+        workflow.reload
+        expect(workflow.name).to eq('new name')
       end
     end
   end

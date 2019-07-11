@@ -44,14 +44,6 @@ module Concerns
               Concerns::ResourceListParams::ENTRIES_ALLOWED_FILTER_PARAMS,
             href: my_dashboard_section_path(:unpublished_entries)
           },
-          workflows: {
-            title: I18n.t(:workflows),
-            icon: nil,
-            partial: :workflows,
-            is_beta: true,
-            # hide_from_index: true,
-            href: my_dashboard_section_path(:workflows)
-          },
           content_media_entries: {
             title: I18n.t(:sitemap_my_content_media_entries),
             section_title: I18n.t(:section_title_media_entries),

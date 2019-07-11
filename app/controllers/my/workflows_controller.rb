@@ -1,12 +1,22 @@
 class My::WorkflowsController < ApplicationController
+  include Concerns::My::DashboardSections
+
   before_action { auth_authorize(:dashboard, :logged_in?) }
   
   def index
+    @get = Presenters::Users::DashboardSection.new(
+      Presenters::Workflows::WorkflowIndex.new(current_user),
+      sections_definition,
+      nil)
+    respond_with(@get, layout: 'app_with_sidebar')
   end
 
   def new
-    @get = Presenters::Workflows::WorkflowNew.new(Workflow.new, current_user)
-    respond_with(@get, layout: 'application')
+    @get = Presenters::Users::DashboardSection.new(
+      Presenters::Workflows::WorkflowNew.new(Workflow.new, current_user),
+      sections_definition,
+      nil)
+    respond_with(@get, layout: 'app_with_sidebar')
   end
 
   def create
@@ -28,7 +38,7 @@ class My::WorkflowsController < ApplicationController
 
   def update
     workflow = Workflow.find(params[:id])
-    auth_authorize workflow, current_user
+    auth_authorize workflow
     workflow.update!(workflow_params)
 
     redirect_to my_workflows_path, notice: 'Workflow has been update successfully.'

@@ -4,8 +4,7 @@
               text: 'New Workgroup')
   end
 
-- content_for(:app_body) do
-  = content_for(:page_header) if content_for?(:page_header)
+- content_for(:page_content) do
   .ui-container.mam.pam.bright.bordered.rounded-bottom.rounded-right
 
     = form_for :workflow, url: my_workflows_path do |f|
