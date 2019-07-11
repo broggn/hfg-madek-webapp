@@ -45,7 +45,6 @@ gem 'uglifier'
 # TEST or DEVELOPMENT only
 #####################################################################
 
-gem 'binding_of_caller', platform: :mri, group: [:development]
 gem 'capybara', '~> 2.4', group: [:test]
 gem 'poltergeist', group: [:test, :development, :personas]
 gem 'rest-client', group: [:test, :development, :personas]
