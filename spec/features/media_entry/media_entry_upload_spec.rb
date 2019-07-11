@@ -59,8 +59,6 @@ feature 'Resource: MediaEntry' do
       md_usage = media_entry.meta_data
         .find_by_meta_key_id(settings.media_entry_default_license_usage_meta_key)
 
-        binding.pry
-
       expect(md_usage.string).to eq settings.media_entry_default_license_usage_text
 
       expect(md_license.keywords.first.id)
