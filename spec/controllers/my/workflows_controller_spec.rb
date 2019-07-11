@@ -43,7 +43,7 @@ describe My::WorkflowsController do
         expect(assigns[:get]).to be_instance_of(Presenters::Users::DashboardSection)
       end
     end
-  end 
+  end
 
   describe 'action: create' do
     let(:workflow) { build :workflow }
@@ -51,7 +51,7 @@ describe My::WorkflowsController do
     context 'when user is not logged in' do
       it 'raises error' do
         expect do
-          post(:create, params: { workflow: { name: workflow.name }})
+          post(:create, params: { workflow: { name: workflow.name } })
         end.to raise_error(Errors::UnauthorizedError)
       end
     end
@@ -121,7 +121,7 @@ describe My::WorkflowsController do
         expect do
           patch(:update,
                 params: { id: workflow.id, workflow: { name: 'new name' } })
-          end.to raise_error(Errors::UnauthorizedError)
+        end.to raise_error(Errors::UnauthorizedError)
       end
     end
 

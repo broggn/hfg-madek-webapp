@@ -2,7 +2,7 @@ class My::WorkflowsController < ApplicationController
   include Concerns::My::DashboardSections
 
   before_action { auth_authorize(:dashboard, :logged_in?) }
-  
+
   def index
     @get = Presenters::Users::DashboardSection.new(
       Presenters::Workflows::WorkflowIndex.new(current_user),
@@ -32,8 +32,11 @@ class My::WorkflowsController < ApplicationController
   def edit
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
-    @get = Presenters::Workflows::WorkflowEdit.new(workflow, current_user)
-    respond_with(@get, layout: 'application')
+    @get = Presenters::Users::DashboardSection.new(
+      Presenters::Workflows::WorkflowEdit.new(workflow, current_user),
+      sections_definition,
+      nil)
+    respond_with(@get, layout: 'app_with_sidebar')
   end
 
   def update
@@ -46,7 +49,7 @@ class My::WorkflowsController < ApplicationController
 
   private
 
-    def workflow_params
-      params.require(:workflow).permit(:name)
-    end
+  def workflow_params
+    params.require(:workflow).permit(:name)
+  end
 end

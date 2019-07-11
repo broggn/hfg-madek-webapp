@@ -1,13 +1,13 @@
 :ruby
   content_for(:page_header) do
     component('page-header',
-              text: 'New Workgroup')
+              text: 'New Workflow')
   end
 
 - content_for(:page_content) do
   .ui-container.mam.pam.bright.bordered.rounded-bottom.rounded-right
 
-    = form_for :workflow, url: my_workflows_path do |f|
+    = form_with scope: :workflow, url: my_workflows_path do |f|
       .form-body
         .ui-form-group.rowed
           = f.label :name, class: 'title-s', class: 'form-label'
