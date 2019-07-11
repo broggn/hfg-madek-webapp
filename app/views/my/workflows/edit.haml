@@ -1,17 +1,18 @@
 :ruby
   content_for(:page_header) do
     component('page-header',
-              text: 'Edit Workflow' + @get.section_content.name)
+              text: 'Edit workflow: ' + @get.section_content.name)
   end
+  workflow = @get.section_content.app_resource
 
 - content_for(:page_content) do
   .ui-container.mam.pam.bright.bordered.rounded-bottom.rounded-right
 
-    = form_with model: @workflow do |f|
+    = form_with model: workflow, url: @get.section_content.update_url do |f|
       .form-body
         .ui-form-group.rowed
           = f.label :name, class: 'title-s', class: 'form-label'
           = f.text_field :name, class: 'form-item', style: 'width: 100%'
 
       .form-footer{ style: 'padding: 0px 10px' }
-        = f.submit t(:group_update_form_save_btn, raise: false), class: 'primary-button'
+        = f.submit 'Update', class: 'primary-button'

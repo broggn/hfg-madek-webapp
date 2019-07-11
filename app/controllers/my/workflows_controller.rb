@@ -44,7 +44,7 @@ class My::WorkflowsController < ApplicationController
     auth_authorize workflow
     workflow.update!(workflow_params)
 
-    redirect_to my_workflows_path, notice: 'Workflow has been update successfully.'
+    redirect_to my_workflows_path, notice: 'Workflow has been updated successfully.'
   end
 
   private
