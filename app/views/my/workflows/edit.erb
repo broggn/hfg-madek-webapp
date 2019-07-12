@@ -1,4 +1,4 @@
-:ruby
+<!-- :ruby
   content_for(:page_header) do
     component('page-header',
               text: 'Edit workflow: ' + @get.section_content.name)
@@ -15,4 +15,10 @@
           = f.text_field :name, class: 'form-item', style: 'width: 100%'
 
       .form-footer{ style: 'padding: 0px 10px' }
-        = f.submit 'Update', class: 'primary-button'
+        = f.submit 'Update', class: 'primary-button' -->
+
+<%-
+content_for(:page_content) do
+  react('Views.My.WorkflowEdit', get: @get.section_content)
+end
+%>

@@ -21,22 +21,28 @@ class MyWorkflows extends React.Component {
     }
 
     return (
-      <div className='ui-resources-holder pal'>
-        {workflows.map((workflow, i) =>
+      <div className="ui-resources-holder pal">
+        {workflows.map((workflow, i) => (
           <div key={i}>
-            <div className='ui-resources-header'>
-              <h1 className='title-l ui-resources-title'>{workflow.name}</h1>
-              <label style={labelStyle} className='phs mls'>{workflow.status}</label>
-              <Link href={workflow.edit_url} mods='strong'>Edit</Link>
+            <div className="ui-resources-header">
+              <h1 className="title-l ui-resources-title">{workflow.name}</h1>
+              <label style={labelStyle} className="phs mls">
+                {workflow.status}
+              </label>
+              <Link href={workflow.edit_url} mods="strong">
+                Edit
+              </Link>
             </div>
-            <ul className='grid ui-resources'>
+            <ul className="grid ui-resources">
               {workflow.collections.map((collection, ci) => (
                 <div key={ci}>
                   <ResourceThumbnail get={collection} />
-                </div>))}
+                </div>
+              ))}
             </ul>
-            <hr className='separator mbm' />
-          </div>)}
+            <hr className="separator mbm" />
+          </div>
+        ))}
       </div>
     )
   }
