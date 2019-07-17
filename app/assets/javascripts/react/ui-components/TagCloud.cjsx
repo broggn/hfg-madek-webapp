@@ -34,7 +34,10 @@ module.exports = React.createClass
     if tagIcon and !f.includes(mods, 'large')
       tagIcon = "#{tagIcon}-mini" # mini variant except in large tags
 
-    <ul className={baseClass}>
+    <ul
+      className={baseClass}
+      style={if f.includes(mods, 'inline') then {display:'inline-block'} else {}}
+    >
       {list.map (tag)->
         props = f.merge(f.omit(@props, 'list'), tag)
         linkProps = f.pick(props, 'href', 'disabled', 'onClick')

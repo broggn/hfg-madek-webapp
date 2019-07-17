@@ -50,27 +50,29 @@ describe My::WorkflowsController do
 
     context 'when user is not logged in' do
       it 'raises error' do
-        expect do
-          post(:create, params: { workflow: { name: workflow.name } })
-        end.to raise_error(Errors::UnauthorizedError)
+        expect { post(:create, params: { workflow: { name: workflow.name } }) }.to raise_error(
+          Errors::UnauthorizedError
+        )
       end
     end
 
     context 'when user is logged in' do
       it 'creates a workflow' do
-        expect do
-          post(:create,
-               params: { workflow: { name: workflow.name } },
-               session: { user_id: user.id })
-        end.to change { Workflow.count }.by(1)
+        expect {
+          post(
+            :create,
+            params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
+          )
+        }.to change { Workflow.count }.by(1)
       end
 
       it 'creates a collection assigned to workflow' do
-        expect do
-          post(:create,
-               params: { workflow: { name: workflow.name } },
-               session: { user_id: user.id })
-        end.to change { Collection.count }.by(1)
+        expect {
+          post(
+            :create,
+            params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
+          )
+        }.to change { Collection.count }.by(1)
       end
     end
   end
@@ -80,8 +82,7 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect { get(:edit, params: { id: workflow.id }) }
-          .to raise_error(Errors::UnauthorizedError)
+        expect { get(:edit, params: { id: workflow.id }) }.to raise_error(Errors::UnauthorizedError)
       end
     end
 
@@ -89,8 +90,9 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect { get(:edit, params: { id: workflow.id }, session: { user_id: user.id }) }
-          .to raise_error(Errors::ForbiddenError)
+        expect {
+          get(:edit, params: { id: workflow.id }, session: { user_id: user.id })
+        }.to raise_error(Errors::ForbiddenError)
       end
     end
 
@@ -108,7 +110,8 @@ describe My::WorkflowsController do
 
         get(:edit, params: { id: workflow.id }, session: { user_id: workflow.user.id })
 
-        expect(assigns[:get]).to be_instance_of(Presenters::Workflows::WorkflowEdit)
+        expect(assigns[:get]).to be_instance_of(Presenters::Users::DashboardSection)
+        expect(assigns[:get].section_content).to be_instance_of(Presenters::Workflows::WorkflowEdit)
       end
     end
   end
@@ -118,10 +121,9 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect do
-          patch(:update,
-                params: { id: workflow.id, workflow: { name: 'new name' } })
-        end.to raise_error(Errors::UnauthorizedError)
+        expect {
+          patch(:update, params: { id: workflow.id, workflow: { name: 'new name' } })
+        }.to raise_error(Errors::UnauthorizedError)
       end
     end
 
@@ -129,11 +131,13 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect do
-          patch(:update,
-                params: { id: workflow.id, workflow: { name: 'new name' } },
-                session: { user_id: user.id })
-        end.to raise_error(Errors::ForbiddenError)
+        expect {
+          patch(
+            :update,
+            params: { id: workflow.id, workflow: { name: 'new name' } },
+            session: { user_id: user.id }
+          )
+        }.to raise_error(Errors::ForbiddenError)
       end
     end
 
@@ -141,9 +145,10 @@ describe My::WorkflowsController do
       it 'updates the workflow' do
         workflow = create :workflow, user: user
 
-        patch(:update,
-              params: { id: workflow.id, workflow: { name: 'new name' } },
-              session: { user_id: user.id })
+        patch(
+          :update,
+          params: { id: workflow.id, workflow: { name: 'new name' } }, session: { user_id: user.id }
+        )
 
         workflow.reload
         expect(workflow.name).to eq('new name')

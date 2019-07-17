@@ -6,6 +6,7 @@ linkifyStr = require('linkifyjs/string')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')
 resourceName = require('../lib/decorate-resource-names.coffee')
 UI = require('../ui-components/index.coffee')
+labelize = UI.labelize
 
 # Decorator for each type is single stateless-function-component,
 # the main/exported component just selects the right one.
@@ -44,11 +45,6 @@ module.exports = React.createClass
 
 
 # helpers
-
-## build tag from name and url and provide unique key
-labelize = (resourceList)->
-  resourceList.map (resource, i)->
-    {children: resourceName(resource), href: resource.url, key: "#{resource.uuid}-#{i}"}
 
 ## build html string with auto-generated links
 linkifyInnerHtml = (string)->

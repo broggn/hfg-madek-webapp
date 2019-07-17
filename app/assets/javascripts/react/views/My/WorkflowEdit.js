@@ -7,20 +7,49 @@ import React from 'react'
 // import { parse as parseQuery } from 'qs'
 // import Moment from 'moment'
 // import currentLocale from '../../../lib/current-locale'
-// const UI = require('../../ui-components/index.coffee')
+const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
 
-const DUMMY_ARK_ID = 'http://pid.zhdk.ch/ark:99999/x9t38rk45c'
+const UI_TXT = {
+  feature_title: 'Prozess',
+
+  associated_collections_title: 'Set mit Inhalten',
+  associated_collections_explain: `
+    In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses
+    bearbeitet werden.
+  `,
+  associated_collections_upload: 'Medien hinzufügen',
+
+  responsible_people_title: 'Beteiligte Personen',
+
+  common_settings_title: 'Gemeinsamer Datensatz',
+  common_settings_explain: `
+    Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
+    Prozessabschluss permanent angewendet.
+  `,
+  common_settings_permissions_title: 'Berechtigungen',
+  common_settings_permissions_responsible: 'Verantwortlich',
+  common_settings_permissions_write: 'Schreib- und Leserechte',
+  common_settings_permissions_read: 'Nur Leserechte',
+  common_settings_permissions_read_public: 'Öffentlicher Zugriff',
+  common_settings_metadata_title: 'MetaDaten',
+
+  actions_back: 'Zurück',
+  actions_validate: 'Prüfen',
+  actions_finish: 'Abschliessen…'
+}
+
+const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
 
 const WorkflowEdit = ({ get }) => {
-  const { name, app_resource } = get
+  const { name, status, responsible_people, common_settings } = get
   return (
     <section className="ui-container bright bordered rounded mas pam">
       <header>
         <span style={{ textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }}>
-          Prozess
+          {UI_TXT['feature_title']}
         </span>
         <h1 className="title-l" style={{ lineHeight: '1.34' }}>
           {name}
@@ -30,13 +59,10 @@ const WorkflowEdit = ({ get }) => {
       <div>
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            Set mit Inhalten
+            {UI_TXT['associated_collections_title']}
           </SubSection.Title>
 
-          <Explainer>
-            In diesem Set entaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses
-            bearbeitet werden.
-          </Explainer>
+          <Explainer>{UI_TXT['associated_collections_explain']}</Explainer>
 
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
@@ -48,7 +74,7 @@ const WorkflowEdit = ({ get }) => {
                 <span>
                   <i className="icon-upload"></i>
                 </span>{' '}
-                Medien hinzufügen
+                {UI_TXT['associated_collections_upload']}
               </a>
             </div>
           </div>
@@ -56,24 +82,22 @@ const WorkflowEdit = ({ get }) => {
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            Beteiligte Personen
+            {UI_TXT['responsible_people_title']}
           </SubSection.Title>
-          <DummyPeople people={[{ name: 'Susanne Schumacher' }, { name: 'Daniel Muzzulini' }]} />
+          <UI.TagCloud mod="person" mods="small" list={UI.labelize(responsible_people)} />
         </SubSection>
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            Gemeinsamer Datensatz
+            {UI_TXT['common_settings_title']}
           </SubSection.Title>
 
-          <Explainer>
-            Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
-            Prozessabschluss permanent angewendet.
-          </Explainer>
+          <Explainer>{UI_TXT['common_settings_explain']}</Explainer>
 
           <SubSection open>
-            <SubSection.Title tag="h3" className="title-s mts" style={{ display: 'inline-block' }}>
-              Berechtigungen{'  '}
+            <SubSection.Title tag="h3" className="title-s mts">
+              {UI_TXT['common_settings_permissions_title']}
+              {'  '}
               <small>
                 <a href="#edit-permissions">
                   <i className="icon-pen" />
@@ -83,27 +107,55 @@ const WorkflowEdit = ({ get }) => {
 
             <ul>
               <li>
-                <span className="title-s">Verantwortlich: </span>
-                <DummyPerson name="Rolf Wolfensberger" link="/xxx" />
+                <span className="title-s">
+                  {UI_TXT['common_settings_permissions_responsible']}:{' '}
+                </span>
+                <UI.TagCloud
+                  mod="person"
+                  mods="small inline"
+                  list={UI.labelize([common_settings.permissions.responsible])}
+                />
               </li>
               <li>
-                <span className="title-s">Schreibrechte: </span>{' '}
-                <DummyPerson link="/xxx" name="Archiv ZHdK - Forschungsdaten" />
+                <span className="title-s">
+                  {UI_TXT['common_settings_permissions_write']}
+                  {': '}
+                </span>
+                <UI.TagCloud
+                  mod="person"
+                  mods="small inline"
+                  list={UI.labelize(common_settings.permissions.write)}
+                />
               </li>
               <li>
-                <span className="title-s">Leserechte: </span>{' '}
-                <DummyPerson link="/xxx" name="[API] sound-colour-space" icon={false} />
+                <span className="title-s">
+                  {UI_TXT['common_settings_permissions_read']}
+                  {': '}
+                </span>
+                <UI.TagCloud
+                  mod="person"
+                  mods="small inline"
+                  list={UI.labelize(common_settings.permissions.read)}
+                />
               </li>
               <li>
-                <span className="title-s">Öffentlicher Zugriff: </span>
-                <DummyCheckmark />
+                <span className="title-s">
+                  {UI_TXT['common_settings_permissions_read_public']}
+                  {': '}
+                </span>
+                {common_settings.permissions.read_public ? (
+                  <i className="icon-checkmark" title="Ja" />
+                ) : (
+                  <i className="icon-close" title="Nein" />
+                )}
               </li>
             </ul>
           </SubSection>
 
           <SubSection open>
-            <SubSection.Title tag="h3" className="title-s mts" style={{ display: 'inline-block' }}>
-              MetaDaten{'  '}
+            <SubSection.Title tag="h3" className="title-s mts">
+              {UI_TXT['common_settings_metadata_title']}
+              {'  '}
               <small>
                 <a href="#edit-metadata">
                   <i className="icon-pen" />
@@ -112,19 +164,11 @@ const WorkflowEdit = ({ get }) => {
             </SubSection.Title>
 
             <ul>
-              <li>
-                <b>Beschreibungstext:</b> Material zur Verfügung gestellt im Rahmen des
-                Forschungsprojekts «Sound Colour Space»
-              </li>
-              <li>
-                <b>Rechtsschutz:</b> CC-By-SA-CH: Attribution Share Alike
-              </li>
-              <li>
-                <b>ArkID:</b>{' '}
-                <a target="_blank" rel="noopener noreferrer" href={DUMMY_ARK_ID}>
-                  <code>{DUMMY_ARK_ID}</code>
-                </a>
-              </li>
+              {common_settings.meta_data.map(({ key, value }) => (
+                <li key={key}>
+                  <b>{key}:</b> {value}
+                </li>
+              ))}
             </ul>
           </SubSection>
         </SubSection>
@@ -132,19 +176,21 @@ const WorkflowEdit = ({ get }) => {
 
       <div className="ui-actions phl pbl mtl">
         <a className="link weak" href="/my/workflows">
-          Zurück
+          {UI_TXT['actions_back']}
         </a>
-        {/* <button className="tertiary-button large" type="button">
-        Prüfen
-      </button> */}
-        {!!app_resource.is_active && (
+        {/*
+        <button className="tertiary-button large" type="button">
+          {UI_TXT['actions_validate']}
+        </button>
+        */}
+        {status === WORKFLOW_STATES.IN_PROGRESS && (
           <button className="primary-button large" type="button">
-            Abschliessen…
+            {UI_TXT['actions_finish']}
           </button>
         )}
       </div>
       <hr />
-      <pre>{JSON.stringify(get, 0, 2)}</pre>
+      {/* <pre>{JSON.stringify(get, 0, 2)}</pre> */}
     </section>
   )
 }
@@ -215,27 +261,6 @@ const DummySetThumb = () => (
       </div>
     </div>
   </div>
-)
-
-const DummyPeople = ({ people = [] }) => (
-  <ul className="small ui-tag-cloud" style={{ display: 'inline-block' }}>
-    {people.map(({ name, link, icon = 'user-mini' }, i) => (
-      <li key={i} className="ui-tag-cloud-item">
-        <a href={link} target="_blank" className="link ui-tag-button ui-link">
-          {!!icon && <i className={`ui-tag-icon icon-${icon}`} />}
-          {name}
-        </a>
-      </li>
-    ))}
-  </ul>
-)
-
-const DummyPerson = person => <DummyPeople people={[person]} />
-
-const DummyCheckmark = () => (
-  <label className="ui-rights-check-label">
-    <i className="icon-checkmark" title="Betrachten" />
-  </label>
 )
 
 const Explainer = ({ children }) => (
