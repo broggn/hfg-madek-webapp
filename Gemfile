@@ -7,7 +7,9 @@ ruby '2.6.3'
 #####################################################################
 
 # Engines
-gem 'configuration_management_backdoor', '= 4.0.0', git: 'https://github.com/michalpodlecki/rails_configuration-management-backdoor'
+gem 'configuration_management_backdoor',
+    '= 4.0.0',
+    git: 'https://github.com/michalpodlecki/rails_configuration-management-backdoor'
 
 # API
 gem 'responders'
@@ -16,7 +18,7 @@ gem 'responders'
 gem 'puma'
 
 # ZHDK-INTEGRATION
-gem "madek_zhdk_integration", path: "zhdk-integration"
+gem 'madek_zhdk_integration', path: 'zhdk-integration'
 
 # FRONTEND
 gem 'compass-rails', '~> 3.0'
@@ -45,10 +47,15 @@ gem 'uglifier'
 # TEST or DEVELOPMENT only
 #####################################################################
 
-gem 'capybara', '~> 2.4', group: [:test]
-gem 'poltergeist', group: [:test, :development, :personas]
-gem 'rest-client', group: [:test, :development, :personas]
-gem 'ruby-prof', group: [:development], platform: :mri
-gem 'selenium-webdriver', group: [:test]
-gem 'zencoder-fetcher', group: [:development]
+gem 'capybara', '~> 2.4', group: %i[test]
+gem 'poltergeist', group: %i[test development personas]
+gem 'rest-client', group: %i[test development personas]
+gem 'ruby-prof', group: %i[development], platform: :mri
+gem 'selenium-webdriver', group: %i[test]
+gem 'zencoder-fetcher', group: %i[development]
 gem 'rails-controller-testing', group: :test
+
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end
