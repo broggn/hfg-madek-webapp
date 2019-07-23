@@ -16,7 +16,10 @@ module Presenters
       end
 
       def actions
-        { update: { url: my_workflow_path(@app_resource) } }
+        {
+          edit: { url: edit_my_workflow_path(@app_resource) },
+          update: { url: my_workflow_path(@app_resource), method: 'PATCH' }
+        }
       end
     end
   end
