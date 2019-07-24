@@ -1,8 +1,30 @@
 import React from 'react'
 import cx from 'classnames'
+import Link from './Link.cjsx'
 
-const PageHeader = ({ icon, fa, title, actions }) =>
-  <div className='ui-body-title'>
+const PageHeader = ({ icon, fa, title, actions, workflow }) => {
+  const labelStyle = {
+    backgroundColor: '#666',
+    color: '#fff',
+    display: 'inline-block',
+    borderRadius: '3px',
+    position: 'relative',
+    top: '-7px'
+  }
+
+  let workflowLabel = null
+  if(workflow) {
+    const workflowLink = <Link href={workflow.actions.edit.url} mods="strong">
+      {workflow.name}
+    </Link>
+    workflowLabel = (
+      <label style={labelStyle} className="phs mls">
+        part of workflow &rarr; {workflowLink}
+      </label>
+    )
+  }
+
+  return <div className='ui-body-title'>
     <div className='ui-body-title-label'>
       <h1 className='title-xl'>
         {!!icon &&
@@ -15,6 +37,7 @@ const PageHeader = ({ icon, fa, title, actions }) =>
           </span>}
         {title}
       </h1>
+      {workflow && (workflowLabel)}
     </div>
 
     {!!actions &&
@@ -23,6 +46,7 @@ const PageHeader = ({ icon, fa, title, actions }) =>
         {actions}
       </div>}
   </div>
+}
 
 PageHeader.propTypes = {
   title: React.PropTypes.string.isRequired,

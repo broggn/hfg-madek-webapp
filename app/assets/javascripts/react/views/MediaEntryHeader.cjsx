@@ -42,7 +42,9 @@ module.exports = React.createClass
       )
     )
 
-    <PageContentHeader icon={icon} title={get.title}>
+    console.log('MediaEntryHeader', this.props)
+
+    <PageContentHeader icon={icon} title={get.title} workflow={get.workflow}>
       {
         f.map(
           buttons,
