@@ -13,7 +13,7 @@ resourcesConfig = # JSON API Endpoints:
 module.exports = (resourceType, parameters = null, localData)->
   unless (baseConfig = resourcesConfig[resourceType])?
     throw new Error "Search: Unknown resourceType: #{resourceType}!"
-  missing = f.select(baseConfig.params, (key)-> f.isEmpty(parameters[key]))
+  missing = f.select(baseConfig.params, (key)-> f.isEmpty(parameters?[key]))
   unless f.isEmpty(missing)
     throw new Error "Search: #{resourceType}: missing parameters: #{missing}!"
 
