@@ -1,5 +1,5 @@
 import React from 'react'
-// import f from 'lodash'
+import f from 'lodash'
 // import setUrlParams from '../../../lib/set-params-for-url.coffee'
 // import AppRequest from '../../../lib/app-request.coffee'
 // import asyncWhile from 'async/whilst'
@@ -9,6 +9,7 @@ import React from 'react'
 // import currentLocale from '../../../lib/current-locale'
 const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
+import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
 
@@ -66,11 +67,14 @@ const WorkflowEdit = ({ get }) => {
 
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
-              <DummySetThumb />
+              {/*<DummySetThumb />*/}
+              {f.map(get.associated_collections, (collection, i) =>
+                <ResourceThumbnail get={collection} key={i} />
+              )}
             </div>
 
             <div className="button-group small mas">
-              <a className="tertiary-button" href="#/my/upload">
+              <a className="tertiary-button" href={get.actions.upload.url}>
                 <span>
                   <i className="icon-upload"></i>
                 </span>{' '}
@@ -175,7 +179,7 @@ const WorkflowEdit = ({ get }) => {
       </div>
 
       <div className="ui-actions phl pbl mtl">
-        <a className="link weak" href="/my/workflows">
+        <a className="link weak" href={get.actions.index.url}>
           {UI_TXT['actions_back']}
         </a>
         {/*

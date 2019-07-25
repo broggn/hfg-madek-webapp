@@ -18,6 +18,17 @@ module Presenters
         { permissions: common_permissons, meta_data: common_meta_data }
       end
 
+      def actions
+        {
+          upload: {
+            url: new_media_entry_path(workflow_id: @app_resource.id)
+          },
+          index: {
+            url: my_workflows_path
+          }
+        }.merge(super)
+      end
+
       private
 
       def common_permissons
