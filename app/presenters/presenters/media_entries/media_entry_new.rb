@@ -1,6 +1,12 @@
 module Presenters
   module MediaEntries
     class MediaEntryNew < Presenter
+      attr_reader :workflow
+
+      def initialize(workflow = nil)
+        super()
+        @workflow = workflow
+      end
 
       def next_url
         prepend_url_context my_dashboard_section_path(:unpublished_entries)
