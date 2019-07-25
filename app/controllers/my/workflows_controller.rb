@@ -23,7 +23,8 @@ class My::WorkflowsController < ApplicationController
     workflow = Workflow.new(workflow_params)
     workflow.user = current_user
     workflow.collections << Collection.new(creator: current_user,
-                                           responsible_user: current_user)
+                                           responsible_user: current_user,
+                                           is_master: true)
     workflow.save!
 
     redirect_to my_workflows_path, notice: 'Workflow has been created successfully.'

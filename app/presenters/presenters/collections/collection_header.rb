@@ -5,6 +5,7 @@ module Presenters
       include Presenters::Shared::Modules::Favoritable
       include Presenters::Shared::Modules::SharedHeader
       include Presenters::Shared::Modules::ShowableInAdmin
+      include Presenters::Shared::Modules::PartOfWorkflow
 
       def initialize(
         app_resource,
@@ -56,17 +57,6 @@ module Presenters
           :destroy_button,
           :show_in_admin_button
         ]
-      end
-
-      def part_of_workflow?
-        !@app_resource.workflow.nil?
-      end
-
-      def workflow
-        if part_of_workflow?
-          Presenters::Workflows::WorkflowCommon.new(@app_resource.workflow,
-                                                    @user)
-        end
       end
 
       private
