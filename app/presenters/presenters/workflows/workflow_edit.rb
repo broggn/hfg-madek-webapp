@@ -9,13 +9,16 @@ module Presenters
   module Workflows
     class WorkflowEdit < WorkflowCommon
       def responsible_people
-        FAKE_DATA[:responsible_people].map { |id| User.find(id) }.map do |u|
+        User.where(id: FAKE_DATA[:responsible_people]).includes(:person).map do |u|
           Presenters::People::PersonIndex.new(u.person)
         end
       end
 
       def common_settings
-        { permissions: common_permissons, meta_data: common_meta_data }
+        {
+          permissions: common_permissions,
+          meta_data: common_meta_data
+        }
       end
 
       def actions
@@ -25,42 +28,48 @@ module Presenters
           },
           index: {
             url: my_workflows_path
+          },
+          finish: {
+            url: finish_my_workflow_path(@app_resource)
           }
         }.merge(super)
       end
 
       private
 
-      def common_permissons
-        {
-          responsible: presenterify(User.find(FAKE_DATA[:archive_user])),
-          write: presenterify([FAKE_DATA[:archive_group]].map { |id| Group.find(id) }),
-          read: presenterify([FAKE_DATA[:socospa_api_client]].map { |id| ApiClient.find(id) }),
-          read_public: true
-        }
+      delegate_to_app_resource :configuration
+
+      def common_permissions
+        configuration['common_permissions'].map do |permission, value|
+          [
+            permission,
+            case permission
+            when 'responsible'
+              presenterify(User.find(value))
+            when 'write'
+              presenterify(Group.where(id: value).to_a)
+            when 'read'
+              presenterify(ApiClient.where(id: value).to_a)
+            when 'read_public'
+              value
+            end
+          ]
+        end.to_h
       end
 
       def common_meta_data
-        [
-          {
-            key: 'Beschreibungstext',
-            value:
-              'Material zur Verfügung gestellt im Rahmen des Forschungsprojekts «Sound Colour Space»'
-          },
-          { key: 'Rechtsschutz', value: 'CC-By-SA-CH: Attribution Share Alike' },
-          { key: 'ArkID', value: 'http://pid.zhdk.ch/ark:99999/x9t38rk45c' }
-        ]
+        configuration['common_meta_data']
       end
 
       def presenterify(obj)
         return obj.map { |item| presenterify(item) } if obj.is_a?(Array)
 
-        case true
-        when obj.is_a?(User)
+        case obj
+        when User
           Presenters::People::PersonIndex.new(obj.person)
-        when obj.is_a?(Group)
+        when Group
           Presenters::Groups::GroupIndex.new(obj)
-        when obj.is_a?(ApiClient)
+        when ApiClient
           Presenters::ApiClients::ApiClientIndex.new(obj)
         else
           binding.pry
