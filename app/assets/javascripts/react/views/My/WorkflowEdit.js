@@ -13,33 +13,39 @@ import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
 
+// TODO: move to translations.csv
 const UI_TXT = {
-  feature_title: 'Prozess',
+  feature_title: ['Prozess','Workflow'],
 
-  associated_collections_title: 'Set mit Inhalten',
-  associated_collections_explain: `
-    In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses
-    bearbeitet werden.
-  `,
-  associated_collections_upload: 'Medien hinzufügen',
+  associated_collections_title: ['Set mit Inhalten', 'Set with content'],
+  associated_collections_explain: [
+    `In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses bearbeitet werden.`,
+    `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`],
+  associated_collections_upload: ['Medien hinzufügen', 'Add media'],
 
-  responsible_people_title: 'Beteiligte Personen',
+  responsible_people_title: ['Beteiligte Personen', 'Involved persons'],
 
-  common_settings_title: 'Gemeinsamer Datensatz',
-  common_settings_explain: `
-    Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
-    Prozessabschluss permanent angewendet.
-  `,
-  common_settings_permissions_title: 'Berechtigungen',
-  common_settings_permissions_responsible: 'Verantwortlich',
-  common_settings_permissions_write: 'Schreib- und Leserechte',
-  common_settings_permissions_read: 'Nur Leserechte',
-  common_settings_permissions_read_public: 'Öffentlicher Zugriff',
-  common_settings_metadata_title: 'MetaDaten',
+  common_settings_title: ['Gemeinsamer Datensatz', 'Common data'],
+  common_settings_explain: [
+    `Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
+     Prozessabschluss permanent angewendet.`,
+    `These data and settings apply to all contents and are permanently applied at the end of the process.`],
+  common_settings_permissions_title: ['Berechtigungen', 'Permissions'],
+  common_settings_permissions_responsible: ['Verantwortlich', 'Responsible'],
+  common_settings_permissions_write: ['Schreib- und Leserechte', 'Read and write rights'],
+  common_settings_permissions_read: ['Nur Leserechte', 'Only reading rights'],
+  common_settings_permissions_read_public: ['Öffentlicher Zugriff', 'Public access'],
+  common_settings_metadata_title: ['MetaDaten', 'MetaData'],
 
-  actions_back: 'Zurück',
-  actions_validate: 'Prüfen',
-  actions_finish: 'Abschliessen…'
+  actions_back: ['Zurück', 'Go back'],
+  actions_validate: ['Prüfen', 'Check'],
+  actions_finish: ['Abschliessen…', 'Finish and lock']
+}
+
+const t = (key) => {
+  const availableLocales = ['de', 'en']
+  const locale = APP_CONFIG.userLanguage
+  return f.get(UI_TXT, [key, availableLocales.indexOf(locale)])
 }
 
 const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
@@ -50,7 +56,7 @@ const WorkflowEdit = ({ get }) => {
     <section className="ui-container bright bordered rounded mas pam">
       <header>
         <span style={{ textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }}>
-          {UI_TXT['feature_title']}
+          {t('feature_title')}
         </span>
         <h1 className="title-l" style={{ lineHeight: '1.34' }}>
           {name}
@@ -60,10 +66,10 @@ const WorkflowEdit = ({ get }) => {
       <div>
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {UI_TXT['associated_collections_title']}
+            {t('associated_collections_title')}
           </SubSection.Title>
 
-          <Explainer>{UI_TXT['associated_collections_explain']}</Explainer>
+          <Explainer>{t('associated_collections_explain')}</Explainer>
 
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
@@ -78,7 +84,7 @@ const WorkflowEdit = ({ get }) => {
                 <span>
                   <i className="icon-upload"></i>
                 </span>{' '}
-                {UI_TXT['associated_collections_upload']}
+                {t('associated_collections_upload')}
               </a>
             </div>
           </div>
@@ -86,21 +92,21 @@ const WorkflowEdit = ({ get }) => {
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {UI_TXT['responsible_people_title']}
+            {t('responsible_people_title')}
           </SubSection.Title>
           <UI.TagCloud mod="person" mods="small" list={UI.labelize(responsible_people)} />
         </SubSection>
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {UI_TXT['common_settings_title']}
+            {t('common_settings_title')}
           </SubSection.Title>
 
-          <Explainer>{UI_TXT['common_settings_explain']}</Explainer>
+          <Explainer>{t('common_settings_explain')}</Explainer>
 
           <SubSection open>
             <SubSection.Title tag="h3" className="title-s mts">
-              {UI_TXT['common_settings_permissions_title']}
+              {t('common_settings_permissions_title')}
               {'  '}
               <small>
                 <a href="#edit-permissions">
@@ -112,7 +118,7 @@ const WorkflowEdit = ({ get }) => {
             <ul>
               <li>
                 <span className="title-s">
-                  {UI_TXT['common_settings_permissions_responsible']}:{' '}
+                  {t('common_settings_permissions_responsible')}:{' '}
                 </span>
                 <UI.TagCloud
                   mod="person"
@@ -122,7 +128,7 @@ const WorkflowEdit = ({ get }) => {
               </li>
               <li>
                 <span className="title-s">
-                  {UI_TXT['common_settings_permissions_write']}
+                  {t('common_settings_permissions_write')}
                   {': '}
                 </span>
                 <UI.TagCloud
@@ -133,7 +139,7 @@ const WorkflowEdit = ({ get }) => {
               </li>
               <li>
                 <span className="title-s">
-                  {UI_TXT['common_settings_permissions_read']}
+                  {t('common_settings_permissions_read')}
                   {': '}
                 </span>
                 <UI.TagCloud
@@ -144,7 +150,7 @@ const WorkflowEdit = ({ get }) => {
               </li>
               <li>
                 <span className="title-s">
-                  {UI_TXT['common_settings_permissions_read_public']}
+                  {t('common_settings_permissions_read_public')}
                   {': '}
                 </span>
                 {common_settings.permissions.read_public ? (
@@ -158,7 +164,7 @@ const WorkflowEdit = ({ get }) => {
 
           <SubSection open>
             <SubSection.Title tag="h3" className="title-s mts">
-              {UI_TXT['common_settings_metadata_title']}
+              {t('common_settings_metadata_title')}
               {'  '}
               <small>
                 <a href="#edit-metadata">
@@ -180,16 +186,16 @@ const WorkflowEdit = ({ get }) => {
 
       <div className="ui-actions phl pbl mtl">
         <a className="link weak" href={get.actions.index.url}>
-          {UI_TXT['actions_back']}
+          {t('actions_back')}
         </a>
         {/*
         <button className="tertiary-button large" type="button">
-          {UI_TXT['actions_validate']}
+          {t('actions_validate')}
         </button>
         */}
         {status === WORKFLOW_STATES.IN_PROGRESS && (
           <button className="primary-button large" type="button">
-            {UI_TXT['actions_finish']}
+            {t('actions_finish')}
           </button>
         )}
       </div>
