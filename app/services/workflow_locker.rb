@@ -1,6 +1,4 @@
 class WorkflowLocker
-  # include Modules::Resources::PermissionsHelpers
-
   def initialize(object_or_id)
     @workflow = if object_or_id.is_a?(ApplicationRecord)
       object_or_id
@@ -18,6 +16,8 @@ class WorkflowLocker
       apply_common_meta_data
       # raise ActiveRecord::Rollback
     end
+
+    true
   end
 
   private
@@ -26,7 +26,7 @@ class WorkflowLocker
     @workflow.configuration
   end
 
-  def resource_permissions(resource, type)#first_n_rights = nil)
+  def resource_permissions(resource, type)
     raise ArgumentError, 'type must be a Symbol' unless type.is_a?(Symbol)
 
     available_permissions =
@@ -43,17 +43,11 @@ class WorkflowLocker
       when MediaEntry then 1
       end
 
-    number_of_applicable_permissions = {
-      user: [3, 4],
+    number_of_applicable_permissions = { # [_if_collection_, _if_media_entry_]
+      user: [2, 3],
       group: [2, 3],
       api_client: [1, 1]
     }.fetch(type)[index]
-
-    # permissions = if first_n_rights.is_a?(Integer)
-    #   available_permissions.first(first_n_rights)
-    # else
-    #   available_permissions
-    # end
 
     {}.tap do |result|
       available_permissions.first(number_of_applicable_permissions).map do |perm_name|
@@ -101,14 +95,29 @@ class WorkflowLocker
       .each { |p| resource.api_client_permissions.create! p }
   end
 
+  def update_public_permissions!(resource)
+    value = configuration['common_permissions']['read_public']
+
+    case resource
+    when Collection
+      resource.update!(get_metadata_and_previews: value)
+    when MediaEntry
+      resource
+        .reload # to get access to 'get_full_size' attr
+        .update!(get_metadata_and_previews: value, get_full_size: value)
+    end
+  end
+
   def apply_common_permissions
     update_user_permissions!(@workflow.master_collection)
     update_group_permissions!(@workflow.master_collection)
     update_api_client_permissions!(@workflow.master_collection)
+    update_public_permissions!(@workflow.master_collection)
     @workflow.master_collection.child_media_resources.each do |resource|
       update_user_permissions!(resource.cast_to_type)
       update_group_permissions!(resource.cast_to_type)
       update_api_client_permissions!(resource.cast_to_type)
+      update_public_permissions!(resource.cast_to_type)
     end
   end
 
