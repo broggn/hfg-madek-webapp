@@ -10,6 +10,8 @@ import f from 'lodash'
 // import Moment from 'moment'
 // import currentLocale from '../../../lib/current-locale'
 
+const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
+
 class MyWorkflows extends React.Component {
   render({ props } = this) {
     const workflows = props.get.list
@@ -34,7 +36,7 @@ class MyWorkflows extends React.Component {
                 <IfLet editUrl={f.get(workflow, 'actions.edit.url')}>
                   {editUrl => (
                     <Link href={editUrl} mods="strong">
-                      Edit
+                      {workflow.status === WORKFLOW_STATES.IN_PROGRESS ? 'Edit' : 'Show details'}
                     </Link>
                   )}
                 </IfLet>
