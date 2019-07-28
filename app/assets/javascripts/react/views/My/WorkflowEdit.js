@@ -10,6 +10,7 @@ import f from 'lodash'
 const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
 import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
+import RailsForm from '../../lib/forms/rails-form.cjsx'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
 
@@ -39,7 +40,7 @@ const UI_TXT = {
 
   actions_back: ['Zurück', 'Go back'],
   actions_validate: ['Prüfen', 'Check'],
-  actions_finish: ['Abschliessen…', 'Finish and lock']
+  actions_finish: ['Abschliessen…', 'Freeze…']
 }
 
 const t = (key) => {
@@ -50,8 +51,9 @@ const t = (key) => {
 
 const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
 
-const WorkflowEdit = ({ get }) => {
+const WorkflowEdit = ({ get, authToken }) => {
   const { name, status, responsible_people, common_settings } = get
+
   return (
     <section className="ui-container bright bordered rounded mas pam">
       <header>
@@ -194,13 +196,15 @@ const WorkflowEdit = ({ get }) => {
         </button>
         */}
         {status === WORKFLOW_STATES.IN_PROGRESS && (
-          <button className="primary-button large" type="button">
-            {t('actions_finish')}
-          </button>
+          <RailsForm action={get.actions.finish.url} method="patch" name="workflow" style={{display: 'inline-block'}} authToken={authToken}>
+            <button className="primary-button large" type="submit">
+              {t('actions_finish')}
+            </button>
+          </RailsForm>
         )}
       </div>
       <hr />
-      {/* <pre>{JSON.stringify(get, 0, 2)}</pre> */}
+        {/* <pre>{JSON.stringify(get, 0, 2)}</pre> */}
     </section>
   )
 }

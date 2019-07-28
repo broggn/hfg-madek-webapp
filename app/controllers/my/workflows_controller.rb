@@ -48,6 +48,14 @@ class My::WorkflowsController < ApplicationController
     redirect_to my_workflows_path, notice: 'Workflow has been updated successfully.'
   end
 
+  def finish
+    workflow = Workflow.find(params[:id])
+    auth_authorize workflow
+    if WorkflowLocker.new(workflow).call
+      redirect_to edit_my_workflow_path(workflow), notice: 'Workflow has been finished!'
+    end
+  end
+
   private
 
   def workflow_params
