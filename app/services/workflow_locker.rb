@@ -1,10 +1,10 @@
 class WorkflowLocker
   def initialize(object_or_id)
     @workflow = if object_or_id.is_a?(ApplicationRecord)
-      object_or_id
-    else
-      Workflow.find(object_or_id)
-    end
+                  object_or_id
+                else
+                  Workflow.find(object_or_id)
+                end
   end
 
   def call
@@ -108,12 +108,16 @@ class WorkflowLocker
     end
   end
 
+  def nested_resources
+    @workflow.master_collection.child_media_resources
+  end
+
   def apply_common_permissions
     update_user_permissions!(@workflow.master_collection)
     update_group_permissions!(@workflow.master_collection)
     update_api_client_permissions!(@workflow.master_collection)
     update_public_permissions!(@workflow.master_collection)
-    @workflow.master_collection.child_media_resources.each do |resource|
+    nested_resources.each do |resource|
       update_user_permissions!(resource.cast_to_type)
       update_group_permissions!(resource.cast_to_type)
       update_api_client_permissions!(resource.cast_to_type)
@@ -121,6 +125,34 @@ class WorkflowLocker
     end
   end
 
+  def create_meta_datum!(resource, meta_key_id, value)
+    meta_datum_klass = \
+      MetaKey.find(meta_key_id).meta_datum_object_type.constantize
+
+    meta_datum_klass.find_by(
+      meta_key_id: meta_key_id,
+      resource.class.name.foreign_key => resource.id
+    ).try(:destroy)
+
+    meta_datum_klass.create_with_user!(@workflow.user, {
+      meta_key_id: meta_key_id,
+      created_by: @workflow.user,
+      value: \
+        (if [MetaDatum::Text, MetaDatum::TextDate].include?(meta_datum_klass)
+           value
+         elsif MetaDatum::Keywords == meta_datum_klass
+           [Keyword.find_by!(term: value).id]
+         end)
+    }.merge(resource.class.name.foreign_key => resource.id))
+  end
+
   def apply_common_meta_data
+    configuration['common_meta_data'].each do |meta_data|
+      next unless meta_data['meta_key_id'].present?
+      create_meta_datum!(@workflow.master_collection, meta_data['meta_key_id'], meta_data['value'])
+      nested_resources.each do |resource|
+        create_meta_datum!(resource.cast_to_type, meta_data['meta_key_id'], meta_data['value'])
+      end
+    end
   end
 end
