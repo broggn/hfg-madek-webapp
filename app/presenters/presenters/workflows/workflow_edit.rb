@@ -1,6 +1,6 @@
 FAKE_DATA = {
-  responsible_people: %w[52658ca5-70bf-4086-b278-29119f3d60c9 d48e4387-b80d-45de-9077-5d88c331fa6a],
-  responsible_people_logins: %w[karen petra],
+  workflow_owners: %w[52658ca5-70bf-4086-b278-29119f3d60c9 d48e4387-b80d-45de-9077-5d88c331fa6a],
+  workflow_owners_logins: %w[karen petra],
   archive_user: '965177d8-1ed0-480f-acc5-f1743983873c',
   archive_group: '0729879a-b4ef-45c9-a340-af1670a8bb57',
   socospa_api_client: '6dbaf29e-a8f0-4885-a3b0-6c8855265a45'
@@ -9,11 +9,11 @@ FAKE_DATA = {
 module Presenters
   module Workflows
     class WorkflowEdit < WorkflowCommon
-      def responsible_people
+      def workflow_owners
         User
           .where('login SIMILAR TO ?',
-                 "(#{FAKE_DATA[:responsible_people_logins].join('|')})%")
-          .or(User.where(id: FAKE_DATA[:responsible_people]))
+                 "(#{FAKE_DATA[:workflow_owners_logins].join('|')})%")
+          .or(User.where(id: FAKE_DATA[:workflow_owners]))
           .map do |u|
             Presenters::People::PersonIndex.new(u.person)
           end

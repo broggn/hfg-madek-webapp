@@ -24,7 +24,7 @@ const UI_TXT = {
     `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`],
   associated_collections_upload: ['Medien hinzufügen', 'Add media'],
 
-  responsible_people_title: ['Beteiligte Personen', 'Involved persons'],
+  workflow_owners_title: ['Prozess-Besitzer', 'Workflow owners'],
 
   common_settings_title: ['Gemeinsamer Datensatz', 'Common data'],
   common_settings_explain: [
@@ -40,7 +40,7 @@ const UI_TXT = {
 
   actions_back: ['Zurück', 'Go back'],
   actions_validate: ['Prüfen', 'Check'],
-  actions_finish: ['Abschliessen…', 'Freeze…']
+  actions_finish: ['Abschliessen…', 'Finish…']
 }
 
 const t = (key) => {
@@ -52,7 +52,7 @@ const t = (key) => {
 const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
 
 const WorkflowEdit = ({ get, authToken }) => {
-  const { name, status, responsible_people, common_settings } = get
+  const { name, status, workflow_owners, common_settings } = get
 
   return (
     <section className="ui-container bright bordered rounded mas pam">
@@ -94,9 +94,9 @@ const WorkflowEdit = ({ get, authToken }) => {
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {t('responsible_people_title')}
+            {t('workflow_owners_title')}
           </SubSection.Title>
-          <UI.TagCloud mod="person" mods="small" list={UI.labelize(responsible_people)} />
+          <UI.TagCloud mod="person" mods="small" list={UI.labelize(workflow_owners)} />
         </SubSection>
 
         <SubSection>
