@@ -118,7 +118,7 @@ module Modules
       end
 
       def workflow_id_param
-        media_entry_params.fetch(:workflow_id, nil)
+        params.fetch(:media_entry, {}).fetch(:workflow_id, nil)
       end
 
       def workflow
