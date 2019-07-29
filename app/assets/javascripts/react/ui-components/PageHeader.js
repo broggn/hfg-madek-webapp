@@ -4,7 +4,7 @@ import Link from './Link.cjsx'
 
 const PageHeader = ({ icon, fa, title, actions, workflow }) => {
   const labelStyle = {
-    backgroundColor: '#666',
+    backgroundColor: '#505050',
     color: '#fff',
     display: 'inline-block',
     borderRadius: '3px',
@@ -19,7 +19,7 @@ const PageHeader = ({ icon, fa, title, actions, workflow }) => {
     </Link>
     workflowLabel = (
       <label style={labelStyle} className="phs mls">
-        part of workflow &rarr; {workflowLink}
+        This {icon === 'set' ? 'Set' : 'Media Entry'} is part of the Workflow "{workflowLink}"
       </label>
     )
   }
