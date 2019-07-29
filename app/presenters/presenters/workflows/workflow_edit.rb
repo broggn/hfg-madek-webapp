@@ -30,7 +30,8 @@ module Presenters
             url: my_workflows_path
           },
           finish: {
-            url: finish_my_workflow_path(@app_resource)
+            url: finish_my_workflow_path(@app_resource),
+            method: 'PATCH'
           }
         }.merge(super)
       end

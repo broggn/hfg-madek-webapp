@@ -196,7 +196,7 @@ const WorkflowEdit = ({ get, authToken }) => {
         </button>
         */}
         {status === WORKFLOW_STATES.IN_PROGRESS && (
-          <RailsForm action={get.actions.finish.url} method="patch" name="workflow" style={{display: 'inline-block'}} authToken={authToken}>
+          <RailsForm action={get.actions.finish.url} method={get.actions.finish.method} name="workflow" style={{display: 'inline-block'}} authToken={authToken}>
             <button className="primary-button large" type="submit">
               {t('actions_finish')}
             </button>
