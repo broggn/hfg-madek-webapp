@@ -20,17 +20,7 @@ class My::WorkflowsController < ApplicationController
   end
 
   def create
-    workflow = Workflow.new(workflow_params)
-    workflow.user = current_user
-    workflow.collections << Collection.new(creator: current_user,
-                                           responsible_user: current_user,
-                                           is_master: true)
-    workflow.save!
-    MetaDatum::Text.create!(
-      collection: workflow.master_collection,
-      meta_key_id: 'madek_core:title',
-      created_by: current_user,
-      string: workflow.name)
+    WorkflowCreator.new(workflow_params, current_user).call
 
     redirect_to my_workflows_path, notice: 'Workflow has been created successfully.'
   end

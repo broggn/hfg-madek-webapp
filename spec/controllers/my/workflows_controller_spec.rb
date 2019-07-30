@@ -66,13 +66,22 @@ describe My::WorkflowsController do
         }.to change { Workflow.count }.by(1)
       end
 
-      it 'creates a collection assigned to workflow' do
+      it 'creates a collection' do
         expect {
           post(
             :create,
             params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
           )
         }.to change { Collection.count }.by(1)
+      end
+
+      it 'creates a collection with the same name' do
+        post(
+          :create,
+          params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
+        )
+
+        expect(Workflow.first.master_collection.title).to eq(workflow.name)
       end
     end
   end
