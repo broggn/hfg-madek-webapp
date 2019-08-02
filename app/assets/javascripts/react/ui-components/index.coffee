@@ -12,4 +12,6 @@ UILibrary.labelize = (resourceList)->
     {children: resourceName(resource), href: resource.url, key: "#{resource.uuid}-#{i}"}
 
 
+UILibrary.resourceName = resourceName
+
 module.exports = UILibrary

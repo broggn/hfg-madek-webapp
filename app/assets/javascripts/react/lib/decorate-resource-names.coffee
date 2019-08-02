@@ -1,6 +1,7 @@
 f = require('active-lodash')
 
 decorators =
+  User: (o) => o.label
   Person: (o, withRole = true)->
     if f.present(o.role) or o.isNew
       buildPersonName(o, withRole)
