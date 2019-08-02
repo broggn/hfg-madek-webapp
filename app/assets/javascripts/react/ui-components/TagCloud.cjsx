@@ -26,13 +26,6 @@ module.exports = React.createClass
     baseClass = classList(parseMods(@props), 'ui-tag-cloud')
     itemClass = classList('ui-tag-cloud-item', { block: mod is 'role' })
     tagClass = 'ui-tag-button'
-    tagIcon = switch mod
-      when 'label'  then 'tag'
-      when 'person' then 'user'
-      when 'role' then 'user'
-      when 'group'  then 'group'
-    if tagIcon and !f.includes(mods, 'large')
-      tagIcon = "#{tagIcon}-mini" # mini variant except in large tags
 
     <ul
       className={baseClass}
@@ -41,8 +34,15 @@ module.exports = React.createClass
       {list.map (tag)->
         props = f.merge(f.omit(@props, 'list'), tag)
         linkProps = f.pick(props, 'href', 'disabled', 'onClick')
-        {count, children} = props
+        {count, children, mod} = props
         key = props.key or JSON.stringify(tag)
+        tagIcon = switch mod
+          when 'label'  then 'tag'
+          when 'person' then 'user'
+          when 'role' then 'user'
+          when 'group'  then 'group'
+        if tagIcon and !f.includes(mods, 'large')
+          tagIcon = "#{tagIcon}-mini" # mini variant except in large tags
 
         <li key={key} className={itemClass}>
           <Link {...linkProps} mods='ui-tag-button'>
