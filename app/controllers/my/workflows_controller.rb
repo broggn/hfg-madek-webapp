@@ -4,18 +4,22 @@ class My::WorkflowsController < ApplicationController
   before_action { auth_authorize(:dashboard, :logged_in?) }
 
   def index
-    @get = Presenters::Users::DashboardSection.new(
-      Presenters::Workflows::WorkflowIndex.new(current_user),
-      sections_definition,
-      nil)
+    @get =
+      Presenters::Users::DashboardSection.new(
+        Presenters::Workflows::WorkflowIndex.new(current_user),
+        sections_definition,
+        nil
+      )
     respond_with(@get, layout: 'app_with_sidebar')
   end
 
   def new
-    @get = Presenters::Users::DashboardSection.new(
-      Presenters::Workflows::WorkflowNew.new(Workflow.new, current_user),
-      sections_definition,
-      nil)
+    @get =
+      Presenters::Users::DashboardSection.new(
+        Presenters::Workflows::WorkflowNew.new(Workflow.new, current_user),
+        sections_definition,
+        nil
+      )
     respond_with(@get, layout: 'app_with_sidebar')
   end
 
@@ -28,10 +32,12 @@ class My::WorkflowsController < ApplicationController
   def edit
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
-    @get = Presenters::Users::DashboardSection.new(
-      Presenters::Workflows::WorkflowEdit.new(workflow, current_user),
-      sections_definition,
-      nil)
+    @get =
+      Presenters::Users::DashboardSection.new(
+        workflow_edit_data(workflow),
+        sections_definition,
+        nil
+      )
     respond_with(@get, layout: 'app_with_sidebar')
   end
 
@@ -39,8 +45,7 @@ class My::WorkflowsController < ApplicationController
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
     workflow.update!(workflow_params)
-
-    redirect_to my_workflows_path, notice: 'Workflow has been updated successfully.'
+    respond_with(workflow_edit_data(workflow.reload))
   end
 
   def finish
@@ -53,12 +58,16 @@ class My::WorkflowsController < ApplicationController
 
   private
 
+  def workflow_edit_data(workflow)
+    Presenters::Workflows::WorkflowEdit.new(workflow, current_user)
+  end
+
   def workflow_params
-    params
-      .require(:workflow)
-      .permit(:name,
-              { owner_ids: [] },
-              common_permissions: [:responsible, { write: [] }, { read: [] }, :read_public],
-              common_meta_data: [:meta_key_id, :value])
+    params.require(:workflow).permit(
+      :name,
+      { owner_ids: [] },
+      common_permissions: [:responsible, { write: [] }, { read: [] }, :read_public],
+      common_meta_data: %i[meta_key_id value]
+    )
   end
 end

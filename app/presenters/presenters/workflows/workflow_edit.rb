@@ -10,43 +10,28 @@ module Presenters
   module Workflows
     class WorkflowEdit < WorkflowCommon
       def workflow_owners
-        User
-          .where('login SIMILAR TO ?',
-                 "(#{FAKE_DATA[:workflow_owners_logins].join('|')})%")
-          .or(User.where(id: FAKE_DATA[:workflow_owners]))
-          .map do |u|
-            Presenters::People::PersonIndex.new(u.person)
-          end
+        User.where('login SIMILAR TO ?', "(#{FAKE_DATA[:workflow_owners_logins].join('|')})%").or(
+          User.where(id: FAKE_DATA[:workflow_owners])
+        )
+          .map { |u| Presenters::People::PersonIndex.new(u.person) }
       end
 
       def common_settings
-        {
-          permissions: common_permissions,
-          meta_data: common_meta_data
-        }
+        { permissions: common_permissions, meta_data: common_meta_data }
       end
 
       def actions
         {
-          upload: {
-            url: new_media_entry_path(workflow_id: @app_resource.id)
-          },
-          index: {
-            url: my_workflows_path
-          },
-          finish: {
-            url: finish_my_workflow_path(@app_resource),
-            method: 'PATCH'
-          }
+          upload: { url: new_media_entry_path(workflow_id: @app_resource.id) },
+          index: { url: my_workflows_path },
+          finish: { url: finish_my_workflow_path(@app_resource), method: 'PATCH' }
         }.merge(super)
       end
 
       private
 
-      delegate_to_app_resource :configuration
-
       def common_permissions
-        configuration['common_permissions'].map do |permission, value|
+        @app_resource.configuration['common_permissions'].map do |permission, value|
           [
             permission,
             case permission
@@ -64,7 +49,11 @@ module Presenters
       end
 
       def common_meta_data
-        configuration['common_meta_data']
+        @app_resource.configuration['common_meta_data'].map do |md|
+          binding.pry unless md['meta_key_id']
+          mk = Presenters::MetaKeys::MetaKeyCommon.new(MetaKey.find(md['meta_key_id']))
+          { meta_key: mk, value: md['value'] }
+        end
       end
 
       def presenterify(obj)

@@ -58,7 +58,7 @@ module.exports = (config, callback) ->
     if (!err && res.statusCode >= 400)
       msg = "Error #{res.statusCode}!"
       if !f.isEmpty(res.body) then msg = "#{err}\n\n#{res.body}"
-      err = new Error("#{res.statusCode}: res.body")
+      err = new Error(msg)
 
     # handle JSON from response
     if (!err && f.includes(res.headers['content-type'], 'application/json'))
