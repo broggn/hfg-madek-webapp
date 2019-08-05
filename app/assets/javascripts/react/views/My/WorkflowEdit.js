@@ -14,45 +14,45 @@ import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
+import app from 'ampersand-app'
 let AutoComplete = false // client-side only!
 
 // const fakeCallback = (a, b, c) => console.log(a, b, c) // eslint-disable-line no-console
 
 // TODO: move to translations.csv
 const UI_TXT = {
-  feature_title: ['Prozess', 'Workflow'],
+  feature_title: { de: 'Prozess', en: 'Workflow' },
 
-  associated_collections_title: ['Set mit Inhalten', 'Set with content'],
+  associated_collections_title: { de: 'Set mit Inhalten', en: 'Set with content' },
   associated_collections_explain: [
     `In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses bearbeitet werden.`,
     `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`
   ],
-  associated_collections_upload: ['Medien hinzufügen', 'Add media'],
+  associated_collections_upload: { de: 'Medien hinzufügen', en: 'Add media' },
 
-  workflow_owners_title: ['Prozess-Besitzer', 'Workflow owners'],
+  workflow_owners_title: { de: 'Prozess-Besitzer', en: 'Workflow owners' },
 
-  common_settings_title: ['Gemeinsamer Datensatz', 'Common data'],
+  common_settings_title: { de: 'Gemeinsamer Datensatz', en: 'Common data' },
   common_settings_explain: [
     `Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
      Prozessabschluss permanent angewendet.`,
     `These data and settings apply to all contents and are permanently applied at the end of the process.`
   ],
-  common_settings_permissions_title: ['Berechtigungen', 'Permissions'],
-  common_settings_permissions_responsible: ['Verantwortlich', 'Responsible'],
-  common_settings_permissions_write: ['Schreib- und Leserechte', 'Read and write rights'],
-  common_settings_permissions_read: ['Nur Leserechte', 'Only reading rights'],
-  common_settings_permissions_read_public: ['Öffentlicher Zugriff', 'Public access'],
-  common_settings_metadata_title: ['MetaDaten', 'MetaData'],
+  common_settings_permissions_title: { de: 'Berechtigungen', en: 'Permissions' },
+  common_settings_permissions_responsible: { de: 'Verantwortlich', en: 'Responsible' },
+  common_settings_permissions_write: { de: 'Schreib- und Leserechte', en: 'Read and write rights' },
+  common_settings_permissions_read: { de: 'Nur Leserechte', en: 'Only reading rights' },
+  common_settings_permissions_read_public: { de: 'Öffentlicher Zugriff', en: 'Public access' },
+  common_settings_metadata_title: { de: 'MetaDaten', en: 'MetaData' },
 
-  actions_back: ['Zurück', 'Go back'],
-  actions_validate: ['Prüfen', 'Check'],
-  actions_finish: ['Abschliessen…', 'Finish…']
+  actions_back: { de: 'Zurück', en: 'Go back' },
+  actions_validate: { de: 'Prüfen', en: 'Check' },
+  actions_finish: { de: 'Abschliessen…', en: 'Finish…' }
 }
 
 const t = key => {
-  const availableLocales = ['de', 'en']
-  const locale = APP_CONFIG.userLanguage
-  return f.get(UI_TXT, [key, availableLocales.indexOf(locale)])
+  const locale = app.config.userLanguage
+  return f.get(UI_TXT, [key, locale])
 }
 
 const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
@@ -147,7 +147,7 @@ const WorkflowEditor = ({
   return (
     <section className="ui-container bright bordered rounded mas pam">
       <header>
-        <span style={supHeadStyle}>{UI_TXT['feature_title']}</span>
+        <span style={supHeadStyle}>{t('feature_title')}</span>
         <h1 className="title-l" style={headStyle}>
           {name}
         </h1>
@@ -213,9 +213,7 @@ const WorkflowEditor = ({
             ) : (
               <ul>
                 <li>
-                  <span className="title-s">
-                    {UI_TXT['common_settings_permissions_responsible']}:{' '}
-                  </span>
+                  <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
                   <UI.TagCloud
                     mod="person"
                     mods="small inline"
@@ -224,7 +222,7 @@ const WorkflowEditor = ({
                 </li>
                 <li>
                   <span className="title-s">
-                    {UI_TXT['common_settings_permissions_write']}
+                    {t('common_settings_permissions_write')}
                     {': '}
                   </span>
                   <UI.TagCloud
@@ -235,7 +233,7 @@ const WorkflowEditor = ({
                 </li>
                 <li>
                   <span className="title-s">
-                    {UI_TXT['common_settings_permissions_read']}
+                    {t('common_settings_permissions_read')}
                     {': '}
                   </span>
                   <UI.TagCloud
@@ -246,7 +244,7 @@ const WorkflowEditor = ({
                 </li>
                 <li>
                   <span className="title-s">
-                    {UI_TXT['common_settings_permissions_read_public']}
+                    {t('common_settings_permissions_read_public')}
                     {': '}
                   </span>
                   {commonPermissions.read_public ? (
@@ -434,12 +432,12 @@ class PermissionsEditor extends React.Component {
           }}>
           <ul>
             <li>
-              <span className="title-s">{UI_TXT['common_settings_permissions_responsible']}: </span>
+              <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
               <UI.TagCloud mod="person" mods="small inline" list={labelize([state.responsible])} />
             </li>
             <li>
               <span className="title-s">
-                {UI_TXT['common_settings_permissions_write']}
+                {t('common_settings_permissions_write')}
                 {': '}
               </span>
               <UI.TagCloud
@@ -453,7 +451,7 @@ class PermissionsEditor extends React.Component {
             </li>
             <li>
               <span className="title-s">
-                {UI_TXT['common_settings_permissions_read']}
+                {t('common_settings_permissions_read')}
                 {': '}
               </span>
               <UI.TagCloud mod="person" mods="small inline" list={labelize(state.read)} />
@@ -461,7 +459,7 @@ class PermissionsEditor extends React.Component {
             </li>
             <li>
               <span className="title-s">
-                {UI_TXT['common_settings_permissions_read_public']}
+                {t('common_settings_permissions_read_public')}
                 {': '}
               </span>
               <input
