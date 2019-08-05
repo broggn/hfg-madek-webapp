@@ -54,6 +54,11 @@ class My::WorkflowsController < ApplicationController
   private
 
   def workflow_params
-    params.require(:workflow).permit(:name)
+    params
+      .require(:workflow)
+      .permit(:name,
+              { owner_ids: [] },
+              common_permissions: [:responsible, { write: [] }, { read: [] }, :read_public],
+              common_meta_data: [:meta_key_id, :value])
   end
 end

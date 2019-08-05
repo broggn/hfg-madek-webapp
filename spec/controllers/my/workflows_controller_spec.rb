@@ -162,6 +162,53 @@ describe My::WorkflowsController do
         workflow.reload
         expect(workflow.name).to eq('new name')
       end
+
+      it 'updates owners' do
+        workflow = create :workflow, user: user
+        workflow.owners << create(:user)
+        owner_1 = create :user
+        owner_2 = create :user
+
+        patch(
+          :update,
+          params: { id: workflow.id, workflow: { owner_ids: [owner_1.id, owner_2.id] }},
+          session: { user_id: user.id })
+
+        expect(workflow.reload.owners).to contain_exactly(owner_1, owner_2)
+      end
+
+      it 'updates common permissions' do
+        workflow = create :workflow, user: user
+        responsible_person = create :user
+        group_1 = create :group
+        group_2 = create :group
+        api_client = create :api_client
+
+        patch(
+          :update,
+          params: {
+            id: workflow.id,
+            workflow: {
+              common_permissions: {
+                responsible: responsible_person.id,
+                write: [group_1.id, group_2.id],
+                read: [api_client.id],
+                read_public: true
+              }
+            }
+          },
+          session: { user_id: user.id })
+
+        workflow.reload
+
+        expect(workflow.common_permissions['responsible'])
+          .to eq(responsible_person.id)
+        expect(workflow.common_permissions['write'])
+          .to contain_exactly(group_1.id, group_2.id)
+        expect(workflow.common_permissions['read'])
+          .to contain_exactly(api_client.id)
+        expect(workflow.common_permissions['read_public']).to be true
+      end
     end
   end
 end
