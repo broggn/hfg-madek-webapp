@@ -33,8 +33,11 @@ module.exports = React.createClass
     >
       {list.map (tag)->
         props = f.merge(f.omit(@props, 'list'), tag)
-        linkProps = f.pick(props, 'href', 'disabled', 'onClick')
-        {count, children, mod} = props
+        {count, children, mod, tag} = props
+        linkProps = f.merge(
+          f.pick(props, 'href', 'disabled', 'onClick'),
+          { className: classList('ui-tag-button', parseMods(props)) }
+        )
         key = props.key or JSON.stringify(tag)
         tagIcon = switch mod
           when 'label'  then 'tag'
@@ -44,8 +47,10 @@ module.exports = React.createClass
         if tagIcon and !f.includes(mods, 'large')
           tagIcon = "#{tagIcon}-mini" # mini variant except in large tags
 
+        TagElm = tag || Link
+
         <li key={key} className={itemClass}>
-          <Link {...linkProps} mods='ui-tag-button'>
+          <TagElm {...linkProps}>
             {if tagIcon
               <Icon i={tagIcon} mods='ui-tag-icon'/>}
 
@@ -53,7 +58,7 @@ module.exports = React.createClass
 
             {if count
               <span className='ui-tag-counter'>{count}</span>}
-          </Link>
+          </TagElm>
         </li>
       }
     </ul>
