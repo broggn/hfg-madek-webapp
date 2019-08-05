@@ -1,5 +1,6 @@
 import React from 'react'
 import f from 'lodash'
+
 // import setUrlParams from '../../../lib/set-params-for-url.coffee'
 // import AppRequest from '../../../lib/app-request.coffee'
 // import asyncWhile from 'async/whilst'
@@ -13,15 +14,19 @@ import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
+let AutoComplete = false // client-side only!
+
+// const fakeCallback = (a, b, c) => console.log(a, b, c) // eslint-disable-line no-console
 
 // TODO: move to translations.csv
 const UI_TXT = {
-  feature_title: ['Prozess','Workflow'],
+  feature_title: ['Prozess', 'Workflow'],
 
   associated_collections_title: ['Set mit Inhalten', 'Set with content'],
   associated_collections_explain: [
     `In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses bearbeitet werden.`,
-    `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`],
+    `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`
+  ],
   associated_collections_upload: ['Medien hinzufügen', 'Add media'],
 
   workflow_owners_title: ['Prozess-Besitzer', 'Workflow owners'],
@@ -30,7 +35,8 @@ const UI_TXT = {
   common_settings_explain: [
     `Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
      Prozessabschluss permanent angewendet.`,
-    `These data and settings apply to all contents and are permanently applied at the end of the process.`],
+    `These data and settings apply to all contents and are permanently applied at the end of the process.`
+  ],
   common_settings_permissions_title: ['Berechtigungen', 'Permissions'],
   common_settings_permissions_responsible: ['Verantwortlich', 'Responsible'],
   common_settings_permissions_write: ['Schreib- und Leserechte', 'Read and write rights'],
@@ -43,7 +49,7 @@ const UI_TXT = {
   actions_finish: ['Abschliessen…', 'Finish…']
 }
 
-const t = (key) => {
+const t = key => {
   const availableLocales = ['de', 'en']
   const locale = APP_CONFIG.userLanguage
   return f.get(UI_TXT, [key, availableLocales.indexOf(locale)])
@@ -51,16 +57,98 @@ const t = (key) => {
 
 const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
 
-const WorkflowEdit = ({ get, authToken }) => {
-  const { name, status, workflow_owners, common_settings } = get
+class WorkflowEdit extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isEditingPermissions: false,
+      isSavingPermissions: false,
+      isEditingMetadata: false,
+      isSavingMetadata: false,
+      commonPermissions: props.get.common_settings.permissions,
+      commonMetadata: props.get.common_settings.meta_data
+    }
+
+    this.actions = [
+      'onToggleEditPermissions',
+      'onSavePermissions',
+      'onToggleEditMetadata',
+      'onSaveMetadata'
+    ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
+  }
+  onToggleEditPermissions(event) {
+    event.preventDefault()
+    // NOTE: Date instead of "true" because it's used as React-`key` for the "edit session",
+    // this is done to enforce a freshly mounted component every time,
+    // which is needed because we read props into state!
+    this.setState(cur => ({ isEditingPermissions: cur.isEditingPermissions ? false : Date.now() }))
+  }
+  onSavePermissions(commonPermissions) {
+    this.setState({ isSavingPermissions: true })
+    const data = { commonPermissions }
+    // TODO: ajax
+    console.log('FAKE AJAX: POST common_permissions', { data }) // eslint-disable-line no-console
+    setTimeout(() => {
+      this.setState({ commonPermissions, isSavingPermissions: false, isEditingPermissions: false })
+    }, 1500)
+  }
+
+  onToggleEditMetadata(event) {
+    event.preventDefault()
+    this.setState(cur => ({ isEditingMetadata: cur.isEditingMetadata ? false : Date.now() }))
+  }
+  onSaveMetadata(commonMetadata) {
+    this.setState({ isSavingMetadata: true })
+    const data = { commonMetadata }
+    // TODO: ajax
+    console.log('FAKE AJAX: POST common_metadata', { data }) // eslint-disable-line no-console
+    setTimeout(() => {
+      this.setState({ commonMetadata, isEditingMetadata: false, isSavingMetadata: false })
+    }, 1500)
+  }
+
+  render({ props, state, actions } = this) {
+    const { name, status, responsible_people, common_settings } = props.get
+
+    return (
+      <div>
+        <WorkflowEditor
+          {...{ name, status, responsible_people, common_settings }}
+          {...state}
+          {...actions}
+        />
+        <hr />
+        <pre className="mas pam code">{JSON.stringify({ state, props }, 0, 2)}</pre>
+      </div>
+    )
+  }
+}
+
+const WorkflowEditor = ({
+  name,
+  status,
+  responsible_people,
+
+  commonPermissions,
+  onToggleEditPermissions,
+  isEditingPermissions,
+  isSavingPermissions,
+  onSavePermissions,
+
+  commonMetadata,
+  onToggleEditMetadata,
+  isEditingMetadata,
+  isSavingMetadata,
+  onSaveMetadata
+}) => {
+  const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
+  const headStyle = { lineHeight: '1.34' }
 
   return (
     <section className="ui-container bright bordered rounded mas pam">
       <header>
-        <span style={{ textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }}>
-          {t('feature_title')}
-        </span>
-        <h1 className="title-l" style={{ lineHeight: '1.34' }}>
+        <span style={supHeadStyle}>{UI_TXT['feature_title']}</span>
+        <h1 className="title-l" style={headStyle}>
           {name}
         </h1>
       </header>
@@ -76,9 +164,9 @@ const WorkflowEdit = ({ get, authToken }) => {
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
               {/*<DummySetThumb />*/}
-              {f.map(get.associated_collections, (collection, i) =>
+              {f.map(get.associated_collections, (collection, i) => (
                 <ResourceThumbnail get={collection} key={i} />
-              )}
+              ))}
             </div>
 
             <div className="button-group small mas">
@@ -96,7 +184,8 @@ const WorkflowEdit = ({ get, authToken }) => {
           <SubSection.Title tag="h2" className="title-m mts">
             {t('workflow_owners_title')}
           </SubSection.Title>
-          <UI.TagCloud mod="person" mods="small" list={UI.labelize(workflow_owners)} />
+          {/* FIXME: <UI.TagCloud mod="person" mods="small" list={UI.labelize(workflow_owners)} /> */}
+          <UI.TagCloud mod="person" mods="small" list={labelize(responsible_people)} />
         </SubSection>
 
         <SubSection>
@@ -106,82 +195,94 @@ const WorkflowEdit = ({ get, authToken }) => {
 
           <Explainer>{t('common_settings_explain')}</Explainer>
 
-          <SubSection open>
+          <SubSection>
             <SubSection.Title tag="h3" className="title-s mts">
               {t('common_settings_permissions_title')}
               {'  '}
-              <small>
-                <a href="#edit-permissions">
-                  <i className="icon-pen" />
-                </a>
-              </small>
+              {!isEditingPermissions && <EditButton onClick={onToggleEditPermissions} />}
             </SubSection.Title>
 
-            <ul>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_responsible')}:{' '}
-                </span>
-                <UI.TagCloud
-                  mod="person"
-                  mods="small inline"
-                  list={UI.labelize([common_settings.permissions.responsible])}
-                />
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_write')}
-                  {': '}
-                </span>
-                <UI.TagCloud
-                  mod="person"
-                  mods="small inline"
-                  list={UI.labelize(common_settings.permissions.write)}
-                />
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_read')}
-                  {': '}
-                </span>
-                <UI.TagCloud
-                  mod="person"
-                  mods="small inline"
-                  list={UI.labelize(common_settings.permissions.read)}
-                />
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_read_public')}
-                  {': '}
-                </span>
-                {common_settings.permissions.read_public ? (
-                  <i className="icon-checkmark" title="Ja" />
-                ) : (
-                  <i className="icon-close" title="Nein" />
-                )}
-              </li>
-            </ul>
+            {isEditingPermissions ? (
+              <PermissionsEditor
+                key={isEditingPermissions}
+                commonPermissions={commonPermissions}
+                isSaving={isSavingPermissions}
+                onCancel={onToggleEditPermissions}
+                onSave={onSavePermissions}
+              />
+            ) : (
+              <ul>
+                <li>
+                  <span className="title-s">
+                    {UI_TXT['common_settings_permissions_responsible']}:{' '}
+                  </span>
+                  <UI.TagCloud
+                    mod="person"
+                    mods="small inline"
+                    list={labelize([commonPermissions.responsible])}
+                  />
+                </li>
+                <li>
+                  <span className="title-s">
+                    {UI_TXT['common_settings_permissions_write']}
+                    {': '}
+                  </span>
+                  <UI.TagCloud
+                    mod="person"
+                    mods="small inline"
+                    list={labelize(commonPermissions.write)}
+                  />
+                </li>
+                <li>
+                  <span className="title-s">
+                    {UI_TXT['common_settings_permissions_read']}
+                    {': '}
+                  </span>
+                  <UI.TagCloud
+                    mod="person"
+                    mods="small inline"
+                    list={labelize(commonPermissions.read)}
+                  />
+                </li>
+                <li>
+                  <span className="title-s">
+                    {UI_TXT['common_settings_permissions_read_public']}
+                    {': '}
+                  </span>
+                  {commonPermissions.read_public ? (
+                    <i className="icon-checkmark" title="Ja" />
+                  ) : (
+                    <i className="icon-close" title="Nein" />
+                  )}
+                </li>
+              </ul>
+            )}
           </SubSection>
 
           <SubSection open>
             <SubSection.Title tag="h3" className="title-s mts">
               {t('common_settings_metadata_title')}
               {'  '}
-              <small>
-                <a href="#edit-metadata">
-                  <i className="icon-pen" />
-                </a>
-              </small>
+              {!isEditingPermissions && <EditButton onClick={onToggleEditMetadata} />}
             </SubSection.Title>
 
-            <ul>
-              {common_settings.meta_data.map(({ key, value }) => (
-                <li key={key}>
-                  <b>{key}:</b> {value}
-                </li>
-              ))}
-            </ul>
+            {isEditingMetadata ? (
+              <MetadataEditor
+                key={isEditingMetadata}
+                commonMetadata={commonMetadata}
+                isSaving={isSavingMetadata}
+                onCancel={onToggleEditMetadata}
+                onSave={onSaveMetadata}
+              />
+            ) : (
+              <ul>
+                {commonMetadata.map(({ key, value }) => (
+                  <li key={key}>
+                    <b>{key}:</b> {value}
+                  </li>
+                ))}
+              </ul>
+            )}
           </SubSection>
         </SubSection>
       </div>
@@ -196,89 +297,262 @@ const WorkflowEdit = ({ get, authToken }) => {
         </button>
         */}
         {status === WORKFLOW_STATES.IN_PROGRESS && (
-          <RailsForm action={get.actions.finish.url} method={get.actions.finish.method} name="workflow" style={{display: 'inline-block'}} authToken={authToken}>
+          <RailsForm
+            action={get.actions.finish.url}
+            method={get.actions.finish.method}
+            name="workflow"
+            style={{ display: 'inline-block' }}
+            authToken={authToken}>
             <button className="primary-button large" type="submit">
               {t('actions_finish')}
             </button>
           </RailsForm>
         )}
       </div>
-      <hr />
-        {/* <pre>{JSON.stringify(get, 0, 2)}</pre> */}
     </section>
   )
 }
 
 module.exports = WorkflowEdit
 
-const DummySetThumb = () => (
-  <div className="ui-resource">
-    <div className="ui-resource-body">
-      <div className="media-set ui-thumbnail">
-        <div className="ui-thumbnail-privacy">
-          <i title="private" className="icon-privacy-private" />
-        </div>
-        <a
-          className="link ui-thumbnail-image-wrapper ui-link"
-          href="#/sets/d0ca4caf-2ae0-4481-b322-79ae4a53d93e"
-          target="_blank"
-          title="socospa-1">
-          <div className="ui-thumbnail-image-holder">
-            <div className="ui-thumbnail-table-image-holder">
-              <div className="ui-thumbnail-cell-image-holder">
-                <div className="ui-thumbnail-inner-image-holder">
-                  <img
-                    src="/media/d029c4b2-7796-41c6-9044-5b1e286ef7c6"
-                    alt="Bild:  socospa-1"
-                    className="ui-thumbnail-image ui_picture"
-                    title="socospa-1"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </a>
-        <div className="ui-thumbnail-meta">
-          <h3 className="ui-thumbnail-meta-title">socospa-1</h3>
-          <h4 className="ui-thumbnail-meta-subtitle" />
-        </div>
-        <div className="ui-thumbnail-actions">
-          <ul className="left by-left">
-            <li className="ui-thumbnail-action">
-              <span className="js-only">
-                <a className="link ui-thumbnail-action-checkbox ui-link" title="auswählen">
-                  <i className="icon-checkbox" />
-                </a>
-              </span>
-            </li>
-            <li className="ui-thumbnail-action">
-              <a className="ui-thumbnail-action-favorite" data-pending="false">
-                <i className="icon-star" />
-              </a>
-            </li>
-          </ul>
-          <ul className="right by-right">
-            <li className="ui-thumbnail-action">
-              <a
-                className="ui-thumbnail-action-favorite"
-                href="#/sets/d0ca4caf-2ae0-4481-b322-79ae4a53d93e/meta_data/edit/by_context">
-                <i className="icon-pen" />
-              </a>
-            </li>
-            <li className="ui-thumbnail-action">
-              <a className="ui-thumbnail-action-favorite">
-                <i className="icon-trash" />
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-)
-
 const Explainer = ({ children }) => (
   <p className="paragraph-s mts measure-wide" style={{ fontStyle: 'italic' }}>
     {children}
   </p>
+)
+
+const EditButton = ({ onClick, icon = 'icon-pen', ...props }) => (
+  <button
+    {...props}
+    onClick={onClick}
+    style={{ background: 'transparent', WebkitAppearance: 'none' }}>
+    <small className="link">{!f.isEmpty(icon) && <i className={icon} />}</small>
+  </button>
+)
+
+class MetadataEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { md: this.props.commonMetadata }
+    AutoComplete = AutoComplete || require('../../lib/autocomplete.cjsx')
+    this.onChangeMdValue = this.onChangeMdValue.bind(this)
+    this.onAddMd = this.onAddMd.bind(this)
+    this.onRemoveMd = this.onRemoveMd.bind(this)
+  }
+
+  onChangeMdValue({ target }) {
+    this.setState(cur => ({
+      md: cur.md.map(md => (md.key !== target.name ? md : { key: md.key, value: target.value }))
+    }))
+  }
+  onAddMd({ metaKeyId }) {
+    this.setState(cur => ({ md: cur.md.concat([{ key: metaKeyId, value: '' }]) }))
+  }
+  onRemoveMd({ metaKeyId }) {
+    this.setState(cur => ({ md: cur.md.filter(md => md.key !== metaKeyId) }))
+  }
+
+  render({ props, state } = this) {
+    const { onSave, onCancel, isSaving } = props
+
+    return (
+      <div>
+        {!!isSaving && <SaveBusySignal />}
+        <form
+          className={isSaving ? 'hidden' : null}
+          onSubmit={e => {
+            e.preventDefault()
+            onSave(this.state.md)
+          }}>
+          <ul className="pvs">
+            {state.md.map((md, i) => (
+              <li key={i} className="ui-form-group pan pts columned">
+                <label htmlFor={`emk_${i}`} className="form-label">
+                  {md.key}
+                </label>
+                <div className="form-item">
+                  <input
+                    type="text"
+                    className="block"
+                    id={`emk_${i}`}
+                    name={md.key}
+                    value={md.value}
+                    onChange={this.onChangeMdValue}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="pts pbs">
+            <button type="submit" className="button primary-button">
+              SAVE
+            </button>{' '}
+            <button type="button" className="button" onClick={onCancel}>
+              CANCEL
+            </button>
+          </div>
+        </form>
+        <hr />
+        <pre className="mas pam code">{JSON.stringify({ state }, 0, 2)}</pre>
+      </div>
+    )
+  }
+}
+
+class PermissionsEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { ...this.props.commonPermissions }
+    AutoComplete = AutoComplete || require('../../lib/autocomplete.cjsx')
+    this.onTogglePublicRead = this.onTogglePublicRead.bind(this)
+    this.onAddPermissionEntity = this.onAddPermissionEntity.bind(this)
+    this.onRemovePermissionEntity = this.onRemovePermissionEntity.bind(this)
+  }
+  onTogglePublicRead() {
+    this.setState(cur => ({ read_public: !cur.read_public }))
+  }
+
+  onAddPermissionEntity(listKey, obj) {
+    this.setState(cur => ({ [listKey]: cur[listKey].concat(obj) }))
+  }
+
+  onRemovePermissionEntity(listKey, obj) {
+    this.setState(cur => ({ [listKey]: cur[listKey].filter(item => item.uuid !== obj.uuid) }))
+  }
+
+  render({ props, state } = this) {
+    const { onSave, onCancel, isSaving } = props
+
+    return (
+      <div>
+        {!!isSaving && <SaveBusySignal />}
+        <form
+          className={isSaving ? 'hidden' : null}
+          onSubmit={e => {
+            e.preventDefault()
+            onSave(this.state)
+          }}>
+          <ul>
+            <li>
+              <span className="title-s">{UI_TXT['common_settings_permissions_responsible']}: </span>
+              <UI.TagCloud mod="person" mods="small inline" list={labelize([state.responsible])} />
+            </li>
+            <li>
+              <span className="title-s">
+                {UI_TXT['common_settings_permissions_write']}
+                {': '}
+              </span>
+              <UI.TagCloud
+                mod="person"
+                mods="small inline"
+                list={labelize(state.write, {
+                  onDelete: f.curry(this.onRemovePermissionEntity)('write')
+                })}
+              />
+              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('write')} />
+            </li>
+            <li>
+              <span className="title-s">
+                {UI_TXT['common_settings_permissions_read']}
+                {': '}
+              </span>
+              <UI.TagCloud mod="person" mods="small inline" list={labelize(state.read)} />
+              <input />
+            </li>
+            <li>
+              <span className="title-s">
+                {UI_TXT['common_settings_permissions_read_public']}
+                {': '}
+              </span>
+              <input
+                type="checkbox"
+                checked={state.read_public}
+                onChange={this.onTogglePublicRead}
+              />
+              {/* {commonPermissions.read_public ? (
+            <i className="icon-checkmark" title="Ja" />
+          ) : (
+            <i className="icon-close" title="Nein" />
+          )} */}
+            </li>
+          </ul>
+
+          <div className="pts pbs">
+            <button type="submit" className="button primary-button">
+              SAVE
+            </button>{' '}
+            <button type="button" className="button" onClick={onCancel}>
+              CANCEL
+            </button>
+          </div>
+        </form>
+        <hr />
+        <pre className="mas pam code">{JSON.stringify({ state }, 0, 2)}</pre>
+      </div>
+    )
+  }
+}
+
+const AutocompleteAdder = ({ type, currentValues, ...props }) => (
+  <span style={{ position: 'relative' }}>
+    <AutoComplete
+      className="block"
+      name="autocompleter"
+      {...props}
+      resourceType={type}
+      valueFilter={({ uuid }) => f.includes(f.map(currentValues, 'subject.uuid'), uuid)}
+    />
+  </span>
+)
+
+const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) => (
+  <ul className="plm" style={{ width: '25rem' }}>
+    <li>
+      Nutzer hinzufügen:{' '}
+      <AutocompleteAdder type="Users" onSelect={onAdd} currentValues={currentUsers} />
+    </li>
+    <li>
+      Gruppe hinzufügen:{' '}
+      <AutocompleteAdder
+        type="Groups"
+        searchParams={{ scope: 'permissions' }}
+        onSelect={onAdd}
+        currentValues={currentGroups}
+      />
+    </li>
+    <li>
+      API-Client hinzufügen:{' '}
+      <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
+    </li>
+  </ul>
+)
+
+const labelize = (resourceList, { withLink = false, onDelete } = {}) =>
+  resourceList.map((resource, i) => ({
+    key: `${resource.uuid}-${i}`,
+    href: withLink ? resource.url : undefined,
+    mod: resource.type.toLowerCase().replace(/.*group/, 'group'),
+    mods: 'not-interactive',
+    tag: 'span',
+    children: (
+      <span>
+        {UI.resourceName(resource)}
+        {!!onDelete && (
+          <button
+            className="multi-select-tag-remove"
+            style={{ background: 'transparent' }}
+            onClick={ev => {
+              ev.preventDefault(), onDelete(resource)
+            }}>
+            <i className="icon-close"></i>
+          </button>
+        )}
+      </span>
+    )
+  }))
+
+const SaveBusySignal = () => (
+  <div className="pal" style={{ textAlign: 'center' }}>
+    {'Saving…'}
+  </div>
 )
