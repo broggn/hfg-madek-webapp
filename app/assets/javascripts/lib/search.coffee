@@ -9,6 +9,7 @@ resourcesConfig = # JSON API Endpoints:
   ApiClients: { url: '/api_clients', key: 'login' }
   People: { url: '/people', params: ['meta_key_id'] }
   Keywords: { url: '/keywords', key: 'label', params: ['meta_key_id'] }
+  MetaKeys: { url: '/meta_keys', key: 'autocomplete_label'  }
 
 module.exports = (resourceType, parameters = null, localData)->
   unless (baseConfig = resourcesConfig[resourceType])?
