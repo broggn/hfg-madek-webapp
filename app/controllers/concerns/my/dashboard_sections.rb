@@ -22,7 +22,7 @@ module Concerns
           },
           workflows: {
             title: 'Workflows',
-            icon: 'icon-api',
+            icon: 'fa fa-flask',
             partial: :workflows,
             is_beta: true,
             hide_from_index: true,
