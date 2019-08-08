@@ -69,8 +69,10 @@ class WorkflowEdit extends React.Component {
     this.state = {
       isEditingPermissions: false,
       isSavingPermissions: false,
+      permissionsUpdateError: null,
       isEditingMetadata: false,
       isSavingMetadata: false,
+      metaDataUpdateError: null,
       commonPermissions: props.get.common_settings.permissions,
       commonMetadata: props.get.common_settings.meta_data
     }
@@ -92,6 +94,7 @@ class WorkflowEdit extends React.Component {
   onSavePermissions(commonPermissions) {
     const action = f.get(this, 'props.get.actions.update')
     if (!action) throw new Error()
+    const finalState = { isSavingPermissions: false, isEditingPermissions: false }
     this.setState({ isSavingPermissions: true })
 
     // tranform form data into what is sent to server:
@@ -109,16 +112,11 @@ class WorkflowEdit extends React.Component {
       if (err) {
         console.error(err) // eslint-disable-line no-console
         alert('ERROR! ' + JSON.stringify(err))
-        return this.setState({ isSavingPermissions: false, isEditingPermissions: false })
+        return this.setState({ ...finalState, permissionsUpdateError: err })
       }
       console.log({ res }) // eslint-disable-line no-console
       const commonPermissions = f.get(res, 'body.get.common_settings.permissions')
-      commonPermissions &&
-        this.setState({
-          commonPermissions,
-          isSavingPermissions: false,
-          isEditingPermissions: false
-        })
+      commonPermissions && this.setState({ ...finalState, commonPermissions })
     })
   }
 
@@ -129,6 +127,7 @@ class WorkflowEdit extends React.Component {
   onSaveMetadata(commonMetadata) {
     const action = f.get(this, 'props.get.actions.update')
     if (!action) throw new Error()
+    const finalState = { isSavingMetadata: false, isEditingMetadata: false }
     this.setState({ isSavingMetadata: true })
 
     // tranform form data into what is sent to server:
@@ -145,12 +144,11 @@ class WorkflowEdit extends React.Component {
       if (err) {
         console.error(err) // eslint-disable-line no-console
         alert('ERROR! ' + JSON.stringify(err))
-        return this.setState({ isSavingPermissions: false, isEditingPermissions: false })
+        return this.setState({ finalState, metaDataUpdateError: err })
       }
       console.log({ res }) // eslint-disable-line no-console
       const commonMetadata = f.get(res, 'body.get.common_settings.meta_data')
-      commonMetadata &&
-        this.setState({ commonMetadata, isSavingMetadata: false, isEditingMetadata: false })
+      commonMetadata && this.setState({ ...finalState, commonMetadata })
     })
   }
 
