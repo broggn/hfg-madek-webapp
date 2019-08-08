@@ -30,7 +30,7 @@ class My::WorkflowsController < ApplicationController
   end
 
   def edit
-    workflow = current_user.workflows.find(params[:id])
+    workflow = Workflow.find(params[:id])
     auth_authorize workflow
     @get =
       Presenters::Users::DashboardSection.new(
