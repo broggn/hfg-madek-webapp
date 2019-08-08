@@ -159,7 +159,7 @@ class WorkflowEdit extends React.Component {
     return (
       <div>
         <WorkflowEditor
-          {...{ name, status, workflow_owners, get: props.get }} // tmp stuff
+          {...{ name, status, workflow_owners, authToken: props.authToken, get: props.get }}
           {...state}
           {...actions}
         />
@@ -174,6 +174,7 @@ const WorkflowEditor = ({
   name,
   status,
   workflow_owners,
+  authToken,
 
   get, // FIXME: remove this, replace with named props
 
@@ -346,8 +347,7 @@ const WorkflowEditor = ({
             method={get.actions.finish.method}
             name="workflow"
             style={{ display: 'inline-block' }}
-            // FIXME: authToken
-            authToken={'authToken'}>
+            authToken={authToken}>
             {' '}
             <button className="primary-button large" type="submit">
               {t('actions_finish')}
