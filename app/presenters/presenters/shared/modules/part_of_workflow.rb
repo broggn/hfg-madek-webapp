@@ -2,8 +2,10 @@ module Presenters
   module Shared
     module Modules
       module PartOfWorkflow
-        def part_of_workflow?
-          !@app_resource.workflow.nil?
+        extend ActiveSupport::Concern
+
+        included do
+          delegate_to_app_resource :part_of_workflow?
         end
 
         def workflow
