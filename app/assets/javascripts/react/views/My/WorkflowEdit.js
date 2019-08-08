@@ -56,7 +56,8 @@ const UI_TXT = {
 
 const t = key => {
   /* global APP_CONFIG */
-  const locale = APP_CONFIG.userLanguage
+  // FIXME: only works client-side for now, hardcode a fallback…
+  const locale = f.get(APP_CONFIG, 'userLanguage') || 'de'
   return f.get(UI_TXT, [key, locale]) || I18nTranslate(key)
 }
 
