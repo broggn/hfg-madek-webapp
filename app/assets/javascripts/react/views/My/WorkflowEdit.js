@@ -11,6 +11,7 @@ import f from 'active-lodash'
 const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
 import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
+import InputMetaDatum from '../../decorators/InputMetaDatum.cjsx'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 import appRequest from '../../../lib/app-request.coffee'
 // import ui from '../../lib/ui.coffee'
@@ -380,7 +381,8 @@ class MetadataEditor extends React.Component {
     // add to metadata list for the MetaKey provided by the automcomplete/searcher.
     const alreadyExists = f.any(this.state.md, md => f.get(mk, 'uuid') === md.meta_key.uuid)
     if (alreadyExists) return false
-    this.setState(cur => ({ md: cur.md.concat([{ meta_key: mk, value: '' }]) }))
+    // debugger // eslint-disable-line no-debugger
+    this.setState(cur => ({ md: cur.md.concat([{ meta_key: mk }]) }))
   }
   onRemoveMd(md) {
     // remove from metadata list the entry matching the mMetaKey `id`
@@ -413,7 +415,7 @@ class MetadataEditor extends React.Component {
                         DEL
                       </button>
                     </div>
-                    <div className="form-item">
+                    {/* <div className="form-item">
                       <input
                         type="text"
                         className="block"
@@ -422,7 +424,16 @@ class MetadataEditor extends React.Component {
                         value={md.value}
                         onChange={this.onChangeMdValue}
                       />
-                    </div>
+                    </div> */}
+
+                    <InputMetaDatum
+                      id={inputId}
+                      metaKey={md.meta_key}
+                      model={{ values: [md.value] }}
+                      name={name}
+                      onChange={fakeCallback}
+                      // subForms={subForms}
+                    />
                   </li>
                 )}
               </Let>

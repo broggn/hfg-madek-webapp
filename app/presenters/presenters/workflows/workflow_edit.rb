@@ -51,7 +51,8 @@ module Presenters
       def common_meta_data
         @app_resource.configuration['common_meta_data'].map do |md|
           binding.pry unless md['meta_key_id']
-          mk = Presenters::MetaKeys::MetaKeyCommon.new(MetaKey.find(md['meta_key_id']))
+          # build something like MetaDatumEdit presenter, but from plain JSON
+          mk = Presenters::MetaKeys::MetaKeyEdit.new(MetaKey.find(md['meta_key_id']))
           { meta_key: mk, value: md['value'] }
         end
       end

@@ -184,7 +184,7 @@ module.exports = React.createClass
     { name, resourceType, values, multiple, extensible, allowedTypes
       searchParams, autocompleteConfig, withRoles } = @props
     state = @state
-    values = state.values or values
+    values = f.compact(state.values or values)
 
     # NOTE: this is only supposed to be used client side,
     # but we need to wait until AutoComplete is loaded
@@ -193,7 +193,7 @@ module.exports = React.createClass
     <div className='form-item'>
       <div className='multi-select'>
         <ul className='multi-select-holder'>
-          {!withRoles and values.map (item, i) =>
+          {!withRoles and f.map values, (item, i) =>
             remover = f.curry(_onItemRemove)(i)
             style = if item.isNew then {fontStyle: 'italic'} else {}
             <li className='multi-select-tag' style={style} key={item.uuid or item.getId?() or JSON.stringify(item)}>
@@ -234,7 +234,7 @@ module.exports = React.createClass
               {if withRoles and f.present(@state.editedItem)
                 <div className='multi-select mts'>
                   <label className="form-label pas">
-                    {if f.present(@state.editedRole) then t('meta_data_role_edit_heading') else t('meta_data_role_add_heading')} 
+                    {if f.present(@state.editedRole) then t('meta_data_role_edit_heading') else t('meta_data_role_add_heading')}
                     <strong> {decorateResource(@state.editedItem, false)}</strong>
                   </label>
                   <hr/>
