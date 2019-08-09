@@ -631,7 +631,7 @@ class NameEditor extends React.Component {
           className={isSaving ? 'hidden' : null}
           onSubmit={e => {
             e.preventDefault()
-            onSave(this.state)
+            onSave(this.state.name)
           }}>
           <input
             type="text"
