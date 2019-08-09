@@ -62,7 +62,7 @@ module Presenters
 
         case obj
         when User
-          Presenters::People::PersonIndex.new(obj.person)
+          Presenters::Users::UserIndex.new(obj)
         when Group
           Presenters::Groups::GroupIndex.new(obj)
         when ApiClient

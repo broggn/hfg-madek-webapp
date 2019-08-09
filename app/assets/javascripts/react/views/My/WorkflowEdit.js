@@ -19,7 +19,7 @@ import appRequest from '../../../lib/app-request.coffee'
 import I18nTranslate from '../../../lib/i18n-translate'
 let AutoComplete = false // client-side only!
 
-const fakeCallback = (a, b, c) => console.log(a, b, c) // eslint-disable-line
+// const fakeCallback = (a, b, c) => console.log([a, b, c]) // eslint-disable-line
 
 // TODO: move to translations.csv
 const UI_TXT = {
@@ -116,8 +116,8 @@ class WorkflowEdit extends React.Component {
         return this.setState({ ...finalState, permissionsUpdateError: err })
       }
       console.log({ res }) // eslint-disable-line no-console
-      const commonPermissions = f.get(res, 'body.get.common_settings.permissions')
-      commonPermissions && this.setState({ ...finalState, commonPermissions })
+      const commonPermissions = f.get(res, 'body.common_settings.permissions')
+      this.setState({ ...finalState, commonPermissions })
     })
   }
 
@@ -148,8 +148,8 @@ class WorkflowEdit extends React.Component {
         return this.setState({ finalState, metaDataUpdateError: err })
       }
       console.log({ res }) // eslint-disable-line no-console
-      const commonMetadata = f.get(res, 'body.get.common_settings.meta_data')
-      commonMetadata && this.setState({ ...finalState, commonMetadata })
+      const commonMetadata = f.get(res, 'body.common_settings.meta_data')
+      this.setState({ ...finalState, commonMetadata })
     })
   }
 
@@ -371,10 +371,10 @@ class MetadataEditor extends React.Component {
     this.onRemoveMd = this.onRemoveMd.bind(this)
   }
 
-  onChangeMdValue({ target }) {
+  onChangeMdValue(name, value) {
     // change value in metadata list where `name` of input matches MetaKey `id`
     this.setState(cur => ({
-      md: cur.md.map(md => (md.meta_key.uuid !== target.name ? md : { ...md, value: target.value }))
+      md: cur.md.map(md => (md.meta_key.uuid !== name ? md : { ...md, value: f.compact(value) }))
     }))
   }
   onAddMdByMk(mk) {
@@ -403,8 +403,8 @@ class MetadataEditor extends React.Component {
           }}>
           <ul className="pvs">
             {state.md.map((md, i) => (
-              <Let key={i} inputId={`emk_${md.meta_key.uuid}`}>
-                {({ inputId }) => (
+              <Let key={i} name={md.meta_key.uuid} inputId={`emk_${md.meta_key.uuid}`}>
+                {({ name, inputId }) => (
                   <li className="ui-form-group pan pts columned">
                     <div className="form-label">
                       <label htmlFor={inputId}>{md.meta_key.label}</label>
@@ -415,24 +415,13 @@ class MetadataEditor extends React.Component {
                         DEL
                       </button>
                     </div>
-                    {/* <div className="form-item">
-                      <input
-                        type="text"
-                        className="block"
-                        id={inputId}
-                        name={md.meta_key.uuid}
-                        value={md.value}
-                        onChange={this.onChangeMdValue}
-                      />
-                    </div> */}
-
                     <InputMetaDatum
                       id={inputId}
                       metaKey={md.meta_key}
+                      // NOTE: with plural values this array around value should be removed
                       model={{ values: [md.value] }}
                       name={name}
-                      onChange={fakeCallback}
-                      // subForms={subForms}
+                      onChange={val => this.onChangeMdValue(name, val)}
                     />
                   </li>
                 )}
@@ -475,10 +464,16 @@ class PermissionsEditor extends React.Component {
     super(props)
     this.state = { ...this.props.commonPermissions }
     AutoComplete = AutoComplete || require('../../lib/autocomplete.cjsx')
+    this.onSetResponsible = this.onSetResponsible.bind(this)
     this.onTogglePublicRead = this.onTogglePublicRead.bind(this)
     this.onAddPermissionEntity = this.onAddPermissionEntity.bind(this)
     this.onRemovePermissionEntity = this.onRemovePermissionEntity.bind(this)
   }
+
+  onSetResponsible(obj) {
+    this.setState({ responsible: obj })
+  }
+
   onTogglePublicRead() {
     this.setState(cur => ({ read_public: !cur.read_public }))
   }
@@ -507,6 +502,16 @@ class PermissionsEditor extends React.Component {
             <li>
               <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
               <UI.TagCloud mod="person" mods="small inline" list={labelize([state.responsible])} />
+              <div className="row">
+                <div className="col1of3">
+                  Nutzer auswählen:{' '}
+                  <AutocompleteAdder
+                    type="Users"
+                    onSelect={this.onSetResponsible}
+                    valueFilter={val => f.get(state.responsible, 'uuid') === f.get(val, 'uuid')}
+                  />
+                </div>
+              </div>
             </li>
             <li>
               <span className="title-s">
@@ -528,7 +533,7 @@ class PermissionsEditor extends React.Component {
                 {': '}
               </span>
               <UI.TagCloud mod="person" mods="small inline" list={labelize(state.read)} />
-              <input />
+              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('write')} />
             </li>
             <li>
               <span className="title-s">
@@ -540,11 +545,6 @@ class PermissionsEditor extends React.Component {
                 checked={state.read_public}
                 onChange={this.onTogglePublicRead}
               />
-              {/* {commonPermissions.read_public ? (
-            <i className="icon-checkmark" title="Ja" />
-          ) : (
-            <i className="icon-close" title="Nein" />
-          )} */}
             </li>
           </ul>
 
@@ -592,25 +592,31 @@ const AutocompleteAdder = ({ type, currentValues, ...props }) => (
 )
 
 const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) => (
-  <ul className="plm" style={{ width: '25rem' }}>
-    <li>
-      Nutzer hinzufügen:{' '}
-      <AutocompleteAdder type="Users" onSelect={onAdd} currentValues={currentUsers} />
-    </li>
-    <li>
-      Gruppe hinzufügen:{' '}
-      <AutocompleteAdder
-        type="Groups"
-        searchParams={{ scope: 'permissions' }}
-        onSelect={onAdd}
-        currentValues={currentGroups}
-      />
-    </li>
-    <li>
-      API-Client hinzufügen:{' '}
-      <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
-    </li>
-  </ul>
+  <div className="row pts pbm">
+    <div className="col1of3">
+      <div className="">
+        Nutzer hinzufügen:{' '}
+        <AutocompleteAdder type="Users" onSelect={onAdd} currentValues={currentUsers} />
+      </div>
+    </div>
+    <div className="col1of3">
+      <div className="pls">
+        Gruppe hinzufügen:{' '}
+        <AutocompleteAdder
+          type="Groups"
+          searchParams={{ scope: 'permissions' }}
+          onSelect={onAdd}
+          currentValues={currentGroups}
+        />
+      </div>
+    </div>
+    <div className="col1of3">
+      <div className="pls">
+        API-Client hinzufügen:{' '}
+        <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
+      </div>
+    </div>
+  </div>
 )
 
 const SaveBusySignal = () => (
