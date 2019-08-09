@@ -20,6 +20,7 @@ import I18nTranslate from '../../../lib/i18n-translate'
 let AutoComplete = false // client-side only!
 
 // const fakeCallback = (a, b, c) => console.log([a, b, c]) // eslint-disable-line
+const DEBUG_STATE = false // set to true when developing or debugging forms with state!
 
 // TODO: move to translations.csv
 const UI_TXT = {
@@ -85,6 +86,7 @@ class WorkflowEdit extends React.Component {
       'onSaveMetadata'
     ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
   }
+
   onToggleEditPermissions(event) {
     event.preventDefault()
     // NOTE: Date instead of "true" because it's used as React-`key` for the "edit session",
@@ -163,8 +165,7 @@ class WorkflowEdit extends React.Component {
           {...state}
           {...actions}
         />
-        <hr />
-        <pre className="mas pam code">{JSON.stringify({ state, props }, 0, 2)}</pre>
+        {!!DEBUG_STATE && <ShowJSONData data={{ state, props }} />}
       </div>
     )
   }
@@ -212,7 +213,6 @@ const WorkflowEditor = ({
 
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
-              {/*<DummySetThumb />*/}
               {f.map(get.associated_collections, (collection, i) => (
                 <ResourceThumbnail get={collection} key={i} />
               ))}
@@ -452,8 +452,7 @@ class MetadataEditor extends React.Component {
             </button>
           </div>
         </form>
-        <hr />
-        <pre className="mas pam code">{JSON.stringify({ state }, 0, 2)}</pre>
+        {!!DEBUG_STATE && <ShowJSONData data={{ state, props }} />}
       </div>
     )
   }
@@ -557,8 +556,7 @@ class PermissionsEditor extends React.Component {
             </button>
           </div>
         </form>
-        <hr />
-        <pre className="mas pam code">{JSON.stringify({ state }, 0, 2)}</pre>
+        {!!DEBUG_STATE && <ShowJSONData data={{ state, props }} />}
       </div>
     )
   }
@@ -622,6 +620,13 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) =
 const SaveBusySignal = () => (
   <div className="pal" style={{ textAlign: 'center' }}>
     {'Saving…'}
+  </div>
+)
+
+const ShowJSONData = ({ data }) => (
+  <div>
+    <hr />
+    <pre className="mas pam code">{JSON.stringify(data, 0, 2)}</pre>
   </div>
 )
 
