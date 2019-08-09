@@ -72,7 +72,6 @@ module Modules
       def add_to_collection(media_entry, collection_id)
         unless collection_id.blank?
           if collection = Collection.find_by_id(collection_id)
-            make_media_entry_valid_as_tmp_workaround(collection, media_entry)
             collection.media_entries << media_entry
           else
             flash[:warning] = 'The collection does not exist!' # TODO: i18n!
@@ -105,15 +104,6 @@ module Modules
 
         if usage_meta_key && usage_text
           create_meta_datum!(media_entry, usage_meta_key.id, usage_text)
-        end
-      end
-
-      def make_media_entry_valid_as_tmp_workaround(collection, media_entry)
-        unless collection.workflow.nil?
-          auth_authorize collection.workflow, :add_resource?
-          create_meta_datum!(media_entry, 'madek_core:title', Faker::Name.name)
-          create_meta_datum!(media_entry, 'madek_core:copyright_notice', 'all rights reserved.')
-          media_entry.update!(is_published: true)
         end
       end
 
