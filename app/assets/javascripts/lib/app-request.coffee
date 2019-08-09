@@ -61,7 +61,8 @@ module.exports = (config, callback) ->
       err = new Error(msg)
 
     # handle JSON from response
-    if (!err && f.includes(res.headers['content-type'], 'application/json'))
+    bodyIsStringAndShouldBeJSON = f.isString(body) && f.includes(res.headers['content-type'], 'application/json')
+    if (!err && bodyIsStringAndShouldBeJSON)
       try
         body = JSON.parse(body)
       catch JSONerror
