@@ -75,6 +75,9 @@ class WorkflowEdit extends React.Component {
       isEditingMetadata: false,
       isSavingMetadata: false,
       metaDataUpdateError: null,
+      isEditingName: false,
+      isSavingName: false,
+      nameUpdateError: null,
       commonPermissions: props.get.common_settings.permissions,
       commonMetadata: props.get.common_settings.meta_data
     }
@@ -83,7 +86,9 @@ class WorkflowEdit extends React.Component {
       'onToggleEditPermissions',
       'onSavePermissions',
       'onToggleEditMetadata',
-      'onSaveMetadata'
+      'onSaveMetadata',
+      'onToggleEditName',
+      'onSaveName'
     ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
   }
 
@@ -155,6 +160,30 @@ class WorkflowEdit extends React.Component {
     })
   }
 
+  onToggleEditName(event) {
+    event.preventDefault()
+    this.setState(cur => ({ isEditingName: cur.isEditingName ? false : Date.now() }))
+  }
+  onSaveName(name) {
+    const action = f.get(this, 'props.get.actions.update')
+    if (!action) throw new Error()
+    const finalState = { isSavingName: false, isEditingName: false }
+    this.setState({ isEditingName: true })
+
+    // tranform form data into what is sent to server:
+    const body = { workflow: { name } }
+
+    appRequest({ url: action.url, method: action.method, json: body }, (err, res) => {
+      if (err) {
+        console.error(err) // eslint-disable-line no-console
+        alert('ERROR! ' + JSON.stringify(err))
+        return this.setState({ finalState, metaDataUpdateError: err })
+      }
+      console.log({ res }) // eslint-disable-line no-console
+      this.setState({ ...finalState, name: f.get(res, 'body.name') })
+    })
+  }
+
   render({ props, state, actions } = this) {
     const { name, status, workflow_owners } = props.get
 
@@ -189,7 +218,12 @@ const WorkflowEditor = ({
   onToggleEditMetadata,
   isEditingMetadata,
   isSavingMetadata,
-  onSaveMetadata
+  onSaveMetadata,
+
+  onToggleEditName,
+  isEditingName,
+  isSavingName,
+  onSaveName
 }) => {
   const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
   const headStyle = { lineHeight: '1.34' }
@@ -198,9 +232,21 @@ const WorkflowEditor = ({
     <section className="ui-container bright bordered rounded mas pam">
       <header>
         <span style={supHeadStyle}>{t('feature_title')}</span>
-        <h1 className="title-l" style={headStyle}>
-          {name}
-        </h1>
+        {!isEditingName ? (
+          <h1 className="title-l" style={headStyle}>
+            {name}
+            {'  '}
+            <EditButton onClick={onToggleEditName} />
+          </h1>
+        ) : (
+          <NameEditor
+            key={isEditingName}
+            name={name}
+            onSave={onSaveName}
+            isSaving={isSavingName}
+            onCancel={onToggleEditName}
+          />
+        )}
       </header>
 
       <div>
@@ -546,6 +592,54 @@ class PermissionsEditor extends React.Component {
               />
             </li>
           </ul>
+
+          <div className="pts pbs">
+            <button type="submit" className="button primary-button">
+              SAVE
+            </button>{' '}
+            <button type="button" className="button" onClick={onCancel}>
+              CANCEL
+            </button>
+          </div>
+        </form>
+        {!!DEBUG_STATE && <ShowJSONData data={{ state, props }} />}
+      </div>
+    )
+  }
+}
+
+class NameEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { name: this.props.name }
+    this.onSetName = this.onSetName.bind(this)
+  }
+
+  onSetName({ target }) {
+    this.setState({ name: target.value })
+  }
+
+  render({ props, state } = this) {
+    const { onSave, onCancel, isSaving } = props
+    // like .title-l class:
+    const inputStyle = { fontSize: '17px', fontWeight: '700' }
+
+    return (
+      <div className="pts">
+        {!!isSaving && <SaveBusySignal />}
+        <form
+          className={isSaving ? 'hidden' : null}
+          onSubmit={e => {
+            e.preventDefault()
+            onSave(this.state)
+          }}>
+          <input
+            type="text"
+            className="block"
+            value={state.name}
+            onChange={this.onSetName}
+            style={inputStyle}
+          />
 
           <div className="pts pbs">
             <button type="submit" className="button primary-button">
