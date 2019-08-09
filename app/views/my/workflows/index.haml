@@ -2,7 +2,7 @@
   content_for(:page_header) do
     component('page-header',
               text: 'My Workflows',
-              icon: '<i class="fa fa-flask"></i>'.html_safe,
+              icon: capture_haml { haml_tag('i.fa.fa-flask') },
               actions: [
                 component('button.primary', link: new_my_workflow_path,
                                             text: 'New workflow')
