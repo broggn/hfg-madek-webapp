@@ -46,6 +46,10 @@ const UI_TXT = {
   common_settings_permissions_write: { de: 'Schreib- und Leserechte', en: 'Read and write rights' },
   common_settings_permissions_read: { de: 'Nur Leserechte', en: 'Only reading rights' },
   common_settings_permissions_read_public: { de: 'Öffentlicher Zugriff', en: 'Public access' },
+  common_settings_permissions_select_user: { de: 'Nutzer auswählen', en: 'Select user' },
+  common_settings_permissions_add_user: { de: 'Nutzer hinzufügen', en: 'Add user' },
+  common_settings_permissions_add_group: { de: 'Gruppe hinzufügen', en: 'Add group' },
+  common_settings_permissions_add_api_client: { de: 'API-Client hinzufügen', en: 'Add API-Client' },
   common_settings_metadata_title: { de: 'MetaDaten', en: 'MetaData' },
 
   actions_back: { de: 'Zurück', en: 'Go back' },
@@ -105,16 +109,24 @@ class WorkflowEdit extends React.Component {
     const finalState = { isSavingPermissions: false, isEditingPermissions: false }
     this.setState({ isSavingPermissions: true })
 
+    function prepareData(obj) {
+      const { uuid, type } = obj;
+      return { uuid, type };
+    }
+
     // tranform form data into what is sent to server:
     const body = {
       workflow: {
         common_permissions: {
-          read: f.map(commonPermissions.read, 'uuid'),
-          write: f.map(commonPermissions.write, 'uuid'),
+          responsible: f.get(commonPermissions, 'responsible.uuid'),
+          read: f.map(commonPermissions.read, prepareData),
+          write: f.map(commonPermissions.write, prepareData),
           read_public: commonPermissions.read_public
         }
       }
     }
+
+    console.log('body', body)
 
     appRequest({ url: action.url, method: action.method, json: body }, (err, res) => {
       if (err) {
@@ -141,7 +153,7 @@ class WorkflowEdit extends React.Component {
     // tranform form data into what is sent to server:
     const body = {
       workflow: {
-        common_metadata: f.map(commonMetadata, md => ({
+        common_meta_data: f.map(commonMetadata, md => ({
           meta_key_id: md.meta_key.uuid,
           value: md.value
         }))
@@ -510,6 +522,7 @@ class PermissionsEditor extends React.Component {
     this.state = { ...this.props.commonPermissions }
     AutoComplete = AutoComplete || require('../../lib/autocomplete.cjsx')
     this.onSetResponsible = this.onSetResponsible.bind(this)
+    this.onRemoveResponsible = this.onRemoveResponsible.bind(this)
     this.onTogglePublicRead = this.onTogglePublicRead.bind(this)
     this.onAddPermissionEntity = this.onAddPermissionEntity.bind(this)
     this.onRemovePermissionEntity = this.onRemovePermissionEntity.bind(this)
@@ -517,6 +530,10 @@ class PermissionsEditor extends React.Component {
 
   onSetResponsible(obj) {
     this.setState({ responsible: obj })
+  }
+
+  onRemoveResponsible() {
+    this.setState({ responsible: null })
   }
 
   onTogglePublicRead() {
@@ -546,10 +563,16 @@ class PermissionsEditor extends React.Component {
           <ul>
             <li>
               <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
-              <UI.TagCloud mod="person" mods="small inline" list={labelize([state.responsible])} />
+              <UI.TagCloud
+                mod="person"
+                mods="small
+                inline"
+                list={labelize([state.responsible], {
+                  onDelete: this.onRemoveResponsible
+                })} />
               <div className="row">
                 <div className="col1of3">
-                  Nutzer auswählen:{' '}
+                  {t('common_settings_permissions_select_user')}:{' '}
                   <AutocompleteAdder
                     type="Users"
                     onSelect={this.onSetResponsible}
@@ -577,8 +600,13 @@ class PermissionsEditor extends React.Component {
                 {t('common_settings_permissions_read')}
                 {': '}
               </span>
-              <UI.TagCloud mod="person" mods="small inline" list={labelize(state.read)} />
-              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('write')} />
+              <UI.TagCloud
+                mod="person"
+                mods="small inline"
+                list={labelize(state.read, {
+                  onDelete: f.curry(this.onRemovePermissionEntity)('read')
+                })} />
+              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('read')} />
             </li>
             <li>
               <span className="title-s">
@@ -687,13 +715,13 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) =
   <div className="row pts pbm">
     <div className="col1of3">
       <div className="">
-        Nutzer hinzufügen:{' '}
+        {t('common_settings_permissions_add_user')}:{' '}
         <AutocompleteAdder type="Users" onSelect={onAdd} currentValues={currentUsers} />
       </div>
     </div>
     <div className="col1of3">
       <div className="pls">
-        Gruppe hinzufügen:{' '}
+        {t('common_settings_permissions_add_group')}:{' '}
         <AutocompleteAdder
           type="Groups"
           searchParams={{ scope: 'permissions' }}
@@ -704,7 +732,7 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) =
     </div>
     <div className="col1of3">
       <div className="pls">
-        API-Client hinzufügen:{' '}
+        {t('common_settings_permissions_add_api_client')}:{' '}
         <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
       </div>
     </div>

@@ -37,10 +37,14 @@ module Presenters
             case permission
             when 'responsible'
               presenterify(User.find(value))
-            when 'write'
-              presenterify(Group.where(id: value).to_a)
-            when 'read'
-              presenterify(ApiClient.where(id: value).to_a)
+            when 'write', 'read'
+              presenterify(
+                value
+                  .group_by { |v| v['type'] }
+                  .map do |class_name, values|
+                    class_name.constantize.where(id: values.map { |v| v['uuid'] } )
+                  end.flatten
+              )
             when 'read_public'
               value
             end
@@ -52,7 +56,11 @@ module Presenters
         @app_resource.configuration['common_meta_data'].map do |md|
           binding.pry unless md['meta_key_id']
           # build something like MetaDatumEdit presenter, but from plain JSON
-          mk = Presenters::MetaKeys::MetaKeyEdit.new(MetaKey.find(md['meta_key_id']))
+          begin
+            mk = Presenters::MetaKeys::MetaKeyEdit.new(MetaKey.find(md['meta_key_id']))
+          rescue ActiveRecord::RecordNotFound
+            next
+          end
           { meta_key: mk, value: md['value'] }
         end
       end
@@ -63,7 +71,7 @@ module Presenters
         case obj
         when User
           Presenters::Users::UserIndex.new(obj)
-        when Group
+        when Group, InstitutionalGroup
           Presenters::Groups::GroupIndex.new(obj)
         when ApiClient
           Presenters::ApiClients::ApiClientIndex.new(obj)
