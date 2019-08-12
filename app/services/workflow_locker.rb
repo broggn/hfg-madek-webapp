@@ -26,8 +26,8 @@ class WorkflowLocker
     @workflow.configuration
   end
 
-  def resource_permissions(resource, type)
-    raise ArgumentError, 'type must be a Symbol' unless type.is_a?(Symbol)
+  def resource_permissions(resource, scope)
+    raise ArgumentError, 'scope must be a Symbol' unless scope.is_a?(Symbol)
 
     available_permissions =
       case resource
@@ -44,10 +44,10 @@ class WorkflowLocker
       end
 
     number_of_applicable_permissions = { # [_if_collection_, _if_media_entry_]
-      user: [2, 3],
-      group: [2, 3],
-      api_client: [1, 1]
-    }.fetch(type)[index]
+      responsible: [2, 3],
+      write: [2, 3],
+      read: [1, 1]
+    }.fetch(scope)[index]
 
     {}.tap do |result|
       available_permissions.first(number_of_applicable_permissions).map do |perm_name|
@@ -56,41 +56,54 @@ class WorkflowLocker
     end
   end
 
-  def user_permissions_params(resource)
-    [
-      { user_id: configuration['common_permissions']['responsible'] }
-        .merge(resource_permissions(resource, :user))
-    ]
-  end
+  def user_permissions_params(resource, scope)
+    users =
+      case scope
+      when :responsible
+        Array.wrap(configuration['common_permissions'][scope.to_s])
+      else
+        configuration['common_permissions'][scope.to_s].select { |o| o['type'] == 'User' }
+      end
 
-  def update_user_permissions!(resource) # key: responsible
-    resource.user_permissions.destroy_all
-    user_permissions_params(resource)
-      .each { |p| resource.user_permissions.create! p }
-  end
-
-  def group_permissions_params(resource)
-    configuration['common_permissions']['write'].map do |group_id|
-      { group_id: group_id }
-        .merge(resource_permissions(resource, :group))
+    users.map do |u|
+      { user_id: u.is_a?(Hash) ? u.fetch('uuid') : u }
+        .merge(resource_permissions(resource, scope))
     end
   end
 
-  def update_group_permissions!(resource) # key: responsible
-    resource.group_permissions.destroy_all
-    group_permissions_params(resource)
+  def update_responsible!(resource)
+    user_permissions_params(resource, :responsible)
+      .each { |p| resource.user_permissions.create! p }
+  end
+
+  def group_permissions_params(resource, scope)
+    configuration['common_permissions'][scope.to_s]
+      .select { |o| ['Group', 'InstitutionalGroup'].include?(o['type']) }
+      .map do |g|
+        { group_id: g.fetch('uuid') }
+          .merge(resource_permissions(resource, scope))
+    end
+  end
+
+  def update_write_permissions!(resource, scope = :write)
+    user_permissions_params(resource, scope)
+      .each { |p| resource.user_permissions.create! p }
+    group_permissions_params(resource, scope)
       .each { |p| resource.group_permissions.create! p }
   end
 
   def api_client_permissions_params(resource)
-    configuration['common_permissions']['read'].map do |api_client_id|
-      { api_client_id: api_client_id }
-        .merge(resource_permissions(resource, :api_client))
+    configuration['common_permissions']['read']
+      .select { |o| o['type'] == 'ApiClient' }
+      .map do |api_client|
+        { api_client_id: api_client.fetch('uuid') }
+          .merge(resource_permissions(resource, :read))
     end
   end
 
-  def update_api_client_permissions!(resource) # key: responsible
-    resource.api_client_permissions.destroy_all
+  def update_read_permissions!(resource)
+    update_write_permissions!(resource, :read)
+
     api_client_permissions_params(resource)
       .each { |p| resource.api_client_permissions.create! p }
   end
@@ -108,19 +121,28 @@ class WorkflowLocker
     end
   end
 
+  def destroy_all_permissions(resource)
+    resource.user_permissions.destroy_all
+    resource.group_permissions.destroy_all
+    resource.api_client_permissions.destroy_all
+  end
+
   def nested_resources
     @workflow.master_collection.child_media_resources
   end
 
   def apply_common_permissions
-    update_user_permissions!(@workflow.master_collection)
-    update_group_permissions!(@workflow.master_collection)
-    update_api_client_permissions!(@workflow.master_collection)
+    destroy_all_permissions(@workflow.master_collection)
+    update_responsible!(@workflow.master_collection)
+    update_write_permissions!(@workflow.master_collection)
+    update_read_permissions!(@workflow.master_collection)
     update_public_permissions!(@workflow.master_collection)
+
     nested_resources.each do |resource|
-      update_user_permissions!(resource.cast_to_type)
-      update_group_permissions!(resource.cast_to_type)
-      update_api_client_permissions!(resource.cast_to_type)
+      destroy_all_permissions(resource.cast_to_type)
+      update_responsible!(resource.cast_to_type)
+      update_write_permissions!(resource.cast_to_type)
+      update_read_permissions!(resource.cast_to_type)
       update_public_permissions!(resource.cast_to_type)
     end
   end
