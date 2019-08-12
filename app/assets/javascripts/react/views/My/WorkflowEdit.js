@@ -237,6 +237,7 @@ const WorkflowEditor = ({
 }) => {
   const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
   const headStyle = { lineHeight: '1.34' }
+  const isEditable = status == WORKFLOW_STATES.IN_PROGRESS
 
   return (
     <section className="ui-container bright bordered rounded mas pam">
@@ -246,7 +247,7 @@ const WorkflowEditor = ({
           <h1 className="title-l" style={headStyle}>
             {name}
             {'  '}
-            <EditButton onClick={onToggleEditName} />
+            <EditButton onClick={onToggleEditName} isEditable={isEditable} />
           </h1>
         ) : (
           <NameEditor
@@ -274,14 +275,16 @@ const WorkflowEditor = ({
               ))}
             </div>
 
-            <div className="button-group small mas">
-              <a className="tertiary-button" href={get.actions.upload.url}>
-                <span>
-                  <i className="icon-upload"></i>
-                </span>{' '}
-                {t('associated_collections_upload')}
-              </a>
-            </div>
+            {isEditable && (
+              <div className="button-group small mas">
+                <a className="tertiary-button" href={get.actions.upload.url}>
+                  <span>
+                    <i className="icon-upload"></i>
+                  </span>{' '}
+                  {t('associated_collections_upload')}
+                </a>
+              </div>)
+            }
           </div>
         </SubSection>
 
@@ -303,7 +306,7 @@ const WorkflowEditor = ({
           <h3 className="title-s mts">
             {t('common_settings_permissions_title')}
             {'  '}
-            {!isEditingPermissions && <EditButton onClick={onToggleEditPermissions} />}
+            {!isEditingPermissions && <EditButton onClick={onToggleEditPermissions} isEditable={isEditable} />}
           </h3>
 
           {isEditingPermissions ? (
@@ -365,7 +368,7 @@ const WorkflowEditor = ({
           <h3 className="title-s mts">
             {t('common_settings_metadata_title')}
             {'  '}
-            {!isEditingPermissions && <EditButton onClick={onToggleEditMetadata} />}
+            {!isEditingPermissions && <EditButton onClick={onToggleEditMetadata} isEditable={isEditable} />}
           </h3>
 
           {isEditingMetadata ? (
@@ -687,14 +690,17 @@ const Explainer = ({ children }) => (
   </p>
 )
 
-const EditButton = ({ onClick, icon = 'icon-pen', ...props }) => (
-  <button
-    {...props}
-    onClick={onClick}
-    style={{ background: 'transparent', WebkitAppearance: 'none' }}>
-    <small className="link">{!f.isEmpty(icon) && <i className={icon} />}</small>
-  </button>
-)
+const EditButton = ({ onClick, icon = 'icon-pen', isEditable, ...props }) => {
+  if(!isEditable) { return null }
+  return (
+    <button
+      {...props}
+      onClick={onClick}
+      style={{ background: 'transparent', WebkitAppearance: 'none' }}>
+      <small className="link">{!f.isEmpty(icon) && <i className={icon} />}</small>
+    </button>
+  )
+}
 
 const AutocompleteAdder = ({ type, currentValues, ...props }) => (
   <span style={{ position: 'relative' }}>
