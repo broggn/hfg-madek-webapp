@@ -57,23 +57,18 @@ class WorkflowLocker
   end
 
   def user_permissions_params(resource, scope)
-    users =
-      case scope
-      when :responsible
-        Array.wrap(configuration['common_permissions'][scope.to_s])
-      else
-        configuration['common_permissions'][scope.to_s].select { |o| o['type'] == 'User' }
-      end
-
-    users.map do |u|
-      { user_id: u.is_a?(Hash) ? u.fetch('uuid') : u }
-        .merge(resource_permissions(resource, scope))
+    configuration['common_permissions'][scope.to_s]
+      .select { |o| o['type'] == 'User' }
+      .map do |u|
+        { user_id: u.is_a?(Hash) ? u.fetch('uuid') : u }
+          .merge(resource_permissions(resource, scope))
     end
   end
 
   def update_responsible!(resource)
-    user_permissions_params(resource, :responsible)
-      .each { |p| resource.user_permissions.create! p }
+    if user = User.find_by(id: configuration['common_permissions']['responsible'])
+      resource.update!(responsible_user_id: user.id)
+    end
   end
 
   def group_permissions_params(resource, scope)
