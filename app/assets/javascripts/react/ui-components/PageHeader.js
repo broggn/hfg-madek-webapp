@@ -4,7 +4,11 @@ import cx from 'classnames'
 import Link from './Link.cjsx'
 import Icon from './Icon.cjsx'
 
+const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
+
 const WorkflowBanner = ({ workflow, icon }) => {
+  if(workflow.status === WORKFLOW_STATES.FINISHED) { return null }
+
   const linkStyle = {
     color: '#adc671',
     textDecoration: 'underline'
@@ -17,6 +21,7 @@ const WorkflowBanner = ({ workflow, icon }) => {
     // position: 'relative',
     // top: '-7px'
   }
+
   return (
     <div style={bannerStyle} className="ui-alert XXXsuccess ui-container inverted paragraph-l mbm">
       <Icon i="madek-workflow" /> This {icon === 'set' ? 'Set' : 'Media Entry'}
