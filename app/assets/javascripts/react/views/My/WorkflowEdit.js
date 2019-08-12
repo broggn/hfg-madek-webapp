@@ -126,8 +126,6 @@ class WorkflowEdit extends React.Component {
       }
     }
 
-    console.log('body', body)
-
     appRequest({ url: action.url, method: action.method, json: body }, (err, res) => {
       if (err) {
         console.error(err) // eslint-disable-line no-console
@@ -565,8 +563,7 @@ class PermissionsEditor extends React.Component {
               <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
               <UI.TagCloud
                 mod="person"
-                mods="small
-                inline"
+                mods="small inline"
                 list={labelize([state.responsible], {
                   onDelete: this.onRemoveResponsible
                 })} />
@@ -593,7 +590,7 @@ class PermissionsEditor extends React.Component {
                   onDelete: f.curry(this.onRemovePermissionEntity)('write')
                 })}
               />
-              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('write')} />
+              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('write')} permissionsScope='write' />
             </li>
             <li>
               <span className="title-s">
@@ -606,7 +603,7 @@ class PermissionsEditor extends React.Component {
                 list={labelize(state.read, {
                   onDelete: f.curry(this.onRemovePermissionEntity)('read')
                 })} />
-              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('read')} />
+              <MultiAdder onAdd={f.curry(this.onAddPermissionEntity)('read')} permissionsScope='read' />
             </li>
             <li>
               <span className="title-s">
@@ -711,7 +708,7 @@ const AutocompleteAdder = ({ type, currentValues, ...props }) => (
   </span>
 )
 
-const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) => (
+const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd , permissionsScope }) => (
   <div className="row pts pbm">
     <div className="col1of3">
       <div className="">
@@ -730,12 +727,14 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd }) =
         />
       </div>
     </div>
-    <div className="col1of3">
-      <div className="pls">
-        {t('common_settings_permissions_add_api_client')}:{' '}
-        <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
+    { permissionsScope === 'read' &&
+      <div className="col1of3">
+        <div className="pls">
+          {t('common_settings_permissions_add_api_client')}:{' '}
+          <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
+        </div>
       </div>
-    </div>
+    }
   </div>
 )
 
