@@ -6,7 +6,8 @@ class WorkflowCreator
 
   def call
     workflow = Workflow.new(@attrs)
-    workflow.user = @user
+    workflow.creator = @user
+    workflow.owners << @user
     workflow.collections << Collection.new(creator: @user,
                                            responsible_user: @user,
                                            is_master: true)

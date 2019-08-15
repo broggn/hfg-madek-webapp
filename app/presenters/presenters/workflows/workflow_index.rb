@@ -6,7 +6,7 @@ module Presenters
       end
 
       def list
-        Workflow.where(user: @user).map { |w| Presenters::Workflows::WorkflowCommon.new(w, @user) }
+        @user.workflows.map { |w| Presenters::Workflows::WorkflowCommon.new(w, @user) }
       end
     end
   end

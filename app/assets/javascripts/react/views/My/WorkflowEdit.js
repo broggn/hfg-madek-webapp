@@ -73,6 +73,9 @@ class WorkflowEdit extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      isEditingOwners: false,
+      isSavingOwners: false,
+      ownersUpdateError: null,
       isEditingPermissions: false,
       isSavingPermissions: false,
       permissionsUpdateError: null,
@@ -87,6 +90,8 @@ class WorkflowEdit extends React.Component {
     }
 
     this.actions = [
+      'onToggleEditOwners',
+      'onSaveOwners',
       'onToggleEditPermissions',
       'onSavePermissions',
       'onToggleEditMetadata',
@@ -94,6 +99,34 @@ class WorkflowEdit extends React.Component {
       'onToggleEditName',
       'onSaveName'
     ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
+  }
+
+  onToggleEditOwners(event) {
+    event.preventDefault()
+    this.setState(cur => ({ isEditingOwners: !cur.isEditingOwners }))
+  }
+  onSaveOwners(owners) {
+    const action = f.get(this, 'props.get.actions.update_owners')
+    if (!action) throw new Error()
+    const finalState = { isEditingOwners: false, isSavingOwners: false }
+    this.setState({ isSavingOwners: true })
+
+    const body = {
+      workflow: {
+        owners: f.map(owners, 'uuid')
+      }
+    }
+
+    appRequest({ url: action.url, method: action.method, json: body }, (err, res) => {
+      if (err) {
+        console.error(err) // eslint-disable-line no-console
+        alert('ERROR! ' + JSON.stringify(err))
+        return this.setState({ ...finalState, ownersUpdateError: err })
+      }
+      console.log({ res }) // eslint-disable-line no-console
+      const workflowOwners = f.get(res, 'body.workflow_owners')
+      this.setState({ ...finalState, workflowOwners })
+    })
   }
 
   onToggleEditPermissions(event) {
@@ -218,6 +251,11 @@ const WorkflowEditor = ({
 
   get, // FIXME: remove this, replace with named props
 
+  isEditingOwners,
+  onToggleEditOwners,
+  isSavingOwners,
+  onSaveOwners,
+
   commonPermissions,
   onToggleEditPermissions,
   isEditingPermissions,
@@ -292,8 +330,18 @@ const WorkflowEditor = ({
           <SubSection.Title tag="h2" className="title-m mts">
             {t('workflow_owners_title')}
           </SubSection.Title>
-
-          <UI.TagCloud mod="person" mods="small" list={labelize(workflow_owners)} />
+          {isEditable && <EditButton onClick={onToggleEditOwners} isEditable={isEditable} />}
+          {isEditingOwners ? (
+            <OwnersEditor
+              workflowOwners={workflow_owners}
+              onSave={onSaveOwners}
+              isSaving={isSavingOwners}
+              onCancel={onToggleEditOwners}
+              creator={get.creator}
+            />
+          ) : (
+            <UI.TagCloud mod="person" mods="small" list={labelize(workflow_owners)} />
+          )}
         </SubSection>
 
         <SubSection>
@@ -684,6 +732,60 @@ class NameEditor extends React.Component {
   }
 }
 
+class OwnersEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { owners: this.props.workflowOwners }
+    AutoComplete = AutoComplete || require('../../lib/autocomplete.cjsx')
+    this.onAddOwner = this.onAddOwner.bind(this)
+    this.onRemoveOwner = this.onRemoveOwner.bind(this)
+  }
+
+  onAddOwner(owner) {
+    this.setState(cur => ({ owners: f.uniq(cur.owners.concat(owner), 'uuid') }))
+  }
+
+  onRemoveOwner(owner) {
+    this.setState(cur => ({ owners: cur.owners.filter(item => item.uuid !== owner.uuid) }))
+  }
+
+  render({ props, state } = this) {
+    return (
+      <div>
+        {!!props.isSaving && <SaveBusySignal />}
+        <form onSubmit={(e) => { e.preventDefault(); props.onSave(state.owners) }}>
+          <UI.TagCloud
+            mod="person"
+            mods="small"
+            list={labelize(this.state.owners, {
+              onDelete: this.onRemoveOwner,
+              creatorId: props.creator.uuid
+            })}
+          />
+          <div className="row">
+            <div className="col1of3">
+              {t('common_settings_permissions_select_user')}:{' '}
+              <AutocompleteAdder
+                type="Users"
+                onSelect={this.onAddOwner}
+                valueFilter={({ uuid }) => f.includes(f.map(this.state.owners, 'uuid'), uuid) }
+              />
+            </div>
+          </div>
+          <div className="pts pbs">
+            <button type="submit" className="button primary-button">
+              SAVE
+            </button>{' '}
+            <button type="button" className="button" onClick={props.onCancel}>
+              CANCEL
+            </button>
+          </div>
+        </form>
+      </div>
+    )
+  }
+}
+
 const Explainer = ({ children }) => (
   <p className="paragraph-s mts measure-wide" style={{ fontStyle: 'italic' }}>
     {children}
@@ -702,17 +804,22 @@ const EditButton = ({ onClick, icon = 'icon-pen', isEditable, ...props }) => {
   )
 }
 
-const AutocompleteAdder = ({ type, currentValues, ...props }) => (
-  <span style={{ position: 'relative' }}>
-    <AutoComplete
-      className="block"
-      name="autocompleter"
-      {...props}
-      resourceType={type}
-      valueFilter={({ uuid }) => f.includes(f.map(currentValues, 'subject.uuid'), uuid)}
-    />
-  </span>
-)
+const AutocompleteAdder = ({ type, currentValues, ...props }) => {
+  const valueFilter = props.valueFilter || (
+    ({ uuid }) => f.includes(f.map(currentValues, 'subject.uuid'), uuid)
+  )
+  return (
+    <span style={{ position: 'relative' }}>
+      <AutoComplete
+        className="block"
+        name="autocompleter"
+        {...props}
+        resourceType={type}
+        valueFilter={valueFilter}
+      />
+    </span>
+  )
+}
 
 const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd , permissionsScope }) => (
   <div className="row pts pbm">
@@ -757,8 +864,13 @@ const ShowJSONData = ({ data }) => (
   </div>
 )
 
-const labelize = (resourceList, { withLink = false, onDelete } = {}) =>
-  f.map(f.compact(resourceList), (resource, i) => ({
+const labelize = (resourceList, { withLink = false, onDelete, creatorId = null } = {}) => {
+  function canDelete(resource) {
+    if(!creatorId) return true
+    return resource.uuid !== creatorId
+  }
+
+  return f.map(f.compact(resourceList), (resource, i) => ({
     key: `${resource.uuid}-${i}`,
     href: withLink ? resource.url : undefined,
     mod: resource.type.toLowerCase().replace(/.*group/, 'group'),
@@ -767,7 +879,7 @@ const labelize = (resourceList, { withLink = false, onDelete } = {}) =>
     children: (
       <span>
         {UI.resourceName(resource)}
-        {!!onDelete && (
+        {!!onDelete && canDelete(resource) && (
           <button
             className="multi-select-tag-remove"
             style={{ background: 'transparent' }}
@@ -780,5 +892,6 @@ const labelize = (resourceList, { withLink = false, onDelete } = {}) =>
       </span>
     )
   }))
+}
 
 const Let = ({ children, ...bindings }) => children(bindings)
