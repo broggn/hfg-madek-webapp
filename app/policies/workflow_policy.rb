@@ -1,6 +1,6 @@
 class WorkflowPolicy < DefaultPolicy
   def edit?
-    record.creator_id == user.id
+    creator? || owner?
   end
 
   def update?
@@ -8,9 +8,19 @@ class WorkflowPolicy < DefaultPolicy
   end
 
   def update_owners?
-    update?
+    creator? && record.is_active
   end
 
   alias_method :add_resource?, :update?
   alias_method :finish?, :update?
+
+  private
+
+  def creator?
+    record.creator_id == user.id
+  end
+
+  def owner?
+    record.owners.exists?(id: user.id)
+  end
 end
