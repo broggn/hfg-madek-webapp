@@ -67,8 +67,6 @@ const t = key => {
   return f.get(UI_TXT, [key, locale]) || I18nTranslate(key)
 }
 
-const WORKFLOW_STATES = { IN_PROGRESS: 'IN_PROGRESS', FINISHED: 'FINISHED' }
-
 class WorkflowEdit extends React.Component {
   constructor(props) {
     super(props)
@@ -275,7 +273,8 @@ const WorkflowEditor = ({
 }) => {
   const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
   const headStyle = { lineHeight: '1.34' }
-  const isEditable = status == WORKFLOW_STATES.IN_PROGRESS
+  const canEdit = get.permissions.can_edit
+  const canEditOwners = get.permissions.can_edit_owners
 
   return (
     <section className="ui-container bright bordered rounded mas pam">
@@ -285,7 +284,7 @@ const WorkflowEditor = ({
           <h1 className="title-l" style={headStyle}>
             {name}
             {'  '}
-            <EditButton onClick={onToggleEditName} isEditable={isEditable} />
+            {canEdit && <EditButton onClick={onToggleEditName} />}
           </h1>
         ) : (
           <NameEditor
@@ -313,7 +312,7 @@ const WorkflowEditor = ({
               ))}
             </div>
 
-            {isEditable && (
+            {canEdit && (
               <div className="button-group small mas">
                 <a className="tertiary-button" href={get.actions.upload.url}>
                   <span>
@@ -330,7 +329,7 @@ const WorkflowEditor = ({
           <SubSection.Title tag="h2" className="title-m mts">
             {t('workflow_owners_title')}
           </SubSection.Title>
-          {isEditable && <EditButton onClick={onToggleEditOwners} isEditable={isEditable} />}
+          {canEditOwners && <EditButton onClick={onToggleEditOwners} />}
           {isEditingOwners ? (
             <OwnersEditor
               workflowOwners={workflow_owners}
@@ -354,7 +353,7 @@ const WorkflowEditor = ({
           <h3 className="title-s mts">
             {t('common_settings_permissions_title')}
             {'  '}
-            {!isEditingPermissions && <EditButton onClick={onToggleEditPermissions} isEditable={isEditable} />}
+            {!isEditingPermissions && canEdit && <EditButton onClick={onToggleEditPermissions} />}
           </h3>
 
           {isEditingPermissions ? (
@@ -416,7 +415,7 @@ const WorkflowEditor = ({
           <h3 className="title-s mts">
             {t('common_settings_metadata_title')}
             {'  '}
-            {!isEditingPermissions && <EditButton onClick={onToggleEditMetadata} isEditable={isEditable} />}
+            {!isEditingPermissions && canEdit && <EditButton onClick={onToggleEditMetadata} />}
           </h3>
 
           {isEditingMetadata ? (
@@ -448,7 +447,7 @@ const WorkflowEditor = ({
           {t('actions_validate')}
         </button>
         */}
-        {status === WORKFLOW_STATES.IN_PROGRESS && (
+        {canEdit && (
           <RailsForm
             action={get.actions.finish.url}
             method={get.actions.finish.method}
@@ -792,8 +791,7 @@ const Explainer = ({ children }) => (
   </p>
 )
 
-const EditButton = ({ onClick, icon = 'icon-pen', isEditable, ...props }) => {
-  if(!isEditable) { return null }
+const EditButton = ({ onClick, icon = 'icon-pen', ...props }) => {
   return (
     <button
       {...props}

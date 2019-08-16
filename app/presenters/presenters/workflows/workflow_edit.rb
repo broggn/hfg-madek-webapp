@@ -25,6 +25,13 @@ module Presenters
         }.merge(super)
       end
 
+      def permissions
+        {
+          can_edit: policy.update?,
+          can_edit_owners: policy.update_owners?
+        }
+      end
+
       private
 
       def common_permissions
@@ -90,6 +97,10 @@ module Presenters
           binding.pry
           fail 'Unknown type?' + obj.to_s
         end
+      end
+
+      def policy
+        Pundit.policy!(@user, @app_resource)
       end
     end
   end
