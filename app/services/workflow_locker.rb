@@ -151,9 +151,9 @@ class WorkflowLocker
       resource.class.name.foreign_key => resource.id
     ).try(:destroy)
 
-    meta_datum_klass.create_with_user!(@workflow.user, {
+    meta_datum_klass.create_with_user!(@workflow.creator, {
       meta_key_id: meta_key_id,
-      created_by: @workflow.user,
+      created_by: @workflow.creator,
       value: \
         (if [MetaDatum::Text, MetaDatum::TextDate].include?(meta_datum_klass)
            value
