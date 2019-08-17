@@ -83,6 +83,7 @@ class WorkflowEdit extends React.Component {
       isEditingName: false,
       isSavingName: false,
       nameUpdateError: null,
+      workflowOwners: props.get.workflow_owners,
       commonPermissions: props.get.common_settings.permissions,
       commonMetadata: props.get.common_settings.meta_data
     }
@@ -226,12 +227,12 @@ class WorkflowEdit extends React.Component {
   }
 
   render({ props, state, actions } = this) {
-    const { name, status, workflow_owners } = props.get
+    const { name, status } = props.get
 
     return (
       <div>
         <WorkflowEditor
-          {...{ name, status, workflow_owners, authToken: props.authToken, get: props.get }}
+          {...{ name, status, authToken: props.authToken, get: props.get }}
           {...state}
           {...actions}
         />
@@ -244,11 +245,11 @@ class WorkflowEdit extends React.Component {
 const WorkflowEditor = ({
   name,
   status,
-  workflow_owners,
   authToken,
 
   get, // FIXME: remove this, replace with named props
 
+  workflowOwners,
   isEditingOwners,
   onToggleEditOwners,
   isSavingOwners,
@@ -332,14 +333,14 @@ const WorkflowEditor = ({
           {canEditOwners && <EditButton onClick={onToggleEditOwners} />}
           {isEditingOwners ? (
             <OwnersEditor
-              workflowOwners={workflow_owners}
+              workflowOwners={workflowOwners}
               onSave={onSaveOwners}
               isSaving={isSavingOwners}
               onCancel={onToggleEditOwners}
               creator={get.creator}
             />
           ) : (
-            <UI.TagCloud mod="person" mods="small" list={labelize(workflow_owners)} />
+            <UI.TagCloud mod="person" mods="small" list={labelize(workflowOwners)} />
           )}
         </SubSection>
 
