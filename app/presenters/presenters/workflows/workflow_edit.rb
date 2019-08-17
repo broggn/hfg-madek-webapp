@@ -27,8 +27,8 @@ module Presenters
 
       def permissions
         {
-          can_edit: policy.update?,
-          can_edit_owners: policy.update_owners?
+          can_edit: policy_for(@user).update?,
+          can_edit_owners: policy_for(@user).update_owners?
         }
       end
 
@@ -97,10 +97,6 @@ module Presenters
           binding.pry
           fail 'Unknown type?' + obj.to_s
         end
-      end
-
-      def policy
-        Pundit.policy!(@user, @app_resource)
       end
     end
   end
