@@ -59,8 +59,16 @@ class My::WorkflowsController < ApplicationController
   def finish
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
-    if WorkflowLocker.new(workflow).call
+    result = WorkflowLocker.new(workflow).call
+    if result == true
       redirect_to edit_my_workflow_path(workflow), notice: 'Workflow has been finished!'
+    else
+      errors = ["Workflow cannot be finished because of following errors:"]
+      result.each do |resource_title, messages|
+        errors << "#{resource_title}: #{messages.join(' ')}"
+      end
+      flash[:error] = errors.join("\n")
+      redirect_to edit_my_workflow_path(workflow)
     end
   end
 

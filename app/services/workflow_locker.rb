@@ -1,10 +1,13 @@
 class WorkflowLocker
+  class ValidationError < StandardError; end
+
   def initialize(object_or_id)
     @workflow = if object_or_id.is_a?(ApplicationRecord)
                   object_or_id
                 else
                   Workflow.find(object_or_id)
                 end
+    @errors = {}
   end
 
   def call
@@ -14,10 +17,13 @@ class WorkflowLocker
       @workflow.update!(is_active: false)
       apply_common_permissions
       apply_common_meta_data
+      validate!
       # raise ActiveRecord::Rollback
     end
 
     true
+  rescue ValidationError
+    @errors
   end
 
   private
@@ -120,6 +126,30 @@ class WorkflowLocker
     resource.user_permissions.destroy_all
     resource.group_permissions.destroy_all
     resource.api_client_permissions.destroy_all
+  end
+
+  def required_context_keys
+    @required_context_keys ||= (
+      app_settings = AppSetting.first
+      context = app_settings.contexts_for_entry_validation.first
+      context.context_keys.where(is_required: true)
+    )
+  end
+
+  def validate!
+    nested_resources.each do |nested_resource|
+      required_context_keys.each do |rck|
+        resource = nested_resource.cast_to_type
+        unless resource.meta_data.find_by(meta_key_id: rck.meta_key_id)
+          @errors[resource.title] ||= []
+          @errors[resource.title] << "#{rck.meta_key.labels['de']} is missing"
+        end
+      end
+    end
+
+    unless @errors.blank?
+      raise ValidationError
+    end
   end
 
   def nested_resources
