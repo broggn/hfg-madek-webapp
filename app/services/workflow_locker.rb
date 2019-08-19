@@ -17,7 +17,7 @@ class WorkflowLocker
       @workflow.update!(is_active: false)
       apply_common_permissions
       apply_common_meta_data
-      validate!
+      validate_and_publish!
       # raise ActiveRecord::Rollback
     end
 
@@ -136,14 +136,20 @@ class WorkflowLocker
     )
   end
 
-  def validate!
+  def validate_and_publish!
     nested_resources.each do |nested_resource|
+      resource = nested_resource.cast_to_type.reload
+      has_errors = false
       required_context_keys.each do |rck|
-        resource = nested_resource.cast_to_type
         unless resource.meta_data.find_by(meta_key_id: rck.meta_key_id)
+          has_errors = true
           @errors[resource.title] ||= []
           @errors[resource.title] << "#{rck.meta_key.labels['de']} is missing"
         end
+      end
+
+      if resource.is_a?(MediaEntry) && !has_errors
+        resource.update!(is_published: true)
       end
     end
 
