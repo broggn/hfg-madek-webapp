@@ -28,11 +28,11 @@ class CollectionPolicy < Shared::MediaResources::MediaResourcePolicy
   end
 
   def add_remove_collection?
-    update? and not accessed_by_workflow_owner?
+    update? or accessed_by_workflow_owner?
   end
 
   def select_collection?
-    logged_in? and show? and not accessed_by_workflow_owner?
+    logged_in? and show?
   end
 
   def share?
