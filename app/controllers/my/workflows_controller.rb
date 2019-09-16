@@ -83,7 +83,7 @@ class My::WorkflowsController < ApplicationController
       :name,
       { owner_ids: [] },
       common_permissions: [:responsible, { write: [:uuid, :type] }, { read: [:uuid, :type] }, :read_public],
-      common_meta_data: [:meta_key_id, { value: [] }]
+      common_meta_data: [:meta_key_id, { value: [:string, :uuid, :label, :type, :subtype, :term, :role_id, :isNew, :first_name, :last_name, :pseudonym] }]
     )
   end
 end

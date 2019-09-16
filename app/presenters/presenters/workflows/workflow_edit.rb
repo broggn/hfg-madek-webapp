@@ -56,14 +56,18 @@ module Presenters
         end.to_h
       end
 
-      def meta_data_value(value, type)
+      def meta_data_value(value, meta_key)
+        return [] unless value.present?
+        type = meta_key.meta_datum_object_type
         value.map do |val|
-          if UUIDTools::UUID_REGEXP =~ val
+          return '' if val.is_a?(Hash) && val.empty?
+          if string = val.fetch('string', nil)
+            string
+          elsif UUIDTools::UUID_REGEXP =~ val['uuid']
             klass = type.split('::').last
             "Presenters::#{klass}::#{klass.singularize}Index"
               .constantize
-              .new("#{klass.singularize}".constantize.find(val))
-            # Keyword.find(val)
+              .new("#{klass.singularize}".constantize.find(val['uuid']))
           else
             val
           end
@@ -75,11 +79,13 @@ module Presenters
           binding.pry unless md['meta_key_id']
           # build something like MetaDatumEdit presenter, but from plain JSON
           begin
-            mk = Presenters::MetaKeys::MetaKeyEdit.new(MetaKey.find(md['meta_key_id']))
+            meta_key = MetaKey.find(md['meta_key_id'])
+            mk = Presenters::MetaKeys::MetaKeyEdit.new(meta_key)
           rescue ActiveRecord::RecordNotFound
             next
           end
-          { meta_key: mk, value: md['value'] }
+
+          { meta_key: mk, value: meta_data_value(md['value'], meta_key) }
         end
       end
 

@@ -180,12 +180,36 @@ class WorkflowEdit extends React.Component {
     const finalState = { isSavingMetadata: false, isEditingMetadata: false }
     this.setState({ isSavingMetadata: true })
 
+    function prepareObj(value) {
+      console.log('value', value)
+      if (f.has(value, 'isNew')) {
+        return { ...value }
+      } else {
+        return { uuid: value.uuid }
+      }
+    }
+
+    function prepareValue(value) {
+      // if (value.isNew) {
+      //   console.log('new value', value)
+      //   return ({ type, term} = value)
+      // }
+
+      if (f.isString(value)) {
+        return { string: value }
+      } else if (f.isObject(value)) {
+        // const { uuid } = value
+        // return value
+        return prepareObj(value)
+      }
+    }
+
     // tranform form data into what is sent to server:
     const body = {
       workflow: {
         common_meta_data: f.map(commonMetadata, md => ({
           meta_key_id: md.meta_key.uuid,
-          value: md.value
+          value: f.map(md.value, prepareValue)
         }))
       }
     }
@@ -429,11 +453,17 @@ const WorkflowEditor = ({
             />
           ) : (
             <ul>
-              {commonMetadata.map(({ meta_key, value }) => (
-                <li key={meta_key.uuid}>
-                  <b>{meta_key.label}:</b> {value}
+              {commonMetadata.map(({ meta_key, value }) => {
+                return <li key={meta_key.uuid}>
+                  <b>{meta_key.label}:</b>
+                  {' '}
+                  {f.every(value, f.isObject) ? (
+                    <UI.TagCloud mod="person" mods="small inline" list={labelize(value)} />
+                  ) : (
+                    value
+                  )}
                 </li>
-              ))}
+              })}
             </ul>
           )}
         </SubSection>
@@ -526,7 +556,7 @@ class MetadataEditor extends React.Component {
                       id={inputId}
                       metaKey={md.meta_key}
                       // NOTE: with plural values this array around value should be removed
-                      model={{ values: [md.value] }}
+                      model={{ values: md.value }}
                       name={name}
                       onChange={val => this.onChangeMdValue(name, val)}
                     />
@@ -869,10 +899,18 @@ const labelize = (resourceList, { withLink = false, onDelete, creatorId = null }
     return resource.uuid !== creatorId
   }
 
+  function mod(resource) {
+    if (resource.type && /group/.test(resource.type)) {
+      return resource.type.toLowerCase().replace(/.*group/, 'group')
+    } else {
+      return resource.type
+    }
+  }
+
   return f.map(f.compact(resourceList), (resource, i) => ({
     key: `${resource.uuid}-${i}`,
     href: withLink ? resource.url : undefined,
-    mod: resource.type.toLowerCase().replace(/.*group/, 'group'),
+    mod: mod(resource),
     mods: 'not-interactive',
     tag: 'span',
     children: (
