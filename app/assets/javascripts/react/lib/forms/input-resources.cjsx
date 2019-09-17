@@ -88,6 +88,9 @@ module.exports = React.createClass
       selectedRole: @defaultRole()
     )
 
+    if @props.onChange
+      @props.onChange(newValues)
+
   _onNewKeyword: (term)->
     @_onItemAdd({ type: 'Keyword', label: term, isNew: true, term: term })
 
@@ -145,6 +148,9 @@ module.exports = React.createClass
     newValues = @state.values.slice(0)
     delete newValues[itemIndex].role
     @setState(values: newValues)
+
+    if @props.onChange
+      @props.onChange(newValues)
 
   _onRoleCancel: () ->
     @setState(

@@ -181,25 +181,19 @@ class WorkflowEdit extends React.Component {
     this.setState({ isSavingMetadata: true })
 
     function prepareObj(value) {
-      console.log('value', value)
       if (f.has(value, 'isNew')) {
-        return { ...value }
+        return value
+      } else if (f.has(value, 'role')) {
+        return { uuid: value.uuid, role: { uuid: value.role.id } }
       } else {
         return { uuid: value.uuid }
       }
     }
 
     function prepareValue(value) {
-      // if (value.isNew) {
-      //   console.log('new value', value)
-      //   return ({ type, term} = value)
-      // }
-
       if (f.isString(value)) {
         return { string: value }
       } else if (f.isObject(value)) {
-        // const { uuid } = value
-        // return value
         return prepareObj(value)
       }
     }

@@ -61,13 +61,21 @@ module Presenters
         type = meta_key.meta_datum_object_type
         value.map do |val|
           return '' if val.is_a?(Hash) && val.empty?
-          if string = val.fetch('string', nil)
+          if string = val.fetch('string', false)
             string
           elsif UUIDTools::UUID_REGEXP =~ val['uuid']
             klass = type.split('::').last
-            "Presenters::#{klass}::#{klass.singularize}Index"
-              .constantize
-              .new("#{klass.singularize}".constantize.find(val['uuid']))
+            if klass == 'Roles'
+              md_role = MetaDatum::Role.new(
+                person: Person.find(val['uuid']),
+                role: Role.find_by(id: val.dig('role', 'uuid'))
+              )
+              Presenters::People::PersonIndexForRoles.new(md_role)
+            else
+              "Presenters::#{klass}::#{klass.singularize}Index"
+                .constantize
+                .new("#{klass.singularize}".constantize.find(val['uuid']))
+            end
           else
             val
           end

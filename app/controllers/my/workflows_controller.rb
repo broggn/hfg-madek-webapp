@@ -78,12 +78,28 @@ class My::WorkflowsController < ApplicationController
     Presenters::Workflows::WorkflowEdit.new(workflow, current_user)
   end
 
+  def meta_data_params
+    [
+      :string,
+      :uuid,
+      :isNew,
+      :label,
+      :type,
+      :subtype,
+      :term,
+      :first_name,
+      :last_name,
+      :pseudonym,
+      { role: [ :uuid ] }
+    ]
+  end
+
   def workflow_params
     params.require(:workflow).permit(
       :name,
       { owner_ids: [] },
       common_permissions: [:responsible, { write: [:uuid, :type] }, { read: [:uuid, :type] }, :read_public],
-      common_meta_data: [:meta_key_id, { value: [:string, :uuid, :label, :type, :subtype, :term, :role_id, :isNew, :first_name, :last_name, :pseudonym] }]
+      common_meta_data: [:meta_key_id, { value: meta_data_params }]
     )
   end
 end
