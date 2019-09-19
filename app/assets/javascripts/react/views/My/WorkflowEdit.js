@@ -181,7 +181,9 @@ class WorkflowEdit extends React.Component {
     this.setState({ isSavingMetadata: true })
 
     function prepareObj(value) {
-      if (f.has(value, 'isNew')) {
+      if (f.has(value, 'string')) {
+        return value
+      } else if (f.has(value, 'isNew')) {
         return value
       } else if (f.has(value, 'role')) {
         return { uuid: value.uuid, role: { uuid: value.role.id } }
@@ -451,10 +453,10 @@ const WorkflowEditor = ({
                 return <li key={meta_key.uuid}>
                   <b>{meta_key.label}:</b>
                   {' '}
-                  {f.every(value, f.isObject) ? (
-                    <UI.TagCloud mod="person" mods="small inline" list={labelize(value)} />
+                  {f.has(value, '0.string') ? (
+                    value[0].string
                   ) : (
-                    value
+                    <UI.TagCloud mod="person" mods="small inline" list={labelize(value)} />
                   )}
                 </li>
               })}
@@ -520,6 +522,14 @@ class MetadataEditor extends React.Component {
     this.setState(cur => ({ md: cur.md.filter(curmd => curmd.meta_key.uuid !== md.meta_key.uuid) }))
   }
 
+  prepareMdValue(value) {
+    if (f.has(value, '0.string')) {
+      return [value[0].string]
+    } else {
+      return value
+    }
+  }
+
   render({ props, state } = this) {
     const { onSave, onCancel, isSaving } = props
 
@@ -550,7 +560,7 @@ class MetadataEditor extends React.Component {
                       id={inputId}
                       metaKey={md.meta_key}
                       // NOTE: with plural values this array around value should be removed
-                      model={{ values: md.value }}
+                      model={{ values: this.prepareMdValue(md.value) }}
                       name={name}
                       onChange={val => this.onChangeMdValue(name, val)}
                     />

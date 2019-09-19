@@ -61,8 +61,8 @@ module Presenters
         type = meta_key.meta_datum_object_type
         value.map do |val|
           return '' if val.is_a?(Hash) && val.empty?
-          if string = val.fetch('string', false)
-            string
+          if val.is_a?(String)
+            { string: val }
           elsif UUIDTools::UUID_REGEXP =~ val['uuid']
             klass = type.split('::').last
             if klass == 'Roles'

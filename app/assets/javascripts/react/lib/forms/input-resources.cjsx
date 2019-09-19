@@ -170,6 +170,9 @@ module.exports = React.createClass
       newValues[itemIndex] = f.cloneDeep(previousItem)
       @setState(values: newValues)
 
+      if @props.onChange
+        @props.onChange(newValues)
+
   _handleMoveDown: (itemIndex, e) ->
     e.preventDefault()
 
@@ -179,6 +182,9 @@ module.exports = React.createClass
       newValues[itemIndex + 1] = f.cloneDeep(editedItem)
       newValues[itemIndex] = f.cloneDeep(nextItem)
       @setState(values: newValues)
+
+      if @props.onChange
+        @props.onChange(newValues)
 
   componentDidUpdate: ()->
     if @_adding
