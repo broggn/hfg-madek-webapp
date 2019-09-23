@@ -300,6 +300,7 @@ const WorkflowEditor = ({
   const headStyle = { lineHeight: '1.34' }
   const canEdit = get.permissions.can_edit
   const canEditOwners = get.permissions.can_edit_owners
+  const isEditing = isEditingName || isEditingOwners || isEditingPermissions || isEditingMetadata
 
   return (
     <section className="ui-container bright bordered rounded mas pam">
@@ -486,7 +487,7 @@ const WorkflowEditor = ({
             style={{ display: 'inline-block' }}
             authToken={authToken}>
             {' '}
-            <button className="primary-button large" type="submit">
+            <button className="primary-button large" type="submit" disabled={isEditing}>
               {t('actions_finish')}
             </button>
           </RailsForm>
