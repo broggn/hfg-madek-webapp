@@ -56,6 +56,14 @@ module Presenters
         end.to_h
       end
 
+      def role_presenter(value)
+        md_role = MetaDatum::Role.new(
+          person: Person.find_by(id: value['uuid']),
+          role: Role.find_by(id: value['role'])
+        )
+        Presenters::People::PersonIndexForRoles.new(md_role)
+      end
+
       def meta_data_value(value, meta_key)
         return [] unless value.present?
         type = meta_key.meta_datum_object_type
@@ -63,14 +71,15 @@ module Presenters
           return '' if val.is_a?(Hash) && val.empty?
           if val.is_a?(String)
             { string: val }
+          elsif !val.key?('uuid') && val['role'].present?
+            val['role'] = Presenters::Roles::RoleIndex.new(
+              Role.find(val['role'])
+            )
+            val
           elsif UUIDTools::UUID_REGEXP =~ val['uuid']
             klass = type.split('::').last
             if klass == 'Roles'
-              md_role = MetaDatum::Role.new(
-                person: Person.find(val['uuid']),
-                role: Role.find_by(id: val.dig('role', 'uuid'))
-              )
-              Presenters::People::PersonIndexForRoles.new(md_role)
+              role_presenter(val)
             else
               "Presenters::#{klass}::#{klass.singularize}Index"
                 .constantize

@@ -59,7 +59,7 @@ class My::WorkflowsController < ApplicationController
   def finish
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
-    result = WorkflowLocker.new(workflow).call
+    result = WorkflowLocker::Service.new(workflow).call
     if result == true
       redirect_to edit_my_workflow_path(workflow), notice: 'Workflow has been finished!'
     else
@@ -90,7 +90,7 @@ class My::WorkflowsController < ApplicationController
       :first_name,
       :last_name,
       :pseudonym,
-      { role: [ :uuid ] }
+      :role
     ]
   end
 

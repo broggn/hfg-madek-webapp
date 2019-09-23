@@ -184,9 +184,13 @@ class WorkflowEdit extends React.Component {
       if (f.has(value, 'string')) {
         return value
       } else if (f.has(value, 'isNew')) {
-        return value
+        let v = value
+        if (f.has(value, 'role')) {
+          v.role = value.role.id
+        }
+        return v
       } else if (f.has(value, 'role')) {
-        return { uuid: value.uuid, role: { uuid: value.role.id } }
+        return { uuid: value.uuid, role: value.role.id }
       } else {
         return { uuid: value.uuid }
       }
