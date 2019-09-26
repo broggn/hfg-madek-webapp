@@ -1,0 +1,21 @@
+- content_for(:title_head) do
+  = "Error!"
+
+- content_for(:body) do
+  %div{class: "vh-100 dt w-100 bg-dark-pink", style: 'display: table;height: 100vh;width: 100%;'}
+    %div{class: "dtc v-mid tc white ph3 ph4-l", style: 'display: table-cell;vertical-align: middle;'}
+      %div.error-msg
+        %h1= "Fehler!"
+        %p.error-reason= "Dieser Inhalt kann nicht angezeigt werden, weil die nötigen Berechtigungen fehlen."
+        %p.error-context= "URL des Inhalts: http://localhost:3100/entries/a18c11e8-42f3-4f2c-972e-1f92d4dab9c7"
+        %p.error-help= "Hilfe: https://medienarchiv.zhdk.ch/hilfe/"
+
+
+= render template: 'layouts/_embedded'
+
+
+-# <article class="vh-100 dt w-100 bg-dark-pink">
+-#   <div class="dtc v-mid tc white ph3 ph4-l">
+-#     <h1 class="f6 f2-m f-subheadline-l fw6 tc">Vertically centering things in css is easy!</h1>
+-#   </div>
+-# </article>

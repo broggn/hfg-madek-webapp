@@ -61,9 +61,9 @@ module Concerns
 
     private
 
-    def get_valid_access_token(resource)
+    def get_valid_access_token(resource, parameters = params)
       return unless resource
-      return unless access_token = get_access_token_from_params(params)
+      return unless access_token = get_access_token_from_params(parameters)
       return unless access = ConfidentialLink.find_by_token(access_token)
       return access_token if access.resource_id == resource.id
     end
@@ -82,6 +82,7 @@ module Concerns
       (action_name == 'show_by_confidential_link' && params.fetch('token', nil)) ||
         (action_name == 'show' && params.fetch('access', nil)) ||
         (controller_name == 'previews' && params.fetch('token', nil)) ||
+        (controller_name == 'oembed' && params.fetch('token', nil)) ||
         params.fetch('accessToken', nil)
     end
 
@@ -100,5 +101,12 @@ module Concerns
     rescue StandardError
       nil
     end
+
+    def disable_http_caching
+      response.headers["Cache-Control"] = "no-cache, no-store"
+      response.headers["Pragma"] = "no-cache"
+      response.headers["Expires"] = "#{1.year.ago}"
+    end
+
   end
 end

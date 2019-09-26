@@ -20,13 +20,16 @@ module Modules
         media_type = media_entry.try(:media_file).try(:media_type)
         handle_confidential_links(media_entry)
 
+        # dont cache the embed page if accessed via ConfidentialLink!
+        disable_http_caching if media_entry.accessed_by_confidential_link
+
         # only whitelisted hosts can hide the title etc
         # by default this is for our OWN ui!
         is_internal = embed_whitelisted? && params.keys.include?('internalEmbed')
 
         # - special case policy: differ for internal and external embeds.
         # - special case error handling: dont raise `UnauthorizedError`,
-        # because logging in won't change the result (see policy for why)
+        #   because we want to show a custom error message
         begin
           if is_internal
             auth_authorize(media_entry, :embedded_internally?)
@@ -34,7 +37,7 @@ module Modules
             auth_authorize(media_entry, :embedded_externally?)
           end
         rescue Pundit::NotAuthorizedError
-          raise Errors::ForbiddenError
+          return embedded_error_message
         end
 
         # errors
@@ -54,6 +57,13 @@ module Modules
 
         has_player = ['audio', 'video'].include?(@get[:media_type])
         render(has_player ? 'embedded' : 'embedded_tiled')
+      end
+
+      private
+
+      def embedded_error_message
+        disable_http_caching # never cache the error page!
+        render('embedded_error', status: 403)
       end
 
     end

@@ -27,6 +27,7 @@
 body {
   font-family: $default-font-family;
   color: $white;
+  background: #222;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -110,4 +111,10 @@ $modal-dialog-padding: 20vmin !important;
 }
 .vjs-modal-dialog-content {
   padding: $modal-dialog-padding !important;
+}
+
+// error messages
+.error-msg {
+  padding: 5%;
+  text-align: center;
 }
