@@ -124,16 +124,18 @@ class OembedController < ApplicationController
   # NOTE: simpler to concat than templating
   def oembed_iframe(url, width, height)
     <<-HTML.strip_heredoc.tr("\n", ' ').strip
-      <iframe
-      width="#{width}px"
-      height="#{height}px"
-      src="#{url}"
-      frameborder="0"
-      style="margin:0;padding:0;border:0"
-      allowfullscreen
-      webkitallowfullscreen
-      mozallowfullscreen
-      ></iframe>
+      <div class="___madek-embed ___madek-confidential-link">
+        <iframe
+        width="#{width}px"
+        height="#{height}px"
+        src="#{url}"
+        frameborder="0"
+        style="margin:0;padding:0;border:0"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen
+        ></iframe>
+      </div>
     HTML
   end
 
