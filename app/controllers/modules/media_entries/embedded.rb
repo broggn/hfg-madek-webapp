@@ -74,10 +74,20 @@ module Modules
       def embedded_error_message(status_code = 500)
         skip_authorization # not needed anymore, just showing an error message
         disable_http_caching # never cache the error page!
-        render('errors/embedded_error', status: status_code, locals: {
-                 status_code: status_code,
-                 wanted_url: _with_failsafe { absolute_full_url(request.path) }
-               })
+        render(
+          'errors/embedded_error',
+          status: status_code,
+          locals: { status_code: status_code, wanted_url: wanted_url })
+      end
+
+      def wanted_url
+        begin
+          u = URI.parse(request.path)
+          u.path.sub!(/\/embedded$/, '')
+          absolute_full_url(u)
+        rescue => e
+          request.url
+        end
       end
 
     end
