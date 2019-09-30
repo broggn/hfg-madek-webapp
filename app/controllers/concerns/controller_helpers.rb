@@ -71,17 +71,9 @@ module Concerns
     def preview_request_by_parent_confidential_link?(resource)
       return false unless resource.is_a?(Preview)
       return false unless controller_name == 'previews' && action_name == 'show'
-      # DEBUG: log referer
-      puts([
-        '',
-        {
-          DEBUG_PREVIEW_REQUEST: {
-            referrer_params: referrer_params, referrer: request.referrer
-          }
-        },
-        ''
-      ])
-      return unless access_token = get_access_token_from_params(referrer_params)
+      # get from referer or explicit param!
+      return unless access_token = get_access_token_from_params(params) \
+        || get_access_token_from_params(referrer_params)
       ConfidentialLink.find_by_token(access_token)
         .try(:resource_id) == resource.media_file.media_entry_id
     rescue ActionController::RoutingError
