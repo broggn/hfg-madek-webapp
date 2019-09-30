@@ -7,7 +7,7 @@ import f from 'active-lodash'
 // import { parse as parseUrl } from 'url'
 // import { parse as parseQuery } from 'qs'
 // import Moment from 'moment'
-// import currentLocale from '../../../lib/current-locale'
+import currentLocale from '../../../lib/current-locale'
 const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
 import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
@@ -537,6 +537,7 @@ class MetadataEditor extends React.Component {
 
   render({ props, state } = this) {
     const { onSave, onCancel, isSaving } = props
+    const langParam = { lang: currentLocale() }
 
     return (
       <div>
@@ -581,7 +582,7 @@ class MetadataEditor extends React.Component {
                 className="block"
                 name="add-meta-key"
                 resourceType="MetaKeys"
-                searchParams={{}}
+                searchParams={langParam}
                 onSelect={this.onAddMdByMk}
                 existingValueHint={t('adder_meta_key_already_used')}
                 valueFilter={val => f.any(state.md, md => f.get(val, 'uuid') === md.meta_key.uuid)}
