@@ -30,7 +30,7 @@ module Presenters
 
       def url
         if @access_token
-          prepend_url_context(preview_path(@app_resource, { accessToken: @access_token }))
+          prepend_url_context(preview_path(@app_resource, accessToken: @access_token))
         else
           prepend_url_context(preview_path(@app_resource))
         end

@@ -83,9 +83,9 @@ module Modules
       def wanted_url
         begin
           u = URI.parse(request.path)
-          u.path.sub!(/\/embedded$/, '')
+          u.path.sub!(%r{/embedded$}, '')
           absolute_full_url(u)
-        rescue => e
+        rescue
           request.url
         end
       end
