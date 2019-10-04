@@ -17,6 +17,7 @@ import appRequest from '../../../lib/app-request.coffee'
 // import ui from '../../lib/ui.coffee'
 // const t = ui.t
 import I18nTranslate from '../../../lib/i18n-translate'
+import labelize from '../../../lib/labelize'
 let AutoComplete = false // client-side only!
 
 // const fakeCallback = (a, b, c) => console.log([a, b, c]) // eslint-disable-line
@@ -902,43 +903,5 @@ const ShowJSONData = ({ data }) => (
     <pre className="mas pam code">{JSON.stringify(data, 0, 2)}</pre>
   </div>
 )
-
-const labelize = (resourceList, { withLink = false, onDelete, creatorId = null } = {}) => {
-  function canDelete(resource) {
-    if(!creatorId) return true
-    return resource.uuid !== creatorId
-  }
-
-  function mod(resource) {
-    if (resource.type && /group/.test(resource.type)) {
-      return resource.type.toLowerCase().replace(/.*group/, 'group')
-    } else {
-      return resource.type
-    }
-  }
-
-  return f.map(f.compact(resourceList), (resource, i) => ({
-    key: `${resource.uuid}-${i}`,
-    href: withLink ? resource.url : undefined,
-    mod: mod(resource),
-    mods: 'not-interactive',
-    tag: 'span',
-    children: (
-      <span>
-        {UI.resourceName(resource)}
-        {!!onDelete && canDelete(resource) && (
-          <button
-            className="multi-select-tag-remove"
-            style={{ background: 'transparent' }}
-            onClick={ev => {
-              ev.preventDefault(), onDelete(resource)
-            }}>
-            <i className="icon-close"></i>
-          </button>
-        )}
-      </span>
-    )
-  }))
-}
 
 const Let = ({ children, ...bindings }) => children(bindings)

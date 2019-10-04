@@ -68,10 +68,10 @@ module Presenters
         return [] unless value.present?
         type = meta_key.meta_datum_object_type
         value.map do |val|
-          return '' if val.is_a?(Hash) && val.empty?
+          return '' if val.is_a?(Hash) && val.empty? # todo: remove?
           if val.is_a?(String)
             { string: val }
-          elsif !val.key?('uuid') && val['role'].present?
+          elsif !val.key?('uuid') && val['role'].present? && !val['role'].is_a?(Presenters::Roles::RoleIndex)
             val['role'] = Presenters::Roles::RoleIndex.new(
               Role.find(val['role'])
             )
