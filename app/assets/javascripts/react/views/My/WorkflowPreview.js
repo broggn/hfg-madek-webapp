@@ -43,7 +43,7 @@ class WorkflowPreview extends React.Component {
         >
 
           {get.child_resources.map((childResource, i) => {
-            // console.log('childResource', childResource)
+            console.log('childResource', childResource)
             const { meta_data, meta_meta_data, workflow, resource, type } = childResource
             const { meta_key_by_meta_key_id, mandatory_by_meta_key_id } = meta_meta_data
 
@@ -55,7 +55,7 @@ class WorkflowPreview extends React.Component {
                 </div>
                 <div className='app-body-content table-cell ui-container table-substance ui-container'>
                   {f.map(meta_key_by_meta_key_id, (meta_key, meta_key_id) => {
-                    if(f.isEmpty(meta_data.meta_datum_by_meta_key_id[meta_key_id].values) && !f.has(mandatory_by_meta_key_id, meta_key_id)) {
+                    if(f.isEmpty(meta_data.meta_datum_by_meta_key_id[meta_key_id].values) && !f.has(mandatory_by_meta_key_id, meta_key_id) && !f.includes(f.map(workflow.common_settings.meta_data, 'meta_key.uuid'), meta_key_id)) {
                       return null
                     }
 
