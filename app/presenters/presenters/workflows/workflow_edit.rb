@@ -19,7 +19,7 @@ module Presenters
         {
           upload: { url: new_media_entry_path(workflow_id: @app_resource.id) },
           index: { url: my_workflows_path },
-          finish: { url: finish_my_workflow_path(@app_resource), method: 'PATCH' },
+          preview: { url: preview_my_workflow_path(@app_resource) },
           update_owners: { url: update_owners_my_workflow_path(@app_resource),
                            method: 'PATCH' }
         }.merge(super)

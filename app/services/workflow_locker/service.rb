@@ -3,19 +3,22 @@ module WorkflowLocker
     include Validation
     include CommonPermissions
     include CommonMetaData
+    include MetaData
 
-    def initialize(object_or_id)
+    def initialize(object_or_id, meta_data = {})
       @workflow = if object_or_id.is_a?(ApplicationRecord)
                     object_or_id
                   else
                     Workflow.find(object_or_id)
                   end
+      @meta_data = meta_data
       @errors = {}
     end
 
     def call
       return false unless @workflow.is_active
 
+      apply_meta_data
       ActiveRecord::Base.transaction do
         @workflow.update!(is_active: false)
         apply_common_permissions

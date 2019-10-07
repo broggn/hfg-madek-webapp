@@ -56,10 +56,22 @@ class My::WorkflowsController < ApplicationController
     respond_with(workflow_edit_data(workflow))
   end
 
+  def preview
+    workflow = Workflow.find(params[:id])
+    auth_authorize workflow
+    @get =
+      Presenters::Users::DashboardSection.new(
+        Presenters::Workflows::WorkflowPreview.new(workflow, current_user),
+        sections_definition,
+        nil
+      )
+    respond_with(@get, layout: 'app_with_sidebar')
+  end
+
   def finish
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
-    result = WorkflowLocker::Service.new(workflow).call
+    result = WorkflowLocker::Service.new(workflow, meta_data_params).call
     if result == true
       redirect_to edit_my_workflow_path(workflow), notice: 'Workflow has been finished!'
     else
@@ -68,7 +80,7 @@ class My::WorkflowsController < ApplicationController
         errors << "#{resource_title}: #{messages.join(' ')}"
       end
       flash[:error] = errors.join("\n")
-      redirect_to edit_my_workflow_path(workflow)
+      redirect_to preview_my_workflow_path(workflow)
     end
   end
 
@@ -78,7 +90,7 @@ class My::WorkflowsController < ApplicationController
     Presenters::Workflows::WorkflowEdit.new(workflow, current_user)
   end
 
-  def meta_data_params
+  def meta_data_value_params
     [
       :string,
       :uuid,
@@ -99,7 +111,11 @@ class My::WorkflowsController < ApplicationController
       :name,
       { owner_ids: [] },
       common_permissions: [:responsible, { write: [:uuid, :type] }, { read: [:uuid, :type] }, :read_public],
-      common_meta_data: [:meta_key_id, { value: meta_data_params }]
+      common_meta_data: [:meta_key_id, { value: meta_data_value_params }]
     )
+  end
+
+  def meta_data_params
+    params.fetch(:meta_data, {})
   end
 end

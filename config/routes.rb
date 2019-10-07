@@ -255,6 +255,7 @@ Madek::Application.routes.draw do
     patch 'tokens/:id', controller: '/api_tokens', action: 'update_api_token', as: 'update_api_token'
 
     resources :workflows, only: [:index, :new, :create, :edit, :update] do
+      get :preview, on: :member
       patch :finish, on: :member
       patch :update_owners, on: :member
     end

@@ -13,6 +13,7 @@ class WorkflowPolicy < DefaultPolicy
 
   alias_method :add_resource?, :update?
   alias_method :finish?, :update?
+  alias_method :preview?, :update?
 
   private
 

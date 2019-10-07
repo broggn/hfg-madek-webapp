@@ -373,7 +373,7 @@ module.exports = {
     </div>
 
 
-  _renderThumbnail: (resource) ->
+  _renderThumbnail: (resource, displayMetaData = true) ->
     src = resource.image_url
 
     if resource.media_file && resource.media_file.previews
@@ -430,10 +430,12 @@ module.exports = {
                   </div>
               }
             </div>
-            <div className="ui-thumbnail-meta">
-              <h3 className="ui-thumbnail-meta-title">{resource.title}</h3>
-              <h4 className="ui-thumbnail-meta-subtitle">{resource.subtitle}</h4>
-            </div>
+            {displayMetaData && (
+              <div className="ui-thumbnail-meta">
+                <h3 className="ui-thumbnail-meta-title">{resource.title}</h3>
+                <h4 className="ui-thumbnail-meta-subtitle">{resource.subtitle}</h4>
+              </div>
+            )}
 
 
           </div>

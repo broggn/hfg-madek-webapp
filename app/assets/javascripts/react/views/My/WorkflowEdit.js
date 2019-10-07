@@ -475,15 +475,24 @@ const WorkflowEditor = ({
         <a className="link weak" href={get.actions.index.url}>
           {t('actions_back')}
         </a>
+        {canEdit && !isEditing ? (
+          <a className="primary-button large" href={get.actions.preview.url}>
+            {t('actions_validate')}
+          </a>
+        ) : (
+          <div className='primary-button large disabled'>
+            {t('actions_validate')}
+          </div>
+        )}
         {/*
         <button className="tertiary-button large" type="button">
           {t('actions_validate')}
         </button>
         */}
-        {canEdit && (
+        {canEdit && false && (
           <RailsForm
-            action={get.actions.finish.url}
-            method={get.actions.finish.method}
+            action={get.actions.preview.url}
+            method={get.actions.preview.method}
             name="workflow"
             style={{ display: 'inline-block' }}
             authToken={authToken}>
