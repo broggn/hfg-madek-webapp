@@ -31,25 +31,28 @@ class WorkflowPreview extends React.Component {
     const { errors, models } = this.state
 
     f.each(child_resources, (childResource) => {
-      const { resource, meta_data } = childResource
-      const resourceId = childResource.uuid
+      const {
+        meta_data: { meta_datum_by_meta_key_id },
+        uuid: resourceId,
+        meta_meta_data: { meta_key_by_meta_key_id }
+      } = childResource
 
-      errors[childResource.uuid] = []
+      errors[resourceId] = []
 
-      f.each(childResource.meta_meta_data.meta_key_by_meta_key_id, (meta_key, meta_key_id) => {
+      f.each(meta_key_by_meta_key_id, (meta_key, metaKeyId) => {
         const model = {
           meta_key: meta_key,
-          values: meta_data.meta_datum_by_meta_key_id[meta_key_id].values || []
+          values: meta_datum_by_meta_key_id[metaKeyId].values || []
         }
         model.originalValues = model.values
 
-        f.set(models, [resourceId, meta_key_id], model)
+        f.set(models, [resourceId, metaKeyId], model)
 
         const validationModel = {
-          [meta_key_id]: f.get(models, [resourceId, meta_key_id])
+          [metaKeyId]: f.get(models, [resourceId, metaKeyId])
         }
         if (validation._validityForAll(childResource.meta_meta_data, validationModel) === 'invalid') {
-          errors[resourceId].push(meta_key_id)
+          errors[resourceId].push(metaKeyId)
         }
 
         this.setState({ models, errors })
@@ -57,24 +60,25 @@ class WorkflowPreview extends React.Component {
     })
   }
 
-  handleValueChange(values, meta_key_id, childResource) {
+  handleValueChange(values, metaKeyId, childResource) {
     const { errors, models } = this.state
-    const resourceId = childResource.uuid
-    f.set(models, [resourceId, meta_key_id, 'values'], values)
+    const { uuid: resourceId, meta_meta_data } = childResource
+
+    f.set(models, [resourceId, metaKeyId, 'values'], values)
 
     if (
       f.has(errors, resourceId)
       && f.isArray(errors[resourceId])
-      && f.includes(errors[resourceId], meta_key_id)
+      && f.includes(errors[resourceId], metaKeyId)
     ) {
-      f.remove(errors[resourceId], (x) => x === meta_key_id)
+      f.remove(errors[resourceId], (x) => x === metaKeyId)
     }
 
     const validationModel = {
-      [meta_key_id]: f.get(models, [resourceId, meta_key_id])
+      [metaKeyId]: f.get(models, [resourceId, metaKeyId])
     }
-    if (validation._validityForAll(childResource.meta_meta_data, validationModel) === 'invalid') {
-      errors[resourceId].push(meta_key_id)
+    if (validation._validityForAll(meta_meta_data, validationModel) === 'invalid') {
+      errors[resourceId].push(metaKeyId)
     }
 
     this.setState({ models, errors })
@@ -95,9 +99,10 @@ class WorkflowPreview extends React.Component {
   }
 
   render() {
-    const { get } = this.props
+    const { get, authToken } = this.props
+    const { models, errors, isFinishing } = this.state
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
-    const submitBtnClass = cx('button primary-button large', { disabled: this.state.isFinishing })
+    const submitBtnClass = cx('button primary-button large', { disabled: isFinishing })
 
     return (
       <section className="ui-container bright bordered rounded mas pam">
@@ -111,11 +116,16 @@ class WorkflowPreview extends React.Component {
           name='resource_meta_data'
           action={get.actions.finish.url}
           method={get.actions.finish.method}
-          authToken={this.props.authToken}
+          authToken={authToken}
         >
 
           {f.map(get.child_resources, (childResource, i) => {
-            const { resource, type, meta_meta_data } = childResource
+            const {
+              resource,
+              type,
+              meta_meta_data: { meta_key_by_meta_key_id },
+              uuid: resourceId
+            } = childResource
 
             return (
               <div className='ui-container bordered pal mbs' key={i}>
@@ -125,14 +135,14 @@ class WorkflowPreview extends React.Component {
                 </div>
                 <div className='app-body-content table-cell ui-container table-substance ui-container'>
                   {
-                    f.map(meta_meta_data.meta_key_by_meta_key_id, (meta_key, metaKeyId) => {
-                      const hasError = f.include(this.state.errors[childResource.uuid], metaKeyId)
-                      const model = f.get(this.state.models, [childResource.uuid, metaKeyId])
+                    f.map(meta_key_by_meta_key_id, (metaKey, metaKeyId) => {
+                      const hasError = f.include(errors[resourceId], metaKeyId)
+                      const model = f.get(models, [resourceId, metaKeyId])
 
                       return (
                         <Fieldset
                           childResource={childResource}
-                          metaKey={meta_key}
+                          metaKey={metaKey}
                           hasError={hasError}
                           model={model}
                           handleValueChange={this.handleValueChange}
@@ -151,7 +161,7 @@ class WorkflowPreview extends React.Component {
               {'Go back'}
             </a>
             <button type='submit' className={submitBtnClass} disabled={this.hasErrors()} onClick={this.handleSubmit}>
-              {this.state.isFinishing ? 'Finishing…' : 'Finish'}
+              {isFinishing ? 'Finishing…' : 'Finish'}
             </button>
           </div>
 
@@ -166,16 +176,22 @@ module.exports = WorkflowPreview
 class Fieldset extends React.PureComponent {
   render() {
     const { childResource, metaKey, model, hasError, handleValueChange } = this.props
-    const { meta_data, meta_meta_data, resource, type, workflow } = childResource
-    const { mandatory_by_meta_key_id } = meta_meta_data
-    const metaKeyId = metaKey.uuid
+    const {
+      meta_data: { meta_datum_by_meta_key_id },
+      meta_meta_data,
+      meta_meta_data: { mandatory_by_meta_key_id },
+      uuid: resourceId,
+      type,
+      workflow
+    } = childResource
+    const { uuid: metaKeyId } = metaKey
 
-    if (f.isEmpty(meta_data.meta_datum_by_meta_key_id[metaKeyId].values) && !f.has(mandatory_by_meta_key_id, metaKeyId) && !f.includes(f.map(workflow.common_settings.meta_data, 'meta_key.uuid'), metaKeyId)) {
+    if (f.isEmpty(meta_datum_by_meta_key_id[metaKeyId].values) && !f.has(mandatory_by_meta_key_id, metaKeyId) && !f.includes(f.map(workflow.common_settings.meta_data, 'meta_key.uuid'), metaKeyId)) {
       return null
     }
 
     const cssClass = cx('ui-form-group prh columned', {'error': hasError})
-    const fieldName = `meta_data[${type}][${resource.uuid}]`
+    const fieldName = `meta_data[${type}][${resourceId}]`
 
     return (
       <fieldset className={cssClass}>
