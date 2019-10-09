@@ -1,5 +1,6 @@
 import React from 'react'
 import f from 'active-lodash'
+import cx from 'classnames'
 
 // import setUrlParams from '../../../lib/set-params-for-url.coffee'
 // import AppRequest from '../../../lib/app-request.coffee'
@@ -55,6 +56,7 @@ const UI_TXT = {
 
   actions_back: { de: 'Zurück', en: 'Go back' },
   actions_validate: { de: 'Prüfen', en: 'Check' },
+  actions_validating: { de: 'Prüfen…', en: 'Checking…' },
   actions_finish: { de: 'Abschliessen…', en: 'Finish…' },
 
   add_md_by_metakey: { de: 'Hinzufügen', en: 'Add' },
@@ -83,6 +85,7 @@ class WorkflowEdit extends React.Component {
       metaDataUpdateError: null,
       isEditingName: false,
       isSavingName: false,
+      isPreviewing: false,
       nameUpdateError: null,
       workflowOwners: props.get.workflow_owners,
       commonPermissions: props.get.common_settings.permissions,
@@ -97,7 +100,8 @@ class WorkflowEdit extends React.Component {
       'onToggleEditMetadata',
       'onSaveMetadata',
       'onToggleEditName',
-      'onSaveName'
+      'onSaveName',
+      'handlePreviewClick'
     ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
   }
 
@@ -251,6 +255,10 @@ class WorkflowEdit extends React.Component {
     })
   }
 
+  handlePreviewClick(e) {
+    this.setState({ isPreviewing: true })
+  }
+
   render({ props, state, actions } = this) {
     const { name, status } = props.get
 
@@ -295,12 +303,16 @@ const WorkflowEditor = ({
   onToggleEditName,
   isEditingName,
   isSavingName,
-  onSaveName
+  onSaveName,
+
+  isPreviewing,
+  handlePreviewClick
 }) => {
   const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
   const headStyle = { lineHeight: '1.34' }
   const canEdit = get.permissions.can_edit
   const canEditOwners = get.permissions.can_edit_owners
+  const canPreview = get.permissions.can_preview
   const isEditing = isEditingName || isEditingOwners || isEditingPermissions || isEditingMetadata
 
   return (
@@ -475,15 +487,13 @@ const WorkflowEditor = ({
         <a className="link weak" href={get.actions.index.url}>
           {t('actions_back')}
         </a>
-        {canEdit && !isEditing ? (
-          <a className="primary-button large" href={get.actions.preview.url}>
-            {t('actions_validate')}
-          </a>
-        ) : (
-          <div className='primary-button large disabled'>
-            {t('actions_validate')}
-          </div>
-        )}
+        <PreviewButton
+          canPreview={canPreview}
+          isEditing={isEditing}
+          isPreviewing={isPreviewing}
+          previewUrl={get.actions.preview.url}
+          handleClick={handlePreviewClick}
+        />
         {/*
         <button className="tertiary-button large" type="button">
           {t('actions_validate')}
@@ -850,6 +860,26 @@ const EditButton = ({ onClick, icon = 'icon-pen', ...props }) => {
       style={{ background: 'transparent', WebkitAppearance: 'none' }}>
       <small className="link">{!f.isEmpty(icon) && <i className={icon} />}</small>
     </button>
+  )
+}
+
+const PreviewButton = ({ handleClick, canPreview, isEditing, isPreviewing, previewUrl }) => {
+  const cssClasses = cx('primary-button large', { disabled: isEditing || isPreviewing })
+  const disabledButton = <div className={cssClasses}>
+    {isPreviewing ? t('actions_validating') : t('actions_validate')}
+  </div>
+  const regularButton = <a className={cssClasses} href={previewUrl} onClick={handleClick}>
+    {t('actions_validate')}
+  </a>
+
+  return (
+    canPreview && (
+      (isEditing || isPreviewing) ? (
+        disabledButton
+      ) : (
+        regularButton
+      )
+    )
   )
 }
 

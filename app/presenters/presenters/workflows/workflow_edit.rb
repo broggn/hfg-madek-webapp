@@ -28,7 +28,8 @@ module Presenters
       def permissions
         {
           can_edit: policy_for(@user).update?,
-          can_edit_owners: policy_for(@user).update_owners?
+          can_edit_owners: policy_for(@user).update_owners?,
+          can_preview: policy_for(@user).preview?
         }
       end
 
