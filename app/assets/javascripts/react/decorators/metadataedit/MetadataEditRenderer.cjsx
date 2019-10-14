@@ -33,12 +33,16 @@ module.exports = {
 
     workflowLink = <Link href={workflow.actions.edit.url} mods='strong'>{workflow.name}</Link>
     info = <span style={{fontStyle: 'italic'}}>
-      * This value is managed by workflow "{workflowLink}"
+      This value is managed by workflow "{workflowLink}"
     </span>
+    arrowStyle =
+      fontSize: '0.75em'
+      position: 'relative'
+      top: '-2px'
 
     <div className='form-item' style={{paddingTop: '5px'}}>
       <div>{value or 'not set'}</div>
-      {info}
+      <span style={arrowStyle}>&#11153;</span> {info}
     </div>
 
 
