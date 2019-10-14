@@ -27,7 +27,11 @@ class WorkflowPreview extends React.Component {
   }
 
   handleSubmit(e) {
-    this.setState({isFinishing: true})
+    if (!confirm('You\'re about to finish the workflow. This action cannot be undone. Do you want to proceed?')) {
+      e.preventDefault()
+    } else {
+      this.setState({ isFinishing: true })
+    }
   }
 
   componentWillMount() {
