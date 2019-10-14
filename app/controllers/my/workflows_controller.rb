@@ -68,19 +68,26 @@ class My::WorkflowsController < ApplicationController
     respond_with(@get, layout: 'app_with_sidebar')
   end
 
-  def finish
-    workflow = Workflow.find(params[:id])
-    auth_authorize workflow
-    result = WorkflowLocker::Service.new(workflow, meta_data_params).call
+  def save_and_not_finish
+    @workflow = Workflow.find(params[:id])
+    auth_authorize @workflow
+    result = WorkflowLocker::Service.new(@workflow, meta_data_params).save_only
     if result == true
-      redirect_to edit_my_workflow_path(workflow), notice: 'Workflow has been finished!'
+      flash[:notice] = 'Meta data has been updated successfully.'
+      redirect_to preview_my_workflow_path(@workflow)
     else
-      errors = ["Workflow cannot be finished because of following errors:"]
-      result.each do |resource_title, messages|
-        errors << "#{resource_title}: #{messages.join(' ')}"
-      end
-      flash[:error] = errors.join("\n")
-      redirect_to preview_my_workflow_path(workflow)
+      handle_errors(result)
+    end
+  end
+
+  def finish
+    @workflow = Workflow.find(params[:id])
+    auth_authorize @workflow
+    result = WorkflowLocker::Service.new(@workflow, meta_data_params).call
+    if result == true
+      redirect_to edit_my_workflow_path(@workflow), notice: 'Workflow has been finished!'
+    else
+      handle_errors(result)
     end
   end
 
@@ -117,5 +124,14 @@ class My::WorkflowsController < ApplicationController
 
   def meta_data_params
     params.fetch(:meta_data, {})
+  end
+
+  def handle_errors(errors)
+    error_message = ['Workflow cannot be finished because of following errors:']
+    errors.each do |resource_title, messages|
+      error_message << "#{resource_title}: #{messages.join(' ')}"
+    end
+    flash[:error] = error_message.join("\n")
+    redirect_to preview_my_workflow_path(@workflow)
   end
 end

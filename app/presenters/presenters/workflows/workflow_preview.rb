@@ -10,6 +10,7 @@ module Presenters
 
       def actions
         {
+          save_and_not_finish: { url: save_and_not_finish_my_workflow_path(@app_resource), method: 'PATCH' },
           finish: { url: finish_my_workflow_path(@app_resource), method: 'PATCH' },
         }.merge(super)
       end

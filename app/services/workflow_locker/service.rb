@@ -32,6 +32,15 @@ module WorkflowLocker
       @errors
     end
 
+    def save_only
+      return false unless @workflow.is_active
+
+      apply_meta_data(allow_blank_values: true)
+      true
+    rescue ValidationError
+      @errors
+    end
+
     private
 
     def configuration

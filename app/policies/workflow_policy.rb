@@ -12,6 +12,7 @@ class WorkflowPolicy < DefaultPolicy
   end
 
   alias_method :add_resource?, :update?
+  alias_method :save_and_not_finish?, :update?
   alias_method :finish?, :update?
   alias_method :preview?, :update?
 

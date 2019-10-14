@@ -256,6 +256,7 @@ Madek::Application.routes.draw do
 
     resources :workflows, only: [:index, :new, :create, :edit, :update] do
       get :preview, on: :member
+      patch :save_and_not_finish, on: :member
       patch :finish, on: :member
       patch :update_owners, on: :member
     end

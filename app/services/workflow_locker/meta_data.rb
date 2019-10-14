@@ -2,12 +2,12 @@ module WorkflowLocker
   module MetaData
     private
 
-    def apply_meta_data
+    def apply_meta_data(allow_blank_values: false)
       @meta_data.each do |resource_type, ids_with_values|
         ids_with_values.each do |id, meta_keys_with_values|
           meta_keys_with_values.each do |meta_key_id, value|
             value = sanitize_value(value, meta_key_id)
-            next if value.blank?
+            next if value.blank? && !allow_blank_values
             resource = find_resource(resource_type, id)
             resource = resource.cast_to_type if resource_type != 'Collection'
             create_meta_datum!(resource, meta_key_id, value, true)

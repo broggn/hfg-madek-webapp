@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import f from 'active-lodash'
 import t from '../../../lib/i18n-translate'
 import cx from 'classnames'
@@ -16,10 +17,13 @@ class WorkflowPreview extends React.Component {
     this.state = {
       models: {},
       errors: {},
-      isFinishing: false
+      isFinishing: false,
+      isSaving: false,
+      formAction: props.get.actions.finish.url
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleValueChange = this.handleValueChange.bind(this)
+    this.handleSaveData = this.handleSaveData.bind(this)
   }
 
   handleSubmit(e) {
@@ -34,15 +38,24 @@ class WorkflowPreview extends React.Component {
       const {
         meta_data: { meta_datum_by_meta_key_id },
         uuid: resourceId,
-        meta_meta_data: { meta_key_by_meta_key_id }
+        meta_meta_data: { meta_key_by_meta_key_id },
+        type,
+        workflow
       } = childResource
 
       errors[resourceId] = []
 
       f.each(meta_key_by_meta_key_id, (meta_key, metaKeyId) => {
+        let metaData = f.get(f.find(workflow.common_settings.meta_data, (md) => md.meta_key.uuid === metaKeyId), 'value')
+        if (f.has(metaData, '0.string')) {
+          metaData = metaData[0].string
+        }
         const model = {
           meta_key: meta_key,
-          values: meta_datum_by_meta_key_id[metaKeyId].values || []
+          type: type,
+          values: f.flatten(
+            f.remove([meta_datum_by_meta_key_id[metaKeyId].values, metaData]), (arr) => f.isEmpty(f.compact(arr))
+          )
         }
         model.originalValues = model.values
 
@@ -84,15 +97,21 @@ class WorkflowPreview extends React.Component {
     this.setState({ models, errors })
   }
 
-  // validate(metaMetaData, resourceId, metaKeyId) {
-  //   const validationModel = {
-  //     [meta_key_id]: f.get(models, [resourceId, meta_key_id])
-  //   }
+  handleSaveData() {
+    this.setState({
+      isSaving: true,
+      formAction: this.props.get.actions.save_and_not_finish.url
+    })
+  }
 
-  //   if (validation._validityForAll(metaMetaData, validationModel) === 'invalid') {
-  //     errors[resourceId].push(meta_key_id)
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.formAction !== this.state.formAction
+      && this.state.formAction === this.props.get.actions.save_and_not_finish.url
+    ) {
+      ReactDOM.findDOMNode(this.form).submit()
+    }
+  }
 
   hasErrors() {
     return !f.every(f.values(this.state.errors), (arr) => f.isEmpty(arr))
@@ -100,7 +119,7 @@ class WorkflowPreview extends React.Component {
 
   render() {
     const { get, authToken } = this.props
-    const { models, errors, isFinishing } = this.state
+    const { models, errors, isFinishing, isSaving } = this.state
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
     const submitBtnClass = cx('button primary-button large', { disabled: isFinishing })
 
@@ -112,9 +131,9 @@ class WorkflowPreview extends React.Component {
         {/*<Link href={get.actions.edit.url}>&larr; Go back to workflow</Link>*/}
 
         <RailsForm
-          ref='form'
+          ref={(form) => this.form = form}
           name='resource_meta_data'
-          action={get.actions.finish.url}
+          action={this.state.formAction}
           method={get.actions.finish.method}
           authToken={authToken}
         >
@@ -124,7 +143,8 @@ class WorkflowPreview extends React.Component {
               resource,
               type,
               meta_meta_data: { meta_key_by_meta_key_id },
-              uuid: resourceId
+              uuid: resourceId,
+              workflow
             } = childResource
 
             return (
@@ -160,7 +180,10 @@ class WorkflowPreview extends React.Component {
             <a className='link weak' href={get.actions.edit.url}>
               {'Go back'}
             </a>
-            <button type='submit' className={submitBtnClass} disabled={this.hasErrors()} onClick={this.handleSubmit}>
+            <button type='button' className='button large' disabled={isSaving || isFinishing} onClick={this.handleSaveData}>
+              {isSaving ? 'Saving…' : 'Save & not finish'}
+            </button>
+            <button type='submit' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
               {isFinishing ? 'Finishing…' : 'Finish'}
             </button>
           </div>
