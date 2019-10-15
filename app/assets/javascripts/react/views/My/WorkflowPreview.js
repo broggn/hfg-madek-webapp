@@ -7,6 +7,8 @@ import cx from 'classnames'
 import MetaDataByListing from '../../decorators/MetaDataByListing.cjsx'
 import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 import Renderer from '../../decorators/metadataedit/MetadataEditRenderer.cjsx'
+import WorkflowCommonPermissions from '../../decorators/WorkflowCommonPermissions'
+import SubSection from '../../ui-components/SubSection'
 import Link from '../../ui-components/Link.cjsx'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 import validation from '../../../lib/metadata-edit-validation.coffee'
@@ -17,6 +19,7 @@ class WorkflowPreview extends React.Component {
     this.state = {
       models: {},
       errors: {},
+      initialErrors: {},
       isFinishing: false,
       isSaving: false,
       formAction: props.get.actions.finish.url
@@ -36,7 +39,7 @@ class WorkflowPreview extends React.Component {
 
   componentWillMount() {
     const { child_resources } = this.props.get
-    const { errors, models } = this.state
+    const { errors, models, initialErrors } = this.state
 
     f.each(child_resources, (childResource) => {
       const {
@@ -48,6 +51,7 @@ class WorkflowPreview extends React.Component {
       } = childResource
 
       errors[resourceId] = []
+      initialErrors[resourceId] = []
 
       f.each(meta_key_by_meta_key_id, (meta_key, metaKeyId) => {
         let metaData = f.get(f.find(workflow.common_settings.meta_data, (md) => md.meta_key.uuid === metaKeyId), 'value')
@@ -70,9 +74,10 @@ class WorkflowPreview extends React.Component {
         }
         if (validation._validityForAll(childResource.meta_meta_data, validationModel) === 'invalid') {
           errors[resourceId].push(metaKeyId)
+          initialErrors[resourceId].push(metaKeyId)
         }
 
-        this.setState({ models, errors })
+        this.setState({ models, errors, initialErrors })
       })
     })
   }
@@ -123,9 +128,19 @@ class WorkflowPreview extends React.Component {
 
   render() {
     const { get, authToken } = this.props
-    const { models, errors, isFinishing, isSaving } = this.state
+    const childResources = get.child_resources
+    const commonPermissions = get.common_settings.permissions
+    const { models, errors, initialErrors, isFinishing, isSaving } = this.state
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
     const submitBtnClass = cx('button primary-button large', { disabled: isFinishing })
+    const showPermissionsOnBottom = childResources.length > 30
+    const numberOfResources = f.reduce(childResources, (result, r) => {
+      if (!f.get(result, r.type)) {
+        f.set(result, r.type, 0)
+      }
+      result[r.type] += 1
+      return result
+    }, {})
 
     return (
       <section className="ui-container bright bordered rounded mas pam">
@@ -133,6 +148,18 @@ class WorkflowPreview extends React.Component {
           <span style={supHeadStyle}>{'Workflow'}</span>
         </header>
         {/*<Link href={get.actions.edit.url}>&larr; Go back to workflow</Link>*/}
+
+        <p className='mvm title-m'>
+          This will apply to everything contained in the Set <strong>{get.name}</strong>.
+          Contained Collections: {numberOfResources['Collection']}, MediaEntries: {numberOfResources['MediaEntry']}
+        </p>
+
+        <div className='ui-container bordered phl pvm mbs'>
+          <WorkflowCommonPermissions
+            permissions={commonPermissions}
+            showHeader={true}
+          />
+        </div>
 
         <RailsForm
           ref={(form) => this.form = form}
@@ -142,7 +169,7 @@ class WorkflowPreview extends React.Component {
           authToken={authToken}
         >
 
-          {f.map(get.child_resources, (childResource, i) => {
+          {f.map(childResources, (childResource, i) => {
             const {
               resource,
               type,
@@ -150,35 +177,54 @@ class WorkflowPreview extends React.Component {
               uuid: resourceId,
               workflow
             } = childResource
+            const hasErrors = !f.isEmpty(errors[resourceId])
+            const hasInitialErrors = !f.isEmpty(initialErrors[resourceId])
+            const headColor = hasErrors ? 'red' : 'green'
+            const suffix = hasErrors ? `${errors[resourceId].length} error(s) found` : ''
+            const icon = hasErrors ? <span className='icon-close' /> : <span className='icon-checkmark' />
 
             return (
-              <div className='ui-container bordered pal mbs' key={i}>
-                <span style={supHeadStyle}>{type}</span>
-                <div className='app-body-sidebar table-cell ui-container table-side prm'>
-                  {Renderer._renderThumbnail(resource, false)}
-                </div>
-                <div className='app-body-content table-cell ui-container table-substance ui-container'>
-                  {
-                    f.map(meta_key_by_meta_key_id, (metaKey, metaKeyId) => {
-                      const hasError = f.include(errors[resourceId], metaKeyId)
-                      const model = f.get(models, [resourceId, metaKeyId])
+              <SubSection startOpen={hasInitialErrors} key={i}>
+                <SubSection.Title tag='span' className='title-s mts'>
+                  <span style={{ letterSpacing: '0.15em' }}>{resource.type}</span>
+                  <span style={{ color: headColor }} className='mls'>{suffix} {icon}</span>
+                </SubSection.Title>
 
-                      return (
-                        <Fieldset
-                          childResource={childResource}
-                          metaKey={metaKey}
-                          hasError={hasError}
-                          model={model}
-                          handleValueChange={this.handleValueChange}
-                          key={metaKeyId}
-                        />
-                      )
-                    })
-                  }
+                <div className='ui-container bordered pal mbs'>
+                  <span style={supHeadStyle}>{type}</span>
+                  <div className='app-body-sidebar table-cell ui-container table-side prm'>
+                    {Renderer._renderThumbnail(resource, false)}
+                  </div>
+                  <div className='app-body-content table-cell ui-container table-substance ui-container'>
+                    {
+                      f.map(meta_key_by_meta_key_id, (metaKey, metaKeyId) => {
+                        const hasError = f.include(errors[resourceId], metaKeyId)
+                        const model = f.get(models, [resourceId, metaKeyId])
+
+                        return (
+                          <Fieldset
+                            childResource={childResource}
+                            metaKey={metaKey}
+                            hasError={hasError}
+                            model={model}
+                            handleValueChange={this.handleValueChange}
+                            key={metaKeyId}
+                          />
+                        )
+                      })
+                    }
+                  </div>
                 </div>
-              </div>
+              </SubSection>
             )
           })}
+
+          {showPermissionsOnBottom &&
+            <WorkflowCommonPermissions
+              permissions={commonPermissions}
+              showHeader={true}
+            />
+          }
 
           <div className='ui-actions pts pbs'>
             <a className='link weak' href={get.actions.edit.url}>
@@ -187,7 +233,7 @@ class WorkflowPreview extends React.Component {
             <button type='button' className='button large' disabled={isSaving || isFinishing} onClick={this.handleSaveData}>
               {isSaving ? 'Saving…' : 'Save & not finish'}
             </button>
-            <button type='submit' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
+            <button type='button' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
               {isFinishing ? 'Finishing…' : 'Finish'}
             </button>
           </div>
