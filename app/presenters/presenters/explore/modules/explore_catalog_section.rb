@@ -26,7 +26,7 @@ module Presenters
 
         def catalog_overview
           {
-            title: @settings.catalog_title,
+            title: localize(@settings.catalog_titles),
             url: explore_catalog_path,
             list: non_empty_catalog_context_keys_presenters
           }
@@ -45,7 +45,7 @@ module Presenters
           @catalog_context_keys ||= \
             @settings
             .catalog_context_keys \
-            .try(:map, & proc { |ck_id| ContextKey.find_by_id(ck_id) })
+            .try(:map, & proc { |ck_id| ::ContextKey.find_by_id(ck_id) })
             .to_a
             .compact
         end

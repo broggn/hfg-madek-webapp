@@ -8,6 +8,7 @@ module Presenters
       include Presenters::Shared::MediaResource::Modules::EditSessions
       include Presenters::Shared::Modules::VocabularyConfig
       include Presenters::Shared::Modules::MetaDataPerContexts
+      include Presenters::Shared::Modules::PartOfWorkflow
 
       def initialize(app_resource,
                      user,

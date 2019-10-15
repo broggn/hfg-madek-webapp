@@ -2,6 +2,7 @@
 # TODO: redirect format html to base-URI (without format, it's the default!)
 
 Madek::Application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   root to: 'application#root'
 
@@ -254,6 +255,13 @@ Madek::Application.routes.draw do
     get 'tokens/new', controller: '/api_tokens', action: 'new_api_token', as: 'new_api_token'
     post 'tokens', controller: '/api_tokens', action: 'create_api_token', as: 'create_api_token'
     patch 'tokens/:id', controller: '/api_tokens', action: 'update_api_token', as: 'update_api_token'
+
+    resources :workflows, only: [:index, :new, :create, :edit, :update] do
+      get :preview, on: :member
+      patch :save_and_not_finish, on: :member
+      patch :finish, on: :member
+      patch :update_owners, on: :member
+    end
 
     # non-resourceful sections are just plain views:
     get ':section', action: 'dashboard_section', as: 'dashboard_section'

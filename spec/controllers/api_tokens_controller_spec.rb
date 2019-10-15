@@ -18,8 +18,8 @@ describe ApiTokensController do
 
         post(
           :create_api_token,
-          { api_token: new_attrs, format: :json },
-          user_id: user.id)
+          params: { api_token: new_attrs, format: :json },
+          session: { user_id: user.id })
 
         assert_response :success
         expect(response.content_type).to be == 'application/json'
@@ -44,8 +44,8 @@ describe ApiTokensController do
 
         post(
           :create_api_token,
-          { api_token: new_attrs, format: :json },
-          user_id: user.id)
+          params: { api_token: new_attrs, format: :json },
+          session: { user_id: user.id })
 
         result = JSON.parse(response.body)
         expect(result['scopes']).to eq ['read', 'write']
@@ -60,8 +60,8 @@ describe ApiTokensController do
 
         patch(
           :update_api_token,
-          { api_token: new_attrs, id: token.id, format: :json },
-          user_id: user.id)
+          params: { api_token: new_attrs, id: token.id, format: :json },
+          session: { user_id: user.id })
 
         token.reload
         expect(token.revoked).to be true
@@ -81,10 +81,10 @@ describe ApiTokensController do
         expect do
           patch(
             :update_api_token,
-            { api_token: new_attrs, id: token.id, format: :json },
-            user_id: user.id)
+            params: { api_token: new_attrs, id: token.id, format: :json },
+            session: { user_id: user.id })
         end.to \
-          raise_error Errors::ForbiddenError, 'Acces Denied!'
+          raise_error Errors::ForbiddenError, 'Access Denied!'
 
         token.reload
         expect(token.revoked).to be true
@@ -98,10 +98,10 @@ describe ApiTokensController do
         expect do
           patch(
             :update_api_token,
-            { api_token: new_attrs, id: token.id, format: :json },
-            user_id: another_user.id)
+            params: { api_token: new_attrs, id: token.id, format: :json },
+            session: { user_id: another_user.id })
         end.to \
-          raise_error Errors::ForbiddenError, 'Acces Denied!'
+          raise_error Errors::ForbiddenError, 'Access Denied!'
 
         token.reload
         expect(token.revoked).to be false

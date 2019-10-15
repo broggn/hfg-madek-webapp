@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ApplicationController do
 
   before(:each) do
-    AppSetting.first || create(:app_settings)
+    AppSetting.first || create(:app_setting)
   end
 
   it 'root' do
@@ -13,7 +13,7 @@ describe ApplicationController do
   end
 
   it 'current user' do
-    get :root, nil, user_id: FactoryGirl.create(:user).id
+    get :root, session: { user_id: FactoryGirl.create(:user).id }
     expect(@controller.current_user).not_to be_nil
   end
 

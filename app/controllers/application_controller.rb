@@ -1,5 +1,4 @@
 require 'application_responder'
-require 'inshape'
 
 class ApplicationController < ActionController::Base
   include AuthorizationSetup
@@ -7,9 +6,10 @@ class ApplicationController < ActionController::Base
   include Concerns::ControllerHelpers
   include Concerns::MadekCookieSession
   include Concerns::RespondersSetup
+  include Concerns::LangParams
   include Errors
 
-  before_action :set_locale_for_app
+  before_action :init_layout_data_presenter
 
   # use pundit to make sure all actions are authorized
   after_action :verify_authorized, except: :index
@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   rescue_from Errors::UnauthorizedError, with: :error_according_to_login_state
 
   # Give views access to these methods:
-  helper_method :current_user, :settings, :use_js
+  helper_method :current_user, :settings, :use_js, :localize
 
   # UI Elements
   append_view_path(Rails.root.join('app', 'ui_elements'))
@@ -39,20 +39,9 @@ class ApplicationController < ActionController::Base
   end
 
   # this is always run first (`before_action` hook)
-  def set_locale_for_app
-    Rails.configuration.i18n.default_locale = AppSetting.default_locale
-    Rails.configuration.i18n.available_locales = AppSetting.available_locales
-    I18n.locale = params[:lang] || I18n.default_locale
-    # presenters need to know about set default_url_options from controller
-    Presenter.instance_eval do
-      def default_url_options(options = {})
-        return options if I18n.locale == I18n.default_locale
-        { lang: I18n.locale }.merge(options)
-      end
-    end
-
-    # TMP: data for application layout.
-    #      it's already a presenter, but we can't `include` it everyhwere yet
+  def init_layout_data_presenter
+    # NOTE: data for application layout.
+    #       it's already a presenter, but we can't `include` it everyhwere.
     @app_layout_data = Presenters::AppView::LayoutData.new(user: current_user)
   end
 
@@ -69,15 +58,14 @@ class ApplicationController < ActionController::Base
 
   def status
     skip_authorization
-    memory_status = InShape::Memory.status
-    render json: { memory: memory_status.content }, \
-           status: memory_status.is_ok ? 200 : 499
+    render plain: 'OK, but we need to provide memory usage info ' \
+                  'as Inshape is no longer compatible'
   end
 
   def settings
     @_settings ||= Pojo.new(
       Settings.to_h # from static files
-      .merge(AppSettings.first.try(:attributes).to_h)) # from DB
+      .merge(AppSetting.first.try(:attributes).to_h)) # from DB
   end
 
   def current_user
@@ -105,10 +93,16 @@ class ApplicationController < ActionController::Base
 
   def error_according_to_login_state
     if authenticated?
-      raise Errors::ForbiddenError, 'Acces Denied!'
+      raise Errors::ForbiddenError, 'Access Denied!'
     else
       raise Errors::UnauthorizedError, 'Please log in!'
     end
+  end
+
+  def localize(setting)
+    return setting unless setting
+    setting[I18n.locale.to_s].presence || \
+      setting[I18n.default_locale.to_s].presence
   end
 
   Madek::UserPrecaching.start_pre_caching_loop

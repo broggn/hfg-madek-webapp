@@ -163,6 +163,7 @@
 @import previews
 @import uberadmin
 @import markdown
+@import _embedded
 /*-----------------------------------------
  *-----------------------------------------
 
@@ -225,3 +226,11 @@ img, img.ui-thumbnail-image
   #ui-resources-preview
     height: 300px
     overflow: auto
+
+
+details.ui-subsection
+  summary
+    cursor: s-resize
+  &[open]
+    summary
+      cursor: n-resize
