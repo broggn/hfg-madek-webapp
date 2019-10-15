@@ -21,6 +21,46 @@ module Presenters
           update: { url: my_workflow_path(@app_resource), method: 'PATCH' }
         }
       end
+
+      private
+
+      def common_permissions
+        @app_resource.configuration['common_permissions'].map do |permission, value|
+          [
+            permission,
+            case permission
+            when 'responsible'
+              presenterify(User.find(value))
+            when 'write', 'read'
+              presenterify(
+                value
+                  .group_by { |v| v['type'] }
+                  .map do |class_name, values|
+                    class_name.constantize.where(id: values.map { |v| v['uuid'] } )
+                  end.flatten
+              )
+            when 'read_public'
+              value
+            end
+          ]
+        end.to_h
+      end
+
+      def presenterify(obj)
+        return obj.map { |item| presenterify(item) } if obj.is_a?(Array)
+
+        case obj
+        when User
+          Presenters::Users::UserIndex.new(obj)
+        when Group, InstitutionalGroup
+          Presenters::Groups::GroupIndex.new(obj)
+        when ApiClient
+          Presenters::ApiClients::ApiClientIndex.new(obj)
+        else
+          binding.pry
+          fail 'Unknown type?' + obj.to_s
+        end
+      end
     end
   end
 end

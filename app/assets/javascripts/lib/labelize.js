@@ -9,11 +9,14 @@ const labelize = (resourceList, { withLink = false, onDelete, creatorId = null }
   }
 
   function mod(resource) {
-    if (resource.type && /group/.test(resource.type)) {
-      return resource.type.toLowerCase().replace(/.*group/, 'group')
-    } else {
-      return resource.type
+    return prepareType(resource).type.toLowerCase()
+  }
+
+  function prepareType(resource) {
+    if (resource.type && /Group/.test(resource.type)) {
+      resource.type = resource.type.replace(/.*Group/, 'Group')
     }
+    return resource
   }
 
   return f.map(f.compact(resourceList), (resource, i) => ({
@@ -24,7 +27,7 @@ const labelize = (resourceList, { withLink = false, onDelete, creatorId = null }
     tag: 'span',
     children: (
       <span>
-        {resourceName(resource)}
+        {resourceName(prepareType(resource))}
         {!!onDelete && canDelete(resource) && (
           <button
             className="multi-select-tag-remove"

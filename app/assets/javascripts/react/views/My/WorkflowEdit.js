@@ -13,6 +13,7 @@ const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
 import ResourceThumbnail from '../../decorators/ResourceThumbnail.cjsx'
 import InputMetaDatum from '../../decorators/InputMetaDatum.cjsx'
+import WorkflowCommonPermissions from '../../decorators/WorkflowCommonPermissions'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 import appRequest from '../../../lib/app-request.coffee'
 // import ui from '../../lib/ui.coffee'
@@ -404,51 +405,7 @@ const WorkflowEditor = ({
               onSave={onSavePermissions}
             />
           ) : (
-            <ul>
-              <li>
-                <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
-                {!!commonPermissions.responsible && (
-                  <UI.TagCloud
-                    mod="person"
-                    mods="small inline"
-                    list={labelize([commonPermissions.responsible])}
-                  />
-                )}
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_write')}
-                  {': '}
-                </span>
-                <UI.TagCloud
-                  mod="person"
-                  mods="small inline"
-                  list={labelize(commonPermissions.write)}
-                />
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_read')}
-                  {': '}
-                </span>
-                <UI.TagCloud
-                  mod="person"
-                  mods="small inline"
-                  list={labelize(commonPermissions.read)}
-                />
-              </li>
-              <li>
-                <span className="title-s">
-                  {t('common_settings_permissions_read_public')}
-                  {': '}
-                </span>
-                {commonPermissions.read_public ? (
-                  <i className="icon-checkmark" title="Ja" />
-                ) : (
-                  <i className="icon-close" title="Nein" />
-                )}
-              </li>
-            </ul>
+            <WorkflowCommonPermissions permissions={commonPermissions} />
           )}
 
           <h3 className="title-s mts">

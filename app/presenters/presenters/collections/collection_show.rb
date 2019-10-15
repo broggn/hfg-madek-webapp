@@ -110,7 +110,8 @@ module Presenters
           load_meta_data: @load_meta_data,
           disable_file_search: @type_filter != 'entries',
           only_filter_search: !['entries', 'collections'].include?(@type_filter),
-          content_type: content_type
+          content_type: content_type,
+          part_of_workflow: part_of_workflow?
         )
       end
 

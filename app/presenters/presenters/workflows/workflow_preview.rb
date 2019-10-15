@@ -4,7 +4,7 @@ module Presenters
       def child_resources
         arr = [ @app_resource.master_collection ] + @app_resource.master_collection.child_media_resources.to_a
         arr.map do |resource|
-          presenterify(resource)
+          presenterify_resource(resource)
         end
       end
 
@@ -15,9 +15,13 @@ module Presenters
         }.merge(super)
       end
 
+      def common_settings
+        { permissions: common_permissions }
+      end
+
       private
 
-      # def presenterify(resource)
+      # def presenterify_resource(resource)
       #   resource = resource.cast_to_type rescue resource
       #   p =
       #     case resource.class.name
@@ -34,7 +38,7 @@ module Presenters
       #   p
       # end
 
-      def presenterify(resource)
+      def presenterify_resource(resource)
         Presenters::MetaData::EditContextMetaData.new(resource, @user, nil, true)
       end
     end
