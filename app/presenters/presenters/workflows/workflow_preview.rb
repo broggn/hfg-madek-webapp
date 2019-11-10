@@ -1,6 +1,13 @@
 module Presenters
   module Workflows
     class WorkflowPreview < WorkflowCommon
+      attr_reader :fill_data_mode
+
+      def initialize(app_resource, user, fill_data_mode: false)
+        super(app_resource, user)
+        @fill_data_mode = fill_data_mode
+      end
+
       def child_resources
         arr = [ @app_resource.master_collection ] + @app_resource.master_collection.child_media_resources.to_a
         arr.map do |resource|
@@ -19,24 +26,15 @@ module Presenters
         { permissions: common_permissions }
       end
 
+      def master_collection
+        Presenters::Collections::CollectionIndexWithChildren.new(
+          @app_resource.master_collection,
+          @user
+        )
+        # presenterify_resource(@app_resource.master_collection)
+      end
+
       private
-
-      # def presenterify_resource(resource)
-      #   resource = resource.cast_to_type rescue resource
-      #   p =
-      #     case resource.class.name
-      #     when 'MediaEntry'
-      #       Presenters::MediaEntries::MediaEntryIndex.new(resource, @user)
-      #     when 'Collection'
-      #       Presenters::Collections::CollectionIndex.new(resource, @user)
-      #     end
-
-      #   p.define_singleton_method(:meta_data) do
-      #     Presenters::MetaData::MetaDataShow.new(@app_resource, @user)
-      #   end
-
-      #   p
-      # end
 
       def presenterify_resource(resource)
         Presenters::MetaData::EditContextMetaData.new(resource, @user, nil, true)

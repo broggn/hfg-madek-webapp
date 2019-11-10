@@ -34,6 +34,8 @@ module WorkflowLocker
         resource_fk => resource.id
       ).try(:destroy)
 
+      return if value.blank?
+
       meta_datum_klass.create_with_user!(@workflow.creator, {
         meta_key_id: meta_key_id,
         created_by: @workflow.creator,
