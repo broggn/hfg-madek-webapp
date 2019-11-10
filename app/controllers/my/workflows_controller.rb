@@ -61,7 +61,11 @@ class My::WorkflowsController < ApplicationController
     auth_authorize workflow
     @get =
       Presenters::Users::DashboardSection.new(
-        Presenters::Workflows::WorkflowPreview.new(workflow, current_user),
+        Presenters::Workflows::WorkflowPreview.new(
+          workflow,
+          current_user,
+          fill_data_mode: fill_data_mode?
+        ),
         sections_definition,
         nil
       )
@@ -133,5 +137,9 @@ class My::WorkflowsController < ApplicationController
     end
     flash[:error] = error_message.join("\n")
     redirect_to preview_my_workflow_path(@workflow)
+  end
+
+  def fill_data_mode?
+    params.fetch(:fill_data, false) == 'true'
   end
 end

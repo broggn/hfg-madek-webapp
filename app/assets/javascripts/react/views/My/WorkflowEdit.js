@@ -86,6 +86,7 @@ class WorkflowEdit extends React.Component {
       metaDataUpdateError: null,
       isEditingName: false,
       isSavingName: false,
+      isProcessing: false,
       isPreviewing: false,
       nameUpdateError: null,
       workflowOwners: props.get.workflow_owners,
@@ -102,6 +103,7 @@ class WorkflowEdit extends React.Component {
       'onSaveMetadata',
       'onToggleEditName',
       'onSaveName',
+      'handleFillDataClick',
       'handlePreviewClick'
     ].reduce((o, name) => ({ ...o, [name]: this[name].bind(this) }), {})
   }
@@ -256,6 +258,13 @@ class WorkflowEdit extends React.Component {
     })
   }
 
+  handleFillDataClick(e) {
+    if (this.state.isProcessing) {
+      e.preventDefault()
+    }
+    this.setState({ isProcessing: true })
+  }
+
   handlePreviewClick(e) {
     this.setState({ isPreviewing: true })
   }
@@ -306,6 +315,8 @@ const WorkflowEditor = ({
   isSavingName,
   onSaveName,
 
+  isProcessing,
+  handleFillDataClick,
   isPreviewing,
   handlePreviewClick
 }) => {
@@ -443,6 +454,13 @@ const WorkflowEditor = ({
       <div className="ui-actions phl pbl mtl">
         <a className="link weak" href={get.actions.index.url}>
           {t('actions_back')}
+        </a>
+        <a
+          className={cx('button large', { disabled: isProcessing })}
+          href={get.actions.fill_data.url}
+          onClick={handleFillDataClick}
+        >
+          {isProcessing ? 'Processing...' : 'Fill Data'}
         </a>
         <PreviewButton
           canPreview={canPreview}

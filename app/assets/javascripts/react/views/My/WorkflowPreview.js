@@ -37,11 +37,25 @@ class WorkflowPreview extends React.Component {
     }
   }
 
+  collectResources() {
+    const resources = [this.props.get.master_collection]
+
+    function getChildResources(r) {
+      f.each(r.child_resources, (childResource) => {
+        resources.push(childResource)
+        getChildResources(childResource)
+      })
+    }
+
+    getChildResources(resources[0])
+
+    return resources
+  }
+
   componentWillMount() {
-    const { child_resources } = this.props.get
     const { errors, models, initialErrors } = this.state
 
-    f.each(child_resources, (childResource) => {
+    f.each(this.collectResources(), (childResource) => {
       const {
         meta_data: { meta_datum_by_meta_key_id },
         uuid: resourceId,
@@ -76,9 +90,9 @@ class WorkflowPreview extends React.Component {
           errors[resourceId].push(metaKeyId)
           initialErrors[resourceId].push(metaKeyId)
         }
-
-        this.setState({ models, errors, initialErrors })
       })
+
+      this.setState({ models, errors, initialErrors })
     })
   }
 
@@ -126,9 +140,108 @@ class WorkflowPreview extends React.Component {
     return !f.every(f.values(this.state.errors), (arr) => f.isEmpty(arr))
   }
 
+  countResourcesByType(resource) {
+    const counts = f.reduce(resource.child_resources, (result, child) => {
+      result[child.type] += 1
+      return result
+    }, { MediaEntry: 0, Collection: 0 })
+    const entrySuffix = (counts['MediaEntry'] === 0 || counts['MediaEntry'] > 1) ? 'Entries' : 'Entry'
+    const collectionSuffix = (counts['Collection'] === 0 || counts['Collection'] > 1) ? 'Collections' : 'Collection'
+
+    return `${counts['MediaEntry']} ${entrySuffix} and ${counts['Collection']} ${collectionSuffix}`
+  }
+
+  collectErrors(resource, source = 'errors') {
+    const errors = f.get(this.state, source)
+    let count = errors[resource.uuid].length
+
+    if (resource.type === 'MediaEntry') {
+      return errors[resource.uuid].length
+    }
+
+    function collectChildErrorsOf(parent) {
+      return f.reduce(parent.child_resources, (result, child) => {
+        const resourceId = child.uuid
+        if (!f.isEmpty(errors[resourceId])) {
+          result += errors[resourceId].length
+        }
+        return result + collectChildErrorsOf(child)
+      }, 0)
+    }
+
+    count += collectChildErrorsOf(resource)
+
+    return count
+  }
+
+  renderResource(childResource) {
+    const {
+      resource,
+      type,
+      meta_meta_data: { meta_key_by_meta_key_id },
+      uuid: resourceId,
+      workflow,
+      child_resources
+    } = childResource
+    const { models, errors, initialErrors } = this.state
+    const hasErrors = this.collectErrors(childResource) > 0
+    const hasInitialErrors = this.collectErrors(childResource, 'initialErrors')
+    const headColor = hasErrors ? 'red' : 'green'
+    const suffix = hasErrors ? `${this.collectErrors(childResource)} error(s) found` : ''
+    const icon = hasErrors ? <span className='icon-close' /> : <span className='icon-checkmark' />
+    const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
+    const counterStyle = { fontWeight: 'normal', fontFamily: 'monospace', letterSpacing: '-0.45px' }
+
+    return (
+      <SubSection startOpen={hasInitialErrors} key={resourceId}>
+        <SubSection.Title tag='span' className='title-s mts'>
+          <span style={{ letterSpacing: '0.15em' }}>{resource.type}</span>
+          <span style={{ color: headColor }} className='mhs'>{suffix} {icon}</span>
+          {type === 'Collection' &&
+            <span style={counterStyle} className='mlx'>(consists of {this.countResourcesByType(childResource)})</span>
+          }
+        </SubSection.Title>
+
+        <div className='ui-container bordered pal mbs'>
+          <span style={supHeadStyle}>{type}</span>
+          <div className='app-body-sidebar table-cell ui-container table-side prm'>
+            {Renderer._renderThumbnail(resource, false)}
+          </div>
+          <div className='app-body-content table-cell ui-container table-substance ui-container'>
+            {
+              f.map(meta_key_by_meta_key_id, (metaKey, metaKeyId) => {
+                const hasError = f.include(errors[resourceId], metaKeyId)
+                const model = f.get(models, [resourceId, metaKeyId])
+
+                return (
+                  <Fieldset
+                    childResource={childResource}
+                    metaKey={metaKey}
+                    hasError={hasError}
+                    model={model}
+                    handleValueChange={this.handleValueChange}
+                    key={metaKeyId}
+                  />
+                )
+              })
+            }
+          </div>
+
+          {child_resources && !f.isEmpty(child_resources) &&
+            <div className='mtl'>
+              <div style={supHeadStyle} className='title-s mbs'>Resources:</div>
+              {f.map(child_resources, (child) => this.renderResource(child))}
+            </div>
+          }
+        </div>
+      </SubSection>
+    )
+  }
+
   render() {
     const { get, authToken } = this.props
     const childResources = get.child_resources
+    const masterCollection = get.master_collection
     const commonPermissions = get.common_settings.permissions
     const { models, errors, initialErrors, isFinishing, isSaving } = this.state
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
@@ -141,6 +254,7 @@ class WorkflowPreview extends React.Component {
       result[r.type] += 1
       return result
     }, {})
+    const isFillDataMode = f.get(get, 'fill_data_mode', false)
 
     return (
       <section className="ui-container bright bordered rounded mas pam">
@@ -149,17 +263,21 @@ class WorkflowPreview extends React.Component {
         </header>
         {/*<Link href={get.actions.edit.url}>&larr; Go back to workflow</Link>*/}
 
-        <p className='mvm title-m'>
-          This will apply to everything contained in the Set <strong>{get.name}</strong>.
-          Contained Collections: {numberOfResources['Collection']}, MediaEntries: {numberOfResources['MediaEntry']}
-        </p>
+        {!isFillDataMode &&
+          <p className='mvm title-m'>
+            This will apply to everything contained in the Set <strong>{get.name}</strong>.
+            Contained Collections: {numberOfResources['Collection']}, MediaEntries: {numberOfResources['MediaEntry']}
+          </p>
+        }
 
-        <div className='ui-container bordered phl pvm mbs'>
-          <WorkflowCommonPermissions
-            permissions={commonPermissions}
-            showHeader={true}
-          />
-        </div>
+        {!isFillDataMode &&
+          <div className='ui-container bordered phl pvm mbs'>
+            <WorkflowCommonPermissions
+              permissions={commonPermissions}
+              showHeader={true}
+            />
+          </div>
+        }
 
         <RailsForm
           ref={(form) => this.form = form}
@@ -169,57 +287,9 @@ class WorkflowPreview extends React.Component {
           authToken={authToken}
         >
 
-          {f.map(childResources, (childResource, i) => {
-            const {
-              resource,
-              type,
-              meta_meta_data: { meta_key_by_meta_key_id },
-              uuid: resourceId,
-              workflow
-            } = childResource
-            const hasErrors = !f.isEmpty(errors[resourceId])
-            const hasInitialErrors = !f.isEmpty(initialErrors[resourceId])
-            const headColor = hasErrors ? 'red' : 'green'
-            const suffix = hasErrors ? `${errors[resourceId].length} error(s) found` : ''
-            const icon = hasErrors ? <span className='icon-close' /> : <span className='icon-checkmark' />
+          {this.renderResource(masterCollection)}
 
-            return (
-              <SubSection startOpen={hasInitialErrors} key={i}>
-                <SubSection.Title tag='span' className='title-s mts'>
-                  <span style={{ letterSpacing: '0.15em' }}>{resource.type}</span>
-                  <span style={{ color: headColor }} className='mls'>{suffix} {icon}</span>
-                </SubSection.Title>
-
-                <div className='ui-container bordered pal mbs'>
-                  <span style={supHeadStyle}>{type}</span>
-                  <div className='app-body-sidebar table-cell ui-container table-side prm'>
-                    {Renderer._renderThumbnail(resource, false)}
-                  </div>
-                  <div className='app-body-content table-cell ui-container table-substance ui-container'>
-                    {
-                      f.map(meta_key_by_meta_key_id, (metaKey, metaKeyId) => {
-                        const hasError = f.include(errors[resourceId], metaKeyId)
-                        const model = f.get(models, [resourceId, metaKeyId])
-
-                        return (
-                          <Fieldset
-                            childResource={childResource}
-                            metaKey={metaKey}
-                            hasError={hasError}
-                            model={model}
-                            handleValueChange={this.handleValueChange}
-                            key={metaKeyId}
-                          />
-                        )
-                      })
-                    }
-                  </div>
-                </div>
-              </SubSection>
-            )
-          })}
-
-          {showPermissionsOnBottom &&
+          {showPermissionsOnBottom && !isFillDataMode &&
             <WorkflowCommonPermissions
               permissions={commonPermissions}
               showHeader={true}
@@ -231,11 +301,13 @@ class WorkflowPreview extends React.Component {
               {'Go back'}
             </a>
             <button type='button' className='button large' disabled={isSaving || isFinishing} onClick={this.handleSaveData}>
-              {isSaving ? 'Saving…' : 'Save & not finish'}
+              {isSaving ? 'Saving…' : 'Save data'}
             </button>
-            <button type='button' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
-              {isFinishing ? 'Finishing…' : 'Finish'}
-            </button>
+            {!isFillDataMode &&
+              <button type='button' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
+                {isFinishing ? 'Finishing…' : 'Finish'}
+              </button>
+            }
           </div>
 
         </RailsForm>
