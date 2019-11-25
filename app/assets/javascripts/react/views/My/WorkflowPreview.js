@@ -30,7 +30,7 @@ class WorkflowPreview extends React.Component {
   }
 
   handleSubmit(e) {
-    if (!confirm('You\'re about to finish the workflow. This action cannot be undone. Do you want to proceed?')) {
+    if (!confirm(t('workflow_preview_finish_confirmation'))) {
       e.preventDefault()
     } else {
       this.setState({ isFinishing: true })
@@ -140,15 +140,21 @@ class WorkflowPreview extends React.Component {
     return !f.every(f.values(this.state.errors), (arr) => f.isEmpty(arr))
   }
 
-  countResourcesByType(resource) {
-    const counts = f.reduce(resource.child_resources, (result, child) => {
-      result[child.type] += 1
-      return result
-    }, { MediaEntry: 0, Collection: 0 })
-    const entrySuffix = (counts['MediaEntry'] === 0 || counts['MediaEntry'] > 1) ? 'Entries' : 'Entry'
-    const collectionSuffix = (counts['Collection'] === 0 || counts['Collection'] > 1) ? 'Collections' : 'Collection'
+  countResourcesByType(resource, withNested = false) {
+    const result = { MediaEntry: 0, Collection: 0 }
 
-    return `${counts['MediaEntry']} ${entrySuffix} and ${counts['Collection']} ${collectionSuffix}`
+    function countChildResources(parent, result) {
+      f.each(parent.child_resources, (child) => {
+        result[child.type] += 1
+        if (withNested && child.type === 'Collection') {
+          countChildResources(child, result)
+        }
+      })
+    }
+
+    countChildResources(resource, result)
+
+    return result
   }
 
   collectErrors(resource, source = 'errors') {
@@ -191,6 +197,7 @@ class WorkflowPreview extends React.Component {
     const icon = hasErrors ? <span className='icon-close' /> : <span className='icon-checkmark' />
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
     const counterStyle = { fontWeight: 'normal', fontFamily: 'monospace', letterSpacing: '-0.45px' }
+    const numberOfResources = this.countResourcesByType(childResource)
 
     return (
       <SubSection startOpen={hasInitialErrors} key={resourceId}>
@@ -198,7 +205,9 @@ class WorkflowPreview extends React.Component {
           <span style={{ letterSpacing: '0.15em' }}>{resource.type}</span>
           <span style={{ color: headColor }} className='mhs'>{suffix} {icon}</span>
           {type === 'Collection' &&
-            <span style={counterStyle} className='mlx'>(consists of {this.countResourcesByType(childResource)})</span>
+            <span style={counterStyle} className='mlx'>
+              ({t('workflow_preview_consists_of_prefix')} {numberOfResources['MediaEntry']} {t('workflow_preview_consists_of_media_entries')} {t('workflow_preview_consists_of_and')} {numberOfResources['Collection']} {t('workflow_preview_consists_of_collections')})
+            </span>
           }
         </SubSection.Title>
 
@@ -229,7 +238,7 @@ class WorkflowPreview extends React.Component {
 
           {child_resources && !f.isEmpty(child_resources) &&
             <div className='mtl'>
-              <div style={supHeadStyle} className='title-s mbs'>Resources:</div>
+              <div style={supHeadStyle} className='title-s mbs'>{t('workflow_preview_resources_header')}:</div>
               {f.map(child_resources, (child) => this.renderResource(child))}
             </div>
           }
@@ -240,20 +249,13 @@ class WorkflowPreview extends React.Component {
 
   render() {
     const { get, authToken } = this.props
-    const childResources = get.child_resources
     const masterCollection = get.master_collection
     const commonPermissions = get.common_settings.permissions
     const { models, errors, initialErrors, isFinishing, isSaving } = this.state
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
     const submitBtnClass = cx('button primary-button large', { disabled: isFinishing })
-    const showPermissionsOnBottom = childResources.length > 30
-    const numberOfResources = f.reduce(childResources, (result, r) => {
-      if (!f.get(result, r.type)) {
-        f.set(result, r.type, 0)
-      }
-      result[r.type] += 1
-      return result
-    }, {})
+    const numberOfAllResources = this.countResourcesByType(masterCollection, true)
+    const showPermissionsOnBottom = f.sum(f.values(numberOfAllResources)) > 30
     const isFillDataMode = f.get(get, 'fill_data_mode', false)
 
     return (
@@ -261,12 +263,12 @@ class WorkflowPreview extends React.Component {
         <header>
           <span style={supHeadStyle}>{'Workflow'}</span>
         </header>
-        {/*<Link href={get.actions.edit.url}>&larr; Go back to workflow</Link>*/}
 
         {!isFillDataMode &&
           <p className='mvm title-m'>
-            This will apply to everything contained in the Set <strong>{get.name}</strong>.
-            Contained Collections: {numberOfResources['Collection']}, MediaEntries: {numberOfResources['MediaEntry']}
+            {t('workflow_preview_summary_text_part_1')} <strong>{get.name}</strong>.
+            {' '}
+            {t('workflow_preview_summary_text_part_2')} {t('workflow_preview_consists_of_collections')}: {numberOfAllResources['Collection']}, {t('workflow_preview_consists_of_media_entries')}: {numberOfAllResources['MediaEntry']}
           </p>
         }
 
@@ -298,14 +300,14 @@ class WorkflowPreview extends React.Component {
 
           <div className='ui-actions pts pbs'>
             <a className='link weak' href={get.actions.edit.url}>
-              {'Go back'}
+              {t('workflow_preview_actions_back')}
             </a>
             <button type='button' className='button large' disabled={isSaving || isFinishing} onClick={this.handleSaveData}>
-              {isSaving ? 'Saving…' : 'Save data'}
+              {isSaving ? t('workflow_preview_actions_saving') : t('workflow_preview_actions_save_data')}
             </button>
             {!isFillDataMode &&
               <button type='button' className={submitBtnClass} disabled={this.hasErrors() || isSaving} onClick={this.handleSubmit}>
-                {isFinishing ? 'Finishing…' : 'Finish'}
+                {isFinishing ? t('workflow_preview_actions_finishing') : t('workflow_preview_actions_finish')}
               </button>
             }
           </div>

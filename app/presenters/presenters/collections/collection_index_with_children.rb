@@ -15,7 +15,6 @@ module Presenters
 
       def x_presenterify(obj)
         obj = obj.cast_to_type
-        # obj.reload
         case obj
         when MediaEntry
           Presenters::MetaData::EditContextMetaData.new(obj, @user, nil, true)

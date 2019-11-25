@@ -107,17 +107,17 @@ describe My::WorkflowsController do
 
     context 'when user is an owner' do
       it 'renders template' do
-        workflow = create :workflow, user: user
+        workflow = create :workflow, creator: user
 
-        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.user.id })
+        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.creator.id })
 
         expect(response).to render_template('workflows/edit')
       end
 
       it 'assigns a presenter to @get' do
-        workflow = create :workflow, user: user
+        workflow = create :workflow, creator: user
 
-        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.user.id })
+        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.creator.id })
 
         expect(assigns[:get]).to be_instance_of(Presenters::Users::DashboardSection)
         expect(assigns[:get].section_content).to be_instance_of(Presenters::Workflows::WorkflowEdit)
@@ -152,7 +152,7 @@ describe My::WorkflowsController do
 
     context 'when user is an owner' do
       it 'updates the workflow' do
-        workflow = create :workflow, user: user
+        workflow = create :workflow, creator: user
 
         patch(
           :update,
@@ -164,7 +164,7 @@ describe My::WorkflowsController do
       end
 
       it 'updates owners' do
-        workflow = create :workflow, user: user
+        workflow = create :workflow, creator: user
         workflow.owners << create(:user)
         owner_1 = create :user
         owner_2 = create :user
@@ -178,7 +178,7 @@ describe My::WorkflowsController do
       end
 
       it 'updates common permissions' do
-        workflow = create :workflow, user: user
+        workflow = create :workflow, creator: user
         responsible_person = create :user
         group_1 = create :group
         group_2 = create :group

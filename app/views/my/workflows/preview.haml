@@ -1,7 +1,7 @@
 :ruby
   content_for(:page_header) do
     component('page-header',
-              text: 'Preview of workflow: ' + @get.section_content.name)
+              text: t(:workflow_preview_header) + @get.section_content.name)
   end
 
 - content_for(:page_content) do

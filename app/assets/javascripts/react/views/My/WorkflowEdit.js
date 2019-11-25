@@ -2,12 +2,6 @@ import React from 'react'
 import f from 'active-lodash'
 import cx from 'classnames'
 
-// import setUrlParams from '../../../lib/set-params-for-url.coffee'
-// import AppRequest from '../../../lib/app-request.coffee'
-// import asyncWhile from 'async/whilst'
-// import { parse as parseUrl } from 'url'
-// import { parse as parseQuery } from 'qs'
-// import Moment from 'moment'
 import currentLocale from '../../../lib/current-locale'
 const UI = require('../../ui-components/index.coffee')
 import SubSection from '../../ui-components/SubSection'
@@ -16,60 +10,13 @@ import InputMetaDatum from '../../decorators/InputMetaDatum.cjsx'
 import WorkflowCommonPermissions from '../../decorators/WorkflowCommonPermissions'
 import RailsForm from '../../lib/forms/rails-form.cjsx'
 import appRequest from '../../../lib/app-request.coffee'
-// import ui from '../../lib/ui.coffee'
-// const t = ui.t
-import I18nTranslate from '../../../lib/i18n-translate'
+import t from '../../../lib/i18n-translate'
 import labelize from '../../../lib/labelize'
+
 let AutoComplete = false // client-side only!
 
 // const fakeCallback = (a, b, c) => console.log([a, b, c]) // eslint-disable-line
 const DEBUG_STATE = false // set to true when developing or debugging forms with state!
-
-// TODO: move to translations.csv
-const UI_TXT = {
-  feature_title: { de: 'Prozess', en: 'Workflow' },
-
-  associated_collections_title: { de: 'Set mit Inhalten', en: 'Set with content' },
-  associated_collections_explain: {
-    de: `In diesem Set enthaltene Inhalte können vor dem Abschluss nur als Teil dieses Prozesses bearbeitet werden.`,
-    en: `Content contained in this set may only be considered as part of this workflow prior to completion to be edited.`
-  },
-  associated_collections_upload: { de: 'Medien hinzufügen', en: 'Add media' },
-
-  workflow_owners_title: { de: 'Prozess-Besitzer', en: 'Workflow owners' },
-
-  common_settings_title: { de: 'Gemeinsamer Datensatz', en: 'Common data' },
-  common_settings_explain: {
-    de: `Diese Daten und Einstellungen gelten für alle enthaltenen Inhalte und werden bei
-     Prozessabschluss permanent angewendet.`,
-    en: `These data and settings apply to all contents and are permanently applied at the end of the process.`
-  },
-  common_settings_permissions_title: { de: 'Berechtigungen', en: 'Permissions' },
-  common_settings_permissions_responsible: { de: 'Verantwortlich', en: 'Responsible' },
-  common_settings_permissions_write: { de: 'Schreib- und Leserechte', en: 'Read and write rights' },
-  common_settings_permissions_read: { de: 'Nur Leserechte', en: 'Only reading rights' },
-  common_settings_permissions_read_public: { de: 'Öffentlicher Zugriff', en: 'Public access' },
-  common_settings_permissions_select_user: { de: 'Nutzer auswählen', en: 'Select user' },
-  common_settings_permissions_add_user: { de: 'Nutzer hinzufügen', en: 'Add user' },
-  common_settings_permissions_add_group: { de: 'Gruppe hinzufügen', en: 'Add group' },
-  common_settings_permissions_add_api_client: { de: 'API-Client hinzufügen', en: 'Add API-Client' },
-  common_settings_metadata_title: { de: 'MetaDaten', en: 'MetaData' },
-
-  actions_back: { de: 'Zurück', en: 'Go back' },
-  actions_validate: { de: 'Prüfen', en: 'Check' },
-  actions_validating: { de: 'Prüfen…', en: 'Checking…' },
-  actions_finish: { de: 'Abschliessen…', en: 'Finish…' },
-
-  add_md_by_metakey: { de: 'Hinzufügen', en: 'Add' },
-  adder_meta_key_already_used: { de: 'Metakey ist schon verwendet', en: 'Metakey already used' }
-}
-
-const t = key => {
-  /* global APP_CONFIG */
-  // FIXME: only works client-side for now, hardcode a fallback…
-  const locale = f.get(APP_CONFIG, 'userLanguage') || 'de'
-  return f.get(UI_TXT, [key, locale]) || I18nTranslate(key)
-}
 
 class WorkflowEdit extends React.Component {
   constructor(props) {
@@ -330,7 +277,7 @@ const WorkflowEditor = ({
   return (
     <section className="ui-container bright bordered rounded mas pam">
       <header>
-        <span style={supHeadStyle}>{t('feature_title')}</span>
+        <span style={supHeadStyle}>{t('workflow_feature_title')}</span>
         {!isEditingName ? (
           <h1 className="title-l" style={headStyle}>
             {name}
@@ -351,10 +298,10 @@ const WorkflowEditor = ({
       <div>
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {t('associated_collections_title')}
+            {t('workflow_associated_collections_title')}
           </SubSection.Title>
 
-          <Explainer>{t('associated_collections_explain')}</Explainer>
+          <Explainer>{t('workflow_associated_collections_explain')}</Explainer>
 
           <div>
             <div className="ui-resources miniature" style={{ margin: 0 }}>
@@ -369,7 +316,7 @@ const WorkflowEditor = ({
                   <span>
                     <i className="icon-upload"></i>
                   </span>{' '}
-                  {t('associated_collections_upload')}
+                  {t('workflow_associated_collections_upload')}
                 </a>
               </div>)
             }
@@ -396,13 +343,13 @@ const WorkflowEditor = ({
 
         <SubSection>
           <SubSection.Title tag="h2" className="title-m mts">
-            {t('common_settings_title')}
+            {t('workflow_common_settings_title')}
           </SubSection.Title>
 
-          <Explainer>{t('common_settings_explain')}</Explainer>
+          <Explainer>{t('workflow_common_settings_explain')}</Explainer>
 
           <h3 className="title-s mts">
-            {t('common_settings_permissions_title')}
+            {t('workflow_common_settings_permissions_title')}
             {'  '}
             {!isEditingPermissions && canEdit && <EditButton onClick={onToggleEditPermissions} />}
           </h3>
@@ -420,7 +367,7 @@ const WorkflowEditor = ({
           )}
 
           <h3 className="title-s mts">
-            {t('common_settings_metadata_title')}
+            {t('workflow_common_settings_metadata_title')}
             {'  '}
             {!isEditingPermissions && canEdit && <EditButton onClick={onToggleEditMetadata} />}
           </h3>
@@ -453,15 +400,17 @@ const WorkflowEditor = ({
 
       <div className="ui-actions phl pbl mtl">
         <a className="link weak" href={get.actions.index.url}>
-          {t('actions_back')}
+          {t('workflow_edit_actions_back')}
         </a>
-        <a
-          className={cx('button large', { disabled: isProcessing })}
-          href={get.actions.fill_data.url}
-          onClick={handleFillDataClick}
-        >
-          {isProcessing ? 'Processing...' : 'Fill Data'}
-        </a>
+        {canPreview && (
+          <a
+            className={cx('button large', { disabled: isProcessing })}
+            href={get.actions.fill_data.url}
+            onClick={handleFillDataClick}
+          >
+            {isProcessing ? t('workflow_edit_actions_processing') : t('workflow_edit_actions_fill_data') }
+          </a>)
+        }
         <PreviewButton
           canPreview={canPreview}
           isEditing={isEditing}
@@ -469,24 +418,6 @@ const WorkflowEditor = ({
           previewUrl={get.actions.preview.url}
           handleClick={handlePreviewClick}
         />
-        {/*
-        <button className="tertiary-button large" type="button">
-          {t('actions_validate')}
-        </button>
-        */}
-        {canEdit && false && (
-          <RailsForm
-            action={get.actions.preview.url}
-            method={get.actions.preview.method}
-            name="workflow"
-            style={{ display: 'inline-block' }}
-            authToken={authToken}>
-            {' '}
-            <button className="primary-button large" type="submit" disabled={isEditing}>
-              {t('actions_finish')}
-            </button>
-          </RailsForm>
-        )}
       </div>
     </section>
   )
@@ -554,7 +485,7 @@ class MetadataEditor extends React.Component {
                         type="button"
                         className="button small db"
                         onClick={() => this.onRemoveMd(md)}>
-                        DEL
+                        {t('workflow_edit_actions_delete')}
                       </button>
                     </div>
                     <InputMetaDatum
@@ -571,7 +502,7 @@ class MetadataEditor extends React.Component {
             ))}
           </ul>
           <div>
-            {t('add_md_by_metakey')}
+            {t('workflow_edit_add_md_by_metakey')}
             <span style={{ position: 'relative' }}>
               <AutoComplete
                 className="block"
@@ -579,7 +510,7 @@ class MetadataEditor extends React.Component {
                 resourceType="MetaKeys"
                 searchParams={langParam}
                 onSelect={this.onAddMdByMk}
-                existingValueHint={t('adder_meta_key_already_used')}
+                existingValueHint={t('workflow_edit_adder_meta_key_already_used')}
                 valueFilter={val => f.any(state.md, md => f.get(val, 'uuid') === md.meta_key.uuid)}
               />
             </span>
@@ -587,10 +518,10 @@ class MetadataEditor extends React.Component {
 
           <div className="pts pbs">
             <button type="submit" className="button primary-button">
-              SAVE
+              {t('workflow_edit_actions_save')}
             </button>{' '}
             <button type="button" className="button" onClick={onCancel}>
-              CANCEL
+              {t('workflow_edit_actions_cancel')}
             </button>
           </div>
         </form>
@@ -646,7 +577,7 @@ class PermissionsEditor extends React.Component {
           }}>
           <ul>
             <li>
-              <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
+              <span className="title-s">{t('workflow_common_settings_permissions_responsible')}: </span>
               <UI.TagCloud
                 mod="person"
                 mods="small inline"
@@ -655,7 +586,7 @@ class PermissionsEditor extends React.Component {
                 })} />
               <div className="row">
                 <div className="col1of3">
-                  {t('common_settings_permissions_select_user')}:{' '}
+                  {t('workflow_common_settings_permissions_select_user')}:{' '}
                   <AutocompleteAdder
                     type="Users"
                     onSelect={this.onSetResponsible}
@@ -666,7 +597,7 @@ class PermissionsEditor extends React.Component {
             </li>
             <li>
               <span className="title-s">
-                {t('common_settings_permissions_write')}
+                {t('workflow_common_settings_permissions_write')}
                 {': '}
               </span>
               <UI.TagCloud
@@ -680,7 +611,7 @@ class PermissionsEditor extends React.Component {
             </li>
             <li>
               <span className="title-s">
-                {t('common_settings_permissions_read')}
+                {t('workflow_common_settings_permissions_read')}
                 {': '}
               </span>
               <UI.TagCloud
@@ -693,7 +624,7 @@ class PermissionsEditor extends React.Component {
             </li>
             <li>
               <span className="title-s">
-                {t('common_settings_permissions_read_public')}
+                {t('workflow_common_settings_permissions_read_public')}
                 {': '}
               </span>
               <input
@@ -706,10 +637,10 @@ class PermissionsEditor extends React.Component {
 
           <div className="pts pbs">
             <button type="submit" className="button primary-button">
-              SAVE
+              {t('workflow_edit_actions_save')}
             </button>{' '}
             <button type="button" className="button" onClick={onCancel}>
-              CANCEL
+              {t('workflow_edit_actions_cancel')}
             </button>
           </div>
         </form>
@@ -754,10 +685,10 @@ class NameEditor extends React.Component {
 
           <div className="pts pbs">
             <button type="submit" className="button primary-button">
-              SAVE
+              {t('workflow_edit_actions_save')}
             </button>{' '}
             <button type="button" className="button" onClick={onCancel}>
-              CANCEL
+              {t('workflow_edit_actions_cancel')}
             </button>
           </div>
         </form>
@@ -799,7 +730,7 @@ class OwnersEditor extends React.Component {
           />
           <div className="row">
             <div className="col1of3">
-              {t('common_settings_permissions_select_user')}:{' '}
+              {t('workflow_common_settings_permissions_select_user')}:{' '}
               <AutocompleteAdder
                 type="Users"
                 onSelect={this.onAddOwner}
@@ -809,10 +740,10 @@ class OwnersEditor extends React.Component {
           </div>
           <div className="pts pbs">
             <button type="submit" className="button primary-button">
-              SAVE
+              {t('workflow_edit_actions_save')}
             </button>{' '}
             <button type="button" className="button" onClick={props.onCancel}>
-              CANCEL
+              {t('workflow_edit_actions_cancel')}
             </button>
           </div>
         </form>
@@ -841,10 +772,10 @@ const EditButton = ({ onClick, icon = 'icon-pen', ...props }) => {
 const PreviewButton = ({ handleClick, canPreview, isEditing, isPreviewing, previewUrl }) => {
   const cssClasses = cx('primary-button large', { disabled: isEditing || isPreviewing })
   const disabledButton = <div className={cssClasses}>
-    {isPreviewing ? t('actions_validating') : t('actions_validate')}
+    {isPreviewing ? t('workflow_edit_actions_validating') : t('workflow_edit_actions_validate')}
   </div>
   const regularButton = <a className={cssClasses} href={previewUrl} onClick={handleClick}>
-    {t('actions_validate')}
+    {t('workflow_edit_actions_validate')}
   </a>
 
   return (
@@ -879,13 +810,13 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd , pe
   <div className="row pts pbm">
     <div className="col1of3">
       <div className="">
-        {t('common_settings_permissions_add_user')}:{' '}
+        {t('workflow_common_settings_permissions_add_user')}:{' '}
         <AutocompleteAdder type="Users" onSelect={onAdd} currentValues={currentUsers} />
       </div>
     </div>
     <div className="col1of3">
       <div className="pls">
-        {t('common_settings_permissions_add_group')}:{' '}
+        {t('workflow_common_settings_permissions_add_group')}:{' '}
         <AutocompleteAdder
           type="Groups"
           searchParams={{ scope: 'permissions' }}
@@ -897,7 +828,7 @@ const MultiAdder = ({ currentUsers, currentGroups, currentApiClients, onAdd , pe
     { permissionsScope === 'read' &&
       <div className="col1of3">
         <div className="pls">
-          {t('common_settings_permissions_add_api_client')}:{' '}
+          {t('workflow_common_settings_permissions_add_api_client')}:{' '}
           <AutocompleteAdder type="ApiClients" onSelect={onAdd} currentValues={currentApiClients} />
         </div>
       </div>

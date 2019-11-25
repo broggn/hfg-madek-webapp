@@ -33,7 +33,7 @@ module.exports = {
 
     workflowLink = <Link href={workflow.actions.edit.url} mods='strong'>{workflow.name}</Link>
     info = <span style={{fontStyle: 'italic'}}>
-      This value is managed by workflow "{workflowLink}"
+      {t('workflow_preview_value_managed_by')} "{workflowLink}"
     </span>
     arrowStyle =
       fontSize: '0.75em'

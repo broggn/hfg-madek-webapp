@@ -8,13 +8,6 @@ module Presenters
         @fill_data_mode = fill_data_mode
       end
 
-      def child_resources
-        arr = [ @app_resource.master_collection ] + @app_resource.master_collection.child_media_resources.to_a
-        arr.map do |resource|
-          presenterify_resource(resource)
-        end
-      end
-
       def actions
         {
           save_and_not_finish: { url: save_and_not_finish_my_workflow_path(@app_resource), method: 'PATCH' },
@@ -31,13 +24,6 @@ module Presenters
           @app_resource.master_collection,
           @user
         )
-        # presenterify_resource(@app_resource.master_collection)
-      end
-
-      private
-
-      def presenterify_resource(resource)
-        Presenters::MetaData::EditContextMetaData.new(resource, @user, nil, true)
       end
     end
   end

@@ -45,7 +45,7 @@ class My::WorkflowsController < ApplicationController
     workflow = Workflow.find(params[:id])
     auth_authorize workflow
     workflow.update!(workflow_params)
-    respond_with(workflow_edit_data(workflow.reload))
+    respond_with(workflow, location: -> { edit_my_workflow_path(workflow) })
   end
 
   def update_owners
@@ -53,7 +53,7 @@ class My::WorkflowsController < ApplicationController
     auth_authorize workflow
     users_or_people_ids = params.require(:workflow).fetch(:owners, [])
     workflow.owners = User.where(id: users_or_people_ids)
-    respond_with(workflow_edit_data(workflow))
+    respond_with(workflow, location: -> { edit_my_workflow_path(workflow) })
   end
 
   def preview
@@ -78,7 +78,7 @@ class My::WorkflowsController < ApplicationController
     result = WorkflowLocker::Service.new(@workflow, meta_data_params).save_only
     if result == true
       flash[:notice] = 'Meta data has been updated successfully.'
-      redirect_to preview_my_workflow_path(@workflow)
+      redirect_to preview_my_workflow_path(@workflow, fill_data: true)
     else
       handle_errors(result)
     end
