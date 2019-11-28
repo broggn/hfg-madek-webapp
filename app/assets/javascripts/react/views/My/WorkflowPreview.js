@@ -193,7 +193,7 @@ class WorkflowPreview extends React.Component {
     const hasErrors = this.collectErrors(childResource) > 0
     const hasInitialErrors = this.collectErrors(childResource, 'initialErrors')
     const headColor = hasErrors ? 'red' : 'green'
-    const suffix = hasErrors ? `${this.collectErrors(childResource)} error(s) found` : ''
+    const suffix = hasErrors ? `${this.collectErrors(childResource)} ${t('workflow_preview_errors_found')}` : ''
     const icon = hasErrors ? <span className='icon-close' /> : <span className='icon-checkmark' />
     const supHeadStyle = { textTransform: 'uppercase', fontSize: '85%', letterSpacing: '0.15em' }
     const counterStyle = { fontWeight: 'normal', fontFamily: 'monospace', letterSpacing: '-0.45px' }
