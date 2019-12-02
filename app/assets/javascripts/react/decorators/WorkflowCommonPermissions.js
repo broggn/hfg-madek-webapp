@@ -2,23 +2,8 @@ import React from 'react'
 import f from 'lodash'
 import cx from 'classnames'
 import TagCloud from '../ui-components/TagCloud.cjsx'
-import I18nTranslate from '../../lib/i18n-translate'
+import t from '../../lib/i18n-translate'
 import labelize from '../../lib/labelize'
-
-const UI_TXT = {
-  common_settings_permissions_title: { de: 'Berechtigungen', en: 'Permissions' },
-  common_settings_permissions_responsible: { de: 'Verantwortlich', en: 'Responsible' },
-  common_settings_permissions_write: { de: 'Schreib- und Leserechte', en: 'Read and write rights' },
-  common_settings_permissions_read: { de: 'Nur Leserechte', en: 'Only reading rights' },
-  common_settings_permissions_read_public: { de: 'Öffentlicher Zugriff', en: 'Public access' }
-}
-
-const t = key => {
-  /* global APP_CONFIG */
-  // FIXME: only works client-side for now, hardcode a fallback…
-  const locale = f.get(APP_CONFIG, 'userLanguage') || 'de'
-  return f.get(UI_TXT, [key, locale]) || I18nTranslate(key)
-}
 
 export default class WorkflowCommonPermissions extends React.Component {
   render() {
@@ -29,11 +14,11 @@ export default class WorkflowCommonPermissions extends React.Component {
     return (
       <div>
         {showHeader &&
-          <span style={supHeadStyle}>{t('common_settings_permissions_title')}</span>
+          <span style={supHeadStyle}>{t('workflow_common_settings_permissions_title')}</span>
         }
         <ul>
           <li>
-            <span className="title-s">{t('common_settings_permissions_responsible')}: </span>
+            <span className="title-s">{t('workflow_common_settings_permissions_responsible')}: </span>
             {!!responsible && (
               <TagCloud
                 mod="person"
@@ -44,7 +29,7 @@ export default class WorkflowCommonPermissions extends React.Component {
           </li>
           <li>
             <span className="title-s">
-              {t('common_settings_permissions_write')}
+              {t('workflow_common_settings_permissions_write')}
               {': '}
             </span>
             <TagCloud
@@ -55,7 +40,7 @@ export default class WorkflowCommonPermissions extends React.Component {
           </li>
           <li>
             <span className="title-s">
-              {t('common_settings_permissions_read')}
+              {t('workflow_common_settings_permissions_read')}
               {': '}
             </span>
             <TagCloud
@@ -66,7 +51,7 @@ export default class WorkflowCommonPermissions extends React.Component {
           </li>
           <li>
             <span className="title-s">
-              {t('common_settings_permissions_read_public')}
+              {t('workflow_common_settings_permissions_read_public')}
               {': '}
             </span>
             {read_public ? (
