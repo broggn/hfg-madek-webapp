@@ -48,6 +48,15 @@ module Presenters
         end
       end
 
+      def indexify_media_entry_if_exists(media_entry)
+        if media_entry
+          Presenters::MediaEntries::MediaEntryIndex.new(media_entry, @user)
+        else
+          ''
+        end
+      end
+
+      # rubocop:disable Metrics/CyclomaticComplexity
       def indexify_if_necessary(value)
         case value.class.name
         when 'Person'
@@ -66,10 +75,16 @@ module Presenters
           Presenters::People::PersonIndexForRoles.new(value)
         when 'PersonWithRoles'
           Presenters::People::PersonIndexForRoles.new(value)
+        when 'MetaDatum::MediaEntry'
+          [
+            indexify_media_entry_if_exists(value.other_media_entry),
+            value.string.presence || ''
+          ]
         else # all other values are "primitive/literal/unspecified":
           value
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 end
