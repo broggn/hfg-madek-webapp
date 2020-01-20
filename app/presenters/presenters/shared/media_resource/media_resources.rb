@@ -151,11 +151,7 @@ module Presenters
             fail 'TypeError! not an AR Collection/Relation!'
           end
 
-          # if resources.class == ::MediaResource.const_get(:ActiveRecord_Relation)
           resources.filter_by(@user, (config[:filter] || {}).merge(part_of_workflow: @part_of_workflow))
-          # else
-            # resources.filter_by(@user, config[:filter] || {})
-          # end
         end
 
         def _total_count
