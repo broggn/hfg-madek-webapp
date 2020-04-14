@@ -7,10 +7,10 @@ module WorkflowLocker
 
     def initialize(object_or_id, meta_data = {})
       @workflow = if object_or_id.is_a?(ApplicationRecord)
-                    object_or_id
-                  else
-                    Workflow.find(object_or_id)
-                  end
+        object_or_id
+      else
+        Workflow.find(object_or_id)
+      end
       @meta_data = meta_data
       @errors = {}
     end

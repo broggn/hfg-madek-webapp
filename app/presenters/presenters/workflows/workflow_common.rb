@@ -36,7 +36,7 @@ module Presenters
                 value
                   .group_by { |v| v['type'] }
                   .map do |class_name, values|
-                    class_name.constantize.where(id: values.map { |v| v['uuid'] } )
+                    class_name.constantize.where(id: values.map { |v| v['uuid'] })
                   end.flatten
               )
             when 'read_public'
@@ -57,7 +57,6 @@ module Presenters
         when ApiClient
           Presenters::ApiClients::ApiClientIndex.new(obj)
         else
-          binding.pry
           fail 'Unknown type?' + obj.to_s
         end
       end

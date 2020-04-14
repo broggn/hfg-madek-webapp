@@ -4,6 +4,7 @@ class My::WorkflowsController < ApplicationController
   before_action { auth_authorize(:dashboard, :logged_in?) }
 
   def index
+    auth_authorize :workflow
     @get =
       Presenters::Users::DashboardSection.new(
         Presenters::Workflows::WorkflowIndex.new(current_user),
@@ -14,6 +15,7 @@ class My::WorkflowsController < ApplicationController
   end
 
   def new
+    auth_authorize :workflow
     @get =
       Presenters::Users::DashboardSection.new(
         Presenters::Workflows::WorkflowNew.new(Workflow.new, current_user),
@@ -24,6 +26,7 @@ class My::WorkflowsController < ApplicationController
   end
 
   def create
+    auth_authorize :workflow
     WorkflowCreator.new(workflow_params, current_user).call
 
     redirect_to my_workflows_path, notice: 'Workflow has been created successfully.'
@@ -78,7 +81,7 @@ class My::WorkflowsController < ApplicationController
     result = WorkflowLocker::Service.new(@workflow, meta_data_params).save_only
     if result == true
       flash[:notice] = 'Meta data has been updated successfully.'
-      redirect_to preview_my_workflow_path(@workflow, fill_data: true)
+      redirect_to edit_my_workflow_path(@workflow)
     else
       handle_errors(result)
     end
@@ -102,27 +105,26 @@ class My::WorkflowsController < ApplicationController
   end
 
   def meta_data_value_params
-    [
-      :string,
-      :uuid,
-      :isNew,
-      :label,
-      :type,
-      :subtype,
-      :term,
-      :first_name,
-      :last_name,
-      :pseudonym,
-      :role
-    ]
+    %i(string uuid isNew label type subtype term first_name last_name pseudonym role)
   end
 
   def workflow_params
     params.require(:workflow).permit(
       :name,
       { owner_ids: [] },
-      common_permissions: [:responsible, { write: [:uuid, :type] }, { read: [:uuid, :type] }, :read_public],
-      common_meta_data: [:meta_key_id, { value: meta_data_value_params }]
+      common_permissions: [
+        :responsible,
+        { write: %i(uuid type) },
+        { read: %i(uuid type) },
+        :read_public
+      ],
+      common_meta_data: [
+        :meta_key_id,
+        { value: meta_data_value_params },
+        :is_common,
+        :is_mandatory,
+        :is_overridable
+      ]
     )
   end
 
@@ -133,7 +135,7 @@ class My::WorkflowsController < ApplicationController
   def handle_errors(errors)
     error_message = ['Workflow cannot be finished because of following errors:']
     errors.each do |resource_title, messages|
-      error_message << "#{resource_title}: #{messages.join(' ')}"
+      error_message << "#{resource_title}: #{messages.join(', ')}"
     end
     flash[:error] = error_message.join("\n")
     redirect_to preview_my_workflow_path(@workflow)

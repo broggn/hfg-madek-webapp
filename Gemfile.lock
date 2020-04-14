@@ -145,9 +145,9 @@ GEM
     erubi (1.8.0)
     erubis (2.7.0)
     execjs (2.7.0)
-    exiftool (0.7.0)
+    exiftool (1.2.1)
       json
-    exiftool_vendored (10.23.0)
+    exiftool_vendored (11.84.0)
       exiftool (>= 0.7.0)
     factory_girl (4.8.1)
       activesupport (>= 3.0.0)
@@ -188,15 +188,8 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
-    json (2.2.0)
-    json (2.2.0-java)
-    json-ld (3.0.2)
-      multi_json (~> 1.12)
-      rdf (>= 2.2.8, < 4.0)
-    json-ld-preloaded (3.0.5)
-      json-ld (~> 3.0)
-      multi_json (~> 1.12)
-      rdf (~> 3.0)
+    json (2.3.0)
+    json (2.3.0-java)
     kaminari (1.0.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.0.1)
@@ -586,7 +579,7 @@ DEPENDENCIES
   zencoder-fetcher
 
 RUBY VERSION
-   ruby 2.6.3p62
+   ruby 2.6.6p146
 
 BUNDLED WITH
    1.17.3

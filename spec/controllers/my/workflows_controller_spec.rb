@@ -11,14 +11,29 @@ describe My::WorkflowsController do
     end
 
     context 'when user is logged in' do
-      before { get(:index, session: { user_id: user.id }) }
+      context 'when user is a member of the beta-tester group' do
+        before do
+          allow_any_instance_of(
+            Group.const_get(:ActiveRecord_Associations_CollectionProxy)
+          ).to receive(:exists?).and_return(true)
+          get(:index, session: { user_id: user.id })
+        end
 
-      it 'renders template' do
-        expect(response).to render_template('workflows/index')
+        it 'renders template' do
+          expect(response).to render_template('workflows/index')
+        end
+
+        it 'assigns a presenter to @get' do
+          expect(assigns(:get))
+            .to be_instance_of(Presenters::Users::DashboardSection)
+        end
       end
 
-      it 'assigns a presenter to @get' do
-        expect(assigns(:get)).to be_instance_of(Presenters::Users::DashboardSection)
+      context 'when user is not a member of the beta-tester group' do
+        it 'raises error' do
+          expect { get(:index, session: { user_id: user.id }) }
+            .to raise_error(Errors::ForbiddenError)
+        end
       end
     end
   end
@@ -31,16 +46,32 @@ describe My::WorkflowsController do
     end
 
     context 'when user is logged in' do
-      it 'renders template' do
-        get(:new, session: { user_id: user.id })
+      context 'when user is a member of the beta-tester group' do
+        before do
+          allow_any_instance_of(
+            Group.const_get(:ActiveRecord_Associations_CollectionProxy)
+          ).to receive(:exists?).and_return(true)
+        end
 
-        expect(response).to render_template('workflows/new')
+        it 'renders template' do
+          get(:new, session: { user_id: user.id })
+
+          expect(response).to render_template('workflows/new')
+        end
+
+        it 'assigns a presenter to @get' do
+          get(:new, session: { user_id: user.id })
+
+          expect(assigns[:get])
+            .to be_instance_of(Presenters::Users::DashboardSection)
+        end
       end
 
-      it 'assigns a presenter to @get' do
-        get(:new, session: { user_id: user.id })
-
-        expect(assigns[:get]).to be_instance_of(Presenters::Users::DashboardSection)
+      context 'when user is not a member of the beta-tester group' do
+        it 'raises error' do
+          expect { get(:new, session: { user_id: user.id }) }
+            .to raise_error(Errors::ForbiddenError)
+        end
       end
     end
   end
@@ -50,38 +81,69 @@ describe My::WorkflowsController do
 
     context 'when user is not logged in' do
       it 'raises error' do
-        expect { post(:create, params: { workflow: { name: workflow.name } }) }.to raise_error(
-          Errors::UnauthorizedError
-        )
+        expect do
+          post(
+            :create,
+            params: { workflow: { name: workflow.name } }
+          )
+        end.to raise_error(Errors::UnauthorizedError)
       end
     end
 
     context 'when user is logged in' do
-      it 'creates a workflow' do
-        expect {
+      context 'when user is a member of the beta-tester group' do
+        before do
+          allow_any_instance_of(
+            Group.const_get(:ActiveRecord_Associations_CollectionProxy)
+          ).to receive(:exists?).and_return(true)
+        end
+        before(:all) do
+          with_disabled_triggers do
+            MetaKey.find_by(id: 'madek_core:title') || create(:meta_key_core_title)
+          end
+        end
+        after(:all) { truncate_tables }
+
+        it 'creates a workflow' do
+          expect do
+            post(
+              :create,
+              params: { workflow: { name: workflow.name } },
+              session: { user_id: user.id }
+            )
+          end.to change { Workflow.count }.by(1)
+        end
+
+        it 'creates a collection' do
+          expect do
+            post(
+              :create,
+              params: { workflow: { name: workflow.name } },
+              session: { user_id: user.id }
+            )
+          end.to change { Collection.count }.by(1)
+        end
+
+        it 'creates a collection with the same name' do
           post(
             :create,
-            params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
+            params: { workflow: { name: workflow.name } },
+            session: { user_id: user.id }
           )
-        }.to change { Workflow.count }.by(1)
+
+          expect(Workflow.first.master_collection.title).to eq(workflow.name)
+        end
       end
 
-      it 'creates a collection' do
-        expect {
-          post(
-            :create,
-            params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
-          )
-        }.to change { Collection.count }.by(1)
-      end
-
-      it 'creates a collection with the same name' do
-        post(
-          :create,
-          params: { workflow: { name: workflow.name } }, session: { user_id: user.id }
-        )
-
-        expect(Workflow.first.master_collection.title).to eq(workflow.name)
+      context 'when user is not a member of the beta-tester group' do
+        it 'raises error' do
+          expect do
+            post(
+              :create,
+              params: { workflow: { name: workflow.name } }
+            )
+          end.to raise_error(Errors::UnauthorizedError)
+        end
       end
     end
   end
@@ -91,7 +153,12 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect { get(:edit, params: { id: workflow.id }) }.to raise_error(Errors::UnauthorizedError)
+        expect do
+          get(
+            :edit,
+            params: { id: workflow.id }
+          )
+        end.to raise_error(Errors::UnauthorizedError)
       end
     end
 
@@ -99,9 +166,9 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect {
+        expect do
           get(:edit, params: { id: workflow.id }, session: { user_id: user.id })
-        }.to raise_error(Errors::ForbiddenError)
+        end.to raise_error(Errors::ForbiddenError)
       end
     end
 
@@ -109,7 +176,11 @@ describe My::WorkflowsController do
       it 'renders template' do
         workflow = create :workflow, creator: user
 
-        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.creator.id })
+        get(
+          :edit,
+          params: { id: workflow.id },
+          session: { user_id: workflow.creator.id }
+        )
 
         expect(response).to render_template('workflows/edit')
       end
@@ -117,10 +188,16 @@ describe My::WorkflowsController do
       it 'assigns a presenter to @get' do
         workflow = create :workflow, creator: user
 
-        get(:edit, params: { id: workflow.id }, session: { user_id: workflow.creator.id })
+        get(
+          :edit,
+          params: { id: workflow.id },
+          session: { user_id: workflow.creator.id }
+        )
 
-        expect(assigns[:get]).to be_instance_of(Presenters::Users::DashboardSection)
-        expect(assigns[:get].section_content).to be_instance_of(Presenters::Workflows::WorkflowEdit)
+        expect(assigns[:get])
+          .to be_instance_of(Presenters::Users::DashboardSection)
+        expect(assigns[:get].section_content)
+          .to be_instance_of(Presenters::Workflows::WorkflowEdit)
       end
     end
   end
@@ -130,9 +207,14 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect {
-          patch(:update, params: { id: workflow.id, workflow: { name: 'new name' } })
-        }.to raise_error(Errors::UnauthorizedError)
+        expect do
+          patch(
+            :update,
+            params: { id: workflow.id, workflow: { name: 'new name' } },
+            xhr: true,
+            as: :json
+          )
+        end.to raise_error(Errors::UnauthorizedError)
       end
     end
 
@@ -140,13 +222,15 @@ describe My::WorkflowsController do
       it 'raises error' do
         workflow = create :workflow
 
-        expect {
+        expect do
           patch(
             :update,
             params: { id: workflow.id, workflow: { name: 'new name' } },
-            session: { user_id: user.id }
+            session: { user_id: user.id },
+            xhr: true,
+            as: :json
           )
-        }.to raise_error(Errors::ForbiddenError)
+        end.to raise_error(Errors::ForbiddenError)
       end
     end
 
@@ -156,7 +240,10 @@ describe My::WorkflowsController do
 
         patch(
           :update,
-          params: { id: workflow.id, workflow: { name: 'new name' } }, session: { user_id: user.id }
+          params: { id: workflow.id, workflow: { name: 'new name' } },
+          session: { user_id: user.id },
+          xhr: true,
+          as: :json
         )
 
         workflow.reload
@@ -171,8 +258,14 @@ describe My::WorkflowsController do
 
         patch(
           :update,
-          params: { id: workflow.id, workflow: { owner_ids: [owner_1.id, owner_2.id] }},
-          session: { user_id: user.id })
+          params: {
+            id: workflow.id,
+            workflow: { owner_ids: [owner_1.id, owner_2.id] }
+          },
+          session: { user_id: user.id },
+          xhr: true,
+          as: :json
+        )
 
         expect(workflow.reload.owners).to contain_exactly(owner_1, owner_2)
       end
@@ -191,24 +284,54 @@ describe My::WorkflowsController do
             workflow: {
               common_permissions: {
                 responsible: responsible_person.id,
-                write: [group_1.id, group_2.id],
-                read: [api_client.id],
+                write: [
+                  {
+                    uuid: group_1.id,
+                    type: 'Group'
+                  }, {
+                    uuid: group_2.id,
+                    type: 'Group'
+                  }
+                ],
+                read: [{ uuid: api_client.id, type: 'ApiClient' }],
                 read_public: true
               }
             }
           },
-          session: { user_id: user.id })
+          session: { user_id: user.id },
+          xhr: true,
+          as: :json
+        )
 
-        workflow.reload
+        expect(permission_object(type: 'responsible'))
+          .to include('uuid' => responsible_person.id,
+                      'type' => 'User',
+                      'label' => responsible_person.person.to_s)
 
-        expect(workflow.common_permissions['responsible'])
-          .to eq(responsible_person.id)
-        expect(workflow.common_permissions['write'])
-          .to contain_exactly(group_1.id, group_2.id)
-        expect(workflow.common_permissions['read'])
-          .to contain_exactly(api_client.id)
-        expect(workflow.common_permissions['read_public']).to be true
+        expect(permission_object(type: 'write').size).to eq(2)
+        expect(permission_object(type: 'write').first)
+          .to include('uuid' => group_1.id,
+                      'type' => 'Group',
+                      'label' => group_1.name)
+        expect(permission_object(type: 'write').second)
+          .to include('uuid' => group_2.id,
+                      'type' => 'Group',
+                      'label' => group_2.name)
+
+        expect(permission_object(type: 'read').size).to eq(1)
+        expect(permission_object(type: 'read').first)
+          .to include('uuid' => api_client.id,
+                      'type' => 'ApiClient',
+                      'login' => api_client.login)
+
+        expect(permission_object(type: 'read_public')).to be true
       end
     end
   end
+end
+
+def permission_object(type:)
+  JSON
+    .parse(response.body)
+    .dig('common_settings', 'permissions', type)
 end

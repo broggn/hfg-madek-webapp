@@ -5,6 +5,7 @@ f = require('active-lodash')
 linkifyStr = require('linkifyjs/string')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')
 resourceName = require('../lib/decorate-resource-names.coffee')
+t = require('../../lib/i18n-translate.js')
 UI = require('../ui-components/index.coffee')
 labelize = UI.labelize
 
@@ -20,6 +21,32 @@ DecoratorsByType =
   TextDate: ({values} = @props)->
     <ul className='inline'>
       {values.map (string)-> <li key={string}>{string}</li>}</ul>
+
+  JSON: ({values, apiUrl} = @props)->
+    <ul className='inline ui-md-json'>{
+      values.map (obj, i)->
+        <li className="wrapped-textarea" style={{
+          display: 'block', padding: 0, overflow: 'hidden'
+        }} key={i}>
+          <textarea
+            readOnly
+            className='code block'
+            rows=10
+            style={{
+              margin: 0, padding: 0,
+              fontSize: '85%',
+              borderTop: 'none',
+              borderLeft: 'none',
+              borderRight: 'none'}}
+            defaultValue={prettifyJson(obj)}
+          />
+          <small style={{fontSize: '85%', display: 'block', padding: '0.5rem'}}>
+            <a href={apiUrl}>
+              <UI.Icon i="dload"/> {t('meta_datum_json_download_value')}
+            </a>
+          </small>
+        </li>
+    }</ul>
 
   People: ({values, tagMods} = @props)->
     <UI.TagCloud mod='person' mods='small' list={labelize(values)}/>
@@ -39,9 +66,10 @@ module.exports = React.createClass
     metaDatum: MadekPropTypes.metaDatum.isRequired
     tagMods: React.PropTypes.any # TODO: mods
 
-  render: ({type, values, tagMods} = @props.metaDatum)->
+  render: (props = @props)->
+    {type, values, api_data_stream_url, tagMods} = props.metaDatum
     DecoratorByType = DecoratorsByType[f.trimLeft(type, 'MetaDatum::')]
-    <DecoratorByType values={values} tagMods={tagMods}/>
+    <DecoratorByType values={values} tagMods={tagMods} apiUrl={api_data_stream_url}/>
 
 
 # helpers
@@ -61,3 +89,10 @@ linkifyInnerHtml = (string)->
       if (type == 'url' && value.length > 50)
         value = value.slice(0, 50) + '…'
       return value)}
+
+prettifyJson = (obj)->
+  try
+    JSON.stringify(obj, 0, 2)
+  catch error
+    console.error("MetaDatumJSON: " + error)
+    String(obj)

@@ -21,7 +21,7 @@ module Presenters
         when Collection
           self.class.new(obj, @user)
         else
-          binding.pry
+          raise "object of #{obj.class} class not supporded!"
         end
       end
     end

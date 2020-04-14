@@ -8,10 +8,19 @@ module Presenters
         @fill_data_mode = fill_data_mode
       end
 
+      def child_resources
+        arr =
+          [@app_resource.master_collection] +
+            @app_resource.master_collection.child_media_resources.to_a
+        arr.map { |resource| presenterify_resource(resource) }
+      end
+
       def actions
         {
-          save_and_not_finish: { url: save_and_not_finish_my_workflow_path(@app_resource), method: 'PATCH' },
-          finish: { url: finish_my_workflow_path(@app_resource), method: 'PATCH' },
+          save_and_not_finish: {
+            url: save_and_not_finish_my_workflow_path(@app_resource), method: 'PATCH'
+          },
+          finish: { url: finish_my_workflow_path(@app_resource), method: 'PATCH' }
         }.merge(super)
       end
 
@@ -24,6 +33,12 @@ module Presenters
           @app_resource.master_collection,
           @user
         )
+      end
+
+      private
+
+      def presenterify_resource(resource)
+        Presenters::MetaData::EditContextMetaData.new(resource, @user, nil, true)
       end
     end
   end

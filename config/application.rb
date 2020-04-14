@@ -32,7 +32,7 @@ module Madek
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
 
-    config.autoload_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('lib')
 
     config.paths['db/migrate'] << \
       Rails.root.join('datalayer', 'db', 'migrate')
@@ -40,8 +40,9 @@ module Madek
     config.paths["config/initializers"] <<  \
       Rails.root.join('datalayer', 'initializers')
 
-    config.autoload_paths += [
+    config.eager_load_paths += [
       Rails.root.join('datalayer', 'lib'),
+      Rails.root.join('datalayer', 'app', 'models', 'concerns'),
       Rails.root.join('datalayer', 'app', 'models'),
       Rails.root.join('datalayer', 'app', 'lib'),
       Rails.root.join('datalayer', 'app', 'queries'),
@@ -49,7 +50,7 @@ module Madek
 
     # this should be in environments/test ; but that doesn't work (???)
     if Rails.env.test?
-      config.autoload_paths += [
+      config.eager_load_paths += [
         Rails.root.join('spec', 'lib')
       ]
     end
@@ -126,8 +127,8 @@ module Madek
       bundle.js
       bundle-embedded-view.js
       bundle-react-server-side.js
-      bundle-integration-testbed.js
     ).map {|name| "#{Rails.env.development? ? 'dev-': ''}#{name}" }
+    .concat(['bundle-integration-testbed.js'])
 
     # NOTE: override (don't extend) the Rails default (which matches lots of garbage)!
     # 2019 update: overriding the default is not possible anymore, so we need to run after the faulty initializer from here: https://github.com/rails/sprockets-rails/blob/e135984ee2b07e1a67c3fa57f799f40b0830e99a/lib/sprockets/railtie.rb#L108
@@ -145,6 +146,7 @@ module Madek
     precompile_assets_dirs = %w(
       fonts/
       images/
+      images/styleguide/
     )
     config.assets.precompile << Proc.new do |filename, path|
       precompile_assets_dirs.any? {|dir| path =~ Regexp.new("app/assets/#{dir}") }

@@ -151,7 +151,11 @@ module Presenters
             fail 'TypeError! not an AR Collection/Relation!'
           end
 
-          resources.filter_by(@user, (config[:filter] || {}).merge(part_of_workflow: @part_of_workflow))
+          resources
+            .filter_by(
+              @user,
+              (config[:filter] || {}).merge(part_of_workflow: @part_of_workflow)
+            )
         end
 
         def _total_count
