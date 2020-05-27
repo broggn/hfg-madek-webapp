@@ -26,7 +26,7 @@ class PeopleController < ApplicationController
 
   def update
     person = get_authorized_resource
-    person.update!(person_params)
+    person.update!(person_params.transform_values(&:presence))
 
     respond_with(@get = person_show_presenter(person))
   end

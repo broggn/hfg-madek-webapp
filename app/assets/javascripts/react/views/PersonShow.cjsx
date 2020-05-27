@@ -106,5 +106,5 @@ deco_external_uris = (uris) ->
     return <li key={i} data-authority-control={JSON.stringify(uri.authority_control)}>{badge}{content}</li>
   )}</ul>
 
-PersonShow.deco_external_uris = deco_external_uris
 module.exports = PersonShow
+module.exports.deco_external_uris = deco_external_uris
