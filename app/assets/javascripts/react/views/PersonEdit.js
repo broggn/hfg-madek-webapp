@@ -14,14 +14,10 @@ class PersonEdit extends React.Component {
   constructor(props) {
     super(props)
 
-    const { first_name, last_name, pseudonym, description, external_uris } = props.get
+    const { external_uris } = props.get
 
     this.state = {
       isSaving: false,
-      first_name,
-      last_name,
-      pseudonym,
-      description,
       external_uris: f.map(external_uris, uri => decorateExternalURI(uri))
     }
 
@@ -78,7 +74,7 @@ class PersonEdit extends React.Component {
                     type="text"
                     className="form-item block"
                     name={'person[first_name]'}
-                    defaultValue={this.state.first_name}
+                    defaultValue={get.first_name}
                   />
                 </label>
               </div>
@@ -89,7 +85,7 @@ class PersonEdit extends React.Component {
                     type="text"
                     className="form-item block"
                     name={'person[last_name]'}
-                    defaultValue={this.state.last_name}
+                    defaultValue={get.last_name}
                   />
                 </label>
               </div>
@@ -100,7 +96,7 @@ class PersonEdit extends React.Component {
                     type="text"
                     className="form-item block"
                     name={'person[pseudonym]'}
-                    defaultValue={this.state.pseudonym}
+                    defaultValue={get.pseudonym}
                   />
                 </label>
               </div>
@@ -110,7 +106,7 @@ class PersonEdit extends React.Component {
                   <textarea
                     className="form-item block"
                     name={'person[description]'}
-                    defaultValue={this.state.description}
+                    defaultValue={get.description}
                   />
                 </label>
               </div>
