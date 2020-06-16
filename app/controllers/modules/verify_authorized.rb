@@ -8,14 +8,15 @@ module Modules
         if Madek::Constants::Webapp::VERIFY_AUTH_SKIP_CONTROLLERS.all? do |sc|
           self.class.to_s != sc.to_s
         end
-          verify_authorized_without_special_cases_exclusion
-        end
+        verify_authorized_without_special_cases_exclusion
       end
-      alias_method :verify_authorized_without_special_cases_exclusion, :verify_authorized
-      alias_method :verify_authorized, :verify_authorized_with_special_cases_exclusion
+    end
+    alias_method :verify_authorized_without_special_cases_exclusion, :verify_authorized
+    alias_method :verify_authorized, :verify_authorized_with_special_cases_exclusion
 
-      def verify_usage_terms_accepted!
-        if current_user \
+    def verify_usage_terms_accepted!
+      binding.pry
+      if current_user \
             and current_user.accepted_usage_terms != UsageTerms.most_recent
           raise Errors::UsageTermsNotAcceptedError
         end

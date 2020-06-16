@@ -32,7 +32,8 @@ gem 'sass-rails'
 gem 'coffee-rails'
 
 # LINKED DATA
-gem 'linkeddata'
+# WTF: including this breaks Active record o_O - check with `bin/rails runner 'puts UsageTerms.most_recent.id === nil'` => true!
+# gem 'linkeddata'
 gem 'json-ld'
 gem 'rdf'
 gem 'rdf-rdfxml'
