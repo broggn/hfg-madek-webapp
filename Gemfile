@@ -46,6 +46,7 @@ gem 'exiftool_vendored'
 gem 'git'
 gem 'json'
 gem 'kaminari'
+gem 'nokogiri'
 gem 'pundit'
 gem 'rubyzip'
 gem 'therubyracer', platform: :mri

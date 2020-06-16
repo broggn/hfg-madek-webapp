@@ -554,6 +554,7 @@ DEPENDENCIES
   linkeddata
   listen
   madek_zhdk_integration!
+  nokogiri
   pg
   pg_tasks!
   poltergeist
