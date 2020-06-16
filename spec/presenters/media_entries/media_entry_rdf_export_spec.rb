@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Presenters::MediaEntries::MediaEntryRdfExport do
   before { truncate_tables }
+  let(:base_url) { 'https://madek.example.org' }
   let(:user) { create :user }
   let(:title) { Faker::Name.title }
   let(:media_entry) { create(:media_entry_with_title, responsible_user: user, title: title) }
@@ -37,7 +38,6 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
     create(:meta_datum_roles, media_entry: media_entry)
   end
   let(:meta_data_roles) { meta_datum_roles.meta_data_roles }
-  let(:base_url) { 'http://localhost:1234' }
   subject { Presenters::MediaEntries::MediaEntryRdfExport.new(media_entry, user) }
 
   before { allow(Settings).to receive(:madek_external_base_url).and_return(base_url) }
@@ -49,6 +49,7 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
       expect(json.keys).to contain_exactly('@context', '@graph')
       expect(json.fetch('@context')).to be_a(Hash)
       expect(json.fetch('@graph')).to be_an(Array)
+      write_json_file_to_disk('media_entry_rdf_export_spec.example.json', json)
     end
 
     it 'returns correct @context node' do
@@ -56,14 +57,14 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
       # compare whole hash, only interpolate strings if absolutely needed
       # (e.g. the base_url is fixed in this spec, so can stay fixed in the strings as well.)
       expect(json['@context']).to eq(
-        '@base' => 'http://localhost:1234/',
-        'madek' => 'http://localhost:1234/ns#',
-        'madek_system' => 'http://localhost:1234/vocabulary/madek_system:',
-        'Keyword' => 'http://localhost:1234/vocabulary/keyword/',
+        '@base' => 'https://madek.example.org/',
+        'madek' => 'https://madek.example.org/ns#',
+        'madek_system' => 'https://madek.example.org/vocabulary/madek_system:',
+        'Keyword' => 'https://madek.example.org/vocabulary/keyword/',
         'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
         'owl' => 'http://www.w3.org/2002/07/owl#',
-        'madek_core' => 'http://localhost:1234/vocabulary/madek_core:',
-        'test' => 'http://localhost:1234/vocabulary/test:'
+        'madek_core' => 'https://madek.example.org/vocabulary/madek_core:',
+        'test' => 'https://madek.example.org/vocabulary/test:'
       )
     end
 
@@ -373,13 +374,13 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
 
     it 'contains correct namespaces' do
       expect(xml.namespaces).to eq(
-        'xmlns:madek' => 'http://localhost:1234/ns#',
-        'xmlns:madek_core' => 'http://localhost:1234/vocabulary/madek_core:',
-        'xmlns:Keyword' => 'http://localhost:1234/vocabulary/keyword/',
+        'xmlns:madek' => 'https://madek.example.org/ns#',
+        'xmlns:madek_core' => 'https://madek.example.org/vocabulary/madek_core:',
+        'xmlns:Keyword' => 'https://madek.example.org/vocabulary/keyword/',
         'xmlns:rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         'xmlns:rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
         'xmlns:owl' => 'http://www.w3.org/2002/07/owl#',
-        'xmlns:test' => 'http://localhost:1234/vocabulary/test:'
+        'xmlns:test' => 'https://madek.example.org/vocabulary/test:'
       )
     end
 
@@ -546,4 +547,12 @@ def expect_resource_node(parent_node, resource, meta_key_id: nil)
   meta_key_node = resource_node.parent
   expect(meta_key_node.name).to eq(meta_key_id)
   expect(meta_key_node.namespace.prefix).to eq('test')
+end
+
+
+def write_json_file_to_disk(name, data)
+  dir = Rails.root.join('tmp','spec_artefacts')
+  FileUtils.mkdir_p(dir)
+  path = dir.join(name)
+  File.write(path, JSON.pretty_generate(data))
 end
