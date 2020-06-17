@@ -6,6 +6,11 @@
 # TOOLS:
 # * https://json-ld.org/playground/
 
+META_KEY_TYPE = 'madek:MetaKey'
+MD_ROLE_TYPE = 'madek:Role'
+MD_JSON_TYPE = 'madek:JSONText'
+# MD_JSON_TYPE = 'rdf:JSON' # not stable yet
+
 module Presenters
   module MediaEntries
     class MediaEntryRdfExport < Presenters::Shared::AppResourceWithUser
@@ -40,7 +45,7 @@ module Presenters
         @_json_ld_graph ||= \
         {
           '@context': context,
-          '@graph': [entry_md, meta_data_graph[:relateds]].flatten
+          '@graph': [entry_md, meta_data_graph[:relateds], hardcoded_relations].flatten
         }
       end
 
@@ -52,20 +57,20 @@ module Presenters
             case md.class.name
             when 'MetaDatum::Text'
               val = { '@value': md.string, '@type': 'madek:Text' }
-              { md.meta_key_id => val }
+              { cid_meta_key(md.meta_key) => val }
 
             when 'MetaDatum::TextDate'
               val = { '@value': md.string, '@type': 'madek:TextDate' }
-              { md.meta_key_id => val }
+              { cid_meta_key(md.meta_key) => val }
 
             when 'MetaDatum::JSON'
-              val = { '@value' => md.json.to_json, '@type' => 'madek:JSONText' }
-              { md.meta_key_id => val }
+              val = { '@value' => md.json.to_json, '@type' => MD_JSON_TYPE }
+              { cid_meta_key(md.meta_key) => val }
 
             when 'MetaDatum::Keywords'
               md.keywords.map do |k|
                 val = {
-                  '@id': full_url("/vocabulary/keyword/#{k.id}"),
+                  '@id': full_url("/vocabulary/keyword/#{k.id}")
                 }
                 related[:keywords].push(val.merge(
                   '@type': 'madek:Keyword',
@@ -74,34 +79,36 @@ module Presenters
                   # _rdf_class: k.rdf_class,
                   "owl:sameAs": k.external_uris.presence
                 ).compact)
-                { md.meta_key_id => val }
+                { cid_meta_key(md.meta_key) => val }
               end
 
             when 'MetaDatum::People'
               md.people.map do |p|
                 val = { '@id': iri_person(p) }
                 related[:people].push(map_person(p))
-                { md.meta_key_id => val }
+                { cid_meta_key(md.meta_key) => val }
               end
 
             # NOTE: Roles map to Properties themselves!
             when 'MetaDatum::Roles'
               md.meta_data_roles.map do |mdr|
+                val = { '@id': iri_person(mdr.person) }
+
                 related[:people].push(map_person(mdr.person))
 
                 # FIXME: either enforce existence of Role,
                 # or define a "genericRole" to be used if blank…
-                # (could be name "Participant" or like the MK)
-                # for now we treat it like MD:People
+                # (could be name "Participant" or like the MK).
+                # For now we treat it like MD:People
                 if !mdr.role
-                  { md.meta_key_id => iri_person(mdr.person) }
+                  { cid_meta_key(md.meta_key) => val }
                 else
                   related[:roles].push(
                     '@id': iri_role(mdr.role),
-                    '@type': 'madek:Role',
+                    '@type': MD_ROLE_TYPE,
                     'rdfs:subPropertyOf': iri_meta_key(md.meta_key)
                   )
-                  { iri_role(mdr.role) => iri_person(mdr.person) }
+                  { iri_role(mdr.role) => val }
                 end
 
               end
@@ -113,15 +120,15 @@ module Presenters
           # also add the MetaKey as a property, so the labels are included for the consumer
           meta_key = md.meta_key
           related[:meta_keys].push(
-            '@type': 'rdf:Property',
-            '@id': full_url("/vocabulary/#{meta_key.id}"),
-            'rdfs:label': meta_key.labels
-              .map { |l, v| { '@language': l, '@value': v } })
-
+            '@type': META_KEY_TYPE,
+            '@id': cid_meta_key(meta_key),
+            'rdfs:label': map_languages(meta_key.labels),
+            'rdfs:comment': map_languages(meta_key.descriptions)
+          )
           value_node
         end
         # binding.pry
-        resource_md = resource_md.flatten.reduce({}, &:merge)
+        resource_md = resource_md.flatten.compact.reduce({}, &:merge)
 
         systemd_md = system_vocabulary_meta_data.map do |key, md|
           value = md.call
@@ -144,7 +151,8 @@ module Presenters
           .map(&:first)
           .sort_by(&:position)
           .map do |v|
-            { v.id => full_url("/vocabulary/#{v.id}:") }
+            cid = v.id === 'madek_core' ? v.id : "madek_#{v.id}"
+            { cid => full_url("/vocabulary/#{v.id}:") }
           end
           .reduce({}, &:merge)
       end
@@ -154,9 +162,19 @@ module Presenters
           madek: full_url('/ns#'),
           madek_system: full_url('/vocabulary/madek_system:'),
           Keyword: full_url('/vocabulary/keyword/'),
+          Role: full_url('/roles/'),
+          rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
           rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
           owl: 'http://www.w3.org/2002/07/owl#'
         }
+      end
+
+      def hardcoded_relations
+        [
+          # {'@id': MD_JSON_TYPE, '@type': 'rdf:JSON'}, # not stable yet
+          {'@id': META_KEY_TYPE, '@type': 'rdf:Property'},
+          {'@id': MD_ROLE_TYPE, '@type': 'rdf:Property'}
+        ]
       end
 
       def dump_rdf(data, format)
@@ -209,21 +227,37 @@ module Presenters
         full_url("/vocabulary/#{mk.id}")
       end
 
+      def cid_meta_key(mk)
+        if mk.id.split(':')[0] === 'madek_core'
+          mk.id
+        else
+          "madek_#{mk.id}"
+        end
+      end
+
       def iri_person(p)
         full_url("/people/#{p.id}")
       end
 
       def iri_role(r)
-        full_url("/roles/#{r.id}")
+        # use prefix because its used as a property
+        "Role:#{r.id}"
       end
+
 
       def map_person(p)
         {
           '@type': 'madek:Person',
-          '@id': full_url("/people/#{p.id}"),
+          '@id': iri_person(p),
           'rdfs:label': p.to_s,
           'owl:sameAs': p.external_uris.presence
         }.compact
+      end
+
+      def map_languages(strings)
+        strings
+          .map { |l, v| { '@language': l, '@value': v } }
+          .presence
       end
 
       def external_base_url

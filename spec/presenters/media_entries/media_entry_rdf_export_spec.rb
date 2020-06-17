@@ -61,10 +61,11 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
         'madek' => 'https://madek.example.org/ns#',
         'madek_system' => 'https://madek.example.org/vocabulary/madek_system:',
         'Keyword' => 'https://madek.example.org/vocabulary/keyword/',
+        "Role" => "https://madek.example.org/roles/",
         'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
         'owl' => 'http://www.w3.org/2002/07/owl#',
         'madek_core' => 'https://madek.example.org/vocabulary/madek_core:',
-        'test' => 'https://madek.example.org/vocabulary/test:'
+        "madek_test" => "https://madek.example.org/vocabulary/test:",
       )
     end
 
@@ -377,10 +378,11 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
         'xmlns:madek' => 'https://madek.example.org/ns#',
         'xmlns:madek_core' => 'https://madek.example.org/vocabulary/madek_core:',
         'xmlns:Keyword' => 'https://madek.example.org/vocabulary/keyword/',
+        "xmlns:Role" => "https://madek.example.org/roles/",
         'xmlns:rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         'xmlns:rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
         'xmlns:owl' => 'http://www.w3.org/2002/07/owl#',
-        'xmlns:test' => 'https://madek.example.org/vocabulary/test:'
+        "xmlns:madek_test" => "https://madek.example.org/vocabulary/test:"
       )
     end
 
