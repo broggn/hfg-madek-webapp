@@ -6,11 +6,13 @@
 # TOOLS:
 # * https://json-ld.org/playground/
 
-META_KEY_TYPE = 'madek:MetaKey'
-MD_ROLE_TYPE = 'madek:Role'
-MD_JSON_TYPE = 'madek:JSONText'
+META_KEY_TYPE = 'madek:MetaKey'.freeze
+MD_ROLE_TYPE = 'madek:Role'.freeze
+MD_JSON_TYPE = 'madek:JSONText'.freeze
+RDF_PROPERTY_TYPE = 'rdf:Property'.freeze
 # MD_JSON_TYPE = 'rdf:JSON' # not stable yet
 
+# rubocop:disable Metrics/ClassLength
 module Presenters
   module MediaEntries
     class MediaEntryRdfExport < Presenters::Shared::AppResourceWithUser
@@ -151,7 +153,7 @@ module Presenters
           .map(&:first)
           .sort_by(&:position)
           .map do |v|
-            cid = v.id === 'madek_core' ? v.id : "madek_#{v.id}"
+            cid = v.id == 'madek_core' ? v.id : "madek_#{v.id}"
             { cid => full_url("/vocabulary/#{v.id}:") }
           end
           .reduce({}, &:merge)
@@ -172,9 +174,13 @@ module Presenters
       def hardcoded_relations
         [
           # {'@id': MD_JSON_TYPE, '@type': 'rdf:JSON'}, # not stable yet
-          {'@id': META_KEY_TYPE, '@type': 'rdf:Property'},
-          {'@id': MD_ROLE_TYPE, '@type': 'rdf:Property'}
-        ]
+          unless META_KEY_TYPE == RDF_PROPERTY_TYPE
+             { '@id': META_KEY_TYPE, '@type': RDF_PROPERTY_TYPE }
+          end,
+          unless MD_ROLE_TYPE == RDF_PROPERTY_TYPE
+             { '@id': MD_ROLE_TYPE, '@type': RDF_PROPERTY_TYPE }
+          end
+        ].compact
       end
 
       def dump_rdf(data, format)
@@ -228,7 +234,7 @@ module Presenters
       end
 
       def cid_meta_key(mk)
-        if mk.id.split(':')[0] === 'madek_core'
+        if mk.id.split(':')[0] == 'madek_core'
           mk.id
         else
           "madek_#{mk.id}"
@@ -243,7 +249,6 @@ module Presenters
         # use prefix because its used as a property
         "Role:#{r.id}"
       end
-
 
       def map_person(p)
         {

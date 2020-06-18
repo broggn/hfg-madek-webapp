@@ -64,6 +64,7 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
         "Role" => "https://madek.example.org/roles/",
         'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
         'owl' => 'http://www.w3.org/2002/07/owl#',
+        "rdf" => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         'madek_core' => 'https://madek.example.org/vocabulary/madek_core:',
         "madek_test" => "https://madek.example.org/vocabulary/test:",
       )
@@ -74,19 +75,20 @@ describe Presenters::MediaEntries::MediaEntryRdfExport do
 
       expect(entry_md).to be_a(Hash)
       # MATCH HASH, without sub-arrays!
+      binding.pry
       expect(
         entry_md.except('test:keywords', 'test:people', 'test:json', meta_datum_roles.meta_key_id)
       ).to eq(
         '@id' => (base_url + '/entries/' + media_entry.id),
         '@type' => 'madek:MediaEntry',
-        'madek_core:title' => { '@value' => title, '@type' => 'madek:MetaDatum::Text' },
+        'madek_core:title' => { '@value' => title, '@type' => 'madek:Text' },
         'test:textdate' => {
-          '@value' => meta_datum_text_date.string, '@type' => 'madek:MetaDatum::TextDate'
+          '@value' => meta_datum_text_date.string, '@type' => 'madek:TextDate'
         }
       )
 
       expect(JSON.parse(entry_md.dig('test:json', '@value'))).to eq(meta_datum_json.json)
-      expect(entry_md.dig('test:json', '@type')).to eq('madek:MetaDatum::JSON')
+      expect(entry_md.dig('test:json', '@type')).to eq('madek:JSON')
 
       expect(entry_md.fetch('test:keywords')).to be_an(Array)
       expect(entry_md.fetch('test:keywords')).to match_array(
