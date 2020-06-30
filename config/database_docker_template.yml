@@ -1,0 +1,19 @@
+pg: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  port: 5432
+  username: postgres
+  password: madek
+  pool: 5
+  database: madek_docker
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  database: madek_docker_test
+
+production:
+<<: *default

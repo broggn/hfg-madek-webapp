@@ -15,6 +15,8 @@ present = require('active-lodash').present
 parseUrl = require('url').parse
 buildUrl = require('url').format
 
+console.log 'hello from docker'
+
 # setup APP ############################################################
 # "global" singleton (returns same object no matter where it's required)
 app = require('ampersand-app')
