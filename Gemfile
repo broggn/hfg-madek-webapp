@@ -32,12 +32,13 @@ gem 'sass-rails'
 gem 'coffee-rails'
 
 # LINKED DATA
-gem 'linkeddata'
+# WTF: including this breaks Active record o_O - check with `bin/rails runner 'puts UsageTerms.most_recent.id === nil'` => true!
+# gem 'linkeddata'
 gem 'json-ld'
 gem 'rdf'
 gem 'rdf-rdfxml'
+gem 'rdf-turtle'
 gem 'equivalent-xml'
-gem 'nokogiri'
 
 # The rest
 gem 'bcrypt-ruby'
@@ -65,6 +66,6 @@ gem 'zencoder-fetcher', group: %i[development]
 gem 'rails-controller-testing', group: :test
 
 group :development do
-  gem 'better_errors'
+  # gem 'better_errors' # NOTE: including this breaks rails and pry in weird ways…
   gem 'binding_of_caller'
 end

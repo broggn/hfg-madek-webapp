@@ -22,6 +22,57 @@ module.exports = React.createClass
     hasOriginal = get.media_file.original_file_url
     hasNeither = not hasPreviews and not hasOriginal
 
+    sectionOriginalFile = hasOriginal && [
+      <div className="col1of3" key="1">
+        <p>
+          {t('media_entry_export_original_hint')}
+        </p>
+      </div>,
+      <div className="col1of3 by-center" key="2">
+        <p>
+          {get.media_file.extension}
+        </p>
+      </div>,
+      <div className="col1of3 by-right" key="3">
+        <a href={forceDownload(get.media_file.original_file_url)}
+          target='_blank'
+          className='primary-button'>
+          {t('media_entry_export_download')}
+        </a>
+      </div>
+    ]
+
+    sectionRdfExport = <div>
+      <h2 className="title-l ui-resource-title mbs">
+        {t('media_entry_export_rdf_title')}{' '}
+        <span>{t('media_entry_export_rdf_title_hint')}</span>
+      </h2>
+      <p className='font-italic mbs'>{t('media_entry_export_rdf_experiment_footnote')}</p>
+      <table className="block">
+        <thead>
+          <tr>
+            <td>Typ</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            f.map get.rdf_export_urls, ({key, label, url, plain_text_url}) ->
+              <tr key={key}>
+                <td><b>{label}</b></td>
+                <td style={textAlign: 'right'}>
+                  {!!plain_text_url &&
+                    <a href={plain_text_url} target='_blank' className='primary-button'><i className="icon-eye"></i></a>
+                  }
+                  {' '}
+                  <a href={url} target='_blank' className='primary-button'><i className="icon-dload"></i></a>
+                </td>
+              </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
     <Modal widthInPixel='800'>
 
       <div className='ui-modal-head'>
@@ -43,31 +94,15 @@ module.exports = React.createClass
             </div>
         }
 
-
         {
           if hasNeither == false
             <div className="ui-export-block" id="original-meta-data">
-              <h2 className="title-l ui-resource-title"
-                style={{marginTop: '0px', marginLeft: '0px', marginBottom: '20px'}}>
+              <h2 className="title-l ui-resource-title mbs" >
                 {t('media_entry_export_original')}
               </h2>
               {
                 if hasOriginal
-                  [
-                    <div className="col1of2">
-                      <p>
-                        {t('media_entry_export_original_hint')}
-                      </p>
-                    </div>
-                    ,
-                    <div className="col1of2 by-right">
-                      <a href={forceDownload(get.media_file.original_file_url)}
-                        target='_blank'
-                        className='primary-button'>
-                        {t('media_entry_export_download')}
-                      </a>
-                    </div>
-                  ]
+                  sectionOriginalFile
                 else
                   <div className="col1of2">
                     <p>
@@ -82,8 +117,8 @@ module.exports = React.createClass
         {
           if hasPreviews
             f.map get.media_file.previews, (preview, type) ->
-              <div key={type} className="align-left bg-light sg-canvas sg-modifier">
-                <h2 className="title-l ui-resource-title" style={{marginTop: '40px', marginLeft: '0px', marginBottom: '20px'}}>
+              <div key={type} className="align-left bg-light mbm pbs">
+                <h2 className="title-l ui-resource-title mbs">
                   {
                     t('media_entry_export_subtitle_' + type)
                   }
@@ -120,7 +155,7 @@ module.exports = React.createClass
               </div>
         }
 
-
+        {sectionRdfExport}
 
       </div>
 
