@@ -26,8 +26,9 @@ module.exports = React.createClass
     l = require('lodash')
     return !l.isEqual(@state, nextState) || !l.isEqual(@props, nextProps)
 
-  render: ({resourceType, imageUrl, mediaType, title, subtitle, mediaUrl, metaData, selectProps, favoriteProps, deleteProps, get} = @props) ->
+  render: ({resourceType, imageUrl, mediaType, title, subtitle, mediaUrl, metaData, selectProps, favoriteProps, deleteProps, positionProps, get} = @props) ->
 
+    { handlePositionChange, positionChangeable } = positionProps
 
     listsWithClasses = []
     if metaData
@@ -117,7 +118,7 @@ module.exports = React.createClass
     ]
 
 
-    actionLis = []
+    actionList = []
 
     liStyle = {
       marginRight: '3px'
@@ -136,7 +137,7 @@ module.exports = React.createClass
             </Link>
           </span>
         </li>
-      actionLis.push(selectAction)
+      actionList.push(selectAction)
 
     if favoriteProps && favoriteProps.favoritePolicy
       favorButton = <FavoriteButton modelFavored={favoriteProps.modelFavored}
@@ -144,11 +145,40 @@ module.exports = React.createClass
         favorOnClick={favoriteProps.favorOnClick} pendingFavorite={favoriteProps.pendingFavorite}
         stateIsClient={favoriteProps.stateIsClient} authToken={favoriteProps.authToken}
         buttonClass='ui-thumbnail-action-favorite' />
-      actionLis.push(
+      actionList.push(
         <li key='favorite' className='ui-thumbnail-action' style={liStyle}>{favorButton}</li>)
 
+    # change position buttons
+    if positionChangeable and resourceType is 'MediaEntry'
+      commonCss =
+        cursor: 'pointer'
+
+      actionList.push(
+        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -2, e)}>
+          <Icon i='arrow-up' className='branded' />
+        </li>
+        )
+
+      actionList.push(
+        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -1, e)}>
+          <Icon i='arrow-up' />
+        </li>
+        )
+
+      actionList.push(
+        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 1, e)}>
+          <Icon i='arrow-down' />
+        </li>
+        )
+
+      actionList.push(
+        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 2, e)}>
+          <Icon i='arrow-down' className='branded' />
+        </li>
+        )
+
     if get.editable
-      actionLis.push(
+      actionList.push(
         <li key='edit' className='ui-thumbnail-action' style={liStyle}>
           <Button className='ui-thumbnail-action-favorite' href={get.edit_meta_data_by_context_url}>
             <i className='icon-pen'></i>
@@ -157,7 +187,7 @@ module.exports = React.createClass
       )
 
     if deleteProps && get.destroyable
-      actionLis.push(
+      actionList.push(
         <li key='destroy' className='ui-thumbnail-action' style={liStyle}>
           <Button className='ui-thumbnail-action-favorite' onClick={deleteProps.showModal}>
             <i className='icon-trash'></i>
@@ -173,14 +203,14 @@ module.exports = React.createClass
       right: 'auto'
       bottom: 'auto'
       height: '20px'
-      width: '110px'
+      width: (actionList.length > 2 ? '230px' : '150px' )
       position: 'static'
       float: 'left'
     }
 
     actions = <div className='ui-thumbnail-actions' style={actionsStyle}>
         <ul className='left by-left'>
-          {actionLis}
+          {actionList}
         </ul>
       </div>
 

@@ -36,6 +36,7 @@ class BoxTitlebar extends React.Component {
 
   getDropdownItems() {
     var currentUrl = this.props.currentUrl
+    var contentType = 'MediaEntry'//this.props.contentType
     var items = f.compact([
       {
         label: t('collection_sorting_created_at_asc'),
@@ -68,7 +69,15 @@ class BoxTitlebar extends React.Component {
         label: t('collection_sorting_last_change'),
         key: 'last_change',
         href: boxSetUrlParams(currentUrl, {list: {order: 'last_change'}})
-      }
+      },
+      (
+        contentType === 'MediaEntry' ?
+        ({
+          label: t('collection_sorting_manual'),
+          key: 'manual',
+          href: boxSetUrlParams(currentUrl, {list: {order: 'manual'}})
+        }) : null
+      )
     ])
 
     return f.flatten(items)

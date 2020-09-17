@@ -41,6 +41,8 @@ class BoxRenderResource extends React.Component {
 
     var item = itemState.data.resource
 
+    const { handlePositionChange, positionChangeable } = this.props
+
     if(!item.uuid) {
       // should not be the case anymore after uploader is not using this box anymore
       throw new Error('no uuid')
@@ -138,6 +140,8 @@ class BoxRenderResource extends React.Component {
         isSelected={isSelected} onSelect={onSelect}
         onPictureClick={onPictureClick}
         pictureLinkStyle={pictureLinkStyle}
+        handlePositionChange={handlePositionChange}
+        positionChangeable={positionChangeable}
         authToken={authToken} key={key}
         pinThumb={config.layout == 'tiles'}
         listThumb={config.layout == 'list'}

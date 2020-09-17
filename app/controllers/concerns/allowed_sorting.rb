@@ -6,7 +6,8 @@ module Concerns
       'created_at DESC',
       'title ASC',
       'title DESC',
-      'last_change'].freeze
+      'last_change',
+      'manual'].freeze
 
     def allowed_sorting(collection)
       if ALLOWED_SORTING.include? collection.sorting

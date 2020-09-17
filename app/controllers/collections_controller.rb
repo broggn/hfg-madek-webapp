@@ -205,6 +205,82 @@ class CollectionsController < ApplicationController
     advanced_shared_meta_data_update
   end
 
+  def change_position
+    collection = get_authorized_resource
+
+    position_change = JSON.parse(params.fetch('positionChange', {}))
+    (head :ok and return) if position_change.blank?
+
+    config = position_change.transform_keys { |k| k.underscore }
+
+    config['prev_order'] ||= collection.sorting
+
+    media_entry_ids =
+      user_scopes_for_collection(collection)[:child_media_entries]
+        .custom_order_by(config['prev_order'])
+        .to_a
+        .map(&:id)
+
+    # debugging
+    # debug_result = [
+    #   "created_at ASC",
+    #   "created_at DESC",
+    #   "title ASC",
+    #   "title DESC",
+    #   # "last_change",
+    #   "manual"
+    # ].map do |ordering|
+    #   user_scopes_for_collection(collection)[:child_media_entries]
+    #     .custom_order_by(ordering)
+    #     .pluck('media_entries.id')
+    # end.map do |pair|
+    #   pair.map do |media_entry_id|
+    #     Arcs::CollectionMediaEntryArc.find_by(collection: collection, media_entry_id: media_entry_id)
+    #   end
+    # end
+
+    # binding.pry
+
+    # continued
+    arcs = media_entry_ids.map do |media_entry_id|
+      Arcs::CollectionMediaEntryArc.find_by(collection: collection, media_entry_id: media_entry_id)
+    end
+
+    resource_index = media_entry_ids.find_index do |media_entry_id|
+      media_entry_id == config["resource_id"]
+    end
+
+    # continue with at least 2 entries
+    (head :ok and return) if arcs.size < 2
+
+    # reset ids
+    ActiveRecord::Base.transaction do
+      arcs.each_with_index do |arc, index|
+        arc.update!(position: index)
+      end
+
+      # update position
+      case config["direction"]
+      when -2
+        arcs[0...resource_index].each { |arc| arc.increment!(:position, 1)}
+        arcs[resource_index].update!(position: 0)
+      when 2
+        last_index = arcs.size - 1
+        arcs[(resource_index + 1)...last_index].each { |arc| arc.decrement!(:position, 1)}
+        arcs[resource_index].update!(position: last_index)
+      when -1, 1
+        arcs[resource_index].increment!(:position, config["direction"])
+        if (previous_resource = arcs[resource_index + config["direction"]])
+          previous_resource.decrement!(:position, config["direction"])
+        end
+      end
+
+      collection.set_as_already_ordered_manually
+    end
+
+    head :ok
+  end
+
   private
 
   def determine_list_conf(collection)

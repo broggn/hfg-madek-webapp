@@ -27,8 +27,11 @@ module.exports = React.createClass
       deleteProps,
       statusProps,
       selectProps,
-      textProps} = @props
+      textProps,
+      positionProps} = @props
   ) ->
+
+    { handlePositionChange, positionChangeable } = positionProps
 
     if statusProps
       statusIcon = <StatusIcon privacyStatus={statusProps.privacyStatus}
@@ -63,6 +66,35 @@ module.exports = React.createClass
         buttonClass='ui-thumbnail-action-favorite' />
       actionsLeft.push(
         <li key='favorite' className='ui-thumbnail-action'>{favorButton}</li>)
+
+    # change position buttons
+    if positionChangeable and resourceType is 'MediaEntry'
+      commonCss =
+        cursor: 'pointer'
+
+      actionsLeft.push(
+        <li className='ui-thumbnail-action mrn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -2, e)}>
+          <Icon i='arrow-left' className='branded small_' />
+        </li>
+        )
+
+      actionsLeft.push(
+        <li className='ui-thumbnail-action mhn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -1, e)}>
+          <Icon i='arrow-left' className='small_' />
+        </li>
+        )
+
+      actionsLeft.push(
+        <li className='ui-thumbnail-action mhn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 1, e)}>
+          <Icon i='arrow-right' className='small_' />
+        </li>
+        )
+
+      actionsLeft.push(
+        <li className='ui-thumbnail-action mln' style={commonCss}  onClick={(e) -> handlePositionChange(get.uuid, 2, e)}>
+          <Icon i='arrow-right' className='branded small_' />
+        </li>
+        )
 
 
     if get.editable

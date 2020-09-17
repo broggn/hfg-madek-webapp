@@ -48,6 +48,8 @@ module Presenters
       attr_reader :action
       attr_reader :active_tab
 
+      delegate_to_app_resource :already_ordered_manually
+
       # <mainTab>
 
       def collection_selection
@@ -209,6 +211,14 @@ module Presenters
 
       def relations_siblings_url
         relation_siblings_collection_path(@app_resource)
+      end
+
+      def change_position_url
+        change_position_collection_path(@app_resource)
+      end
+
+      def position_changeable
+        policy_for(@user).change_position?# && @type_filter == 'entries'
       end
 
       private

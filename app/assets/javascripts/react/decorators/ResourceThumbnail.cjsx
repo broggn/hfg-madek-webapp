@@ -157,6 +157,11 @@ module.exports = React.createClass
       favoritePolicy: get.favorite_policy
     }
 
+    positionProps = {
+      handlePositionChange: @props.handlePositionChange
+      positionChangeable: @props.positionChangeable
+    }
+
     deleteProps = {
       stateDeleteModal: @state.deleteModal
       onModalCancel: @_onModalCancel
@@ -253,6 +258,7 @@ module.exports = React.createClass
           get={get}
           onPictureClick={this.props.onPictureClick}
           pictureLinkStyle={this.props.pictureLinkStyle}
+          positionProps={positionProps}
         />
       </li>
     else
@@ -277,6 +283,7 @@ module.exports = React.createClass
           style={@props.style}
           onPictureClick={this.props.onPictureClick}
           pictureLinkStyle={this.props.pictureLinkStyle}
+          positionProps={positionProps}
           />
       </Element>
 

@@ -10,6 +10,7 @@ setUrlParams = require('../../lib/set-params-for-url.coffee')
 parseUrl = require('url').parse
 stringifyUrl = require('url').format
 parseQuery = require('qs').parse
+uniqBy = require('lodash').uniqBy
 Selection = require('../../lib/selection.coffee')
 resourceListParams = require('../../shared/resource_list_params.coffee')
 appRequest = require('../../lib/app-request.coffee')
@@ -42,7 +43,6 @@ simpleXhr = require('../../lib/simple-xhr.coffee')
 LoadXhr = require('../../lib/load-xhr.coffee')
 Preloader = require('../ui-components/Preloader.cjsx')
 
-SortDropdown = require('./resourcesbox/SortDropdown.cjsx')
 ActionsDropdown = require('./resourcesbox/ActionsDropdown.cjsx')
 Clipboard = require('./resourcesbox/Clipboard.cjsx')
 
@@ -365,6 +365,80 @@ module.exports = React.createClass
     else
       this.triggetRootEvent({ action: 'toggle-resource-selection', resourceUuid: resource.uuid})
 
+  handlePositionChange: (resourceId, direction, event) ->
+    event.preventDefault()
+
+    targetOrder = 'manual'
+    newConfig = f.extend({}, @state.config)
+    prevOrder = newConfig.order
+
+    # console.log('resourceId', resourceId)
+    # console.log('direction', direction)
+    # newResources = @state.boxState.components.resources
+    # newBoxState = f.extend({}, @state.boxState)
+    # newResources = newBoxState.components.resources.slice(0)
+    # console.log(@state.boxState.components.resources is newResources)
+
+    # resourcesCount = newBoxState.components.resources.length
+    # console.log('resourcesCount', resourcesCount)
+    # return unless resourcesCount.length
+
+    # maxIndex = resourcesCount - 1
+
+    # console.log('before', @state.boxState.components.resources.length)
+    # resources = uniqBy(@state.boxState.components.resources, (o) -> o.data.resource.uuid)
+    # console.log('after', resources.length)
+
+    # index = f.findIndex(resources, (o) -> o.data.resource.uuid is resourceId)
+    # newIndex = switch direction
+    #   when -2 then 0
+    #   when -1 then index + direction
+    #   when 1 then index + direction
+    #   when 2 then maxIndex
+
+    newConfig.positionChange =
+      prevOrder: prevOrder
+      resourceId: resourceId
+      direction: direction
+
+    doRequest = () =>
+      simpleXhr(
+        {
+          method: 'PATCH',
+          url: @props.collectionData.changePositionUrl,
+          body: "positionChange=#{JSON.stringify(@state.config.positionChange)}"
+        },
+        (error) =>
+          if error
+            alert(error)
+          else
+            # must be uncommented!!!!!! todo
+            @forceFetchNextPage()
+      )
+
+    href = parseUrl(BoxSetUrlParams(@_currentUrl(), {list: {order: targetOrder}}))
+    routerGoto(href)
+
+    @setState(
+      config: f.merge(newConfig, {order: targetOrder})#,
+      windowHref: href
+      ,
+      () =>
+        doRequest()
+        @_persistListConfig(list_config: {order: targetOrder})
+    )
+
+    # exResource = newResources[newIndex]
+    # newResources[newIndex] = newResources[index]
+    # newResources[index] = exResource
+
+    # newIndex = index + direction
+
+    # console.log('index', index)
+
+    # newBoxState.components.resources = f.shuffle(newBoxState.components.resources)
+    # @setState(boxState: newBoxState)
+
   _showSelectionLimit: (version) ->
     @setState(showSelectionLimit: version)
 
@@ -659,6 +733,7 @@ module.exports = React.createClass
     boxTitleBar = () =>
       {filter, layout, for_url, order} = config
       totalCount = f.get(get, 'pagination.total_count')
+      contentType = get.content_type
       isClient = @state.isClient
 
       layouts = BoxUtil.allowedLayoutModes(@props.disableListMode).map (layoutMode) =>
@@ -677,6 +752,7 @@ module.exports = React.createClass
         savedOrder={@state.savedOrder}
         layoutSave={@layoutSave}
         collectionData={@props.collectionData}
+        contentType={contentType}
         heading={heading}
         totalCount={totalCount}
         mods={mods}
@@ -862,6 +938,8 @@ module.exports = React.createClass
                 showSelectionLimit={@_showSelectionLimit}
                 selectionLimit={@_selectionLimit()}
                 onSelectResource={@_onSelectResource}
+                handlePositionChange={@handlePositionChange}
+                positionChangeable={f.get(@props, 'collectionData.position_changeable', false)}
                 config={config}
                 hoverMenuId={@state.hoverMenuId}
                 authToken={authToken}
