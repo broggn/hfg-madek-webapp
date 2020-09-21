@@ -73,26 +73,46 @@ module.exports = React.createClass
         cursor: 'pointer'
 
       actionsLeft.push(
-        <li className='ui-thumbnail-action mrn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -2, e)}>
-          <Icon i='arrow-left' className='branded small_' />
+        <li
+          className='ui-thumbnail-action mrn'
+          style={commonCss}
+          title='Move to the beginning'
+          onClick={(e) -> handlePositionChange(get.uuid, -2, e)}
+        >
+          <Icon i='arrow-left' className='branded' />
         </li>
         )
 
       actionsLeft.push(
-        <li className='ui-thumbnail-action mhn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -1, e)}>
-          <Icon i='arrow-left' className='small_' />
+        <li
+          className='ui-thumbnail-action mhn'
+          style={commonCss}
+          title='Move left'
+          onClick={(e) -> handlePositionChange(get.uuid, -1, e)}
+        >
+          <Icon i='arrow-left' />
         </li>
         )
 
       actionsLeft.push(
-        <li className='ui-thumbnail-action mhn' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 1, e)}>
-          <Icon i='arrow-right' className='small_' />
+        <li
+          className='ui-thumbnail-action mhn'
+          style={commonCss}
+          title='Move right'
+          onClick={(e) -> handlePositionChange(get.uuid, 1, e)}
+        >
+          <Icon i='arrow-right' />
         </li>
         )
 
       actionsLeft.push(
-        <li className='ui-thumbnail-action mln' style={commonCss}  onClick={(e) -> handlePositionChange(get.uuid, 2, e)}>
-          <Icon i='arrow-right' className='branded small_' />
+        <li
+          className='ui-thumbnail-action mln'
+          style={commonCss}
+          title='Move to the end'
+          onClick={(e) -> handlePositionChange(get.uuid, 2, e)}
+        >
+          <Icon i='arrow-right' className='branded' />
         </li>
         )
 

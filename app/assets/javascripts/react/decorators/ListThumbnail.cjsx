@@ -150,29 +150,48 @@ module.exports = React.createClass
 
     # change position buttons
     if positionChangeable and resourceType is 'MediaEntry'
-      commonCss =
-        cursor: 'pointer'
+      commonCss = f.merge(liStyle, { cursor: 'pointer' })
 
       actionList.push(
-        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -2, e)}>
+        <li
+          className='ui-thumbnail-action'
+          style={commonCss}
+          title='Move to the beginning'
+          onClick={(e) -> handlePositionChange(get.uuid, -2, e)}
+        >
           <Icon i='arrow-up' className='branded' />
         </li>
         )
 
       actionList.push(
-        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, -1, e)}>
+        <li
+          className='ui-thumbnail-action'
+          style={commonCss}
+          title='Move up'
+          onClick={(e) -> handlePositionChange(get.uuid, -1, e)}
+        >
           <Icon i='arrow-up' />
         </li>
         )
 
       actionList.push(
-        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 1, e)}>
+        <li
+          className='ui-thumbnail-action'
+          style={commonCss}
+          title='Move down'
+          onClick={(e) -> handlePositionChange(get.uuid, 1, e)}
+        >
           <Icon i='arrow-down' />
         </li>
         )
 
       actionList.push(
-        <li className='ui-thumbnail-action' style={commonCss} onClick={(e) -> handlePositionChange(get.uuid, 2, e)}>
+        <li
+          className='ui-thumbnail-action'
+          style={commonCss}
+          title='Move to the end'
+          onClick={(e) -> handlePositionChange(get.uuid, 2, e)}
+        >
           <Icon i='arrow-down' className='branded' />
         </li>
         )
@@ -203,7 +222,7 @@ module.exports = React.createClass
       right: 'auto'
       bottom: 'auto'
       height: '20px'
-      width: (actionList.length > 2 ? '230px' : '150px' )
+      width: ("#{actionList.length * 25 + 12}px")
       position: 'static'
       float: 'left'
     }
