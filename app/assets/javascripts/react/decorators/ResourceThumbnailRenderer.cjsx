@@ -81,7 +81,7 @@ module.exports = React.createClass
         >
           <Icon i='arrow-left' className='branded' />
         </li>
-        )
+      )
 
       actionsLeft.push(
         <li
@@ -92,7 +92,7 @@ module.exports = React.createClass
         >
           <Icon i='arrow-left' />
         </li>
-        )
+      )
 
       actionsLeft.push(
         <li
@@ -103,7 +103,7 @@ module.exports = React.createClass
         >
           <Icon i='arrow-right' />
         </li>
-        )
+      )
 
       actionsLeft.push(
         <li
@@ -114,7 +114,7 @@ module.exports = React.createClass
         >
           <Icon i='arrow-right' className='branded' />
         </li>
-        )
+      )
 
 
     if get.editable
