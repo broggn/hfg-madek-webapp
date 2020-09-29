@@ -7,7 +7,8 @@ module Concerns
       'title ASC',
       'title DESC',
       'last_change',
-      'manual'].freeze
+      'manual ASC',
+      'manual DESC'].freeze
 
     def allowed_sorting(collection)
       if ALLOWED_SORTING.include? collection.sorting

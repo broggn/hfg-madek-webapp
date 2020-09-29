@@ -208,51 +208,70 @@ class CollectionsController < ApplicationController
   def change_position
     collection = get_authorized_resource
 
-    position_change = JSON.parse(params.fetch('positionChange', {}))
-    (head :ok and return) if position_change.blank?
+    position_change = JSON.parse(params.fetch('positionChange', '{}'))
+    (head :bad_request and return) if position_change.blank?
 
-    config = position_change.transform_keys(&:underscore)
+    prev_order, resource_id, direction = position_change.values_at('prevOrder',
+                                                                   'resourceId',
+                                                                   'direction')
+    prev_order ||= collection.sorting
 
-    config['prev_order'] ||= collection.sorting
+    (head :bad_request and return) if [prev_order, resource_id].any?(&:blank?)
+
+    if prev_order == 'manual DESC'
+      direction = {
+        -2 => 2,
+        -1 => 1,
+        1 => -1,
+        2 => -2
+      }[direction]
+
+      prev_order = 'manual ASC'
+    end
 
     media_entry_ids =
       user_scopes_for_collection(collection)[:child_media_entries]
-        .custom_order_by(config['prev_order'])
+        .custom_order_by(prev_order)
         .to_a
         .map(&:id)
 
-    # continued
     arcs = media_entry_ids.map do |media_entry_id|
       Arcs::CollectionMediaEntryArc.find_by(collection: collection, media_entry_id: media_entry_id)
     end
 
     resource_index = media_entry_ids.find_index do |media_entry_id|
-      media_entry_id == config['resource_id']
+      media_entry_id == resource_id
     end
 
     # continue with at least 2 entries
     (head :ok and return) if arcs.size < 2
 
-    # reset ids
     ActiveRecord::Base.transaction do
+      # reset ids
       arcs.each_with_index do |arc, index|
         arc.update!(position: index)
       end
 
+      last_index = arcs.size - 1
+
       # update position
-      case config['direction']
+      case direction
       when -2
-        arcs[0...resource_index].each { |arc| arc.increment!(:position, 1) }
+        arcs[0...resource_index].each { |arc| arc.increment!(:position) }
         arcs[resource_index].update!(position: 0)
-      when 2
-        last_index = arcs.size - 1
-        arcs[(resource_index + 1)..last_index].each { |arc| arc.decrement!(:position, 1) }
-        arcs[resource_index].update!(position: last_index)
-      when -1, 1
-        arcs[resource_index].increment!(:position, config['direction'])
-        if (previous_resource = arcs[resource_index + config['direction']])
-          previous_resource.decrement!(:position, config['direction'])
+      when -1
+        if (previous_resource = arcs[resource_index - 1])
+          previous_resource.increment!(:position)
+          arcs[resource_index].decrement!(:position)
         end
+      when 1
+        if (next_resource = arcs[resource_index + 1])
+          next_resource.decrement!(:position)
+          arcs[resource_index].increment!(:position)
+        end
+      when 2
+        arcs[(resource_index + 1)..last_index].each { |arc| arc.decrement!(:position) }
+        arcs[resource_index].update!(position: last_index)
       end
 
       collection.set_as_already_ordered_manually

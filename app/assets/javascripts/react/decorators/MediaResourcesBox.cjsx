@@ -368,40 +368,23 @@ module.exports = React.createClass
   handlePositionChange: (resourceId, direction, event) ->
     event.preventDefault()
 
-    targetOrder = 'manual'
+    currentOrder = f.get(@state.config, 'order', @props.collectionData.order)
+
+    targetOrder =
+      if f.includes(['manual ASC', 'manual DESC'], currentOrder)
+        currentOrder
+      else
+        'manual ASC'
+
     newConfig = f.extend({}, @state.config)
     prevOrder = newConfig.order
-
-    # console.log('resourceId', resourceId)
-    # console.log('direction', direction)
-    # newResources = @state.boxState.components.resources
-    # newBoxState = f.extend({}, @state.boxState)
-    # newResources = newBoxState.components.resources.slice(0)
-    # console.log(@state.boxState.components.resources is newResources)
-
-    # resourcesCount = newBoxState.components.resources.length
-    # console.log('resourcesCount', resourcesCount)
-    # return unless resourcesCount.length
-
-    # maxIndex = resourcesCount - 1
-
-    # console.log('before', @state.boxState.components.resources.length)
-    # resources = uniqBy(@state.boxState.components.resources, (o) -> o.data.resource.uuid)
-    # console.log('after', resources.length)
-
-    # index = f.findIndex(resources, (o) -> o.data.resource.uuid is resourceId)
-    # newIndex = switch direction
-    #   when -2 then 0
-    #   when -1 then index + direction
-    #   when 1 then index + direction
-    #   when 2 then maxIndex
 
     newConfig.positionChange =
       prevOrder: prevOrder
       resourceId: resourceId
       direction: direction
 
-    doRequest = () =>
+    persistPosition = () =>
       simpleXhr(
         {
           method: 'PATCH',
@@ -412,7 +395,7 @@ module.exports = React.createClass
           if error
             alert(error)
           else
-            # must be uncommented!!!!!! todo
+            @_persistListConfig(list_config: {order: targetOrder})
             @forceFetchNextPage()
       )
 
@@ -423,21 +406,8 @@ module.exports = React.createClass
       config: f.merge(newConfig, {order: targetOrder})#,
       windowHref: href
       ,
-      () =>
-        doRequest()
-        @_persistListConfig(list_config: {order: targetOrder})
+      persistPosition
     )
-
-    # exResource = newResources[newIndex]
-    # newResources[newIndex] = newResources[index]
-    # newResources[index] = exResource
-
-    # newIndex = index + direction
-
-    # console.log('index', index)
-
-    # newBoxState.components.resources = f.shuffle(newBoxState.components.resources)
-    # @setState(boxState: newBoxState)
 
   _showSelectionLimit: (version) ->
     @setState(showSelectionLimit: version)
@@ -733,7 +703,6 @@ module.exports = React.createClass
     boxTitleBar = () =>
       {filter, layout, for_url, order} = config
       totalCount = f.get(get, 'pagination.total_count')
-      contentType = get.content_type
       isClient = @state.isClient
 
       layouts = BoxUtil.allowedLayoutModes(@props.disableListMode).map (layoutMode) =>
@@ -752,7 +721,6 @@ module.exports = React.createClass
         savedOrder={@state.savedOrder}
         layoutSave={@layoutSave}
         collectionData={@props.collectionData}
-        contentType={contentType}
         heading={heading}
         totalCount={totalCount}
         mods={mods}
