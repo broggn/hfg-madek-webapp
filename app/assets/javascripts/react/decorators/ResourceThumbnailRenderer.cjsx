@@ -79,7 +79,7 @@ module.exports = React.createClass
           title='Move to the beginning'
           onClick={(e) -> handlePositionChange(get.uuid, -2, e)}
         >
-          <Icon i='arrow-left' className='branded' />
+          <Icon i='move-left-first' />
         </li>
       )
 
@@ -90,7 +90,7 @@ module.exports = React.createClass
           title='Move left'
           onClick={(e) -> handlePositionChange(get.uuid, -1, e)}
         >
-          <Icon i='arrow-left' />
+          <Icon i='move-left' />
         </li>
       )
 
@@ -101,7 +101,7 @@ module.exports = React.createClass
           title='Move right'
           onClick={(e) -> handlePositionChange(get.uuid, 1, e)}
         >
-          <Icon i='arrow-right' />
+          <Icon i='move-right' />
         </li>
       )
 
@@ -112,7 +112,7 @@ module.exports = React.createClass
           title='Move to the end'
           onClick={(e) -> handlePositionChange(get.uuid, 2, e)}
         >
-          <Icon i='arrow-right' className='branded' />
+          <Icon i='move-right-last' />
         </li>
       )
 

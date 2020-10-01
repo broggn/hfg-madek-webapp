@@ -218,7 +218,7 @@ module Presenters
       end
 
       def position_changeable
-        policy_for(@user).change_position?# && @type_filter == 'entries'
+        policy_for(@user).change_position?
       end
 
       private
