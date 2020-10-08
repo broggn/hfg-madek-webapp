@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 classNames = require('classnames')
 _ = require('lodash')
 jQuery = require('jquery')

@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 defaultsDeep = require('lodash/defaultsDeep')
 fromPairs = require('lodash/fromPairs')

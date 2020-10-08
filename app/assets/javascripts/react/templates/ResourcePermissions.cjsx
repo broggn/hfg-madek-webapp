@@ -1,7 +1,7 @@
 # Permissions View for a single resource, can be show or (inline-)edit
 # - has internal router to switch between show/edit by URL
 
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js') # TODO: select correct locale!
 url = require('url')

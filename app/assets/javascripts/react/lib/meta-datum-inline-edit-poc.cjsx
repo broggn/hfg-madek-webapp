@@ -5,7 +5,7 @@
 #   (target elements with data properties; enhance on document load)
 # ###
 #
-# React = require('react').default
+# import React from 'react'.default
 # ampersandReactMixin = ('ampersand-react-mixin')
 #
 # module.exports = React.createClass

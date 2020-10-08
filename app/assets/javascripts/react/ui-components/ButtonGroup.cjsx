@@ -1,6 +1,6 @@
 # ButtonGroup - give buttons as children or props.list
 
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 ui = require('../lib/ui.coffee')
 UiPropTypes = require('./propTypes.coffee')

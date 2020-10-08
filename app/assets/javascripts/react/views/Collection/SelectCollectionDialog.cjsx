@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 ReactDOM = require('react-dom')
 ampersandReactMixin = require('ampersand-react-mixin')
 f = require('active-lodash')

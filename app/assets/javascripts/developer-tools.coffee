@@ -1,8 +1,9 @@
+import React from 'react'
 global = require('global')
 
 global.$ = require('jquery')
 global.f = require('active-lodash')
-global.React = require('react').default
+global.React = React
 global.ReactDOM = require('react-dom')
 
 global.App =

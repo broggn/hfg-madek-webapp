@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 PropTypes = React.PropTypes
 f = require('active-lodash')
 ui = require('../lib/ui.coffee')

@@ -3,7 +3,7 @@
 # If it fails, a retry icon is shown, with a fallback link
 # If fetching is retryed 5 times only use fallback link (sync, for browser error)
 
-React = require('react').default
+import React from 'react'.default
 PropTypes = React.PropTypes
 ReactDOM = require('react-dom')
 f = require('active-lodash')

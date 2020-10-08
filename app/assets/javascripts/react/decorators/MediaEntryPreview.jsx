@@ -1,4 +1,4 @@
-const React = require('react').default
+const import React from 'react'.default
 // eslint-disable-next-line react/no-deprecated
 const PropTypes = React.PropTypes
 const f = require('active-lodash')

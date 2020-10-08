@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 ampersandReactMixin = require('ampersand-react-mixin')
 f = require('active-lodash')
 t = require('../../../lib/i18n-translate.js')

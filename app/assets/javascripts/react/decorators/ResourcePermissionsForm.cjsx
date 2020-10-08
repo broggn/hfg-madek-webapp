@@ -1,6 +1,6 @@
 # Permissions Form for single or batch resources
 
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js') # TODO: select correct locale!
 ampersandReactMixin = require('ampersand-react-mixin')

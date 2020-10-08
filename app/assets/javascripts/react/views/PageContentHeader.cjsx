@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 
 # TODO: remove this wrapper and only use UI component
 PageHeader = require('../ui-components/PageHeader.js')

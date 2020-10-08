@@ -1,6 +1,6 @@
 # FIXME: remove this
 
-React = require('react').default
+import React from 'react'.default
 ReactDOM = require('react-dom')
 RailsForm = require('../lib/forms/rails-form.cjsx')
 

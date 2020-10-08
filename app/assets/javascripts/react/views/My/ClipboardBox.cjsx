@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 ui = require('../../lib/ui.coffee')
 t = ui.t
 libUrl = require('url')

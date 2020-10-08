@@ -7,7 +7,7 @@
 #       check if we could just port (and style!) from boostrap…
 #       <https://github.com/react-bootstrap/react-bootstrap>
 
-React = require('react').default
+import React from 'react'.default
 PropTypes = React.PropTypes
 f = require('active-lodash')
 ui = require('../lib/ui.coffee')

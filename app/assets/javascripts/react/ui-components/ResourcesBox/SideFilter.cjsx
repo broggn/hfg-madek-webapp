@@ -1,7 +1,7 @@
 # decorates: DynamicFilters
 # fallback: no # only used interactive (client-side)
 
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 t = require('../../../lib/i18n-translate.js')
 css = require('classnames')

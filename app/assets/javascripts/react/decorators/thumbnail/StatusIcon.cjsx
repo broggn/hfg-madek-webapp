@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 c = require('classnames')
 parseMods = require('../../lib/ui.coffee').parseMods

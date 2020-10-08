@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 classList = require('classnames')
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js')

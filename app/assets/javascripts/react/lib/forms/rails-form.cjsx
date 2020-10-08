@@ -1,6 +1,6 @@
 # Rails-style general-purpose form
 
-React = require('react').default
+import React from 'react'.default
 ReactDOM = require('react-dom')
 f = require('active-lodash')
 ui = require('../../lib/ui.coffee')

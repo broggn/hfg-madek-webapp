@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 
 module.exports = React.createClass
   displayName: 'FormButton'

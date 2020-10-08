@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 t = require('../../../lib/i18n-translate.js')
 PageHeader = require('../../ui-components/PageHeader')
 MetaDataList = require('../../decorators/MetaDataList.cjsx')

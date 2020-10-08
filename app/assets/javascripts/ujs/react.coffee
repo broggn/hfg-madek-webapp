@@ -1,5 +1,5 @@
 $ = require('jquery')
-React = require('react').default
+import React from 'react'.default
 ReactDOM = require('react-dom')
 f = require('active-lodash')
 url = require('url')

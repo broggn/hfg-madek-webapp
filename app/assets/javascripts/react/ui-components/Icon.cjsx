@@ -1,6 +1,6 @@
 # A single icon (from styleguide) by name
 
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 ui = require('../lib/ui.coffee')
 

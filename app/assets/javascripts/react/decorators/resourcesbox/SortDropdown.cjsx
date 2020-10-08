@@ -1,4 +1,4 @@
-React = require('react').default
+import React from 'react'.default
 f = require('active-lodash')
 cx = require('classnames')
 Dropdown = require('../../ui-components/Dropdown.cjsx')
