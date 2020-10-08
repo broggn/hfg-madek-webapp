@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 HeaderButton = require('./HeaderButton.cjsx')
 PageContentHeader = require('./PageContentHeader.cjsx')

@@ -2,7 +2,7 @@
 # Differences between the supported classes (Entry, Collection)
 # are handled in the models, so there is only 1 view for all of them.
 
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 ui = require('../../lib/ui.coffee')
 t = ui.t

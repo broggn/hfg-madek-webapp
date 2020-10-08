@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js')
 ResourceThumbnail = require('../decorators/ResourceThumbnail.cjsx')

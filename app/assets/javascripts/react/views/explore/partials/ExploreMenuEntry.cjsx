@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 cx = require('classnames')
 
 module.exports = React.createClass

@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 InputFieldText = require('../forms/input-field-text.cjsx')
 

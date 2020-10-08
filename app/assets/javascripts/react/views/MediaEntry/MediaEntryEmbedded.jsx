@@ -1,4 +1,4 @@
-const React = require('react')
+const React = require('react').default
 const f = require('active-lodash')
 // const cx = require('classnames')
 // const t = require('../../../lib/i18n-translate.js')

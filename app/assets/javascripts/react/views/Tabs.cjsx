@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 
 module.exports = React.createClass

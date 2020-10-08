@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('lodash')
 CatalogThumbnail = require('./CatalogThumbnail.cjsx')
 t = require('../../../../lib/i18n-translate.js')

@@ -1,6 +1,6 @@
 # Render a UI "Tag Cloud" from a list of tag *props*
 
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 classList = require('classnames')
 parseMods = require('../lib/ui.coffee').parseMods

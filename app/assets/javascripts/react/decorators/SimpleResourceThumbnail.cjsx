@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ResourceThumbnail = require('./ResourceThumbnail.cjsx')
 
 module.exports = React.createClass

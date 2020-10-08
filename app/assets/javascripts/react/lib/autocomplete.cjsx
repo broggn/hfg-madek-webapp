@@ -12,7 +12,7 @@ callback = (data)-> alert(data.uuid)
 NOTE: fails if even required on server (jQuery)!
 ###
 
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 PropTypes = React.PropTypes
 f = require('active-lodash')

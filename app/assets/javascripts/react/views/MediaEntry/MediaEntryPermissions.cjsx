@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 
 ResourcePermissions = require('../../templates/ResourcePermissions.cjsx')
 

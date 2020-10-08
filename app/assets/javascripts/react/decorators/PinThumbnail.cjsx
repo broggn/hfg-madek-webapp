@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 async = require('async')
 f = require('active-lodash')
 c = require('classnames')

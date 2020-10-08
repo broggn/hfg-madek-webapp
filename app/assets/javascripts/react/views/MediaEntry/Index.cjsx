@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 
 ResourcesBoxWithSwitch = require('../../templates/ResourcesBoxWithSwitch.cjsx')
 

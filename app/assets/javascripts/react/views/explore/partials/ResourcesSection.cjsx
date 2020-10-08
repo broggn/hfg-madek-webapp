@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 Keyword = require('../../../ui-components/Keyword.cjsx')
 CatalogResource = require('./CatalogResource.cjsx')

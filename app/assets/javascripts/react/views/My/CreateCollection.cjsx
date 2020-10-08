@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 getRailsCSRFToken = require('../../../lib/rails-csrf-token.coffee')
 ampersandReactMixin = require('ampersand-react-mixin')

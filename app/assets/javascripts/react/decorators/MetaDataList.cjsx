@@ -1,6 +1,6 @@
 # A list of MetaData, either by Vocabulary or by Context
 
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 classList = require('classnames/dedupe')
 parseMods = require('../lib/ui.coffee').parseMods

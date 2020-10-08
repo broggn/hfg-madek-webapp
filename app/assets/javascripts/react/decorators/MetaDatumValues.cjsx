@@ -1,6 +1,6 @@
 # Takes a MetaDatum and displays the values according to the type.
 
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 linkifyStr = require('linkifyjs/string')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')

@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 t = require('../../lib/i18n-translate.js')
 
 module.exports = React.createClass

@@ -1,6 +1,6 @@
 # Wrap this around anything for bootstrap-style tooltips
 
-React = require('react')
+React = require('react').default
 Tooltip = require('react-bootstrap/lib/Tooltip')
 OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger')
 

@@ -1,5 +1,5 @@
 # Display multiple Rows of MetaData Lists (by Context or by Vocabulary)
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js')
 MadekPropTypes = require('../lib/madek-prop-types.coffee')

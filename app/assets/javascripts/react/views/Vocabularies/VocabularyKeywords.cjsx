@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 f = require('lodash')
 t = require('../../../lib/i18n-translate.js')

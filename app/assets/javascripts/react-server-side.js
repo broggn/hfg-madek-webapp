@@ -9,7 +9,7 @@
 //
 require('./env')
 // use React from npm, not gem (also disabled in gem config)
-var React = require('react')
+var React = require('react').default
 var ReactDOMServer = require('react-dom/server')
 var ReactDOM = require('react-dom')
 var UI = require('./react/index.coffee')

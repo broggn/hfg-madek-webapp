@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 PageContent = require('../PageContent.cjsx')
 TabContent = require('../TabContent.cjsx')

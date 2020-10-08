@@ -1,6 +1,6 @@
 # FIXME: move/rename, it's used for MediaEntry as well!
 
-React = require('react')
+React = require('react').default
 ampersandReactMixin = require('ampersand-react-mixin')
 f = require('active-lodash')
 t = require('../../../lib/i18n-translate.js')

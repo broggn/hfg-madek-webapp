@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 Modal = require('../../ui-components/Modal.cjsx')
 loadXhr = require('../../../lib/load-xhr.coffee')

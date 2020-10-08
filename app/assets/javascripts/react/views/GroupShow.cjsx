@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 isEmpty = require('lodash/isEmpty')
 ui = require('../lib/ui.coffee')
 t = require('../../lib/i18n-translate.js')

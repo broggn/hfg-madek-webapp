@@ -1,7 +1,7 @@
 # Toolbar inside Box, with Filterbutton, actions, etc.
 # In Styleguide it's still called "FilterBar".
 
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 {parseMods, cx} = require('../../lib/ui.coffee')
 UiPropTypes = require('../propTypes.coffee')

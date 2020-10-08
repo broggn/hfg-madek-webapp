@@ -9,7 +9,7 @@ require('./env')
 
 // local requires
 const present = require('active-lodash').present
-const React = require('react')
+const React = require('react').default
 const ReactDOM = require('react-dom')
 const MediaEntryEmbedded = require('./react/views/MediaEntry/MediaEntryEmbedded.jsx')
 

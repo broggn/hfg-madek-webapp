@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 MadekPropTypes = require('../madek-prop-types.coffee')
 InputResources = require('./input-resources.cjsx')

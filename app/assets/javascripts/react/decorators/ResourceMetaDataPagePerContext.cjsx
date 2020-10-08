@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 f = require('active-lodash')
 t = require('../../lib/i18n-translate.js')
 setUrlParams = require('../../lib/set-params-for-url.coffee')

@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 MadekPropTypes = require('../madek-prop-types.coffee')
 Icon = require('../../ui-components/Icon.cjsx')
 Tooltipped = require('../../ui-components/Tooltipped.cjsx')

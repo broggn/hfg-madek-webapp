@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 ReactDOM = require('react-dom')
 Moment = require('moment')
 currentLocale = require('../../lib/current-locale.js')

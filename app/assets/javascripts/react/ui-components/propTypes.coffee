@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 
 module.exports =
   Clickable: React.PropTypes.shape

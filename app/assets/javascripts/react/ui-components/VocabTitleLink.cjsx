@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 Icon = require('./Icon.cjsx')
 cs = require('classnames')
 

@@ -2,7 +2,7 @@ global = require('global')
 
 global.$ = require('jquery')
 global.f = require('active-lodash')
-global.React = require('react')
+global.React = require('react').default
 global.ReactDOM = require('react-dom')
 
 global.App =

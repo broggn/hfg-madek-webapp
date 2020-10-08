@@ -1,4 +1,4 @@
-React = require('react')
+React = require('react').default
 isEmpty = require('lodash/isEmpty')
 t = require('../../lib/i18n-translate.js')
 PageHeader = require('../ui-components/PageHeader.js')
