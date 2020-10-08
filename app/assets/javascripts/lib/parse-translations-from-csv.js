@@ -4,25 +4,21 @@
 //       - the CSV(!) will be inlined as a simple string.
 
 var f = require('active-lodash')
-var CSV = require('babyparse')
+// var CSV = require('babyparse')
 
 var ignoreColumnsDefault = ['comment']
 
-function readTranslationsFromCSV (rawCsvText, ignoreColumns) {
+function readTranslationsFromCSV(data, ignoreColumns) {
   ignoreColumns = f.presence(ignoreColumns) || ignoreColumnsDefault
 
-  if (!f.present(rawCsvText)) {
+  if (!f.present(data)) {
     throw new Error('No translations found!')
-  }
-  var parsed = CSV.parse(rawCsvText)
-  if (f.present(parsed.errors)) {
-    throw new Error(parsed.errors)
   }
 
   // first line is header, rest are rows
   // first column are the keys, rest are langs
-  var header = parsed.data[0]
-  var rows = parsed.data.slice(1)
+  var header = data[0]
+  var rows = data.slice(1)
   var languages = header.slice(1)
   var keys = f.map(rows, '0')
 
