@@ -10,7 +10,6 @@ setUrlParams = require('../../lib/set-params-for-url.coffee')
 parseUrl = require('url').parse
 stringifyUrl = require('url').format
 parseQuery = require('qs').parse
-uniqBy = require('lodash').uniqBy
 Selection = require('../../lib/selection.coffee')
 resourceListParams = require('../../shared/resource_list_params.coffee')
 appRequest = require('../../lib/app-request.coffee')
