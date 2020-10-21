@@ -276,8 +276,6 @@ class CollectionsController < ApplicationController
         arcs[(resource_index + 1)..last_index].each { |arc| arc.decrement!(:position) }
         arcs[resource_index].update!(position: last_index)
       end
-
-      collection.set_as_already_ordered_manually
     end
 
     head :ok

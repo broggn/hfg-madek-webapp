@@ -48,8 +48,6 @@ module Presenters
       attr_reader :action
       attr_reader :active_tab
 
-      delegate_to_app_resource :already_ordered_manually
-
       # <mainTab>
 
       def collection_selection

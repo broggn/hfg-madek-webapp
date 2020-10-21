@@ -26,7 +26,6 @@ module.exports = React.createClass
       url: get.url
       batchEditUrl: get.batch_edit_url
       changePositionUrl: get.change_position_url
-      alreadyOrderedManually: get.already_ordered_manually
 
     renderSwitcher = (boxUrl) =>
       resourceTypeSwitcher(get.child_media_resources, boxUrl, true, null)

@@ -34,10 +34,6 @@ module Presenters
           policy_for(@user).add_remove_collection?
         end
 
-        # def position_changeable
-        #   policy_for(@user).change_position? && @type_filter == 'entries'
-        # end
-
         included do
           def url
             prepend_url_context collection_path @app_resource.id
