@@ -205,6 +205,9 @@ class CollectionsController < ApplicationController
     advanced_shared_meta_data_update
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
   def change_position
     collection = get_authorized_resource
 
@@ -279,6 +282,9 @@ class CollectionsController < ApplicationController
 
     head :ok
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   private
 
