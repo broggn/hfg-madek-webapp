@@ -16,7 +16,6 @@ appRequest = require('../../lib/app-request.coffee')
 
 Waypoint = require('react-waypoint')
 RailsForm = require('../lib/forms/rails-form.cjsx')
-ResourceThumbnail = require('./ResourceThumbnail.cjsx')
 { Button, ButtonGroup, Icon, Link, Preloader, Dropdown, ActionsBar
 } = require('../ui-components/index.coffee')
 MenuItem = Dropdown.MenuItem
@@ -106,10 +105,6 @@ module.exports = React.createClass
     batchRemoveFromSet: false,
     savedLayout: @props.collectionData.layout if @props.collectionData
     savedOrder: @props.collectionData.order if @props.collectionData
-    listMetadata: {}
-    loadingListMetadataResource: null
-    loadingNextPage: false
-    modelReloading: false
     showBatchTransferResponsibility: false
     batchTransferResponsibilityResources: []
     batchDestroyResourcesModal: false
@@ -366,6 +361,8 @@ module.exports = React.createClass
 
   handlePositionChange: (resourceId, direction, event) ->
     event.preventDefault()
+
+    return if @state.boxState.data.loadingNextPage
 
     currentOrder = f.get(@state.config, 'order', @props.collectionData.order)
 
@@ -635,7 +632,6 @@ module.exports = React.createClass
       windowHref: href
       ,
       () =>
-        url = parseUrl(BoxSetUrlParams(@_currentUrl(), {list: {order: itemKey}}))
         # @state.resources.clearPages({
         #   pathname: url.pathname,
         #   query: url.query
@@ -891,6 +887,11 @@ module.exports = React.createClass
               />
             else
               BoxRenderResources = require('./BoxRenderResources.jsx')
+              positionProps =
+                handlePositionChange: @handlePositionChange
+                changeable: f.get(@props, 'collectionData.position_changeable', false)
+                disabled: @state.boxState.data.loadingNextPage
+
               <BoxRenderResources
                 resources={
                   f.map(
@@ -905,8 +906,7 @@ module.exports = React.createClass
                 showSelectionLimit={@_showSelectionLimit}
                 selectionLimit={@_selectionLimit()}
                 onSelectResource={@_onSelectResource}
-                handlePositionChange={@handlePositionChange}
-                positionChangeable={f.get(@props, 'collectionData.position_changeable', false)}
+                positionProps={positionProps}
                 config={config}
                 hoverMenuId={@state.hoverMenuId}
                 authToken={authToken}

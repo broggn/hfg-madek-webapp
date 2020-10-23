@@ -37,7 +37,7 @@ class BoxRenderResources extends React.Component {
     var authToken = this.props.authToken
     var withActions = this.props.withActions
     var listMods = this.props.listMods
-    const { handlePositionChange, positionChangeable } = this.props
+    const { positionProps } = this.props
 
     // fetching relations enabled by default if layout is grid + withActions + isClient
     var fetchRelations = isClient && withActions && f.includes(['grid', 'list'], config.layout)
@@ -72,8 +72,7 @@ class BoxRenderResources extends React.Component {
             resourceState={itemState}
             isClient={isClient}
             onSelectResource={onSelectResource}
-            handlePositionChange={handlePositionChange}
-            positionChangeable={positionChangeable}
+            positionProps={positionProps}
             config={config}
             hoverMenuId={hoverMenuId}
             showBatchButtons={this.props.showBatchButtons}

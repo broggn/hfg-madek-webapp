@@ -38,10 +38,9 @@ class BoxRenderResource extends React.Component {
     var hoverMenuId = this.props.hoverMenuId
     var fetchRelations = this.props.fetchRelations
     var authToken = this.props.authToken
+    const { positionProps } = this.props
 
     var item = itemState.data.resource
-
-    const { handlePositionChange, positionChangeable } = this.props
 
     if(!item.uuid) {
       // should not be the case anymore after uploader is not using this box anymore
@@ -140,8 +139,7 @@ class BoxRenderResource extends React.Component {
         isSelected={isSelected} onSelect={onSelect}
         onPictureClick={onPictureClick}
         pictureLinkStyle={pictureLinkStyle}
-        handlePositionChange={handlePositionChange}
-        positionChangeable={positionChangeable}
+        positionProps={positionProps}
         authToken={authToken} key={key}
         pinThumb={config.layout == 'tiles'}
         listThumb={config.layout == 'list'}

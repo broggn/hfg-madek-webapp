@@ -95,7 +95,7 @@ module.exports = React.createClass
   _onModalCancel: () ->
     @setState(deleteModal: false)
 
-  render: ({get, elm, isSelected, fetchRelations, authToken} = @props, state = @state)->
+  render: ({get, elm, isSelected, fetchRelations, authToken, positionProps} = @props, state = @state)->
 
     if fetchRelations
       parentRelations = @state.relationsState.relations.parents
@@ -157,11 +157,6 @@ module.exports = React.createClass
       favoritePolicy: get.favorite_policy
     }
 
-    positionProps = {
-      handlePositionChange: @props.handlePositionChange
-      positionChangeable: @props.positionChangeable
-    }
-
     deleteProps = {
       stateDeleteModal: @state.deleteModal
       onModalCancel: @_onModalCancel
@@ -215,7 +210,6 @@ module.exports = React.createClass
       getMediaType(f.get(@props.get, 'media_file.content_type'))
 
     if @props.pinThumb
-      do -> console.log get
       <li style={@props.style} className={cx('ui-resource', {
         'is-video': get.media_type == 'video', 'ui-selected': (selectProps and selectProps.isSelected)})
       }>

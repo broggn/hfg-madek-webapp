@@ -31,8 +31,6 @@ module.exports = React.createClass
       positionProps} = @props
   ) ->
 
-    { handlePositionChange, positionChangeable } = positionProps
-
     if statusProps
       statusIcon = <StatusIcon privacyStatus={statusProps.privacyStatus}
         resourceType={resourceType}
@@ -68,9 +66,11 @@ module.exports = React.createClass
         <li key='favorite' className='ui-thumbnail-action'>{favorButton}</li>)
 
     # change position buttons
-    if positionChangeable and resourceType is 'MediaEntry'
+    if f.get(positionProps, 'changeable', false) and resourceType is 'MediaEntry'
+      { handlePositionChange } = positionProps
       commonCss =
-        cursor: 'pointer'
+        cursor: (if positionProps.disabled then 'not-allowed' else 'pointer')
+      iconCssClass = cx({ mid: positionProps.disabled })
 
       actionsLeft.push(
         <li
@@ -79,7 +79,7 @@ module.exports = React.createClass
           title='Move to the beginning'
           onClick={(e) -> handlePositionChange(get.uuid, -2, e)}
         >
-          <Icon i='move-left-first' />
+          <Icon i='move-left-first' className={iconCssClass} />
         </li>
       )
 
@@ -90,7 +90,7 @@ module.exports = React.createClass
           title='Move left'
           onClick={(e) -> handlePositionChange(get.uuid, -1, e)}
         >
-          <Icon i='move-left' />
+          <Icon i='move-left' className={iconCssClass} />
         </li>
       )
 
@@ -101,7 +101,7 @@ module.exports = React.createClass
           title='Move right'
           onClick={(e) -> handlePositionChange(get.uuid, 1, e)}
         >
-          <Icon i='move-right' />
+          <Icon i='move-right' className={iconCssClass} />
         </li>
       )
 
@@ -112,7 +112,7 @@ module.exports = React.createClass
           title='Move to the end'
           onClick={(e) -> handlePositionChange(get.uuid, 2, e)}
         >
-          <Icon i='move-right-last' />
+          <Icon i='move-right-last' className={iconCssClass} />
         </li>
       )
 

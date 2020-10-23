@@ -28,7 +28,7 @@ module.exports = React.createClass
 
   render: ({resourceType, imageUrl, mediaType, title, subtitle, mediaUrl, metaData, selectProps, favoriteProps, deleteProps, positionProps, get} = @props) ->
 
-    { handlePositionChange, positionChangeable } = positionProps
+    { handlePositionChange } = positionProps
 
     listsWithClasses = []
     if metaData
@@ -149,8 +149,9 @@ module.exports = React.createClass
         <li key='favorite' className='ui-thumbnail-action' style={liStyle}>{favorButton}</li>)
 
     # change position buttons
-    if positionChangeable and resourceType is 'MediaEntry'
-      commonCss = f.merge(liStyle, { cursor: 'pointer' })
+    if positionProps.changeable and resourceType is 'MediaEntry'
+      commonCss = f.merge(liStyle, { cursor: (if positionProps.disabled then 'not-allowed' else 'pointer') })
+      iconCssClass = c({ mid: positionProps.disabled })
 
       actionList.push(
         <li
@@ -159,7 +160,7 @@ module.exports = React.createClass
           title='Move to the beginning'
           onClick={(e) -> handlePositionChange(get.uuid, -2, e)}
         >
-          <Icon i='move-up-first' />
+          <Icon i='move-up-first' className={iconCssClass} />
         </li>
       )
 
@@ -170,7 +171,7 @@ module.exports = React.createClass
           title='Move up'
           onClick={(e) -> handlePositionChange(get.uuid, -1, e)}
         >
-          <Icon i='move-up' />
+          <Icon i='move-up' className={iconCssClass} />
         </li>
       )
 
@@ -181,7 +182,7 @@ module.exports = React.createClass
           title='Move down'
           onClick={(e) -> handlePositionChange(get.uuid, 1, e)}
         >
-          <Icon i='move-down' />
+          <Icon i='move-down' className={iconCssClass} />
         </li>
       )
 
@@ -192,7 +193,7 @@ module.exports = React.createClass
           title='Move to the end'
           onClick={(e) -> handlePositionChange(get.uuid, 2, e)}
         >
-          <Icon i='move-down-last' />
+          <Icon i='move-down-last' className={iconCssClass} />
         </li>
       )
 
