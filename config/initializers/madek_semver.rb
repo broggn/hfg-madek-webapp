@@ -27,8 +27,10 @@ end
 def git_hash
   @git_hash ||= \
     if deploy_info then deploy_info['commit_id']
-    else
+    elsif system('git rev-parse --is-inside-work-tree 2>/dev/null')
       `git log -n1 --format='%h'`.chomp
+    else
+      '???'
     end
 end
 

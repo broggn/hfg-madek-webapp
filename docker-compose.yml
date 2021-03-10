@@ -1,0 +1,47 @@
+# usage:
+# $ docker-compose up # build image and start app
+# $ docker-compose build # rebuild image (if the Dockerfile or dependencies changed)
+#
+# now issue commands against the local source code but running inside the container:
+# $ docker-compose run webapp bundle install
+#
+# Troubleshooting:
+# starting from remote (SSH) on macOS, must unlock keychain first to communicate with Docker Desktop
+# $ security unlock-keychain
+
+version: "3.8"
+
+# platform: 'linux/amd64'
+
+services:
+
+  webapp:
+    logging:
+      options:
+        max-size: "1g"
+    build:
+      context: '.'
+    container_name: 'madek-webapp'
+    command: >
+      bash -c "
+        unset BUNDLE_PATH;
+        unset BUNDLE_BIN;
+        ./scripts/prepare-dev && bundle exec rails server -v -p 3000 -b '0.0.0.0';
+      "
+    ports:
+      - "3000:3000"
+    volumes:
+      - ..:/madek/server          # if repo is inside superproject (default)
+      # - .:/madek/server/webapp  # if repo is standalone
+    environment:
+      # DATABASE_URL: "${DATABASE_URL?database url must be set!}"
+      DATABASE_URL: "postgresql://postgres:madek@db:5432/madek?max-pool-size=5"
+      RAILS_ENV: ${RAILS_ENV:-development}
+      # RAILS_LOG_LEVEL: debug
+      # DISABLE_DATABASE_ENVIRONMENT_CHECK: 1
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: madek

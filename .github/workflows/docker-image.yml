@@ -1,0 +1,19 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ mfa/docker ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with: { submodules: recursive }
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag madek/webapp:tree-$(git log -n1 --pretty='%T')

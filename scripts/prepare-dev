@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu
+
+rm -f tmp/pids/server.pid
+
+git submodule update --init --recursive --force \
+  datalayer
+
+echo 'installing dependencies…'
+export BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES=1
+bundle install
+
+# npm install --no-audit
+git submodule update --init --recursive --force \
+  node_modules
