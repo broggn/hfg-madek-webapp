@@ -50,7 +50,7 @@ gem 'json'
 gem 'kaminari'
 gem 'pundit'
 gem 'rubyzip'
-gem 'therubyracer', platform: :mri
+# gem 'therubyracer', platform: :mri
 gem 'uglifier'
 
 ####################################################################
