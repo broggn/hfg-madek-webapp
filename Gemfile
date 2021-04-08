@@ -60,12 +60,11 @@ gem 'unf_ext', '>= 0.0.7.4' # indirect dependcy, but define here to force versio
 #####################################################################
 
 group :test do
-  gem 'capybara', '~> 2.18'
+  gem 'capybara', '~> 3.35.0'
   gem 'rails-controller-testing'
   gem 'selenium-webdriver'
 end
 
-gem 'poltergeist', groups: [:test, :development]
 gem 'rest-client', groups: [:test, :development]
 
 group :development do

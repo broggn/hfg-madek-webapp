@@ -3,8 +3,6 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 
-require 'capybara/poltergeist'
-
 DEFAULT_BROWSER_TIMEOUT = 180 # instead of the default 60
 BROWSER_DONWLOAD_DIR = Rails.root.join('tmp', 'test_driver_browser_downloads')
 `rm -rf #{BROWSER_DONWLOAD_DIR} && mkdir -p #{BROWSER_DONWLOAD_DIR}`
@@ -64,7 +62,6 @@ RSpec.configure do |config|
       when nil, true, :firefox then :selenium_ff
       when false then :rack_test
       when :firefox_nojs then :selenium_ff_nojs
-      when :phantomjs then :poltergeist
       else fail 'unknown browser!'
       end
   end
@@ -173,8 +170,6 @@ RSpec.configure do |config|
     case Capybara.current_driver
     when :selenium_ff, :selenium_ff_nojs, :selenium_chrome
       page.driver.browser.save_screenshot(path) rescue nil
-    when :poltergeist
-      page.driver.render(path, full: true) rescue nil
     else
       Rails
         .logger

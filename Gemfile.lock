@@ -63,7 +63,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.4.0)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     arel (9.0.0)
     ast (2.3.0)
     babel-source (5.8.35)
@@ -75,13 +76,14 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.4)
-    capybara (2.18.0)
+    capybara (3.35.3)
       addressable
       mini_mime (>= 0.1.3)
-      nokogiri (>= 1.3.3)
-      rack (>= 1.0.0)
-      rack-test (>= 0.5.4)
-      xpath (>= 2.0, < 4.0)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
     childprocess (0.5.9)
       ffi (~> 1.0, >= 1.0.11)
     chronic_duration (0.10.6)
@@ -92,7 +94,6 @@ GEM
       flay (~> 2.6.1)
       flog (~> 4.3.2)
       mime-types
-    cliver (0.3.2)
     coderay (1.1.1)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
@@ -212,7 +213,7 @@ GEM
     mime-types-data (3.2021.0225)
     mimemagic (0.3.7)
       nokogiri (~> 1.11.2)
-    mini_mime (1.0.2)
+    mini_mime (1.1.0)
     mini_portile2 (2.5.0)
     mini_racer (0.3.1)
       libv8 (~> 8.4.255)
@@ -221,17 +222,13 @@ GEM
     multi_xml (0.5.5)
     netrc (0.11.0)
     nio4r (2.5.7)
-    nokogiri (1.11.2)
+    nokogiri (1.11.3)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     numerizer (0.1.1)
     parser (2.3.1.2)
       ast (~> 2.2)
     pg (0.19.0)
-    poltergeist (1.10.0)
-      capybara (~> 2.1)
-      cliver (~> 0.3.1)
-      websocket-driver (>= 0.2.0)
     powerpack (0.1.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -241,6 +238,7 @@ GEM
       pry (>= 0.9.10, < 0.11.0)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
+    public_suffix (4.0.6)
     puma (3.7.0)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
@@ -312,6 +310,7 @@ GEM
       execjs
       railties (>= 3.2)
       tilt
+    regexp_parser (2.1.1)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
@@ -414,7 +413,7 @@ DEPENDENCIES
   base32-crockford
   bcrypt
   binding_of_caller
-  capybara (~> 2.18)
+  capybara (~> 3.35.0)
   chronic_duration
   cider_ci-open_session (>= 1.0.0, < 2.0.0)
   cider_ci-support (= 3.2)
@@ -438,7 +437,6 @@ DEPENDENCIES
   mini_racer
   pg
   pg_tasks!
-  poltergeist
   pry
   pry-nav
   pry-rails
