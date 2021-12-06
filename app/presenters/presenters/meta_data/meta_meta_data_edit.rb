@@ -4,10 +4,10 @@ module Presenters
       include AuthorizationSetup
       include Presenters::Shared::Modules::VocabularyConfig
 
-      def initialize(user, resource_class, resource = nil)
+      def initialize(user, resource)
         @user = user
-        @resource_class = resource_class
-        @resource = resource # optional, used for Workflow settings
+        @resource = resource
+        @resource_class = resource.class
       end
 
       def mandatory_by_meta_key_id
@@ -119,15 +119,18 @@ module Presenters
       end
 
       def configured_contexts
-        # see VocabularyConfig
-        case @resource_class.name
-        when 'MediaEntry'
-          _contexts_for_entry_edit
-        when 'Collection'
-          _contexts_for_collection_edit
-        else
-          fail 'Invalid resource_class!'
-        end
+        contexts =
+          # see VocabularyConfig
+          case @resource_class.name
+          when 'MediaEntry'
+            _contexts_for_entry_edit
+          when 'Collection'
+            _contexts_for_collection_edit
+          else
+            fail 'Invalid resource_class!'
+          end
+
+        select_editable_contexts(contexts)
       end
 
       def apply_mandatory_meta_keys_from_workflow_if_possible(arr)
@@ -140,6 +143,11 @@ module Presenters
         end
 
         arr.to_h
+      end
+
+      def select_editable_contexts(contexts)
+        ids = @resource.restricted_contexts.pluck(:id)
+        contexts.select { |c| !ids.include?(c.id) }
       end
     end
   end
