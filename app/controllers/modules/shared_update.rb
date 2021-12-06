@@ -57,6 +57,8 @@ module Modules
     end
 
     def handle_meta_datum_in_case_of_single_update!(resource, meta_key_id, value)
+      return if meta_key_from_restricted_context?(meta_key_id, resource)
+
       # These 4 cases are handled by the datalayer:
       # 1. MD exists, value is present: update MD
       # 2. MD exists, value is empty: delete MD
@@ -89,6 +91,16 @@ module Modules
 
     def id_name(resource)
       (resource.class.name.underscore + '_id').to_sym
+    end
+
+    def resource_restricted_context_ids(resource)
+      @_resource_restricted_context_ids ||= resource.restricted_contexts.pluck(:id)
+    end
+
+    def meta_key_from_restricted_context?(meta_key_id, resource)
+      context_id = meta_key_id.split(':').first
+
+      resource_restricted_context_ids(resource).include?(context_id)
     end
   end
 end

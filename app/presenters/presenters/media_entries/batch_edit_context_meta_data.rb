@@ -83,7 +83,7 @@ module Presenters
 
       def meta_meta_data
         Presenters::MetaData::MetaMetaDataEdit.new(
-          @user, @authorized_resources[0].class)
+          @user, @authorized_resources[0])
       end
 
       def submit_url

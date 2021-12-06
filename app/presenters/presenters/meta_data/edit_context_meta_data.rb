@@ -30,7 +30,7 @@ module Presenters
       end
 
       def meta_meta_data
-        Presenters::MetaData::MetaMetaDataEdit.new(@user, @app_resource.class, @app_resource)
+        Presenters::MetaData::MetaMetaDataEdit.new(@user, @app_resource)
       end
 
       def meta_data

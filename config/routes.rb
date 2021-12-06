@@ -205,8 +205,6 @@ Madek::Application.routes.draw do
   get 'vocabulary/:vocab_id/content', to: 'vocabularies#contents', as: 'vocabulary_contents'
   get 'vocabulary/:vocab_id/permissions', to: 'vocabularies#permissions', as: 'vocabulary_permissions'
 
-  get 'meta_meta_data', to: 'meta_meta_data#index'
-
   # TODO: also "scope" this inside /vocabulary ↑ (but don't break CRUD & search)
   resources :meta_keys, only: :index
   resources :keywords, only: :index
