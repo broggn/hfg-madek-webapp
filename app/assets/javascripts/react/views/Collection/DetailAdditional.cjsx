@@ -39,5 +39,6 @@ module.exports = React.createClass
         enableOrdering={true} enableOrderByTitle={true}
         showAllButton={true}
         actionName={@props.get.action}
+        showAddSetButton={true}
         />
     </div>
