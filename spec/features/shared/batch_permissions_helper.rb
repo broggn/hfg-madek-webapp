@@ -163,6 +163,7 @@ module BatchPermissionsHelper
     @case_10_user = FactoryGirl.create(:user)
     @case_10_group = FactoryGirl.create(:group)
     @case_10_api_client = FactoryGirl.create(:api_client)
+    @case_10_delegation = FactoryGirl.create(:delegation)
 
     # CASE 11
     @case_11_user = FactoryGirl.create(:user)
