@@ -9,8 +9,8 @@
 #
 ###############################################################################
 
-# TODO: use debian (buster) and make ruby-team base image…
-FROM ruby:2.6.6
+# NOTE: should be same version as in .ruby-version file
+FROM ruby:2.7.2
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -qq \
@@ -36,19 +36,19 @@ WORKDIR $APP_HOME
 COPY Gemfile* ./
 COPY datalayer/Gemfile* ./datalayer/
 COPY zhdk-integration ./zhdk-integration/
-RUN bundle install
+# RUN bundle install
 
-# npm packages
-COPY package*.json ./
-RUN npm ci
+# # npm packages
+# COPY package*.json ./
+# RUN npm ci
 
-# application code and all the rest
-COPY . $APP_HOME
+# # application code and all the rest
+# COPY . $APP_HOME
 
-# # precompile assets
-# RUN bundle exec rails assets:precompile
+# # # precompile assets
+# # RUN bundle exec rails assets:precompile
 
-# NOTE: we dont start the server, this is handled from the
-# Dockerfile consumer (like docker-compose). Example command:
-# EXPOSE 3000
-# CMD ["rails", "server", "-p", "3000", "-b", "0.0.0.0"]
+# # NOTE: we dont start the server, this is handled from the
+# # Dockerfile consumer (like docker-compose). Example command:
+# # EXPOSE 3000
+# # CMD ["rails", "server", "-p", "3000", "-b", "0.0.0.0"]
