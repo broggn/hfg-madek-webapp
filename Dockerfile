@@ -36,19 +36,22 @@ WORKDIR $APP_HOME
 COPY Gemfile* ./
 COPY datalayer/Gemfile* ./datalayer/
 COPY zhdk-integration ./zhdk-integration/
-# RUN bundle install
 
-# # npm packages
-# COPY package*.json ./
-# RUN npm ci
+# https://github.com/rubyjs/mini_racer#troubleshooting
+RUN gem update --system
+RUN bundle install
 
-# # application code and all the rest
-# COPY . $APP_HOME
+# npm packages
+COPY package*.json ./
+RUN npm ci
 
-# # # precompile assets
-# # RUN bundle exec rails assets:precompile
+# application code and all the rest
+COPY . $APP_HOME
 
-# # NOTE: we dont start the server, this is handled from the
-# # Dockerfile consumer (like docker-compose). Example command:
-# # EXPOSE 3000
-# # CMD ["rails", "server", "-p", "3000", "-b", "0.0.0.0"]
+# # precompile assets
+# RUN bundle exec rails assets:precompile
+
+# NOTE: we dont start the server, this is handled from the
+# Dockerfile consumer (like docker-compose). Example command:
+# EXPOSE 3000
+# CMD ["rails", "server", "-p", "3000", "-b", "0.0.0.0"]
