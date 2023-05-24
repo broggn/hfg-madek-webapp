@@ -2,10 +2,15 @@ module Presenters
   module Explore
     class ContextKeyForExplore < Presenters::Shared::AppResource
 
+      include Presenters::Explore::Modules::NewestEntryWithImage
+
       def initialize(app_resource, user)
         super(app_resource)
         @meta_key = @app_resource.meta_key
         @user = user
+        @limit = 24
+        @size = :medium
+        @entry = catalog_key_thumb_entry(@app_resource, @user, @limit)
       end
 
       def label
@@ -24,7 +29,7 @@ module Presenters
       end
 
       def url
-        prepend_url_context explore_catalog_category_path(@app_resource.id)
+        media_entry_path(@entry)
       end
 
       def description
@@ -32,11 +37,12 @@ module Presenters
       end
 
       def image_url
-        prepend_url_context \
-          catalog_key_thumb_path \
-            category: @app_resource.id,
-            preview_size: :medium,
-            limit: 24
+        imgs =
+          Presenters::MediaFiles::MediaFile.new(@entry, @user)
+          .try(:previews)
+          .try(:[], :images)
+        img = imgs.try(:fetch, @size, nil) || imgs.try(:values).try(:first)
+        img.url
       end
     end
   end

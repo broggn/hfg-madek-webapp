@@ -35,8 +35,7 @@ module Presenters
         def non_empty_catalog_context_keys_presenters
           @non_empty_catalog_context_keys_presenters ||= \
             catalog_context_keys.map do |c_key|
-              Presenters::Explore::ContextKeyForExplore.new(
-                c_key, @user)
+              Presenters::Explore::ContextKeyForExplore.new(c_key, @user)
             end.select { |p| p.usage_count > 0 }
         end
 

@@ -61,13 +61,6 @@ module Madek
       Rails.root.join('datalayer', 'app', 'queries'),
     ]
 
-    # this should be in environments/test ; but that doesn't work (???)
-    if Rails.env.test?
-      config.eager_load_paths += [
-        Rails.root.join('spec', 'lib')
-      ]
-    end
-
     # handle all error pages inside the app:
     config.action_dispatch.show_exceptions = true
     config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }

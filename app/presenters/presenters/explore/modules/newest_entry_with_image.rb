@@ -45,6 +45,31 @@ module Presenters
             .reorder('media_entries.created_at DESC')
             .limit(24)
         end
+
+        def catalog_key_thumb_keyword(meta_key, user, limit)
+          Keyword
+            .for_meta_key_and_used_in_visible_entries_with_previews(meta_key, user, limit)
+            .sample
+        end
+
+        def catalog_key_thumb_person(meta_key, user, limit)
+          Person
+            .for_meta_key_and_used_in_visible_entries_with_previews(meta_key, user, limit)
+            .sample
+        end
+
+        def catalog_key_thumb_entry(context_key, user, limit)
+          meta_key = context_key.meta_key
+
+          case meta_key.meta_datum_object_type
+          when 'MetaDatum::Keywords'
+            keyword = catalog_key_thumb_keyword(meta_key, user, limit)
+            newest_media_entry_with_image_file_for_keyword_and_user(keyword.id, user).sample
+          when 'MetaDatum::People'
+            person = catalog_key_thumb_person(meta_key, user, limit)
+            newest_media_entry_with_image_file_for_person_and_user(person.id, user).sample
+          end
+        end
       end
     end
   end
