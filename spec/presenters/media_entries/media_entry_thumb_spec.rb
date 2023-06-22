@@ -7,23 +7,20 @@ describe Presenters::MediaEntries::MediaEntryIndex do
     AppSetting.find_or_create_by(id: 0)
   end
 
-  it_can_be 'dumped' do
-    ##############################################
-    # ...because before hooks don't get executed !
-    truncate_tables
-    restore_seeds
-    ##############################################
+  describe 'can be dumped' do
+    let(:presenter) do
+      media_entry = FactoryBot.create(:media_entry_with_image_media_file)
 
-    media_entry = FactoryBot.create(:media_entry_with_image_media_file)
+      meta_key = MetaKey.find_by_id('madek_core:title')
 
-    meta_key = MetaKey.find_by_id('madek_core:title')
+      FactoryBot.create :meta_datum_text,
+        meta_key: meta_key,
+        media_entry: media_entry
 
-    FactoryBot.create :meta_datum_text,
-                       meta_key: meta_key,
-                       media_entry: media_entry
+      described_class.new(media_entry, media_entry.responsible_user) 
+    end
 
-    let(:presenter) \
-      { described_class.new(media_entry, media_entry.responsible_user) }
+    include_examples 'dumped'
   end
 
   it_responds_to 'privacy_status' do

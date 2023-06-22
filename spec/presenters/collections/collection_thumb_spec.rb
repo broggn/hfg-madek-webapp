@@ -7,23 +7,20 @@ describe Presenters::Collections::CollectionIndex do
     AppSetting.find_or_create_by(id: 0)
   end
 
-  it_can_be 'dumped' do
-    ##############################################
-    # ...because before hooks don't get executed !
-    truncate_tables
-    restore_seeds
-    ##############################################
+  describe 'can be dumped' do
+    let(:presenter) do
+      collection = FactoryBot.create(:collection)
 
-    collection = FactoryBot.create(:collection)
+      meta_key = MetaKey.find_by_id('madek_core:title')
 
-    meta_key = MetaKey.find_by_id('madek_core:title')
+      FactoryBot.create :meta_datum_text,
+        meta_key: meta_key,
+        collection: collection
 
-    FactoryBot.create :meta_datum_text,
-                       meta_key: meta_key,
-                       collection: collection
+      described_class.new(collection, collection.responsible_user) 
+    end
 
-    let(:presenter) \
-      { described_class.new(collection, collection.responsible_user) }
+    include_examples 'dumped'
   end
 
   it_responds_to 'privacy_status' do
