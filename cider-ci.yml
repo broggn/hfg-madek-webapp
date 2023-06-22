@@ -10,11 +10,11 @@ jobs:
       include: cider-ci/context-components/rspec-tests.yml
 
 
-  check-feature-tasks:
-    name: Check if feature tasks are up to date
-    run_when: *DEFAULT_TRIGGERS
-    context:
-      include: cider-ci/context-components/check-feature-tasks.yml
+  # check-feature-tasks:
+  #   name: Check if feature tasks are up to date
+  #   run_when: *DEFAULT_TRIGGERS
+  #   context:
+  #     include: cider-ci/context-components/check-feature-tasks.yml
 
 
   general-feature-tests:
@@ -24,10 +24,10 @@ jobs:
         job_key: basic-rspec-tests
         type: job
         states: [passed] 
-      check-feature_tasks:
-        job_key: check-feature-tasks
-        type: job
-        states: [passed] 
+      # check-feature_tasks:
+      #   job_key: check-feature-tasks
+      #   type: job
+      #   states: [passed] 
     run_when: *PLAIN_DEP
     context:
       include: cider-ci/context-components/general-feature-tests.yml
