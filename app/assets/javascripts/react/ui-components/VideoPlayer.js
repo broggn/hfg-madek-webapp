@@ -12,7 +12,14 @@ const propTypes = {
       content_type: PropTypes.string,
       profile: PropTypes.string
     })
-  )
+  ),
+  /** Options (geometry) */
+  options: PropTypes.shape({
+    fluid: PropTypes.bool,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    ratio: PropTypes.string
+  })
 }
 
 const VIDEOJS_OPTIONS = {
@@ -46,12 +53,7 @@ const VIDEOJS_OPTIONS = {
 const sourceLabel = ({ profile }) => (endsWith(profile, '_HD') ? 'HD' : 'SD')
 
 class VideoPlayer extends React.Component {
-  _onVideoJsMount() {
-    // _onVideoJsMount(player) {
-    // console.log({ player })
-  }
-
-  render({ sources, ...props } = this.props) {
+  render({ sources, options, ...props } = this.props) {
     const videoSources = sources.map(source => ({
       src: source.url,
       type: source.content_type,
@@ -60,14 +62,7 @@ class VideoPlayer extends React.Component {
       key: `${source.url}${source.content_type}`
     }))
 
-    return (
-      <VideoJS
-        {...props}
-        sources={videoSources}
-        onMount={this._onVideoJsMount}
-        options={merge(VIDEOJS_OPTIONS, props.options)}
-      />
-    )
+    return <VideoJS {...props} sources={videoSources} options={merge(VIDEOJS_OPTIONS, options)} />
   }
 }
 
