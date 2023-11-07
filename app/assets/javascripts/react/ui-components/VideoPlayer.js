@@ -38,7 +38,9 @@ const VIDEOJS_OPTIONS = {
       'fullscreenToggle'
     ]
   },
-  plugins: { videoJsResolutionSwitcher: { default: 'low', dynamicLabel: true } }
+  plugins: {
+    /* videoJsResolutionSwitcher: { default: 'low', dynamicLabel: true } */
+  }
 }
 
 const sourceLabel = ({ profile }) => (endsWith(profile, '_HD') ? 'HD' : 'SD')

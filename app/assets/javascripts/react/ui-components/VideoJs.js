@@ -51,9 +51,10 @@ class VideoJS extends Component {
 
     // make library available to our plugins and other extensions:
     window.videojs = videojs
-    if (props.mode === 'video') {
+
+    /* if (props.mode === 'video') {
       require('../../lib/videojs-resolution-switcher')
-    }
+    } */
 
     if (!this.props.isInternal) {
       merge(playerOptions, {
@@ -71,7 +72,7 @@ class VideoJS extends Component {
     }
 
     // init/start
-    videojs.plugin('titleBar', titleBarPlugin)
+    videojs.registerPlugin('titleBar', titleBarPlugin)
     const player = videojs(videoTag, playerOptions)
     window.player = player
     this.toCallOnUnmount.push(player.destroy)
