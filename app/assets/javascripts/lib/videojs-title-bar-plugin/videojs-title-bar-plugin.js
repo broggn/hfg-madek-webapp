@@ -20,6 +20,7 @@ export default function titleBarPlugin({
     subtitle: Dom('span')
   }
   overlay.el.className = 'vjs-titlebar'
+  overlay.el.style.zIndex = 1 // otherwise poster image covers the title bar in idle mode
   overlay.caption.className = 'vjs-titlebar-caption'
   overlay.title.className = 'vjs-titlebar-title'
   overlay.subtitle.className = 'vjs-titlebar-subtitle'

@@ -105,7 +105,6 @@ class VideoJS extends Component {
     const { sources, mode, options, ...restProps } = this.props
     const { type, width, height, poster, preload, controls, className } = restProps
     if (!sources) throw new TypeError()
-    DEBUG_CHECK(restProps)
 
     const MediaTag = mode // "audio" or "video"
     const mediaProps = { type, width, height, poster, preload, controls }
@@ -127,32 +126,6 @@ class VideoJS extends Component {
     // so videojs won't create additional wrapper in the DOM
     // see https://github.com/videojs/video.js/pull/3856
     return <div data-vjs-player>{playerContent}</div>
-  }
-}
-
-// TODO: remove when stable UVB 7.11.2023
-function DEBUG_CHECK(restProps) {
-  const check = omit(
-    restProps,
-    'captionConf',
-    'isInternal',
-    'getUrl',
-    'onMount',
-    'onReady',
-    'doInit',
-    'type',
-    'width',
-    'height',
-    'poster',
-    'preload',
-    'controls',
-    'className'
-  )
-  if (Object.keys(check).length > 0) {
-    console.error(
-      'found unknown prop(s) which used to be passed to the <audio> or <video> tag',
-      check
-    )
   }
 }
 
