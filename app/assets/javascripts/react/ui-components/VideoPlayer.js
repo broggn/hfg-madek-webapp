@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import merge from 'lodash/merge'
 import endsWith from 'lodash/endsWith'
 
 import VideoJS from './VideoJs'
@@ -34,19 +33,11 @@ const VIDEOJS_OPTIONS = {
       'remainingTimeDisplay',
       'muteToggle',
       'volumeControl',
-      // 'playbackRateMenuButton',
-      // 'chaptersButton',
-      // 'descriptionsButton',
-      // 'subtitlesButton',
-      // 'captionsButton',
-      // 'audioTrackButton',
+      'qualitySelector',
       'space',
       'customControlSpacer',
       'fullscreenToggle'
     ]
-  },
-  plugins: {
-    /* videoJsResolutionSwitcher: { default: 'low', dynamicLabel: true } */
   }
 }
 
@@ -62,7 +53,9 @@ class VideoPlayer extends React.Component {
       key: `${source.url}${source.content_type}`
     }))
 
-    return <VideoJS {...props} sources={videoSources} options={merge(VIDEOJS_OPTIONS, options)} />
+    return (
+      <VideoJS {...props} sources={videoSources} options={{ ...VIDEOJS_OPTIONS, ...options }} />
+    )
   }
 }
 

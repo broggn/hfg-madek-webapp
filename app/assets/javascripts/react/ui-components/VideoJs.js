@@ -61,7 +61,7 @@ class VideoJS extends Component {
 
   componentDidMount() {
     const { options, captionConf, isInternal, mode, onReady } = this.props
-    const { fluid = true, ratio: aspectRatio = '16:9', width, height } = options
+    const { fluid = true, ratio: aspectRatio = '16:9', width, height, controlBar } = options
     const { title, logoTitle, subtitle, link } = captionConf
     const plugins = isInternal
       ? {}
@@ -77,7 +77,7 @@ class VideoJS extends Component {
             }
           }
         }
-    const playerOptions = { fluid, aspectRatio, width, height, ...plugins }
+    const playerOptions = { fluid, aspectRatio, width, height, controlBar, ...plugins }
 
     // eslint-disable-next-line react/no-string-refs
     const videoTag = this.refs.videojs
@@ -87,6 +87,10 @@ class VideoJS extends Component {
 
     // make library available to our plugins and other extensions:
     window.videojs = videojs
+
+    if (mode === 'video') {
+      require('@silvermine/videojs-quality-selector')(videojs)
+    }
 
     // init/start
     videojs.registerPlugin('titleBar', titleBarPlugin)

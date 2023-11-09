@@ -9,6 +9,8 @@
 //= depend_on_asset '../../../node_modules/video.js/dist/video-js'
 @import '../javascripts/lib/videojs-resolution-switcher/lib/videojs-resolution-switcher';
 //= depend_on_asset '../javascripts/lib/videojs-resolution-switcher/lib/videojs-resolution-switcher'
+@import '../../../node_modules/@silvermine/videojs-quality-selector/dist/css/quality-selector';
+//= depend_on_asset '../../../node_modules/@silvermine/videojs-quality-selector/dist/css/quality-selector'
 
 // default fullscreen sizing:
 // see <https://docs.brightcove.com/en/perform/brightcove-player/guides/sizing-the-player.html#fullscreen>

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import merge from 'lodash/merge'
 
 import VideoJS from './VideoJs'
 
@@ -13,16 +12,9 @@ const VIDEOJS_OPTIONS = {
       'timeDivider',
       'durationDisplay',
       'progressControl',
-      // 'liveDisplay',
       'remainingTimeDisplay',
       'muteToggle',
       'volumeControl',
-      // 'playbackRateMenuButton',
-      // 'chaptersButton',
-      // 'descriptionsButton',
-      // 'subtitlesButton',
-      // 'captionsButton',
-      // 'audioTrackButton',
       'space',
       'customControlSpacer',
       'fullscreenToggle'
@@ -65,7 +57,7 @@ class AudioPlayer extends React.Component {
           mode="audio"
           className="ui-audio-player"
           sources={videoSources}
-          options={merge(VIDEOJS_OPTIONS, options)}
+          options={{ ...VIDEOJS_OPTIONS, ...options }}
         />
       </div>
     )
