@@ -203,13 +203,6 @@ $slider-bg-color: lighten($primary-background-color, 33.34%);
   }
 }
 
-// fix:
-.vjs-menu-button-popup .vjs-menu {
-  // original styles set a very wide with,
-  // causes layout flicker on menu hover!
-  width: initial;
-}
-
 // // audio variant
 
 // wavesurfer plugin styles:
