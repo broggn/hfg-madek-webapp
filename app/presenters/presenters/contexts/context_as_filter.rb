@@ -22,13 +22,17 @@ module Presenters
             children_attrs = ['uuid', 'count', 'label', 'type']
             context_key = Presenters::ContextKeys::ContextKeyCommon.new(
               ContextKey.find(context_key_id))
+            too_many_hits = (context_key.meta_key.value_type == 'MetaDatum::People' || 
+                            context_key.meta_key.value_type == 'MetaDatum::Roles') &&
+                            values.filter{ |v| v["type"] == "person"}.count > 20
             {
               type: :MetaKey,
               uuid: context_key.meta_key_id,
               position: context_key.position,
               label: context_key.label || context_key.id,
-              children: values.map { |v| v.slice(*children_attrs) },
-              has_roles: context_key.meta_key.can_have_roles?
+              children: too_many_hits ? [] : values.map { |v| v.slice(*children_attrs) },
+              meta_datum_object_type: context_key.meta_key.value_type,
+              too_many_hits: too_many_hits ? true : nil
             }
           end
           .sort { |x, y| x[:position] <=> y[:position] }
