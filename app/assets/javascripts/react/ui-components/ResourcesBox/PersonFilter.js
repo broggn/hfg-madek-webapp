@@ -108,16 +108,30 @@ function getStaticDataSource(staticItems) {
 }
 
 function getRemoteDataSource() {
-  const resourceUrl = url.format({
+  /* const resourceUrl = url.format({
     pathname: '/people',
     query: { meta_key_id: 'madek_core:authors', search_term: '__SEARCH_TERM__' }
-  })
+  }) */
+  const resourceUrl =
+    document.location.href +
+    '&context_key_id=8ac0a6b5-0d59-4c67-8614-58aa667a8064&search_term=__SEARCH_TERM__' +
+    '&list%5Bsparse_filter%5D=true&___sparse=%7B%22dynamic_filters%22%3A%7B%22section_group_meta_data%22%3A%7B%7D%7D%7D'
   const Bloodhound = require('@eins78/typeahead.js/dist/bloodhound.js')
   const tokenizer = s => Bloodhound.tokenizers.whitespace((s || '').trim())
   return new Bloodhound({
     datumTokenizer: tokenizer,
     queryTokenizer: tokenizer,
-    remote: { url: resourceUrl, wildcard: '__SEARCH_TERM__' }
+    remote: {
+      url: resourceUrl,
+      wildcard: '__SEARCH_TERM__',
+      transform: data => {
+        const context = data.dynamic_filters.section_group_meta_data.find(
+          x => x.label === 'Personen'
+        ) || { children: [] }
+        const contextKey = context.children[0] || { children: [] }
+        return contextKey.children
+      }
+    }
   })
 }
 

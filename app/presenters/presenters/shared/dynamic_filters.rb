@@ -10,12 +10,13 @@ module Presenters
     class DynamicFilters < Presenter
       include Presenters::Shared::Modules::VocabularyConfig
 
-      def initialize(user, scope, tree, existing_filters)
+      def initialize(user, scope, tree, existing_filters, sub_filters)
         @user = user
         @scope = scope
         @tree = tree || {}
         @resource_type = scope.model or fail 'TypeError! (Expected AR Scope)'
         @existing_filters = existing_filters
+        @sub_filters = sub_filters
       end
 
       def section_group_media_files
@@ -23,7 +24,7 @@ module Presenters
       end
 
       def section_group_meta_data
-        meta_data(@scope, @tree)
+        meta_data(@scope, @tree, @sub_filters)
       end
 
       def section_group_permissions
@@ -299,7 +300,7 @@ module Presenters
         SQL
       end
 
-      def meta_data(scope, _tree)
+      def meta_data(scope, _tree, sub_filters)
         # TODO: ui_context_list = contexts_for_dynamic_filters (when in Admin UI)
         ui_context_list = _contexts_for_dynamic_filters # from VocabularyConfig
         return unless ui_context_list.present?
@@ -311,6 +312,12 @@ module Presenters
           .sort_by { |bundle| ui_context_list_ids.index(bundle[0]) }
           .map.with_index do |bundle, index|
             context_id, values = bundle
+            if sub_filters[:context_key_id]
+              values = values.filter { |v| v['context_key_id'] == sub_filters[:context_key_id] }
+            end
+            if sub_filters[:search_term]
+              values = values.filter { |v| v['label'].downcase.include? sub_filters[:search_term].downcase }
+            end
             # Sort them last in list (assumes there are less than 100 app-filters):
             position = 100 + index
             Presenters::Contexts::ContextAsFilter.new(
