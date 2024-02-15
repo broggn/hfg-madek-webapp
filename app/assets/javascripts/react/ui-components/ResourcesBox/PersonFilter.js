@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import f from 'active-lodash'
 import cx from 'classnames'
-import url from 'url'
 import jQuery from 'jquery'
 import t from '../../../lib/i18n-translate'
 
@@ -108,27 +107,31 @@ function getStaticDataSource(staticItems) {
 }
 
 function getRemoteDataSource() {
-  /* const resourceUrl = url.format({
-    pathname: '/people',
-    query: { meta_key_id: 'madek_core:authors', search_term: '__SEARCH_TERM__' }
-  }) */
-  const resourceUrl =
-    document.location.href +
-    '&context_key_id=8ac0a6b5-0d59-4c67-8614-58aa667a8064&search_term=__SEARCH_TERM__' +
-    '&list%5Bsparse_filter%5D=true&___sparse=%7B%22dynamic_filters%22%3A%7B%22section_group_meta_data%22%3A%7B%7D%7D%7D'
+  const url = new URL(location.href)
+  url.searchParams.set('list[sparse_filter]', 'true')
+  url.searchParams.set(
+    '___sparse',
+    JSON.stringify({ dynamic_filters: { section_group_meta_data: {} } })
+  )
+  url.searchParams.set('context_key_id', '8ac0a6b5-0d59-4c67-8614-58aa667a8064')
+  url.searchParams.set('search_term', '__SEARCH_TERM__')
+
   const Bloodhound = require('@eins78/typeahead.js/dist/bloodhound.js')
   const tokenizer = s => Bloodhound.tokenizers.whitespace((s || '').trim())
   return new Bloodhound({
     datumTokenizer: tokenizer,
     queryTokenizer: tokenizer,
     remote: {
-      url: resourceUrl,
+      url: url.href,
       wildcard: '__SEARCH_TERM__',
       transform: data => {
         const context = data.dynamic_filters.section_group_meta_data.find(
           x => x.label === 'Personen'
         ) || { children: [] }
         const contextKey = context.children[0] || { children: [] }
+        if (contextKey.too_many_hits) {
+          return [{ label: 'Bitte mehr Buchstaben eingeben', disabled: true }]
+        }
         return contextKey.children
       }
     }
@@ -142,9 +145,14 @@ function getDataSet(staticItems) {
       pending: '<div class="ui-preloader small" style="height: 1.5em"></div>',
       notFound: '<div class="ui-autocomplete-empty">' + t('app_autocomplete_no_results') + '</div>',
       suggestion: value =>
-        `<div class="ui-autocomplete-override-sidebar ui-autocomplete-override-sidebar--with-number">` +
+        `<div class="${cx(
+          'ui-autocomplete-override-sidebar ui-autocomplete-override-sidebar--with-number',
+          { 'ui-autocomplete-disabled': value.disabled }
+        )}">` +
         `<div class="ui-autocomplete-override-sidebar__label">${value.label}</div>` +
-        `<div class="ui-autocomplete-override-sidebar__number">${value.count || '0'}<div>` +
+        `<div class="ui-autocomplete-override-sidebar__number">${
+          value.count === undefined ? '' : value.count
+        }<div>` +
         `</div>`
     },
     limit: 20,

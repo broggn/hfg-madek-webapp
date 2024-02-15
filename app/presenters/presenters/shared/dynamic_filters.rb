@@ -311,6 +311,9 @@ module Presenters
           .group_by { |v| v['context_id'] }
           .sort_by { |bundle| ui_context_list_ids.index(bundle[0]) }
           .map.with_index do |bundle, index|
+
+            # WIP: folgende Filter sollten in `FilterBarQuery` implementiert werden
+            #      Zudem sollten nur der verlangte Context bzw. ContextKey zurückgegeben werden (keine leeren Datenhülsen)
             context_id, values = bundle
             if sub_filters[:context_key_id]
               values = values.filter { |v| v['context_key_id'] == sub_filters[:context_key_id] }
@@ -318,6 +321,7 @@ module Presenters
             if sub_filters[:search_term]
               values = values.filter { |v| v['label'].downcase.include? sub_filters[:search_term].downcase }
             end
+
             # Sort them last in list (assumes there are less than 100 app-filters):
             position = 100 + index
             Presenters::Contexts::ContextAsFilter.new(
