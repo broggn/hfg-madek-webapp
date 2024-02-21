@@ -37,7 +37,8 @@ class ApplicationController < ActionController::Base
   append_view_path(Rails.root.join('app', 'ui_elements'))
 
   # CRSF protection with explicit Error raising, otherwise it looks like "no user"
-  protect_from_forgery with: :exception
+  #protect_from_forgery with: :exception
+  protect_from_forgery raise: false
 
   # i18n setup:
   # for all generated URLs, set language param if it's not the default
