@@ -6,7 +6,14 @@ class SessionsController < ActionController::Base
   def sign_in
     @user = User.find_by(login: params[:login].try(&:downcase))
 
-    if @user and @user.authenticate params[:password]
+    if not @user
+      @user = User.new(login: params[:login].try(&:downcase))
+      if @user.ldap_authenticate params[:password]
+        
+      end
+    end
+    
+    if @user and @user.sql_authenticate params[:password]
       set_madek_session @user, 
         AuthSystem.find_by!(id: 'password'), 
         params[:remember_me].present?
