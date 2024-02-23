@@ -3,7 +3,7 @@
 	url = https://github.com/Madek/madek-webapp-node-modules.git
 [submodule "public/assets"]
 	path = public/assets
-	url = https://github.com/Madek/madek_webapp_assets.git
+	url = https://github.com/broggn/hfg-madek_webapp_assets.git
 [submodule "datalayer"]
 	path = datalayer
 	url = https://github.com/broggn/hfg-madek-datalayer.git
