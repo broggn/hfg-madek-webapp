@@ -48,7 +48,7 @@ module Madek
       VERIFY_AUTH_SKIP_CONTROLLERS = \
         [ConfigurationManagementBackdoorController,
          ErrorsController,
-         MadekZhdkIntegration::AuthenticationController,
+         # MadekZhdkIntegration::AuthenticationController,
          StyleguideController,
          ZencoderJobsController]
 
